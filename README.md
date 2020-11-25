@@ -1,2 +1,2 @@
 # TJMC-Launcher
-An ElectronJS version of TJM-Launcher
+An ElectronJS based version of TJM-Launcher
