@@ -1,0 +1,23 @@
+{
+  "name": "TJMC-Launcher",
+  "version": "1.0.0",
+  "description": "An ElectronJS version of TJM-Launcher",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MakAndJo/TJMC-Launcher.git"
+  },
+  "keywords": [],
+  "author": "MakAndJo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MakAndJo/TJMC-Launcher/issues"
+  },
+  "homepage": "https://github.com/MakAndJo/TJMC-Launcher#readme",
+  "devDependencies": {
+    "electron": "^11.0.3"
+  }
+}
