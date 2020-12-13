@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Hello World!</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link type="text/css" rel="stylesheet" href="./css/launcher.css">
 </head>
-<body style="background: white;">
+<body style="background: #444;">
+    <%- include('frame') %>
     <h1>Hello World!</h1>
     <p>
         Вы используете node <script>document.write(process.versions.node)</script>,

@@ -1,0 +1,202 @@
+
+@font-face {
+    font-family: 'Minecraft Rus'; 
+    src: url('minecraftia.ttf');
+}
+@font-face {
+    font-family: 'Segoe UI Bold'; 
+    src: url('segoeuibold.ttf');
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Element Styles                                                              *
+ *                                                                             *
+ ******************************************************************************/
+
+/* Reset body, html, and div presets. */
+body, html, div {
+    margin: 0px;
+    padding: 0px;
+}
+
+/* Reset p presets. */
+p {
+    -webkit-margin-before: 0em;
+    -webkit-margin-after: 0em;
+}
+
+/* Set default font and color. */
+body, button {
+    font-family: 'Minecraft Rus';
+    background-color: #30303010;
+}
+
+/*body {
+    background: url('./../images/backgrounds/0.jpg') no-repeat center center fixed;
+    background-size: cover;
+}*/
+
+/*******************************************************************************
+ *                                                                             *
+ * Frame Styles (frame.ejs)                                                    *
+ *                                                                             *
+ ******************************************************************************/
+
+/* Frame Bar */
+#frameBar {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 1s ease;
+    background-color: #1a1a1ada;
+    -webkit-user-select: none;
+}
+
+/* Undraggable region on the top of the frame. */
+#frameResizableTop {
+    height: 2px;
+    width: 100%;
+    -webkit-app-region: no-drag;
+}
+
+/* Flexbox to wrap the main frame content. */
+#frameMain {
+    display: flex;
+    height: 22px;
+    flex-direction: row-reverse;
+}
+
+/* Undraggable region on the left and right of the frame. */
+.frameResizableVert {
+    width: 2px;
+    -webkit-app-region: no-drag;
+}
+
+/* Main frame content for windows. */
+#frameContentWin {
+    display: flex;
+    width: 100%;
+    -webkit-app-region: drag;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Main frame content for darwin. */
+#frameContentDarwin {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    -webkit-app-region: drag;
+}
+
+/* Frame logo (windows only). */
+#frameTitleDock {
+    padding: 0 10px;
+}
+#frameTitleText {
+    font-size: 14px;
+    color: white;
+    font-family: 'Candara';
+}
+
+/* Windows frame button dock. */
+#frameButtonDockWin {
+    -webkit-app-region: no-drag !important;
+    position: relative;
+    right: 0;
+    overflow: hidden;
+    height: 100%;
+}
+#frameButtonDockWin > .frameButton:not(:first-child) {
+    margin-left: -4px;
+}
+
+/* Darwin frame button dock: NaN; */
+#frameButtonDockDarwin {
+    -webkit-app-region: no-drag !important;
+    position: relative;
+    top: -1px;
+    right: -1px;
+}
+
+/* Windows Frame Button Styles. */
+.frameButton {
+    background: none;
+    border: none;
+    height: 100%;
+    width: 28px;
+    cursor: pointer;
+    color: #ddd;
+    display: inline-block;
+    text-align: center;
+}
+.frameButton:hover,
+.frameButton:focus {
+    background: rgba(189, 189, 189, 0.43);
+}
+.frameButton:active {
+    background: rgba(156, 156, 156, 0.43);
+}
+.frameButton:focus {
+    outline: 0px;
+}
+
+/* Close button is red. */
+#frameButton_close:hover,
+#frameButton_close:focus {
+    background: rgba(255, 53, 53, 0.61) !important;
+}
+#frameButton_close:active {
+    background: rgba(235, 0, 0, 0.61) !important;
+}
+
+/* Darwin Frame Button Styles. */
+.frameButtonDarwin {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    border: 0px;
+    margin-left: 5px;
+    -webkit-app-region: no-drag !important;
+    cursor: pointer;
+}
+.frameButtonDarwin:focus {
+    outline: 0px;
+}
+
+#frameButtonDarwin_close {
+    background-color: #e74c32;
+}
+#frameButtonDarwin_close:hover,
+#frameButtonDarwin_close:focus {
+    background-color: #FF9A8A;
+}
+#frameButtonDarwin_close:active {
+    background-color: #ff8d7b;
+}
+
+#frameButtonDarwin_minimize {
+    background-color: #fed045;
+}
+#frameButtonDarwin_minimize:hover,
+#frameButtonDarwin_minimize:focus {
+    background-color: #FFE9A9;
+}
+#frameButtonDarwin_minimize:active {
+    background-color: #ffde7b;
+}
+
+#frameButtonDarwin_restoredown {
+    background-color: #96e734;
+}
+#frameButtonDarwin_restoredown:hover,
+#frameButtonDarwin_restoredown:focus {
+    background-color: #D6FFA6;
+}
+#frameButtonDarwin_restoredown:active {
+    background-color: #bfff76;
+}
