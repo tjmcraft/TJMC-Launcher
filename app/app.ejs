@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>TJMC-Launcher</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <script src="./assets/js/uicore.js"></script>
+    <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
+    <style>
+        body {
+            background: url(assets/images/default.png);
+            transition: 5s all ease;
+            background-size: cover;
+            -webkit-user-select: none;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+    </style>
+</head>
+<body style="background: #ddd;">
+    <%- include('frame') %>
+    <div id="main">
+        <%- include('main') %>
+    </div>
+</body>
+</html>

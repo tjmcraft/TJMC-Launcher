@@ -6,7 +6,7 @@ const url = require('url')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
-app.disableHardwareAcceleration()
+//app.disableHardwareAcceleration()
 
 // https://github.com/electron/electron/issues/18397
 app.allowRendererProcessReuse = true
@@ -17,16 +17,19 @@ function createWindow () {
   win = new BrowserWindow({
     width: 1000,
     height: 580,
+    minWidth: 800,
+    minHeight: 500,
     frame: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true
     },
+    icon: getPlatformIcon('icon'),
     backgroundColor: '#171614'
   })
 
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'app', 'index.ejs'),
+    pathname: path.join(__dirname, 'app', 'app.ejs'),
     protocol: 'file:',
     slashes: true
   }))
@@ -126,4 +129,20 @@ function createMenu() {
 
   }
 
+}
+
+function getPlatformIcon(filename){
+  let ext
+  switch(process.platform) {
+      case 'win32':
+          ext = 'ico'
+          break
+      case 'darwin':
+      case 'linux':
+      default:
+          ext = 'png'
+          break
+  }
+
+  return path.join(__dirname, 'app', 'assets', 'images', `${filename}.${ext}`)
 }
