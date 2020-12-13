@@ -1,6 +1,6 @@
 const $                                      = require('jquery')
 const {ipcRenderer, remote, shell, webFrame} = require('electron')
-const LoggerUtil                             = require('./js/loggerutil')
+const LoggerUtil                             = require('./assets/js/loggerutil')
 
 const loggerUICore             = LoggerUtil('%c[UICore]', 'color: #000668; font-weight: bold')
 const loggerAutoUpdater        = LoggerUtil('%c[AutoUpdater]', 'color: #000668; font-weight: bold')
