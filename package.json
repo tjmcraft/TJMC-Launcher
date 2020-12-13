@@ -13,6 +13,8 @@
   "author": "MakAndJo",
   "license": "ISC",
   "dependencies": {
+    "ejs": "^3.1.5",
+    "ejs-electron": "^2.1.1",
     "electron": "^11.1.0"
   }
 }
