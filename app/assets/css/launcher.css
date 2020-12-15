@@ -227,17 +227,22 @@ body, button {
 input[type="text"] {
     top: 8px;
     left: 8px;
-    padding: 4px;
+    /* padding: 4px; */
+    background-image: url(https://www.tjmcraft.ga/login/resources/server/skinRender.php?vr=0&hr=0&headOnly=true&ratio=8&user=MakAndJo);
+    background-position: 4px;
+    background-repeat: no-repeat;
+    padding: 2px 2px 2px 32px;
+    background-size: 24px;
  }
 #version {
     top: 8px;
-    left: 130px;
+    left: 200px;
 }
 
 input, select {
     border: 1px solid gray;
     border-width: 0px 0px 1px 0px;
-    background: #1a1a1a !important;
+    background-color: #1a1a1a !important;
     outline: none;
     height: 32px;
     width: 184px;
@@ -246,4 +251,5 @@ input, select {
     font-family: 'Candara';
     opacity: 0.8;
     position: absolute;
+    padding: 4px;
 }
