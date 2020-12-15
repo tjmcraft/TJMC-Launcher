@@ -21,8 +21,9 @@ function createWindow () {
     minHeight: 500,
     frame: false,
     webPreferences: {
-      nodeIntegration: true,
-      enableRemoteModule: true
+        contextIsolation: false,
+        nodeIntegration: true,
+        enableRemoteModule: true
     },
     icon: getPlatformIcon('icon'),
     backgroundColor: '#171614'
