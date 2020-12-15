@@ -6,7 +6,7 @@ const url = require('url')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
-//app.disableHardwareAcceleration()
+app.disableHardwareAcceleration()
 
 // https://github.com/electron/electron/issues/18397
 app.allowRendererProcessReuse = true
@@ -38,14 +38,14 @@ function createWindow () {
     win.show()
   })
 
-  win.removeMenu()
+  //win.removeMenu()
 
   win.resizable = true
 
   win.on('closed', () => {
       win = null
   })
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow)

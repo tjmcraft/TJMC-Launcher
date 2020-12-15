@@ -7,6 +7,10 @@
     font-family: 'Segoe UI Bold'; 
     src: url('segoeuibold.ttf');
 }
+@font-face {
+    font-family: 'Candara'; 
+    src: url('candara.ttf');
+}
 
 /*******************************************************************************
  *                                                                             *
@@ -93,6 +97,17 @@ body, button {
     -webkit-app-region: drag;
 }
 
+#frameContentDarwin #frameTitleDock {
+    position: absolute;
+    text-align: center;
+    justify-self: center;
+    align-self: center;
+    display: block;
+    left: 0;
+    right: 0;
+    z-index: -1;
+}
+
 /* Frame logo (windows only). */
 #frameTitleDock {
     padding: 0 10px;
@@ -134,8 +149,7 @@ body, button {
     display: inline-block;
     text-align: center;
 }
-.frameButton:hover,
-.frameButton:focus {
+.frameButton:hover{
     background: rgba(189, 189, 189, 0.43);
 }
 .frameButton:active {
@@ -146,8 +160,7 @@ body, button {
 }
 
 /* Close button is red. */
-#frameButton_close:hover,
-#frameButton_close:focus {
+#frameButton_close:hover {
     background: rgba(255, 53, 53, 0.61) !important;
 }
 #frameButton_close:active {
@@ -171,8 +184,7 @@ body, button {
 #frameButtonDarwin_close {
     background-color: #e74c32;
 }
-#frameButtonDarwin_close:hover,
-#frameButtonDarwin_close:focus {
+#frameButtonDarwin_close:hover {
     background-color: #FF9A8A;
 }
 #frameButtonDarwin_close:active {
@@ -182,8 +194,7 @@ body, button {
 #frameButtonDarwin_minimize {
     background-color: #fed045;
 }
-#frameButtonDarwin_minimize:hover,
-#frameButtonDarwin_minimize:focus {
+#frameButtonDarwin_minimize:hover {
     background-color: #FFE9A9;
 }
 #frameButtonDarwin_minimize:active {
@@ -193,8 +204,7 @@ body, button {
 #frameButtonDarwin_restoredown {
     background-color: #96e734;
 }
-#frameButtonDarwin_restoredown:hover,
-#frameButtonDarwin_restoredown:focus {
+#frameButtonDarwin_restoredown:hover {
     background-color: #D6FFA6;
 }
 #frameButtonDarwin_restoredown:active {
