@@ -18,6 +18,9 @@
  *                                                                             *
  ******************************************************************************/
 * {box-sizing: border-box;}
+html, body {
+    overflow: hidden;
+}
 /* Reset body, html, and div presets. */
 body, html, div {
     margin: 0px;
@@ -223,17 +226,17 @@ body, button {
     width: 100%;
     height: 48px;
 }
-
-input[type="text"] {
+#nick {
     top: 8px;
     left: 8px;
     /* padding: 4px; */
-    background-image: url(https://www.tjmcraft.ga/login/resources/server/skinRender.php?vr=0&hr=0&headOnly=true&ratio=8&user=MakAndJo);
+    background-image: url(../images/user-icon.png);
     background-position: 4px;
     background-repeat: no-repeat;
     padding: 2px 2px 2px 32px;
     background-size: 24px;
- }
+}
+
 #version {
     top: 8px;
     left: 200px;

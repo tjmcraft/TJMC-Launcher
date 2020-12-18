@@ -5,7 +5,7 @@
     и Electron <script>document.write(process.versions.electron)</script>.
 </p>
 <div id="mainBar">
-    <input type="text" placeholder="Ник">
+    <input type="text" placeholder="Ник" id="nick">
     <select id="version">
         <option selected value="s1">Чебурашка</option>
         <option value="s2">Крокодил Гена</option>
@@ -13,3 +13,16 @@
         <option value="s4">Крыса Лариса</option>
     </select>
 </div>
+<script>
+    document.getElementById('nick').oninput = function(e){
+        console.log(e.target.value)
+    }
+    
+var arr = ["Яблоко", "Апельсин", "Груша"];
+
+arr.forEach(function(item, i, arr) {
+    addVer(document.getElementById( 'version' ), item);
+});
+
+
+</script>
