@@ -49,10 +49,11 @@ document.addEventListener('readystatechange', function () {
             console.log(e.target.value)
         }
         Minecraft.getVersionManifest.then(parsed => {
-            for (const cv in parsed.versions) {
-                version_list.addVer(parsed.versions[cv].id);
+            //logg.log(parsed)
+            for (const cv in parsed) {
+                version_list.addVer(parsed[cv].id);
             }
-            version_list.value = parsed.latest.release
+            //version_list.value = parsed.release;
         })
     }
 });
@@ -74,7 +75,25 @@ class Minecraft {
     }
     static get getVersionManifest () {
         return new Promise(resolve => {
+            this.getMVM.then(m => {
+                this.getTVM.then(t => {
+                    return resolve(arrayDeDuplicate(m.versions,t.versions))
+                })
+            })
+        })
+    }
+    static get getMVM (){
+        return new Promise(resolve => {
             request.get(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, (error, response, body) => {
+                if (error) resolve(error)
+                const parsed = JSON.parse(body)
+                return resolve(parsed)
+            })
+        })
+    }
+    static get getTVM (){
+        return new Promise(resolve => {
+            request.get(`http://u.tlauncher.ru/repo/versions/versions.json`, (error, response, body) => {
                 if (error) resolve(error)
                 const parsed = JSON.parse(body)
                 return resolve(parsed)
@@ -83,7 +102,7 @@ class Minecraft {
     }
 
     getVersion (version) {
-        //logg.log('Loading Version JSON for: '+version)
+        logg.log('Loading Version JSON for: '+version)
         return new Promise(resolve => {
             const versionJsonPath = path.join(this.options.version, version, `${version}.json`)
 
@@ -91,29 +110,29 @@ class Minecraft {
                 const c_version = JSON.parse(fs.readFileSync(versionJsonPath))
                 if (c_version.inheritsFrom) {
                     this.getVersion(c_version.inheritsFrom).then(inherit => {
-                        console.log(c_version.libraries)
                         c_version.libraries = arrayDeDuplicate(c_version.libraries, inherit.libraries)
                         c_version.mainClass = c_version.mainClass ?? inherit.mainClass
                         c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
                         c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
                         c_version.downloads = c_version.downloads ?? inherit.downloads
-                        c_version.arguments = arrayDeDuplicate(Array(c_version.arguments), Array(inherit.arguments))
+                        c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
+                        c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
                         return resolve(c_version)
                     })
                 }   
             }
             
             this.constructor.getVersionManifest.then(parsed => {
-                for (const cv in parsed.versions) {
-                    if (parsed.versions[cv].id === version) {
-                        request.get(parsed.versions[cv].url, (error, response, body) => {
+                for (const cv in parsed) {
+                    if (parsed[cv].id === version) {
+                        request.get(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`, (error, response, body) => {
                             if (error) resolve(error)
                             const c_version = JSON.parse(body)
                             fs.mkdir(path.dirname(versionJsonPath), { recursive: true }, (err) => {
                                 if (err) throw err;
                                 fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
                             })
-                            if (c_version.inheritsFrom) {
+                            /*if (c_version.inheritsFrom) {
                                 this.getVersion(c_version.inheritsFrom).then(inherit => {
                                     console.log(c_version.libraries)
                                     c_version.libraries = arrayDeDuplicate(c_version.libraries, inherit.libraries)
@@ -124,7 +143,8 @@ class Minecraft {
                                     c_version.arguments = arrayDeDuplicate(Array(c_version.arguments), Array(inherit.arguments))
                                     return resolve(c_version)
                                 })
-                            }
+                            }*/
+                            return resolve(c_version)
                         })
                     }
                 }
