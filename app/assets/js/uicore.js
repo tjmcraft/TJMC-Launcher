@@ -62,9 +62,9 @@ document.addEventListener('readystatechange', function () {
 class Minecraft {
     constructor () {
         this.options = {
-            root: require('electron').remote.app.getPath('userData')+'/minecraft',
+            root: path.join(this.constructor.getAppData, 'minecraft'),
+            version: path.join(this.constructor.getAppData, 'minecraft', 'versions'),
             url: {
-                version_manifest: `https://launchermeta.mojang.com/mc/game/version_manifest.json`,
                 resource: "https://resources.download.minecraft.net"
             }
         }
@@ -81,13 +81,26 @@ class Minecraft {
             })
         })
     }
+
     getVersion (version) {
+        //logg.log('Loading Version JSON for: '+version)
         return new Promise(resolve => {
-            const versionJsonPath = path.join(path.join(this.options.root, 'versions', version), `${version}.json`)
-            console.log(versionJsonPath);
-            if (fs.existsSync(versionJsonPath)) {
-                this.version = JSON.parse(fs.readFileSync(versionJsonPath))
-                return resolve(this.version)
+            const versionJsonPath = path.join(this.options.version, version, `${version}.json`)
+
+            if (fs.existsSync(versionJsonPath) && fs.readFileSync(versionJsonPath)) {
+                const c_version = JSON.parse(fs.readFileSync(versionJsonPath))
+                if (c_version.inheritsFrom) {
+                    this.getVersion(c_version.inheritsFrom).then(inherit => {
+                        console.log(c_version.libraries)
+                        c_version.libraries = arrayDeDuplicate(c_version.libraries, inherit.libraries)
+                        c_version.mainClass = c_version.mainClass ?? inherit.mainClass
+                        c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
+                        c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
+                        c_version.downloads = c_version.downloads ?? inherit.downloads
+                        c_version.arguments = arrayDeDuplicate(Array(c_version.arguments), Array(inherit.arguments))
+                        return resolve(c_version)
+                    })
+                }   
             }
             
             this.constructor.getVersionManifest.then(parsed => {
@@ -95,12 +108,46 @@ class Minecraft {
                     if (parsed.versions[cv].id === version) {
                         request.get(parsed.versions[cv].url, (error, response, body) => {
                             if (error) resolve(error)
-                            this.version = JSON.parse(body)
-                            return resolve(this.version)
+                            const c_version = JSON.parse(body)
+                            fs.mkdir(path.dirname(versionJsonPath), { recursive: true }, (err) => {
+                                if (err) throw err;
+                                fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
+                            })
+                            if (c_version.inheritsFrom) {
+                                this.getVersion(c_version.inheritsFrom).then(inherit => {
+                                    console.log(c_version.libraries)
+                                    c_version.libraries = arrayDeDuplicate(c_version.libraries, inherit.libraries)
+                                    c_version.mainClass = c_version.mainClass ?? inherit.mainClass
+                                    c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
+                                    c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
+                                    c_version.downloads = c_version.downloads ?? inherit.downloads
+                                    c_version.arguments = arrayDeDuplicate(Array(c_version.arguments), Array(inherit.arguments))
+                                    return resolve(c_version)
+                                })
+                            }
                         })
                     }
                 }
-            })
+            });
+
         })
     }
+
+
 }
+
+/**
+* This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
+*
+* @params ...args Function accept multiple array input (merges them to single array with no duplicates)
+* it also can be used to filter duplicates in single array
+*/
+function arrayDeDuplicate(...args){
+    let set = new Set();
+    for(let arr of args){
+       arr.map((value) => {
+          set.add(value);
+       });
+    }
+    return [...set];
+ }
