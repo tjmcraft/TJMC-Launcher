@@ -2,24 +2,30 @@ const child = require('child_process')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const logg = LoggerUtil('%c[Minecraft Core]', 'color: #be1600; font-weight: bold')
-class Minecraft {
-    constructor () {
-        this.options = {
-            javaPath: 'java',
-            path: {
-                root: path.join(this.constructor.getAppData, 'minecraft'),
-                version: path.join(this.constructor.getAppData, 'minecraft', 'versions')
-            },
-            url: {
-                resource: "https://resources.download.minecraft.net"
-            }
-        }
-    }
-    static get getAppData(){
-        return path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
+const checksum                               = require('checksum')
+const Zip = require('adm-zip')
+const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
+
+let counter = 0
+
+class Minecraft{
+    /**
+     * This is just constructor
+     * @param client U may set here this
+     */
+    constructor (client) {
+        this.client = client
+        this.options = client.options
+        this.baseRequest = request.defaults({
+            pool: { maxSockets: this.options.request.maxSockets || 2 },
+            timeout: this.options.request.timeout || 10000
+        })
     }
 
+    /**
+     * Function checks if current Java version works
+     * @param {string} java java executable or path to java
+     */
     async checkJava (java) {
         return new Promise(resolve => {
             child.exec(`"${java}" -version`, (error, stdout, stderr) => {
@@ -33,36 +39,19 @@ class Minecraft {
         })
     }
 
-    async construct () {
-        const java = await this.checkJava(this.options.javaPath || 'java')
-        if (!java.run) {
-            logg.debug(`Couldn't start Minecraft due to: ${java.message}`)
-            return null
-        }
-        if (!fs.existsSync(this.options.path.root)) {
-            logg.debug('Attempting to create root folder')
-            fs.mkdirSync(this.options.path.root)
-        }
-        if (this.options.path.gameDirectory) {
-            this.options.path.gameDirectory = path.resolve(this.options.path.gameDirectory)
-            if (!fs.existsSync(this.options.path.gameDirectory)) {
-              fs.mkdirSync(this.options.path.gameDirectory, { recursive: true })
+    /**
+     * Function return current os name
+     */
+    getOS () {
+        if (this.options.os) {
+            return this.options.os
+        } else {
+            switch (process.platform) {
+                case 'win32': return 'windows'
+                case 'darwin': return 'osx'
+                default: return 'linux'
             }
         }
-        const directory = this.options.path.version || path.join(this.options.path.root, 'versions', this.options.version.number)
-        this.options.path.version = directory
-
-        const versionFile = await this.getVersion(this.options.version.number)
-        /*const mcPath = this.options.overrides.minecraftJar || (this.options.version.custom
-          ? path.join(this.options.root, 'versions', this.options.version.custom, `${this.options.version.custom}.jar`)
-          : path.join(directory, `${this.options.version.number}.jar`))
-        this.options.mcPath = mcPath
-        const nativePath = await this.handler.getNatives()
-    
-        if (!fs.existsSync(mcPath)) {
-          logg.debug('Attempting to download Minecraft version jar')
-          await this.handler.getJar()
-        }*/
     }
 
     static get getVersionManifest () {
@@ -93,6 +82,10 @@ class Minecraft {
         })
     }
 
+    /**
+     * Function just download a single file and return its body
+     * @param url give url of file
+     */
     downloadFile(url) {
         return new Promise((resolve, reject) => {
             request(url, (error, response, body) => {
@@ -111,7 +104,7 @@ class Minecraft {
      */
     async getVersion (version) {
         logg.log('Loading Version JSON for: '+version)
-        const versionJsonPath = path.join(this.options.path.version, version, `${version}.json`)
+        const versionJsonPath = path.join(this.options.path.version, `${version}.json`)
         var c_version = null;
         if (fs.existsSync(versionJsonPath)) {
             c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
@@ -140,62 +133,336 @@ class Minecraft {
         return c_version
     }
 
-    downloadAsync (url, directory, name, retry, type) {
-        return new Promise(resolve => {
-        fs.mkdirSync(directory, { recursive: true })
+    /**
+     * Function downloads main jar 
+     * @param version Main version JSON
+     */
+    async getJar (version) {
+        const versionPath = path.join(this.options.path.version)
+        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.number}.jar`, true, 'version-jar')
+        logg.debug('Downloaded version jar')
+    }
 
-        const _request = this.baseRequest(url)
+    /**
+     * Function creates classpathes to libraries
+     * @param classJson Main version JSON
+     */
+    async getClasses (classJson) {
+        let libs = []
 
-        let receivedBytes = 0
-        let totalBytes = 0
+        const libraryDirectory = path.resolve(path.join(this.options.path.root, 'libraries'))
 
-        _request.on('response', (data) => {
-            if (data.statusCode === 404) {
-            this.client.emit('debug', `[MCLC]: Failed to download ${url} due to: File not found...`)
-            resolve(false)
+        if (classJson.mavenFiles) {
+            await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven-custom')
+        }
+        //libs = (await this.downloadToDirectory(libraryDirectory, classJson.libraries, 'classes-custom'))
+
+        const parsed = classJson.libraries.map(lib => {
+            if (lib.downloads.artifact && !this.parseRule(lib)) return lib
+        })
+
+        libs = libs.concat((await this.downloadToDirectory(libraryDirectory, parsed, 'classes')))
+        counter = 0
+
+        logg.log('Collected class paths')
+        return libs
+    }
+
+    popString (path) {
+        const tempArray = path.split('/')
+        tempArray.pop()
+        return tempArray.join('/')
+    }
+
+    /**
+     * Function get and download natives
+     * @param version Main version JSON
+     */
+    async getNatives (version) {
+        const nativeDirectory = path.resolve(path.join(this.options.path.version, 'natives'))
+
+        if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
+            fs.mkdirSync(nativeDirectory, { recursive: true })
+
+            const natives = async () => {
+                const natives = []
+                await Promise.all(version.libraries.map(async (lib) => {
+                    if (!lib.downloads.classifiers) return
+                    if (this.parseRule(lib)) return
+
+                    const native = this.getOS() === 'osx'
+                    ? lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']
+                    : lib.downloads.classifiers[`natives-${this.getOS()}`]
+
+                    natives.push(native)
+                }))
+                return natives
+            }
+            const stat = await natives()
+
+            this.client.emit('progress', {
+                type: 'natives',
+                task: 0,
+                total: stat.length
+            })
+
+            await Promise.all(stat.map(async (native) => {
+                if (!native) return
+                const name = native.path.split('/').pop()
+                await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
+                if (!await this.checkSum(native.sha1, path.join(nativeDirectory, name))) {
+                    await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
+                }
+                try {
+                    new Zip(path.join(nativeDirectory, name)).extractAllTo(nativeDirectory, true)
+                } catch (e) {
+                    // Only doing a console.warn since a stupid error happens. You can basically ignore this.
+                    // if it says Invalid file name, just means two files were downloaded and both were deleted.
+                    // All is well.
+                    console.warn(e)
+                }
+                fs.unlinkSync(path.join(nativeDirectory, name))
+                counter++
+                this.client.emit('progress', {
+                    type: 'natives',
+                    task: counter,
+                    total: stat.length
+                })
+            }))
+            logg.debug('Downloaded and extracted natives')
+        }
+
+        counter = 0
+        logg.debug(`Set native path to ${nativeDirectory}`)
+
+        return nativeDirectory
+    }
+
+    /**
+     * Function getting and download assets
+     * @param version Main version JSON
+     */
+    async getAssets (version) {
+        const assetDirectory = path.resolve(path.join(this.options.root, 'assets'))
+        if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
+            await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
+        }
+    
+        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }))
+    
+        this.client.emit('progress', {
+            type: 'assets',
+            task: 0,
+            total: Object.keys(index.objects).length
+        })
+    
+        await Promise.all(Object.keys(index.objects).map(async asset => {
+            const hash = index.objects[asset].hash
+            const subhash = hash.substring(0, 2)
+            const subAsset = path.join(assetDirectory, 'objects', subhash)
+    
+            if (!fs.existsSync(path.join(subAsset, hash)) || !await this.checkSum(hash, path.join(subAsset, hash))) {
+                await this.downloadAsync(`${this.options.overrides.url.resource}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
+                counter++
+                this.client.emit('progress', {
+                    type: 'assets',
+                    task: counter,
+                    total: Object.keys(index.objects).length
+                })
+            }
+        }))
+        counter = 0
+    /*
+        // Copy assets to legacy if it's an older Minecraft version.
+        if (this.isLegacy()) {
+            if (fs.existsSync(path.join(assetDirectory, 'legacy'))) {
+                this.client.emit('debug', '[MCLC]: The \'legacy\' directory is no longer used as Minecraft looks ' +
+                'for the resouces folder regardless of what is passed in the assetDirecotry launch option. I\'d ' +
+                `recommend removing the directory (${path.join(assetDirectory, 'legacy')})`)
+            }
+        
+            const legacyDirectory = path.join(this.options.root, 'resources')
+            this.client.emit('debug', `[MCLC]: Copying assets over to ${legacyDirectory}`)
+        
+            this.client.emit('progress', {
+                type: 'assets-copy',
+                task: 0,
+                total: Object.keys(index.objects).length
+            })
+        
+            await Promise.all(Object.keys(index.objects).map(async asset => {
+                const hash = index.objects[asset].hash
+                const subhash = hash.substring(0, 2)
+                const subAsset = path.join(assetDirectory, 'objects', subhash)
+        
+                const legacyAsset = asset.split('/')
+                legacyAsset.pop()
+        
+                if (!fs.existsSync(path.join(legacyDirectory, legacyAsset.join('/')))) {
+                fs.mkdirSync(path.join(legacyDirectory, legacyAsset.join('/')), { recursive: true })
+                }
+        
+                if (!fs.existsSync(path.join(legacyDirectory, asset))) {
+                fs.copyFileSync(path.join(subAsset, hash), path.join(legacyDirectory, asset))
+                }
+                counter++
+                this.client.emit('progress', {
+                type: 'assets-copy',
+                task: counter,
+                total: Object.keys(index.objects).length
+                })
+            }))
+        }
+    */
+        counter = 0
+    
+        logg.debug('Downloaded assets')
+    }
+
+    /**
+     * Function download libraries
+     * @param directory 
+     * @param libraries 
+     * @param eventName 
+     */
+    async downloadToDirectory (directory, libraries, eventName) {
+        const libs = []
+
+        await Promise.all(libraries.map(async library => {
+            if (!library) return
+            const lib = library.name.split(':')
+
+            let jarPath
+            let name
+            if (library.downloads && library.downloads.artifact && library.downloads.artifact.path) {
+            name = library.downloads.artifact.path.split('/')[library.downloads.artifact.path.split('/').length - 1]
+            jarPath = path.join(directory, this.popString(library.downloads.artifact.path))
+            } else {
+            name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
+            jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
             }
 
-            totalBytes = parseInt(data.headers['content-length'])
-        })
+            if (!fs.existsSync(path.join(jarPath, name))) {
+            // Simple lib support, forgot which addon needed this but here you go, Mr special.
+            if (library.url) {
+                const url = `${library.url}${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
+                await this.downloadAsync(url, jarPath, name, true, eventName)
+            } else if (library.downloads && library.downloads.artifact) {
+                await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
+            }
+            }
 
-        _request.on('error', async (error) => {
-            this.client.emit('debug', `[MCLC]: Failed to download asset to ${path.join(directory, name)} due to\n${error}.` +
-                        ` Retrying... ${retry}`)
-            if (retry) await this.downloadAsync(url, directory, name, false, type)
-            resolve()
-        })
-
-        _request.on('data', (data) => {
-            receivedBytes += data.length
-            this.client.emit('download-status', {
-            name: name,
-            type: type,
-            current: receivedBytes,
-            total: totalBytes
+            counter++
+            this.client.emit('progress', {
+            type: eventName,
+            task: counter,
+            total: libraries.length
             })
-        })
+            libs.push(`${jarPath}${path.sep}${name}`)
+        }))
+        counter = 0
 
-        const file = fs.createWriteStream(path.join(directory, name))
-        _request.pipe(file)
+        return libs
+    }
 
-        file.once('finish', () => {
-            this.client.emit('download', name)
-            resolve({
-            failed: false,
-            asset: null
+    /**
+     * Function download file async
+     * @param url URL to download
+     * @param directory Directory to download
+     * @param name FileName to download
+     * @param retry Try again?
+     * @param type Type of download
+     */
+    downloadAsync (url, directory, name, retry, type) {
+        return new Promise(resolve => {
+            fs.mkdirSync(directory, { recursive: true })
+
+            const _request = this.baseRequest(url)
+
+            let receivedBytes = 0
+            let totalBytes = 0
+
+            _request.on('response', (data) => {
+                if (data.statusCode === 404) {
+                    logg.debug(`Failed to download ${url} due to: File not found...`)
+                    resolve(false)
+                }
+
+                totalBytes = parseInt(data.headers['content-length'])
             })
-        })
 
-        file.on('error', async (e) => {
-            this.client.emit('debug', `[MCLC]: Failed to download asset to ${path.join(directory, name)} due to\n${e}.` +
-                        ` Retrying... ${retry}`)
-            if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
-            if (retry) await this.downloadAsync(url, directory, name, false, type)
-            resolve()
-        })
+            _request.on('error', async (error) => {
+                logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
+                if (retry) await this.downloadAsync(url, directory, name, false, type)
+                resolve()
+            })
+
+            _request.on('data', (data) => {
+                receivedBytes += data.length
+                this.client.emit('download-status', {
+                    name: name,
+                    type: type,
+                    current: receivedBytes,
+                    total: totalBytes
+                })
+            })
+
+            const file = fs.createWriteStream(path.join(directory, name))
+            _request.pipe(file)
+
+            file.once('finish', () => {
+                this.client.emit('download', name)
+                resolve({failed: false,asset: null})
+            })
+
+            file.on('error', async (e) => {
+                logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
+                if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                if (retry) await this.downloadAsync(url, directory, name, false, type)
+                resolve()
+            })
         })
     }
 
+    /**
+     * Function checks file hash
+     * @param hash given hash
+     * @param file file
+     */
+    checkSum (hash, file) {
+        return new Promise((resolve, reject) => {
+            checksum.file(file, (err, sum) => {
+            if (err) {
+                logg.debug(`Failed to check file hash due to ${err}`)
+                resolve(false)
+            } else {
+                resolve(hash === sum)
+            }
+            })
+        })
+    }
+
+    /**
+     * Function checks rules of lib
+     * @param lib Library to check
+     */
+    parseRule (lib) {
+        if (lib.rules) {
+            if (lib.rules.length > 1) {
+            if (lib.rules[0].action === 'allow' &&
+                        lib.rules[1].action === 'disallow' &&
+                        lib.rules[1].os.name === 'osx') {
+                return this.getOS() === 'osx'
+            } else {
+                return true
+            }
+            } else {
+            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return this.getOS() !== 'osx'
+            }
+        } else {
+            return false
+        }
+    }
 
 }
 
@@ -215,4 +482,4 @@ function arrayDeDuplicate(...args){
        });
     }
     return [...set];
- }
+}
