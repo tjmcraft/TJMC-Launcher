@@ -159,7 +159,6 @@ class Minecraft{
         }
 
         const parsed = classJson.libraries.map(lib => {
-            logg.warn(lib)
             if (lib.url || lib.artifact || lib.downloads.artifact && !this.parseRule(lib)) return lib
         })
 

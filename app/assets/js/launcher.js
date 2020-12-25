@@ -15,11 +15,11 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.12.2'
+                number: '1.12.2'
             },
             request: {
                 maxSockets: 4,
-                timeout: 1000
+                timeout: 5000
             },
             path: {
                 root: path.join(this.constructor.getAppData, 'minecraft'),
@@ -33,11 +33,11 @@ class launcher extends EventEmitter{
         this.handler = new Minecraft(this)
         const java = await this.handler.checkJava(this.options.javaPath || 'java')
         if (!java.run) {
-            logg.debug(`Couldn't start Minecraft due to: ${java.message}`)
+            logg.warn(`Couldn't start Minecraft due to: ${java.message}`)
             return null
         }
         if (!fs.existsSync(this.options.path.root)) {
-            logg.debug('Attempting to create root folder')
+            logg.log('Attempting to create root folder')
             fs.mkdirSync(this.options.path.root)
         }
         if (this.options.path.gameDirectory) {
@@ -53,12 +53,12 @@ class launcher extends EventEmitter{
         
         const nativePath = await this.handler.getNatives(versionFile)
         if (!fs.existsSync(this.options.mcPath)) {
-          logg.debug('Attempting to download Minecraft version jar')
+          logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)
         }
 
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        logg.warn(classes)
+        logg.debug(classes)
 
         logg.log('nice')
     }
