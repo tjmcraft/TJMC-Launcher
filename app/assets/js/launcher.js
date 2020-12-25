@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: '1.15.2'
+                number: 'ForgeOptiFine 1.12.2'
             },
             request: {
                 maxSockets: 4,
@@ -23,7 +23,8 @@ class launcher extends EventEmitter{
             },
             path: {
                 root: path.join(this.constructor.getAppData, 'minecraft'),
-                version: path.join(this.constructor.getAppData, 'minecraft', 'versions')
+                version: path.join(this.constructor.getAppData, 'minecraft', 'versions'),
+                directory: path.join(this.constructor.getAppData, 'minecraft', 'versions')
             },
             url: {
                 resource: "https://resources.download.minecraft.net"
@@ -51,7 +52,6 @@ class launcher extends EventEmitter{
         this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
         
         const nativePath = await this.handler.getNatives(versionFile)
-        logg.warn(this.options.mcPath)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.debug('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)

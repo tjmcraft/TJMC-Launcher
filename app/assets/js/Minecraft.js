@@ -104,7 +104,7 @@ class Minecraft{
      */
     async getVersion (version) {
         logg.log('Loading Version JSON for: '+version)
-        const versionJsonPath = path.join(this.options.path.version, `${version}.json`)
+        const versionJsonPath = path.join(this.options.path.directory, version, `${version}.json`)
         var c_version = null;
         if (fs.existsSync(versionJsonPath)) {
             c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
@@ -124,11 +124,13 @@ class Minecraft{
             c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
             c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
             c_version.downloads = c_version.downloads ?? inherit.downloads
-            c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(Array(c_version.arguments.game), Array(inherit.arguments.game)) : c_version.arguments.game ?? inherit.arguments.game
-            c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(Array(c_version.arguments.jvm), Array(inherit.arguments.jvm)) : c_version.arguments.jvm ?? inherit.arguments.jvm
+            if (c_version.arguments && inherit.arguments){
+                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(Array(c_version.arguments.game), Array(inherit.arguments.game)) : c_version.arguments.game ?? inherit.arguments.game
+                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(Array(c_version.arguments.jvm), Array(inherit.arguments.jvm)) : c_version.arguments.jvm ?? inherit.arguments.jvm
+            }
             delete c_version.inheritsFrom
         }
-        fs.mkdirSync(this.options.path.root, {recursive: true})
+        fs.mkdirSync(path.join(this.options.path.directory, version), {recursive: true})
         fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
         return c_version
     }
@@ -155,13 +157,13 @@ class Minecraft{
         if (classJson.mavenFiles) {
             await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven-custom')
         }
-        //libs = (await this.downloadToDirectory(libraryDirectory, classJson.libraries, 'classes-custom'))
 
         const parsed = classJson.libraries.map(lib => {
-            if (lib.downloads.artifact && !this.parseRule(lib)) return lib
+            logg.warn(lib)
+            if (lib.url || lib.artifact || lib.downloads.artifact && !this.parseRule(lib)) return lib
         })
 
-        libs = libs.concat((await this.downloadToDirectory(libraryDirectory, parsed, 'classes')))
+        libs = libs.concat(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
         counter = 0
 
         logg.log('Collected class paths')
@@ -187,14 +189,21 @@ class Minecraft{
             const natives = async () => {
                 const natives = []
                 await Promise.all(version.libraries.map(async (lib) => {
-                    if (!lib.downloads.classifiers) return
+                    if (!lib.classifiers || !lib.downloads.classifiers) return
                     if (this.parseRule(lib)) return
 
-                    const native = this.getOS() === 'osx'
-                    ? lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']
-                    : lib.downloads.classifiers[`natives-${this.getOS()}`]
-
-                    natives.push(native)
+                    const native = 
+                    lib.classifiers ? (
+                        this.getOS() === 'osx' 
+                        ? (lib.classifiers['natives-osx'] || lib.classifiers['natives-macos']) 
+                        : (lib.classifiers[`natives-${this.getOS()}`]) 
+                    ) : lib.downloads.classifiers ? (
+                        this.getOS() === 'osx' 
+                        ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
+                        : (lib.downloads.classifiers[`natives-${this.getOS()}`]) 
+                    ) : null
+                    natives = arrayDeDuplicate(natives, native)
+                    //natives.push(native)
                 }))
                 return natives
             }
@@ -330,34 +339,53 @@ class Minecraft{
 
         await Promise.all(libraries.map(async library => {
             if (!library) return
+            
             const lib = library.name.split(':')
 
             let jarPath
             let name
-            if (library.downloads && library.downloads.artifact && library.downloads.artifact.path) {
-            name = library.downloads.artifact.path.split('/')[library.downloads.artifact.path.split('/').length - 1]
-            jarPath = path.join(directory, this.popString(library.downloads.artifact.path))
-            } else {
-            name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
-            jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
-            }
+
+            /*if (library.downloads && library.downloads.artifact || library.artifact && library.downloads.artifact.path || library.artifact.path) {
+                name = library.downloads.artifact.path.split('/')[library.downloads.artifact.path.split('/').length - 1]
+                jarPath = path.join(directory, this.popString(library.downloads.artifact.path))
+            } else {*/
+                name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
+                jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
+            //}
 
             if (!fs.existsSync(path.join(jarPath, name))) {
-            // Simple lib support, forgot which addon needed this but here you go, Mr special.
-            if (library.url) {
-                const url = `${library.url}${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
-                await this.downloadAsync(url, jarPath, name, true, eventName)
-            } else if (library.downloads && library.downloads.artifact) {
-                await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
-            }
+                if (library.downloads && library.downloads.artifact) {
+                    await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
+                } else if (library.artifact) {
+                    await this.downloadAsync(library.artifact.url, jarPath, name, true, eventName)
+                } else if (library.url) {
+                    const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
+                    const url = [
+                        library.url, 
+                        'https://libraries.minecraft.net/'+jar_name, 
+                        'https://tlauncherrepo.com/repo/libraries/'+jar_name, 
+                        'https://files.minecraftforge.net/maven/'+jar_name, 
+                        'http://dl.liteloader.com/versions/'+jar_name, 
+                        'https://repo1.maven.org/maven2/'+jar_name, 
+                        library.url+jar_name
+                    ]
+                    for (const c in url){
+                        if(await this.downloadAsync(url, jarPath, name, true, eventName)) {
+                            console.debug(url)
+                            continue
+                        }
+                    }
+                }
             }
 
             counter++
+
             this.client.emit('progress', {
-            type: eventName,
-            task: counter,
-            total: libraries.length
+                type: eventName,
+                task: counter,
+                total: libraries.length
             })
+
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
         counter = 0
@@ -374,54 +402,58 @@ class Minecraft{
      * @param type Type of download
      */
     downloadAsync (url, directory, name, retry, type) {
-        return new Promise(resolve => {
-            fs.mkdirSync(directory, { recursive: true })
+        if (url.includes('http')) {
+            return new Promise(resolve => {
+                fs.mkdirSync(directory, { recursive: true })
 
-            const _request = this.baseRequest(url)
+                const _request = this.baseRequest(url)
 
-            let receivedBytes = 0
-            let totalBytes = 0
+                let receivedBytes = 0
+                let totalBytes = 0
 
-            _request.on('response', (data) => {
-                if (data.statusCode === 404) {
-                    logg.debug(`Failed to download ${url} due to: File not found...`)
-                    resolve(false)
-                }
+                _request.on('response', (data) => {
+                    if (data.statusCode !== 200) {
+                        logg.debug(`Failed to download ${url} due to: File not found...`)
+                        if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                        resolve(false)
+                    }
 
-                totalBytes = parseInt(data.headers['content-length'])
-            })
+                    totalBytes = parseInt(data.headers['content-length'])
+                })
 
-            _request.on('error', async (error) => {
-                logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
-                if (retry) await this.downloadAsync(url, directory, name, false, type)
-                resolve()
-            })
+                _request.on('error', async (error) => {
+                    logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
+                    if (retry) await this.downloadAsync(url, directory, name, false, type)
+                    if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                    resolve()
+                })
 
-            _request.on('data', (data) => {
-                receivedBytes += data.length
-                this.client.emit('download-status', {
-                    name: name,
-                    type: type,
-                    current: receivedBytes,
-                    total: totalBytes
+                _request.on('data', (data) => {
+                    receivedBytes += data.length
+                    this.client.emit('download-status', {
+                        name: name,
+                        type: type,
+                        current: receivedBytes,
+                        total: totalBytes
+                    })
+                })
+
+                const file = fs.createWriteStream(path.join(directory, name))
+                _request.pipe(file)
+
+                file.once('finish', () => {
+                    this.client.emit('download', name)
+                    resolve({failed: false,asset: null})
+                })
+
+                file.on('error', async (e) => {
+                    logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
+                    if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                    if (retry) await this.downloadAsync(url, directory, name, false, type)
+                    resolve()
                 })
             })
-
-            const file = fs.createWriteStream(path.join(directory, name))
-            _request.pipe(file)
-
-            file.once('finish', () => {
-                this.client.emit('download', name)
-                resolve({failed: false,asset: null})
-            })
-
-            file.on('error', async (e) => {
-                logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
-                if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
-                if (retry) await this.downloadAsync(url, directory, name, false, type)
-                resolve()
-            })
-        })
+        }
     }
 
     /**
