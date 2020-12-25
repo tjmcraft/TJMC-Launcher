@@ -56,9 +56,17 @@ class launcher extends EventEmitter{
           logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)
         }
+
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        //logg.debug(classes)
+        const classPaths = ['-cp']
+        const separator = this.handler.getOS() === 'windows' ? ';' : ':'
+        logg.debug(`Using ${separator} to separate class paths`)
+        const jar = fs.existsSync(this.options.mcPath) ? `${separator}${this.options.mcPath}` : `${separator}${path.join(directory, `${this.options.version.number}.jar`)}`
+        classPaths.push(`${classes.join(separator)}${jar}`)
+        classPaths.push(versionFile.mainClass)
+
+        logg.debug(classPaths)
 
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
