@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: '1.12.2'
+                number: 'ForgeOptiFine 1.12.2'
             },
             request: {
                 maxSockets: 32,
@@ -47,7 +47,7 @@ class launcher extends EventEmitter{
             }
         }
         this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)
-
+        logg.log('Attempting to load main json')
         const versionFile = await this.handler.getVersion(this.options.version.number)
         this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
         
@@ -56,7 +56,7 @@ class launcher extends EventEmitter{
           logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)
         }
-
+        logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
         //logg.debug(classes)
 
@@ -64,6 +64,7 @@ class launcher extends EventEmitter{
         await this.handler.getAssets(versionFile)
 
         logg.log('nice')
+        return true
     }
 }
 

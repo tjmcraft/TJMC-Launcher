@@ -103,7 +103,7 @@ class Minecraft{
      * @param version Version of Minecraft
      */
     async getVersion (version) {
-        logg.log('Loading Version JSON for: '+version)
+        logg.debug('Loading Version JSON for: '+version)
         const versionJsonPath = path.join(this.options.path.directory, version, `${version}.json`)
         var c_version = null;
         if (fs.existsSync(versionJsonPath)) {
@@ -165,7 +165,7 @@ class Minecraft{
         libs = libs.concat(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
         counter = 0
 
-        logg.log('Collected class paths')
+        logg.debug('Collected class paths')
         return libs
     }
 
