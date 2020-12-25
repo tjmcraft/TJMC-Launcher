@@ -18,7 +18,7 @@ class launcher extends EventEmitter{
                 number: '1.12.2'
             },
             request: {
-                maxSockets: 4,
+                maxSockets: 32,
                 timeout: 5000
             },
             path: {
@@ -58,7 +58,10 @@ class launcher extends EventEmitter{
         }
 
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        logg.debug(classes)
+        //logg.debug(classes)
+
+        logg.log('Attempting to download assets')
+        await this.handler.getAssets(versionFile)
 
         logg.log('nice')
     }

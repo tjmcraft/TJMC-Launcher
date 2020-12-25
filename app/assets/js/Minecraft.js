@@ -17,7 +17,7 @@ class Minecraft{
         this.client = client
         this.options = client.options
         this.baseRequest = request.defaults({
-            pool: { maxSockets: this.options.request.maxSockets || 2 },
+            pool: { maxSockets: this.options.request.maxSockets || 4 },
             timeout: this.options.request.timeout || 10000
         })
     }
@@ -251,7 +251,7 @@ class Minecraft{
      * @param version Main version JSON
      */
     async getAssets (version) {
-        const assetDirectory = path.resolve(path.join(this.options.root, 'assets'))
+        const assetDirectory = path.resolve(path.join(this.options.path.root, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
         }
@@ -270,7 +270,7 @@ class Minecraft{
             const subAsset = path.join(assetDirectory, 'objects', subhash)
     
             if (!fs.existsSync(path.join(subAsset, hash)) || !await this.checkSum(hash, path.join(subAsset, hash))) {
-                await this.downloadAsync(`${this.options.overrides.url.resource}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
+                await this.downloadAsync(`${this.options.url.resource}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
                 counter++
                 this.client.emit('progress', {
                     type: 'assets',
@@ -279,49 +279,6 @@ class Minecraft{
                 })
             }
         }))
-        counter = 0
-    /*
-        // Copy assets to legacy if it's an older Minecraft version.
-        if (this.isLegacy()) {
-            if (fs.existsSync(path.join(assetDirectory, 'legacy'))) {
-                this.client.emit('debug', '[MCLC]: The \'legacy\' directory is no longer used as Minecraft looks ' +
-                'for the resouces folder regardless of what is passed in the assetDirecotry launch option. I\'d ' +
-                `recommend removing the directory (${path.join(assetDirectory, 'legacy')})`)
-            }
-        
-            const legacyDirectory = path.join(this.options.root, 'resources')
-            this.client.emit('debug', `[MCLC]: Copying assets over to ${legacyDirectory}`)
-        
-            this.client.emit('progress', {
-                type: 'assets-copy',
-                task: 0,
-                total: Object.keys(index.objects).length
-            })
-        
-            await Promise.all(Object.keys(index.objects).map(async asset => {
-                const hash = index.objects[asset].hash
-                const subhash = hash.substring(0, 2)
-                const subAsset = path.join(assetDirectory, 'objects', subhash)
-        
-                const legacyAsset = asset.split('/')
-                legacyAsset.pop()
-        
-                if (!fs.existsSync(path.join(legacyDirectory, legacyAsset.join('/')))) {
-                fs.mkdirSync(path.join(legacyDirectory, legacyAsset.join('/')), { recursive: true })
-                }
-        
-                if (!fs.existsSync(path.join(legacyDirectory, asset))) {
-                fs.copyFileSync(path.join(subAsset, hash), path.join(legacyDirectory, asset))
-                }
-                counter++
-                this.client.emit('progress', {
-                type: 'assets-copy',
-                task: counter,
-                total: Object.keys(index.objects).length
-                })
-            }))
-        }
-    */
         counter = 0
     
         logg.debug('Downloaded assets')
