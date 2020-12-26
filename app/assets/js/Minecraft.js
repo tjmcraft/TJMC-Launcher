@@ -188,7 +188,7 @@ class Minecraft{
             const natives = async () => {
                 const natives = []
                 await Promise.all(version.libraries.map(async (lib) => {
-                    if (!lib.classifiers || !lib.downloads.classifiers) return
+                    if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
                     if (this.parseRule(lib)) return
 
                     const native = 
@@ -201,8 +201,8 @@ class Minecraft{
                         ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
                         : (lib.downloads.classifiers[`natives-${this.getOS()}`]) 
                     ) : null
-                    natives = arrayDeDuplicate(natives, native)
-                    //natives.push(native)
+                    //natives = arrayDeDuplicate(natives, native)
+                    natives.push(native)
                 }))
                 return natives
             }
@@ -451,6 +451,83 @@ class Minecraft{
             return false
         }
     }
+
+    async getLaunchOptions (modification) {
+        const type = modification || this.version
+    
+        let args = type.minecraftArguments
+          ? type.minecraftArguments.split(' ')
+          : type.arguments.game
+        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
+        const assetPath = path.join(assetRoot)
+    
+        const minArgs = 11
+        if (args.length < minArgs) args = args.concat(type.minecraftArguments ? type.minecraftArguments.split(' ') : type.arguments.game)
+    
+        this.options.authorization = await Promise.resolve(this.options.authorization)
+    
+        const fields = {
+          '${auth_access_token}': this.options.authorization.access_token,
+          '${auth_session}': this.options.authorization.access_token,
+          '${auth_player_name}': this.options.authorization.name,
+          '${auth_uuid}': this.options.authorization.uuid,
+          '${user_properties}': this.options.authorization.user_properties,
+          '${user_type}': 'mojang',
+          '${version_name}': this.options.version.number,
+          '${assets_index_name}': type.assetIndex.id,
+          '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
+          '${assets_root}': assetPath,
+          '${game_assets}': assetPath,
+          '${version_type}': this.options.version.type
+        }
+    
+        for (let index = 0; index < args.length; index++) {
+          if (typeof args[index] === 'object') args.splice(index, 2)
+          if (Object.keys(fields).includes(args[index])) {
+            args[index] = fields[args[index]]
+          }
+        }
+    
+        if (this.options.window) {
+          this.options.window.fullscreen
+            ? args.push('--fullscreen')
+            : args.push('--width', this.options.window.width, '--height', this.options.window.height)
+        }
+        if (this.options.server) args.push('--server', this.options.server.host, '--port', this.options.server.port || '25565')
+        if (this.options.proxy) {
+          args.push(
+            '--proxyHost',
+            this.options.proxy.host,
+            '--proxyPort',
+            this.options.proxy.port || '8080',
+            '--proxyUser',
+            this.options.proxy.username,
+            '--proxyPass',
+            this.options.proxy.password
+          )
+        }
+        if (this.options.customLaunchArgs) args = args.concat(this.options.customLaunchArgs)
+        this.client.emit('debug', '[MCLC]: Set launch options')
+        return args
+      }
+
+      getMemory () {
+        if (!this.options.memory) {
+          this.client.emit('debug', '[MCLC]: Memory not set! Setting 1GB as MAX!')
+          this.options.memory = {
+            min: 512,
+            max: 1023
+          }
+        }
+        if (!isNaN(this.options.memory.max) && !isNaN(this.options.memory.min)) {
+          if (this.options.memory.max < this.options.memory.min) {
+            this.client.emit('debug', '[MCLC]: MIN memory is higher then MAX! Resetting!')
+            this.options.memory.max = 1023
+            this.options.memory.min = 512
+          }
+          return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
+        } else { return [`${this.options.memory.max}`, `${this.options.memory.min}`] }
+      }
 
 }
 

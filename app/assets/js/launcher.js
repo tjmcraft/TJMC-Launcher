@@ -15,7 +15,8 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.12.2'
+                number: 'ForgeOptiFine 1.12.2',
+                type: 'modified'
             },
             request: {
                 maxSockets: 32,
@@ -28,12 +29,22 @@ class launcher extends EventEmitter{
             },
             url: {
                 resource: "https://resources.download.minecraft.net"
+            },
+            authorization: {
+                access_token: 'null',
+                name: 'MakAndJo',
+                uuid: 'null',
+                user_properties: ''
+            },
+            launch: {
+                detached: true,
+                cwd: ''
             }
         }
         this.handler = new Minecraft(this)
         const java = await this.handler.checkJava(this.options.javaPath || 'java')
         if (!java.run) {
-            logg.warn(`Couldn't start Minecraft due to: ${java.message}`)
+            logg.error(`Couldn't start Minecraft due to: ${java.message}`)
             return null
         }
         if (!fs.existsSync(this.options.path.root)) {
@@ -47,11 +58,12 @@ class launcher extends EventEmitter{
             }
         }
         this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)
+
         logg.log('Attempting to load main json')
         const versionFile = await this.handler.getVersion(this.options.version.number)
-        this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
-        
         const nativePath = await this.handler.getNatives(versionFile)
+
+        this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)
@@ -66,13 +78,39 @@ class launcher extends EventEmitter{
         classPaths.push(`${classes.join(separator)}${jar}`)
         classPaths.push(versionFile.mainClass)
 
-        logg.debug(classPaths)
-
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
 
+        const args = []
+        let jvm = [
+            '-XX:-UseAdaptiveSizePolicy',
+            '-XX:-OmitStackTraceInFastThrow',
+            '-Dfml.ignorePatchDiscrepancies=true',
+            '-Dfml.ignoreInvalidMinecraftCertificates=true',
+            `-Djava.library.path=${nativePath}`,
+            `-Xmx${this.handler.getMemory()[0]}`,
+            `-Xms${this.handler.getMemory()[1]}`
+        ]
+        const launchOptions = await this.handler.getLaunchOptions(versionFile)
+
+        const launchArguments = args.concat(jvm, classPaths, launchOptions)
+        logg.debug(`Launching with arguments ${this.options.javaPath} ${launchArguments.join(' ')}`)
+
+        const minecraft = child.spawn(
+            this.options.javaPath, 
+            launchArguments,
+            {
+                cwd: this.options.launch.cwd || this.options.path.root, 
+                detached: this.options.launch.detached 
+            }
+        )
+        
+        minecraft.stdout.on('data', (data) => logg.log(data.toString('utf-8')))
+        minecraft.stderr.on('data', (data) => logg.error(data.toString('utf-8')))
+        minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
+
         logg.log('nice')
-        return true
+        return
     }
 }
 
