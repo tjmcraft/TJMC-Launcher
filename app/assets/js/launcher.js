@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.12.2',
+                number: 'ForgeOptiFine 1.16.3',
                 type: 'modified'
             },
             request: {
@@ -37,7 +37,9 @@ class launcher extends EventEmitter{
                 user_properties: ''
             },
             launch: {
-                detached: true,
+                width: 800,
+                height: 500,
+                detached: false,
                 cwd: ''
             }
         }
@@ -62,7 +64,7 @@ class launcher extends EventEmitter{
         logg.log('Attempting to load main json')
         const versionFile = await this.handler.getVersion(this.options.version.number)
         const nativePath = await this.handler.getNatives(versionFile)
-
+        logg.warn(versionFile)
         this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.log('Attempting to download Minecraft version jar')
@@ -71,7 +73,7 @@ class launcher extends EventEmitter{
 
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        logg.warn(classes)
+        //logg.warn(classes)
         const classPaths = ['-cp']
         const separator = this.handler.getOS() === 'windows' ? ';' : ':'
         logg.debug(`Using ${separator} to separate class paths`)
@@ -93,7 +95,7 @@ class launcher extends EventEmitter{
             `-Xms${this.handler.getMemory()[1]}`
         ]
         const launchOptions = await this.handler.getLaunchOptions(versionFile)
-
+    logg.debug(launchOptions)
         const launchArguments = args.concat(jvm, classPaths, launchOptions)
         logg.debug(`Launching with arguments ${this.options.javaPath} ${launchArguments.join(' ')}`)
 

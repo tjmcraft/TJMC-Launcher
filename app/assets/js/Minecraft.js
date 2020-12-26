@@ -124,9 +124,9 @@ class Minecraft{
             c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
             c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
             c_version.downloads = c_version.downloads ?? inherit.downloads
-            if (c_version.arguments && inherit.arguments){
-                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(Array(c_version.arguments.game), Array(inherit.arguments.game)) : c_version.arguments.game ?? inherit.arguments.game
-                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(Array(c_version.arguments.jvm), Array(inherit.arguments.jvm)) : c_version.arguments.jvm ?? inherit.arguments.jvm
+            if (c_version.arguments || inherit.arguments){
+                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game ?? inherit.arguments.game
+                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm ?? inherit.arguments.jvm
             }
             delete c_version.inheritsFrom
         }
@@ -310,20 +310,20 @@ class Minecraft{
             //}
 
             if (!fs.existsSync(path.join(jarPath, name))) {
-                if (library.downloads && library.downloads.artifact) {
+                if (library.downloads && library.downloads.artifact && library.downloads.artifact.url.includes('http')) {
                     await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
-                } else if (library.artifact) {
+                } else if (library.artifact && library.artifact.url.includes('http')) {
                     await this.downloadAsync(library.artifact.url, jarPath, name, true, eventName)
-                } else if (library.url) {
+                } else {
                     const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
                     const url = [
-                        library.url, 
-                        'https://libraries.minecraft.net/'+jar_name, 
-                        'https://tlauncherrepo.com/repo/libraries/'+jar_name, 
-                        'https://files.minecraftforge.net/maven/'+jar_name, 
-                        'http://dl.liteloader.com/versions/'+jar_name, 
-                        'https://repo1.maven.org/maven2/'+jar_name, 
-                        library.url+jar_name
+                        library.url ? library.url : '',
+                        'https://libraries.minecraft.net/' + jar_name, 
+                        'https://tlauncherrepo.com/repo/libraries/' + jar_name, 
+                        'https://files.minecraftforge.net/maven/' + jar_name, 
+                        'http://dl.liteloader.com/versions/' + jar_name, 
+                        'https://repo1.maven.org/maven2/' + jar_name, 
+                        (library.url ? library.url : '') + jar_name
                     ]
                     for (let c of url){
                         if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
@@ -373,7 +373,6 @@ class Minecraft{
                         if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
                         resolve(false)
                     }
-
                     totalBytes = parseInt(data.headers['content-length'])
                 })
 
@@ -452,50 +451,58 @@ class Minecraft{
         }
     }
 
-    async getLaunchOptions (modification) {
-        const type = modification || this.version
-    
-        let args = type.minecraftArguments
-          ? type.minecraftArguments.split(' ')
-          : type.arguments.game
+    async getLaunchOptions (json) {
+        
+        let args = json.minecraftArguments ? json.minecraftArguments.split(' ') : json.arguments.game
         const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-    
-        const minArgs = 11
-        if (args.length < minArgs) args = args.concat(type.minecraftArguments ? type.minecraftArguments.split(' ') : type.arguments.game)
-    
-        this.options.authorization = await Promise.resolve(this.options.authorization)
-    
+
+        //const minArgs = 5
+        //if (args.length < minArgs) args = args.concat(json.minecraftArguments ? json.minecraftArguments.split(' ') : json.arguments.game)
+
         const fields = {
-          '${auth_access_token}': this.options.authorization.access_token,
-          '${auth_session}': this.options.authorization.access_token,
-          '${auth_player_name}': this.options.authorization.name,
-          '${auth_uuid}': this.options.authorization.uuid,
-          '${user_properties}': this.options.authorization.user_properties,
-          '${user_type}': 'mojang',
-          '${version_name}': this.options.version.number,
-          '${assets_index_name}': type.assetIndex.id,
-          '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
-          '${assets_root}': assetPath,
-          '${game_assets}': assetPath,
-          '${version_type}': this.options.version.type
+            '${auth_access_token}': this.options.authorization.access_token,
+            '${auth_session}': this.options.authorization.access_token,
+            '${auth_player_name}': this.options.authorization.name,
+            '${auth_uuid}': this.options.authorization.uuid,
+            '${user_properties}': this.options.authorization.user_properties,
+            '${user_type}': 'mojang',
+            '${version_name}': this.options.version.number,
+            '${assets_index_name}': json.assetIndex.id,
+            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
+            '${assets_root}': assetPath,
+            '${game_assets}': assetPath,
+            '${version_type}': this.options.version.type,
+            '${resolution_width}': this.options.launch.width,
+            '${resolution_height}': this.options.launch.height
         }
-    
+
+        for (let i = 0; i < args.length; i++){
+            if (typeof args[i] === 'object') {
+                if (args[i].value && args[i].rules){
+                    args[i] = ""
+                } else if (Array.isArray(args[i])) {
+                    args[i] = ""
+                }else {
+                    args.splice(i, 2)
+                }
+            }
+        }
+
         for (let index = 0; index < args.length; index++) {
-          if (typeof args[index] === 'object') args.splice(index, 2)
-          if (Object.keys(fields).includes(args[index])) {
-            args[index] = fields[args[index]]
-          }
+            if (Object.keys(fields).includes(args[index])) {
+                args[index] = fields[args[index]]
+            }
         }
-    
+
         if (this.options.window) {
-          this.options.window.fullscreen
+            this.options.window.fullscreen
             ? args.push('--fullscreen')
-            : args.push('--width', this.options.window.width, '--height', this.options.window.height)
+            : args.push('--width', this.options.launch.width, '--height', this.options.launch.height)
         }
         if (this.options.server) args.push('--server', this.options.server.host, '--port', this.options.server.port || '25565')
         if (this.options.proxy) {
-          args.push(
+            args.push(
             '--proxyHost',
             this.options.proxy.host,
             '--proxyPort',
@@ -504,30 +511,30 @@ class Minecraft{
             this.options.proxy.username,
             '--proxyPass',
             this.options.proxy.password
-          )
+            )
         }
-        if (this.options.customLaunchArgs) args = args.concat(this.options.customLaunchArgs)
+        //if (this.options.customLaunchArgs) args = args.concat(this.options.customLaunchArgs)
         logg.debug('Set launch options')
         return args
-      }
+    }
 
-      getMemory () {
+    getMemory () {
         if (!this.options.memory) {
-          logg.debug('Memory not set! Setting 1GB as MAX!')
-          this.options.memory = {
+            logg.debug('Memory not set! Setting 1GB as MAX!')
+            this.options.memory = {
             min: 512,
             max: 1023
-          }
+            }
         }
         if (!isNaN(this.options.memory.max) && !isNaN(this.options.memory.min)) {
-          if (this.options.memory.max < this.options.memory.min) {
+            if (this.options.memory.max < this.options.memory.min) {
             logg.debug('MIN memory is higher then MAX! Resetting!')
             this.options.memory.max = 1023
             this.options.memory.min = 512
-          }
-          return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
+            }
+            return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
         } else { return [`${this.options.memory.max}`, `${this.options.memory.min}`] }
-      }
+    }
 
 }
 
