@@ -37,8 +37,9 @@ class launcher extends EventEmitter{
                 user_properties: ''
             },
             launch: {
-                width: 800,
-                height: 500,
+                fullscreen: false,
+                width: 1280,
+                height: 720,
                 detached: false,
                 cwd: ''
             }
@@ -73,30 +74,13 @@ class launcher extends EventEmitter{
 
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        //logg.warn(classes)
-        const classPaths = ['-cp']
-        const separator = this.handler.getOS() === 'windows' ? ';' : ':'
-        logg.debug(`Using ${separator} to separate class paths`)
-        const jar = fs.existsSync(this.options.mcPath) ? `${separator}${this.options.mcPath}` : `${separator}${path.join(directory, `${this.options.version.number}.jar`)}`
-        classPaths.push(`${classes.join(separator)}${jar}`)
-        classPaths.push(versionFile.mainClass)
+
 
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
-
         const args = []
-        let jvm = [
-            '-XX:-UseAdaptiveSizePolicy',
-            '-XX:-OmitStackTraceInFastThrow',
-            '-Dfml.ignorePatchDiscrepancies=true',
-            '-Dfml.ignoreInvalidMinecraftCertificates=true',
-            `-Djava.library.path=${nativePath}`,
-            `-Xmx${this.handler.getMemory()[0]}`,
-            `-Xms${this.handler.getMemory()[1]}`
-        ]
-        const launchOptions = await this.handler.getLaunchOptions(versionFile)
-    logg.debug(launchOptions)
-        const launchArguments = args.concat(jvm, classPaths, launchOptions)
+
+        const launchArguments = this.handler.constructJVMArguments(versionFile, nativePath, classes)
         logg.debug(`Launching with arguments ${this.options.javaPath} ${launchArguments.join(' ')}`)
 
         const minecraft = child.spawn(

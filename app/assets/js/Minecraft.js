@@ -3,6 +3,7 @@ const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const checksum                               = require('checksum')
+const os = require('os')
 const Zip = require('adm-zip')
 const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
@@ -451,73 +452,6 @@ class Minecraft{
         }
     }
 
-    async getLaunchOptions (json) {
-        
-        let args = json.minecraftArguments ? json.minecraftArguments.split(' ') : json.arguments.game
-        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
-        const assetPath = path.join(assetRoot)
-
-        //const minArgs = 5
-        //if (args.length < minArgs) args = args.concat(json.minecraftArguments ? json.minecraftArguments.split(' ') : json.arguments.game)
-
-        const fields = {
-            '${auth_access_token}': this.options.authorization.access_token,
-            '${auth_session}': this.options.authorization.access_token,
-            '${auth_player_name}': this.options.authorization.name,
-            '${auth_uuid}': this.options.authorization.uuid,
-            '${user_properties}': this.options.authorization.user_properties,
-            '${user_type}': 'mojang',
-            '${version_name}': this.options.version.number,
-            '${assets_index_name}': json.assetIndex.id,
-            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
-            '${assets_root}': assetPath,
-            '${game_assets}': assetPath,
-            '${version_type}': this.options.version.type,
-            '${resolution_width}': this.options.launch.width,
-            '${resolution_height}': this.options.launch.height
-        }
-
-        for (let i = 0; i < args.length; i++){
-            if (typeof args[i] === 'object') {
-                if (args[i].value && !args[i].rules){
-                    args[i] = args[i].value
-                } else if (Array.isArray(args[i])) {
-                    args[i] = ""
-                } else {
-                    args[i] = ""
-                }
-            }
-        }
-
-        for (let index = 0; index < args.length; index++) {
-            if (Object.keys(fields).includes(args[index])) {
-                args[index] = fields[args[index]]
-            }
-        }
-
-        if (this.options.window) {
-            this.options.window.fullscreen
-            ? args.push('--fullscreen')
-            : args.push('--width', this.options.launch.width, '--height', this.options.launch.height)
-        }
-        if (this.options.server) args.push('--server', this.options.server.host, '--port', this.options.server.port || '25565')
-        if (this.options.proxy) {
-            args.push(
-            '--proxyHost',
-            this.options.proxy.host,
-            '--proxyPort',
-            this.options.proxy.port || '8080',
-            '--proxyUser',
-            this.options.proxy.username,
-            '--proxyPass',
-            this.options.proxy.password
-            )
-        }
-        //if (this.options.customLaunchArgs) args = args.concat(this.options.customLaunchArgs)
-        logg.debug('Set launch options')
-        return args
-    }
-
     getMemory () {
         if (!this.options.memory) {
             logg.debug('Memory not set! Setting 1GB as MAX!')
@@ -534,6 +468,239 @@ class Minecraft{
             }
             return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
         } else { return [`${this.options.memory.max}`, `${this.options.memory.min}`] }
+    }
+
+
+    /**
+     * Converts the process.platform OS names to match mojang's OS names.
+     */
+    mojangFriendlyOS(){
+        const opSys = process.platform
+        if (opSys === 'darwin') {
+            return 'osx'
+        } else if (opSys === 'win32'){
+            return 'windows'
+        } else if (opSys === 'linux'){
+            return 'linux'
+        } else {
+            return 'unknown_os'
+        }
+    }
+
+    /**
+     * Construct the argument array that will be passed to the JVM process.
+     * 
+     */
+    constructJVMArguments(versionFile, tempNativePath, cp){
+        if(versionFile.arguments){
+            return this._constructJVMArguments113(versionFile, tempNativePath, cp)
+        } else {
+            return this._constructJVMArguments112(versionFile, tempNativePath, cp)
+        }
+    }
+
+    /**
+     * Construct the argument array that will be passed to the JVM process.
+     * This function is for 1.12 and below.
+     */
+    _constructJVMArguments112(versionFile, tempNativePath, cp){
+
+        let args = []
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
+
+        // Java Arguments
+        if(process.platform === 'darwin'){
+            args.push('-Xdock:name=HeliosLauncher')
+            //args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+        }
+        args.push('-Xmx' + this.getMemory()[0])
+        args.push('-Xms' + this.getMemory()[1])
+        args.push('-Djava.library.path=' + tempNativePath)
+
+        // Classpath Argument
+        args.push('-cp')
+        args.push(`${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`)
+
+        // Main Java Class
+        args.push(versionFile.mainClass)
+
+        // Forge Arguments
+        args = args.concat(this._resolveForgeArgs(versionFile, cp))
+
+        return args
+    }
+
+    /**
+     * Construct the argument array that will be passed to the JVM process.
+     * This function is for 1.13+
+     * 
+     * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
+     * 
+     */
+    _constructJVMArguments113(versionFile, tempNativePath, cp){
+
+        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
+        const assetPath = path.join(assetRoot)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
+        const fields = {
+            '${auth_access_token}': this.options.authorization.access_token,
+            '${auth_session}': this.options.authorization.access_token,
+            '${auth_player_name}': this.options.authorization.name,
+            '${auth_uuid}': this.options.authorization.uuid,
+            '${user_properties}': this.options.authorization.user_properties,
+            '${user_type}': 'mojang',
+            '${version_name}': this.options.version.number,
+            '${assets_index_name}': versionFile.assetIndex.id,
+            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
+            '${assets_root}': assetPath,
+            '${game_assets}': assetPath,
+            '${version_type}': this.options.version.type,
+            '${resolution_width}': this.options.launch.width,
+            '${resolution_height}': this.options.launch.height,
+            '${classpath}': `${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`,
+            '${natives_directory}': tempNativePath,
+            '${launcher_name}': 'TJMC',
+            '${launcher_version}': '1.0.0'
+        }
+
+        let args = []
+
+        if(process.platform === 'darwin'){
+            args.push('-Xdock:name=TJMC')
+            //args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+        }
+        args.push('-Xmx' + this.getMemory()[0])
+        args.push('-Xms' + this.getMemory()[1])
+        args = args.concat(versionFile.arguments.jvm)
+
+        // Main Java Class
+        args.push(versionFile.mainClass)
+
+        // Vanilla Arguments
+        args = args.concat(versionFile.arguments.game)
+
+        for(let i=0; i<args.length; i++){
+            if(typeof args[i] === 'object' && args[i].rules != null){
+                let checksum = 0
+                for(let rule of args[i].rules){
+                    if(rule.os != null){
+                        if(rule.os.name === this.mojangFriendlyOS()
+                            && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
+                            if(rule.action === 'allow'){
+                                checksum++
+                            }
+                        } else {
+                            if(rule.action === 'disallow'){
+                                checksum++
+                            }
+                        }
+                    } else if(rule.features != null){
+                        // We don't have many 'features' in the index at the moment.
+                        // This should be fine for a while.
+                        if(rule.features.has_custom_resolution != null && rule.features.has_custom_resolution === true){
+                            if(this.options.launch.fullscreen){
+                                args[i].value = [
+                                    '--fullscreen',
+                                    'true'
+                                ]
+                            }
+                            checksum++
+                        }
+                    }
+                }
+
+                // TODO splice not push
+                if(checksum === args[i].rules.length){
+                    if(typeof args[i].value === 'string'){
+                        args[i] = args[i].value
+                    } else if(typeof args[i].value === 'object'){
+                        //args = args.concat(args[i].value)
+                        args.splice(i, 1, ...args[i].value)
+                    }
+                    // Decrement i to reprocess the resolved value
+                    i--
+                } else {
+                    args[i] = null
+                }
+
+            } else if(typeof args[i] === 'string' && !(args[i] === undefined)){
+                for (let ob of Object.keys(fields)) {
+                    if (args[i].includes(ob)) {
+                        logg.log(args[i])
+                        logg.debug(fields[ob])
+                        args[i] = args[i].replace(ob, fields[ob])
+                    }
+                }
+            } else if (typeof args[i] === 'object' && !args[i].rules) {
+                if(typeof args[i].value === 'string'){
+                    args[i] = args[i].value
+                } else if(typeof args[i].value === 'object'){
+                    //args = args.concat(args[i].value)
+                    args.splice(i, 1, ...args[i].value)
+                }
+            } else {
+                args[i] = null
+            }
+        }
+
+        // Filter null values
+        args = args.filter(arg => {
+            return arg != null
+        })
+
+        return args
+    }
+
+    /**
+     * Resolve the arguments required by forge.
+     * 
+     * @returns {Array.<string>} An array containing the arguments required by forge.
+     */
+    _resolveForgeArgs(versionFile, cp){
+        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
+        const assetPath = path.join(assetRoot)
+        const fields = {
+            '${auth_access_token}': this.options.authorization.access_token,
+            '${auth_session}': this.options.authorization.access_token,
+            '${auth_player_name}': this.options.authorization.name,
+            '${auth_uuid}': this.options.authorization.uuid,
+            '${user_properties}': this.options.authorization.user_properties,
+            '${user_type}': 'mojang',
+            '${version_name}': this.options.version.number,
+            '${assets_index_name}': versionFile.assetIndex.id,
+            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
+            '${assets_root}': assetPath,
+            '${game_assets}': assetPath,
+            '${version_type}': this.options.version.type,
+            '${resolution_width}': this.options.launch.width,
+            '${resolution_height}': this.options.launch.height,
+            '${classpath}': cp.join(process.platform === 'win32' ? ';' : ':'),
+            '${natives_directory}': tempNativePath
+        }
+
+        const mcArgs = versionFile.minecraftArguments.split(' ')
+
+        // Replace the declared variables with their proper values.
+        for(let i=0; i<mcArgs.length; ++i){
+            for (let i = 0; i < mcArgs.length; i++) {
+                if (Object.keys(fields).includes(mcArgs[i])) {
+                    mcArgs[i] = fields[mcArgs[i]]
+                }
+            }
+        }
+
+        // Prepare game resolution
+        if(this.options.launch.fullscreen){
+            mcArgs.push('--fullscreen')
+            mcArgs.push(true)
+        } else {
+            mcArgs.push('--width')
+            mcArgs.push(this.options.launch.width)
+            mcArgs.push('--height')
+            mcArgs.push(this.options.launch.height)
+        }
+
+        return mcArgs
     }
 
 }
