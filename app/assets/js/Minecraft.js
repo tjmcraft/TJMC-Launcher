@@ -456,25 +456,25 @@ class Minecraft{
         if (!this.options.memory) {
             logg.debug('Memory not set! Setting 1GB as MAX!')
             this.options.memory = {
-            min: 512,
-            max: 1023
+                min: 512,
+                max: 1024
             }
         }
         if (!isNaN(this.options.memory.max) && !isNaN(this.options.memory.min)) {
             if (this.options.memory.max < this.options.memory.min) {
-            logg.debug('MIN memory is higher then MAX! Resetting!')
-            this.options.memory.max = 1023
-            this.options.memory.min = 512
+                logg.debug('MIN memory is higher then MAX! Resetting!')
+                this.options.memory.max = 1024
+                this.options.memory.min = 512
             }
             return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
-        } else { return [`${this.options.memory.max}`, `${this.options.memory.min}`] }
+        }
     }
 
 
     /**
-     * Converts the process.platform OS names to match mojang's OS names.
+     * Function returns OS names to match mojang's OS names.
      */
-    mojangFriendlyOS(){
+    getCurrentOS(){
         const opSys = process.platform
         if (opSys === 'darwin') {
             return 'osx'
@@ -559,6 +559,7 @@ class Minecraft{
             '${resolution_height}': this.options.launch.height,
             '${classpath}': `${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`,
             '${natives_directory}': tempNativePath,
+            '${game_libraries_directory}': this.options.path.directory,
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }
@@ -584,7 +585,7 @@ class Minecraft{
                 let checksum = 0
                 for(let rule of args[i].rules){
                     if(rule.os != null){
-                        if(rule.os.name === this.mojangFriendlyOS()
+                        if(rule.os.name === this.getCurrentOS()
                             && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
                             if(rule.action === 'allow'){
                                 checksum++

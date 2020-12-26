@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'OptiFine 1.15.2',
+                number: 'ForgeOptiFine 1.16.3',
                 type: 'modified'
             },
             request: {
@@ -42,6 +42,10 @@ class launcher extends EventEmitter{
                 height: 720,
                 detached: false,
                 cwd: ''
+            },
+            memory: {
+                max: 1024,
+                min: 512
             }
         }
         this.handler = new Minecraft(this)
