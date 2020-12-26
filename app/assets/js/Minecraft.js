@@ -325,11 +325,8 @@ class Minecraft{
                         'https://repo1.maven.org/maven2/'+jar_name, 
                         library.url+jar_name
                     ]
-                    for (const c in url){
-                        if(await this.downloadAsync(url, jarPath, name, true, eventName)) {
-                            console.debug(url)
-                            continue
-                        }
+                    for (let c of url){
+                        if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
                     }
                 }
             }
@@ -358,6 +355,7 @@ class Minecraft{
      * @param type Type of download
      */
     downloadAsync (url, directory, name, retry, type) {
+        if (fs.existsSync(path.join(directory, name)) && fs.readFileSync(path.join(directory, name)).length > 0) return
         if (url.includes('http')) {
             return new Promise(resolve => {
                 fs.mkdirSync(directory, { recursive: true })

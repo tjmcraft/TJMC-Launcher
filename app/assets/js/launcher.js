@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.12.2',
+                number: 'OptiFine 1.12.2',
                 type: 'modified'
             },
             request: {
@@ -71,6 +71,7 @@ class launcher extends EventEmitter{
 
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
+        //logg.warn(classes)
         const classPaths = ['-cp']
         const separator = this.handler.getOS() === 'windows' ? ';' : ':'
         logg.debug(`Using ${separator} to separate class paths`)
