@@ -479,12 +479,12 @@ class Minecraft{
 
         for (let i = 0; i < args.length; i++){
             if (typeof args[i] === 'object') {
-                if (args[i].value && args[i].rules){
-                    args[i] = ""
+                if (args[i].value && !args[i].rules){
+                    args[i] = args[i].value
                 } else if (Array.isArray(args[i])) {
                     args[i] = ""
-                }else {
-                    args.splice(i, 2)
+                } else {
+                    args[i] = ""
                 }
             }
         }

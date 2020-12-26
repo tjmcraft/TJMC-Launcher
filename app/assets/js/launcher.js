@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.16.3',
+                number: 'OptiFine 1.15.2',
                 type: 'modified'
             },
             request: {
