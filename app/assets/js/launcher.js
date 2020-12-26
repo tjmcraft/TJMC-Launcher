@@ -15,12 +15,12 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'OptiFine 1.12.2',
+                number: 'ForgeOptiFine 1.12.2',
                 type: 'modified'
             },
             request: {
                 maxSockets: 32,
-                timeout: 5000
+                timeout: 10000
             },
             path: {
                 root: path.join(this.constructor.getAppData, 'minecraft'),
@@ -71,7 +71,7 @@ class launcher extends EventEmitter{
 
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
-        //logg.warn(classes)
+        logg.warn(classes)
         const classPaths = ['-cp']
         const separator = this.handler.getOS() === 'windows' ? ';' : ':'
         logg.debug(`Using ${separator} to separate class paths`)

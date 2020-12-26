@@ -162,7 +162,7 @@ class Minecraft{
             if (lib.url || lib.artifact || lib.downloads.artifact && !this.parseRule(lib)) return lib
         })
 
-        libs = libs.concat(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
+        libs = arrayDeDuplicate(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
         counter = 0
 
         logg.debug('Collected class paths')
@@ -339,6 +339,8 @@ class Minecraft{
                 total: libraries.length
             })
 
+            if (library.mod || library.downloadOnly) return 
+            
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
         counter = 0
@@ -355,7 +357,7 @@ class Minecraft{
      * @param type Type of download
      */
     downloadAsync (url, directory, name, retry, type) {
-        if (fs.existsSync(path.join(directory, name)) && fs.readFileSync(path.join(directory, name)).length > 0) return
+        if (fs.existsSync(path.join(directory, name)) && fs.readFileSync(path.join(directory, name)).length > 0) return new Promise(resolve => {return resolve(false)})
         if (url.includes('http')) {
             return new Promise(resolve => {
                 fs.mkdirSync(directory, { recursive: true })
@@ -505,13 +507,13 @@ class Minecraft{
           )
         }
         if (this.options.customLaunchArgs) args = args.concat(this.options.customLaunchArgs)
-        this.client.emit('debug', '[MCLC]: Set launch options')
+        logg.debug('Set launch options')
         return args
       }
 
       getMemory () {
         if (!this.options.memory) {
-          this.client.emit('debug', '[MCLC]: Memory not set! Setting 1GB as MAX!')
+          logg.debug('Memory not set! Setting 1GB as MAX!')
           this.options.memory = {
             min: 512,
             max: 1023
@@ -519,7 +521,7 @@ class Minecraft{
         }
         if (!isNaN(this.options.memory.max) && !isNaN(this.options.memory.min)) {
           if (this.options.memory.max < this.options.memory.min) {
-            this.client.emit('debug', '[MCLC]: MIN memory is higher then MAX! Resetting!')
+            logg.debug('MIN memory is higher then MAX! Resetting!')
             this.options.memory.max = 1023
             this.options.memory.min = 512
           }
