@@ -15,7 +15,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.16.3',
+                number: 'OptiFine 1.15.2',
                 type: 'modified'
             },
             request: {
@@ -79,10 +79,8 @@ class launcher extends EventEmitter{
         logg.log('Attempting to download libraries')
         const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
 
-
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
-        const args = []
 
         const launchArguments = this.handler.constructJVMArguments(versionFile, nativePath, classes)
         logg.debug(`Launching with arguments ${this.options.javaPath} ${launchArguments.join(' ')}`)

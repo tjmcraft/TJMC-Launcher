@@ -50,7 +50,8 @@ class Minecraft{
             switch (process.platform) {
                 case 'win32': return 'windows'
                 case 'darwin': return 'osx'
-                default: return 'linux'
+                case 'linux': return 'linux'
+                default: return 'unknown_os'
             }
         }
     }
@@ -470,32 +471,15 @@ class Minecraft{
         }
     }
 
-
-    /**
-     * Function returns OS names to match mojang's OS names.
-     */
-    getCurrentOS(){
-        const opSys = process.platform
-        if (opSys === 'darwin') {
-            return 'osx'
-        } else if (opSys === 'win32'){
-            return 'windows'
-        } else if (opSys === 'linux'){
-            return 'linux'
-        } else {
-            return 'unknown_os'
-        }
-    }
-
     /**
      * Construct the argument array that will be passed to the JVM process.
      * 
      */
     constructJVMArguments(versionFile, tempNativePath, cp){
         if(versionFile.arguments){
-            return this._constructJVMArguments113(versionFile, tempNativePath, cp)
+            return this.getJVMArgs113(versionFile, tempNativePath, cp)
         } else {
-            return this._constructJVMArguments112(versionFile, tempNativePath, cp)
+            return this.getJVMArgs112(versionFile, tempNativePath, cp)
         }
     }
 
@@ -503,7 +487,7 @@ class Minecraft{
      * Construct the argument array that will be passed to the JVM process.
      * This function is for 1.12 and below.
      */
-    _constructJVMArguments112(versionFile, tempNativePath, cp){
+    getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
         const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
@@ -525,7 +509,7 @@ class Minecraft{
         args.push(versionFile.mainClass)
 
         // Forge Arguments
-        args = args.concat(this._resolveForgeArgs(versionFile, cp))
+        args = args.concat(this.resolveArgs(versionFile, cp))
 
         return args
     }
@@ -537,7 +521,7 @@ class Minecraft{
      * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
      * 
      */
-    _constructJVMArguments113(versionFile, tempNativePath, cp){
+    getJVMArgs113(versionFile, tempNativePath, cp){
 
         const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
@@ -585,7 +569,7 @@ class Minecraft{
                 let checksum = 0
                 for(let rule of args[i].rules){
                     if(rule.os != null){
-                        if(rule.os.name === this.getCurrentOS()
+                        if(rule.os.name === this.getOS()
                             && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
                             if(rule.action === 'allow'){
                                 checksum++
@@ -627,8 +611,6 @@ class Minecraft{
             } else if(typeof args[i] === 'string' && !(args[i] === undefined)){
                 for (let ob of Object.keys(fields)) {
                     if (args[i].includes(ob)) {
-                        logg.log(args[i])
-                        logg.debug(fields[ob])
                         args[i] = args[i].replace(ob, fields[ob])
                     }
                 }
@@ -653,11 +635,11 @@ class Minecraft{
     }
 
     /**
-     * Resolve the arguments required by forge.
+     * Resolve the arguments
      * 
-     * @returns {Array.<string>} An array containing the arguments required by forge.
+     * @returns {Array.<string>} An array containing the arguments
      */
-    _resolveForgeArgs(versionFile, cp){
+    resolveArgs(versionFile, cp){
         const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
         const fields = {
