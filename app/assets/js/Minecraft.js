@@ -61,7 +61,7 @@ class Minecraft{
         return new Promise(resolve => {
             this.getMVM.then(m => {
                 this.getTVM.then(t => {
-                    return resolve(arrayDeDuplicate(m.versions,t.versions))
+                    return resolve(merge(m.versions,t.versions))
                 })
             })
         })
@@ -122,14 +122,14 @@ class Minecraft{
         }
         if (c_version.inheritsFrom) {
             const inherit = await this.getVersion(c_version.inheritsFrom)
-            c_version.libraries = arrayDeDuplicate(c_version.libraries, inherit.libraries)
+            c_version.libraries = merge(c_version.libraries, inherit.libraries)
             c_version.mainClass = c_version.mainClass ?? inherit.mainClass
             c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
             c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
             c_version.downloads = c_version.downloads ?? inherit.downloads
             if (c_version.arguments || inherit.arguments){
-                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? arrayDeDuplicate(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game ?? inherit.arguments.game
-                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? arrayDeDuplicate(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm ?? inherit.arguments.jvm
+                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game ?? inherit.arguments.game
+                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm ?? inherit.arguments.jvm
             }
             delete c_version.inheritsFrom
         }
@@ -165,7 +165,7 @@ class Minecraft{
             if (lib.url || lib.artifact || lib.downloads.artifact && !this.parseRule(lib)) return lib
         })
 
-        libs = arrayDeDuplicate(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
+        libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
         counter = 0
 
         logg.debug('Collected class paths')
@@ -204,8 +204,8 @@ class Minecraft{
                         ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
                         : (lib.downloads.classifiers[`natives-${this.getOS()}`]) 
                     ) : null
-                    //natives = arrayDeDuplicate(natives, native)
-                    natives.push(native)
+                    natives = merge(natives, native)
+                    //natives.push(native)
                 }))
                 return natives
             }
@@ -668,20 +668,20 @@ class Minecraft{
 
 }
 
-module.exports = Minecraft
-
 /**
 * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
 *
 * @params ...args Function accept multiple array input (merges them to single array with no duplicates)
 * it also can be used to filter duplicates in single array
 */
-function arrayDeDuplicate(...args){
-    let set = new Set();
-    for(let arr of args){
-       arr.map((value) => {
-          set.add(value);
-       });
+var merge = (...args) => {
+    let set = new Set()
+    for (let arr of args) {
+        arr.map((value) => {
+            set.add(value)
+        })
     }
-    return [...set];
+    return [...set]
 }
+
+module.exports = {Minecraft, merge}

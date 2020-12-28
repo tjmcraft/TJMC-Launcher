@@ -4,7 +4,7 @@ const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const Minecraft                              = require('./Minecraft')
+const {Minecraft, merge}                              = require('./Minecraft')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter{
@@ -82,7 +82,7 @@ class launcher extends EventEmitter{
         }
 
         logg.log('Attempting to download libraries')
-        const classes = arrayDeDuplicate(await this.handler.getClasses(versionFile))
+        const classes = merge(await this.handler.getClasses(versionFile))
 
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
@@ -109,20 +109,3 @@ class launcher extends EventEmitter{
 }
 
 module.exports = launcher
-
-
-/**
-* This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
-*
-* @params ...args Function accept multiple array input (merges them to single array with no duplicates)
-* it also can be used to filter duplicates in single array
-*/
-function arrayDeDuplicate(...args){
-    let set = new Set();
-    for(let arr of args){
-       arr.map((value) => {
-          set.add(value);
-       });
-    }
-    return [...set];
-}

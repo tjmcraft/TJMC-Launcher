@@ -4,7 +4,7 @@ const LoggerUtil                             = require('./assets/js/loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const Minecraft                              = require('./assets/js/Minecraft')
+const {Minecraft}                       = require('./assets/js/Minecraft')
 const launcher                               = require('./assets/js/launcher')
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
