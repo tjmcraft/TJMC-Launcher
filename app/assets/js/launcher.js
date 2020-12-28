@@ -4,7 +4,7 @@ const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const {Minecraft, merge}                              = require('./Minecraft')
+const {Minecraft, merge, getOS}                              = require('./Minecraft')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter{
@@ -12,7 +12,18 @@ class launcher extends EventEmitter{
         return path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
     }
     static openMineDir(){
-        child.exec(`open "" "${this.getAppData}"`)
+        logg.debug('Using default path: '+this.getAppData)
+        switch (getOS()) {
+            case 'windows': 
+                child.exec(`explorer "${this.getAppData}"`)
+                break
+            case 'osx':
+                child.exec(`open "" "${this.getAppData}"`)
+                break
+            default:
+                break
+        }
+        return
     }
     async construct () {
         this.options = {

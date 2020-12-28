@@ -41,22 +41,6 @@ class Minecraft{
         })
     }
 
-    /**
-     * Function return current os name
-     */
-    getOS () {
-        if (this.options.os) {
-            return this.options.os
-        } else {
-            switch (process.platform) {
-                case 'win32': return 'windows'
-                case 'darwin': return 'osx'
-                case 'linux': return 'linux'
-                default: return 'unknown_os'
-            }
-        }
-    }
-
     static get getVersionManifest () {
         return new Promise(resolve => {
             this.getMVM.then(m => {
@@ -196,13 +180,13 @@ class Minecraft{
 
                     const native = 
                     lib.classifiers ? (
-                        this.getOS() === 'osx' 
+                        getOS() === 'osx' 
                         ? (lib.classifiers['natives-osx'] || lib.classifiers['natives-macos']) 
-                        : (lib.classifiers[`natives-${this.getOS()}`]) 
+                        : (lib.classifiers[`natives-${getOS()}`]) 
                     ) : lib.downloads.classifiers ? (
-                        this.getOS() === 'osx' 
+                        getOS() === 'osx' 
                         ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
-                        : (lib.downloads.classifiers[`natives-${this.getOS()}`]) 
+                        : (lib.downloads.classifiers[`natives-${getOS()}`]) 
                     ) : null
                     natives = merge(natives, native)
                     //natives.push(native)
@@ -442,12 +426,12 @@ class Minecraft{
             if (lib.rules[0].action === 'allow' &&
                         lib.rules[1].action === 'disallow' &&
                         lib.rules[1].os.name === 'osx') {
-                return this.getOS() === 'osx'
+                return getOS() === 'osx'
             } else {
                 return true
             }
             } else {
-            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return this.getOS() !== 'osx'
+            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return getOS() !== 'osx'
             }
         } else {
             return false
@@ -569,7 +553,7 @@ class Minecraft{
                 let checksum = 0
                 for(let rule of args[i].rules){
                     if(rule.os != null){
-                        if(rule.os.name === this.getOS()
+                        if(rule.os.name === getOS()
                             && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
                             if(rule.action === 'allow'){
                                 checksum++
@@ -668,20 +652,32 @@ class Minecraft{
 
 }
 
-/**
-* This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
-*
-* @params ...args Function accept multiple array input (merges them to single array with no duplicates)
-* it also can be used to filter duplicates in single array
-*/
-var merge = (...args) => {
-    let set = new Set()
-    for (let arr of args) {
-        arr.map((value) => {
-            set.add(value)
-        })
+    /**
+     * Function return current os name
+     */
+    function getOS () {
+        switch (process.platform) {
+            case 'win32': return 'windows'
+            case 'darwin': return 'osx'
+            case 'linux': return 'linux'
+            default: return 'unknown_os'
+        }
     }
-    return [...set]
-}
 
-module.exports = {Minecraft, merge}
+    /**
+    * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
+    *
+    * @params ...args Function accept multiple array input (merges them to single array with no duplicates)
+    * it also can be used to filter duplicates in single array
+    */
+    var merge = (...args) => {
+        let set = new Set()
+        for (let arr of args) {
+            arr.map((value) => {
+                set.add(value)
+            })
+        }
+        return [...set]
+    }
+
+    module.exports = {Minecraft, merge, getOS}
