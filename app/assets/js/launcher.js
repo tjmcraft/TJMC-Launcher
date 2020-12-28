@@ -4,7 +4,7 @@ const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const {Minecraft, merge, getOS}                              = require('./Minecraft')
+const {Minecraft, merge, getOS}              = require('./Minecraft')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter{

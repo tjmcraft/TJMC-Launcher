@@ -53,13 +53,18 @@ body, button {
 
 /* Frame Bar */
 #frameBar {
-    position: relative;
+    position: absolute;
     z-index: 100;
     display: flex;
     flex-direction: column;
     transition: background-color 1s ease;
     background-color: #1a1a1ada;
     -webkit-user-select: none;
+    width: 100%;
+    height: 22px;
+    left: 0;
+    right: 0;
+    top: 0;
 }
 
 /* Undraggable region on the top of the frame. */
@@ -217,6 +222,13 @@ body, button {
 
 /* =============================================== */
 
+#main {
+    width: 100%;
+    height: 100%;
+    padding: 22px 0 48px 0;
+    display: block;
+    position: absolute;
+}
 #mainBar {
     position: absolute;
     left: 0;
@@ -226,6 +238,23 @@ body, button {
     width: 100%;
     height: 48px;
 }
+
+#topBar {
+    position: absolute;
+    top: 22px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    background: #313131af;
+}
+  
+#bar {
+    width: 0;
+    height: 12px;
+    background-color: firebrick;
+    transition: width 0.2s;
+}
+
 #nick {
     top: 8px;
     left: 8px;

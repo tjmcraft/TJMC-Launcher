@@ -42,6 +42,7 @@ document.addEventListener('readystatechange', function () {
             })
         })
         // =================================================================
+
         version_list.addVer = function (val){
             option = document.createElement( 'option' );
             option.value = option.text = val;
@@ -61,3 +62,6 @@ document.addEventListener('readystatechange', function () {
 });
 
 
+function setBar(percentage) {
+    document.getElementById('bar').style.width = percentage + "%"
+}
