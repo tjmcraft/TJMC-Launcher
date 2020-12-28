@@ -1,5 +1,6 @@
 const child = require('child_process')
 const EventEmitter = require('events').EventEmitter
+const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
@@ -10,12 +11,15 @@ class launcher extends EventEmitter{
     static get getAppData(){
         return path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
     }
+    static openMineDir(){
+        child.exec(`open "" "${this.getAppData}"`)
+    }
     async construct () {
         this.options = {
             javaPath: 'java',
             os: null,
             version: {
-                number: 'OptiFine 1.15.2',
+                number: 'ForgeOptiFine 1.12.2',
                 type: 'modified'
             },
             request: {
@@ -48,6 +52,7 @@ class launcher extends EventEmitter{
                 min: 512
             }
         }
+        logg.debug(`Minecraft folder ${this.options.path.root}`)
         this.handler = new Minecraft(this)
         const java = await this.handler.checkJava(this.options.javaPath || 'java')
         if (!java.run) {
@@ -56,12 +61,12 @@ class launcher extends EventEmitter{
         }
         if (!fs.existsSync(this.options.path.root)) {
             logg.log('Attempting to create root folder')
-            fs.mkdirSync(this.options.path.root)
+            fs.mkdirSync(this.options.path.root, {recursive: true})
         }
         if (this.options.path.gameDirectory) {
             this.options.path.gameDirectory = path.resolve(this.options.path.gameDirectory)
             if (!fs.existsSync(this.options.path.gameDirectory)) {
-              fs.mkdirSync(this.options.path.gameDirectory, { recursive: true })
+              fs.mkdirSync(this.options.path.gameDirectory, {recursive: true})
             }
         }
         this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)

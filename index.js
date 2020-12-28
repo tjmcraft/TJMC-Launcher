@@ -3,6 +3,7 @@ const ejse = require('ejs-electron')
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
+const launcher = require('./app/assets/js/launcher')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
@@ -89,6 +90,15 @@ function createMenu() {
           }]
       }
 
+      let minecraftMenu = {
+          label: 'Minecraft',
+          submenu: [{
+            role: 'help',
+            accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
+            click: () => {  }
+          }]
+      }
+
       // New edit menu adds support for text-editing keyboard shortcuts
       let editSubMenu = {
           label: 'Edit',
@@ -122,7 +132,7 @@ function createMenu() {
       }
 
       // Bundle submenus into a single template and build a menu object with it
-      let menuTemplate = [applicationSubMenu, editSubMenu]
+      let menuTemplate = [applicationSubMenu, minecraftMenu, editSubMenu]
       let menuObject = Menu.buildFromTemplate(menuTemplate)
 
       // Assign it to the application
@@ -139,6 +149,8 @@ function getPlatformIcon(filename){
           ext = 'ico'
           break
       case 'darwin':
+          ext = 'icns'
+          break
       case 'linux':
       default:
           ext = 'png'

@@ -1,4 +1,5 @@
 const child = require('child_process')
+const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
@@ -476,57 +477,10 @@ class Minecraft{
      * 
      */
     constructJVMArguments(versionFile, tempNativePath, cp){
-        if(versionFile.arguments){
-            return this.getJVMArgs113(versionFile, tempNativePath, cp)
-        } else {
-            return this.getJVMArgs112(versionFile, tempNativePath, cp)
-        }
-    }
-
-    /**
-     * Construct the argument array that will be passed to the JVM process.
-     * This function is for 1.12 and below.
-     */
-    getJVMArgs112(versionFile, tempNativePath, cp){
-
-        let args = []
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
-
-        // Java Arguments
-        if(process.platform === 'darwin'){
-            args.push('-Xdock:name=TJMC')
-            //args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
-        }
-        args.push('-Xmx' + this.getMemory()[0])
-        args.push('-Xms' + this.getMemory()[1])
-        args.push('-Djava.library.path=' + tempNativePath)
-
-        // Classpath Argument
-        args.push('-cp')
-        args.push(`${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`)
-
-        // Main Java Class
-        args.push(versionFile.mainClass)
-
-        // Forge Arguments
-        args = args.concat(this.resolveArgs(versionFile, cp))
-
-        return args
-    }
-
-    /**
-     * Construct the argument array that will be passed to the JVM process.
-     * This function is for 1.13+
-     * 
-     * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
-     * 
-     */
-    getJVMArgs113(versionFile, tempNativePath, cp){
-
         const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
         const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
-        const fields = {
+        this.fields = {
             '${auth_access_token}': this.options.authorization.access_token,
             '${auth_session}': this.options.authorization.access_token,
             '${auth_player_name}': this.options.authorization.name,
@@ -547,12 +501,58 @@ class Minecraft{
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }
+        if(versionFile.arguments){
+            return this.getJVMArgs113(versionFile, tempNativePath, cp)
+        } else {
+            return this.getJVMArgs112(versionFile, tempNativePath, cp)
+        }
+    }
+
+    /**
+     * Construct the argument array that will be passed to the JVM process.
+     * This function is for 1.12 and below.
+     */
+    getJVMArgs112(versionFile, tempNativePath, cp){
+
+        let args = []
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
+
+        // Java Arguments
+        if(process.platform === 'darwin'){
+            args.push('-Xdock:name=TJMC')
+            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+        }
+        args.push('-Xmx' + this.getMemory()[0])
+        args.push('-Xms' + this.getMemory()[1])
+        args.push('-Djava.library.path=' + tempNativePath)
+
+        // Classpath Argument
+        args.push('-cp')
+        args.push(`${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`)
+
+        // Main Java Class
+        args.push(versionFile.mainClass)
+
+        // Forge Arguments
+        args = args.concat(this.resolveArgs(versionFile))
+
+        return args
+    }
+
+    /**
+     * Construct the argument array that will be passed to the JVM process.
+     * This function is for 1.13+
+     * 
+     * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
+     * 
+     */
+    getJVMArgs113(versionFile){
 
         let args = []
 
         if(process.platform === 'darwin'){
             args.push('-Xdock:name=TJMC')
-            //args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + this.getMemory()[0])
         args.push('-Xms' + this.getMemory()[1])
@@ -609,9 +609,9 @@ class Minecraft{
                 }
 
             } else if(typeof args[i] === 'string' && !(args[i] === undefined)){
-                for (let ob of Object.keys(fields)) {
+                for (let ob of Object.keys(this.fields)) {
                     if (args[i].includes(ob)) {
-                        args[i] = args[i].replace(ob, fields[ob])
+                        args[i] = args[i].replace(ob, this.fields[ob])
                     }
                 }
             } else if (typeof args[i] === 'object' && !args[i].rules) {
@@ -639,35 +639,15 @@ class Minecraft{
      * 
      * @returns {Array.<string>} An array containing the arguments
      */
-    resolveArgs(versionFile, cp){
-        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
-        const assetPath = path.join(assetRoot)
-        const fields = {
-            '${auth_access_token}': this.options.authorization.access_token,
-            '${auth_session}': this.options.authorization.access_token,
-            '${auth_player_name}': this.options.authorization.name,
-            '${auth_uuid}': this.options.authorization.uuid,
-            '${user_properties}': this.options.authorization.user_properties,
-            '${user_type}': 'mojang',
-            '${version_name}': this.options.version.number,
-            '${assets_index_name}': versionFile.assetIndex.id,
-            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
-            '${assets_root}': assetPath,
-            '${game_assets}': assetPath,
-            '${version_type}': this.options.version.type,
-            '${resolution_width}': this.options.launch.width,
-            '${resolution_height}': this.options.launch.height,
-            '${classpath}': cp.join(process.platform === 'win32' ? ';' : ':'),
-            '${natives_directory}': tempNativePath
-        }
+    resolveArgs(versionFile){
 
         const mcArgs = versionFile.minecraftArguments.split(' ')
 
         // Replace the declared variables with their proper values.
         for(let i=0; i<mcArgs.length; ++i){
             for (let i = 0; i < mcArgs.length; i++) {
-                if (Object.keys(fields).includes(mcArgs[i])) {
-                    mcArgs[i] = fields[mcArgs[i]]
+                if (Object.keys(this.fields).includes(mcArgs[i])) {
+                    mcArgs[i] = this.fields[mcArgs[i]]
                 }
             }
         }
