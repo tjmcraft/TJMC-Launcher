@@ -287,6 +287,87 @@ body, button {
     margin: 8px 0 8px 8px;
 }
 
+
+#overlay {
+    transition: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #010101D9;
+    text-align: center;
+    backdrop-filter: blur(3px);
+    width: 100%;
+    z-index: 99;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+#overlay #container {
+    position: relative;
+    transition: none;
+    max-width: 60vw;
+    max-height: 70vh;
+    background: #252626;
+    display: inline;
+    border-radius: 8px;
+    min-width: 400px;
+    min-height: 230px;
+    padding: 1em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-line;
+    font-size: 16px;
+    font-family: 'Candara';
+}
+
+#overlay #overlayCloseButton {
+    transition: none;
+    border: 2px solid #777;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+}
+
+#overlay #overlayCloseButton:hover {
+    background: #7F7F7F5d;
+}
+
+::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+    background: var(--header-background);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170, 0.7);
+}
+
+::-webkit-scrollbar-thumb,::-webkit-scrollbar-track-piece {
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-corner { 
+    background: var(--header-background);
+}
+
 input, select {
     border: 1px solid gray;
     border-width: 0px 0px 1px 0px;
