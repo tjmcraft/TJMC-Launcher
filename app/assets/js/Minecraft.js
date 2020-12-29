@@ -188,8 +188,8 @@ class Minecraft{
                         ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
                         : (lib.downloads.classifiers[`natives-${getOS()}`]) 
                     ) : null
-                    natives = merge(natives, native)
-                    //natives.push(native)
+                    //natives = merge(natives, native)
+                    natives.push(native)
                 }))
                 return natives
             }
@@ -228,6 +228,12 @@ class Minecraft{
         }
 
         counter = 0
+        this.client.emit('progress', {
+            type: 'natives',
+            task: counter,
+            total: 1
+        })
+
         logg.debug(`Set native path to ${nativeDirectory}`)
 
         return nativeDirectory
@@ -266,7 +272,13 @@ class Minecraft{
                 })
             }
         }))
+
         counter = 0
+        this.client.emit('progress', {
+            type: 'assets',
+            task: counter,
+            total: Object.keys(index.objects).length
+        })
     
         logg.debug('Downloaded assets')
     }
@@ -330,7 +342,13 @@ class Minecraft{
             
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
+
         counter = 0
+        this.client.emit('progress', {
+            type: eventName,
+            task: counter,
+            total: libraries.length
+        })
 
         return libs
     }
@@ -384,6 +402,12 @@ class Minecraft{
                 _request.pipe(file)
 
                 file.once('finish', () => {
+                    this.client.emit('download-status', {
+                        name: name,
+                        type: type,
+                        current: 0,
+                        total: totalBytes
+                    })
                     this.client.emit('download', name)
                     resolve({failed: false,asset: null})
                 })

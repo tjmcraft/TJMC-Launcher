@@ -7,7 +7,7 @@
     <script src="./assets/js/uicore.js"></script>
     <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
     <style>
-        body {
+        #frameMain {
             background: url(assets/images/default.png);
             background-size: cover;
             -webkit-user-select: none;
@@ -19,12 +19,18 @@
 </head>
 <body>
     <%- include('frame') %>
-    <div id="main">
-        <%- include('main') %>
-    </div>
-    <div id="mainBar">
-        <input type="text" placeholder="Ник" id="nick">
-        <select id="version"></select>
+    <div id="frameMain">
+        <div id="topBar" class="hidden">
+            <div id="progress-bar"></div>
+        </div>
+        <div id="main">
+            <%- include('main') %>
+        </div>
+        <div id="mainBar">
+            <input type="text" placeholder="Ник" id="nick">
+            <select id="version"></select>
+            <button id="playButton">Играть</button>
+        </div>
     </div>
 </body>
 </html>

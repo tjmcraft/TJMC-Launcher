@@ -30,7 +30,7 @@ class launcher extends EventEmitter{
             javaPath: 'java',
             os: null,
             version: {
-                number: 'ForgeOptiFine 1.12.2',
+                number: 'OptiFine 1.16.4',
                 type: 'modified'
             },
             request: {
@@ -64,7 +64,9 @@ class launcher extends EventEmitter{
             }
         }
         logg.debug(`Minecraft folder ${this.options.path.root}`)
+
         this.handler = new Minecraft(this)
+
         const java = await this.handler.checkJava(this.options.javaPath || 'java')
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
@@ -115,7 +117,7 @@ class launcher extends EventEmitter{
         minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
 
         logg.log('nice')
-        return
+        return true
     }
 }
 

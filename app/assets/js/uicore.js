@@ -4,27 +4,33 @@ const LoggerUtil                             = require('./assets/js/loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const {Minecraft}                       = require('./assets/js/Minecraft')
-const launcher                               = require('./assets/js/launcher')
+const {Minecraft}                            = require('./assets/js/Minecraft')
+const client                               = require('./assets/js/launcher')
+
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
 document.addEventListener('readystatechange', function () {
-
+    const window = remote.getCurrentWindow()
     if (document.readyState === 'interactive'){
-        version_list = document.getElementById('version')
+
+        /* ================================= */
+        const versionList = document.querySelector('#version')
+        const topBar = document.querySelector('#topBar')
+        const progressBar = document.querySelector('#progress-bar')
+        const nickField = document.querySelector('#nick')
+        const playButton = document.querySelector('#playButton')
+        /* ================================= */
         
         logg.log('UICore Initializing..')
         // Bind close button.
         Array.from(document.getElementsByClassName('fCb')).map((val) => {
             val.addEventListener('click', e => {
-                const window = remote.getCurrentWindow()
                 window.close()
             })
         })
         // Bind restore down button.
         Array.from(document.getElementsByClassName('fRb')).map((val) => {
             val.addEventListener('click', e => {
-                const window = remote.getCurrentWindow()
                 if(window.isMaximized()){
                     window.unmaximize()
                 } else {
@@ -36,32 +42,70 @@ document.addEventListener('readystatechange', function () {
         // Bind minimize button.
         Array.from(document.getElementsByClassName('fMb')).map((val) => {
             val.addEventListener('click', e => {
-                const window = remote.getCurrentWindow()
                 window.minimize()
                 document.activeElement.blur()
             })
         })
         // =================================================================
 
-        version_list.addVer = function (val){
+        versionList.addVer = function (val){
             option = document.createElement( 'option' );
             option.value = option.text = val;
-            version_list.add( option );
+            versionList.add( option );
         }
-        document.getElementById('nick').oninput = function(e){
+
+        // ==========  progressBar ========== 
+
+        progressBar.setValue = (v) => {
+            progressBar.style.width = v + "%"
+            window.setProgressBar(v/100)
+        }
+
+        // ----------------------------------
+
+        nickField.oninput = function(e){
             console.log(e.target.value)
         }
         Minecraft.getVersionManifest.then(parsed => {
-            //logg.log(parsed)
             for (const cv in parsed) {
-                version_list.addVer(parsed[cv].id);
+                versionList.addVer(parsed[cv].id)
             }
-            //version_list.value = parsed.release;
+            //versionList.value = parsed.release
         })
+        playButton.addEventListener('click', (e) => {
+            startMine()
+        })
+        // ----------------------------------
+        function startMine () {
+            let launcher = new client()
+            launcher.on('progress', (e) => {
+                progressBar.setValue((e.task/e.total)*100)
+            })
+            launcher.on('download-status', (e) => {
+                if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
+            })
+            topBar.toggle(true)
+            launcher.construct().then((e) => {
+                topBar.toggle(false)
+            })
+            
+        }
     }
 });
 
 
-function setBar(percentage) {
-    document.getElementById('bar').style.width = percentage + "%"
+
+
+/**
+ * Functions toogle all elements using css
+ * @param {boolean} s state to toggle (it can be null)
+ */
+Element.prototype.toggle = function(s = null) {
+    let cl = this.classList,
+        c = 'hidden'
+    if (s != null ? s : cl.contains(c) == 1){
+        cl.remove(c)
+    } else {
+        cl.add(c)
+    }
 }

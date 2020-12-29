@@ -18,8 +18,12 @@
  *                                                                             *
  ******************************************************************************/
 * {box-sizing: border-box;}
+div {transition: 0.5s all;}
+.hidden {visibility: hidden; opacity: 0;}
 html, body {
     overflow: hidden;
+    height: 100%;
+    margin: 0;
 }
 /* Reset body, html, and div presets. */
 body, html, div {
@@ -53,7 +57,6 @@ body, button {
 
 /* Frame Bar */
 #frameBar {
-    position: absolute;
     z-index: 100;
     display: flex;
     flex-direction: column;
@@ -65,30 +68,31 @@ body, button {
     left: 0;
     right: 0;
     top: 0;
+    position: relative;
 }
 
 /* Undraggable region on the top of the frame. */
-#frameResizableTop {
+#frameBar #frameResizableTop {
     height: 2px;
     width: 100%;
     -webkit-app-region: no-drag;
 }
 
 /* Flexbox to wrap the main frame content. */
-#frameMain {
+#frameBar .content {
     display: flex;
     height: 22px;
     flex-direction: row-reverse;
 }
 
 /* Undraggable region on the left and right of the frame. */
-.frameResizableVert {
+#frameBar .frameResizableVert {
     width: 2px;
     -webkit-app-region: no-drag;
 }
 
 /* Main frame content for windows. */
-#frameContentWin {
+#frameBar #frameContentWin {
     display: flex;
     width: 100%;
     -webkit-app-region: drag;
@@ -98,7 +102,7 @@ body, button {
 }
 
 /* Main frame content for darwin. */
-#frameContentDarwin {
+#frameBar #frameContentDarwin {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -106,7 +110,7 @@ body, button {
     -webkit-app-region: drag;
 }
 
-#frameContentDarwin #frameTitleDock {
+#frameBar #frameContentDarwin #frameTitleDock {
     position: absolute;
     text-align: center;
     justify-self: center;
@@ -118,29 +122,29 @@ body, button {
 }
 
 /* Frame logo (windows only). */
-#frameTitleDock {
+#frameBar #frameTitleDock {
     padding: 0 10px;
 }
-#frameTitleText {
+#frameBar #frameTitleText {
     font-size: 14px;
     color: white;
     font-family: 'Candara';
 }
 
 /* Windows frame button dock. */
-#frameButtonDockWin {
+#frameBar #frameButtonDockWin {
     -webkit-app-region: no-drag !important;
     position: relative;
     right: 0;
     overflow: hidden;
     height: 100%;
 }
-#frameButtonDockWin > .frameButton:not(:first-child) {
+#frameBar #frameButtonDockWin > .frameButton:not(:first-child) {
     margin-left: -4px;
 }
 
 /* Darwin frame button dock: NaN; */
-#frameButtonDockDarwin {
+#frameBar #frameButtonDockDarwin {
     -webkit-app-region: no-drag !important;
     position: relative;
     top: -1px;
@@ -148,7 +152,7 @@ body, button {
 }
 
 /* Windows Frame Button Styles. */
-.frameButton {
+#frameBar .frameButton {
     background: none;
     border: none;
     height: 100%;
@@ -158,26 +162,26 @@ body, button {
     display: inline-block;
     text-align: center;
 }
-.frameButton:hover{
+#frameBar .frameButton:hover{
     background: rgba(189, 189, 189, 0.43);
 }
-.frameButton:active {
+#frameBar .frameButton:active {
     background: rgba(156, 156, 156, 0.43);
 }
-.frameButton:focus {
+#frameBar .frameButton:focus {
     outline: 0px;
 }
 
 /* Close button is red. */
-#frameButton_close:hover {
+#frameBar #frameButton_close:hover {
     background: rgba(255, 53, 53, 0.61) !important;
 }
-#frameButton_close:active {
+#frameBar #frameButton_close:active {
     background: rgba(235, 0, 0, 0.61) !important;
 }
 
 /* Darwin Frame Button Styles. */
-.frameButtonDarwin {
+#frameBar .frameButtonDarwin {
     height: 12px;
     width: 12px;
     border-radius: 50%;
@@ -186,78 +190,91 @@ body, button {
     -webkit-app-region: no-drag !important;
     cursor: pointer;
 }
-.frameButtonDarwin:focus {
+#frameBar .frameButtonDarwin:focus {
     outline: 0px;
 }
 
-#frameButtonDarwin_close {
+#frameBar #frameButtonDarwin_close {
     background-color: #e74c32;
 }
-#frameButtonDarwin_close:hover {
+#frameBar #frameButtonDarwin_close:hover {
     background-color: #FF9A8A;
 }
-#frameButtonDarwin_close:active {
+#frameBar #frameButtonDarwin_close:active {
     background-color: #ff8d7b;
 }
 
-#frameButtonDarwin_minimize {
+#frameBar #frameButtonDarwin_minimize {
     background-color: #fed045;
 }
-#frameButtonDarwin_minimize:hover {
+#frameBar #frameButtonDarwin_minimize:hover {
     background-color: #FFE9A9;
 }
-#frameButtonDarwin_minimize:active {
+#frameBar #frameButtonDarwin_minimize:active {
     background-color: #ffde7b;
 }
 
-#frameButtonDarwin_restoredown {
+#frameBar #frameButtonDarwin_restoredown {
     background-color: #96e734;
 }
-#frameButtonDarwin_restoredown:hover {
+#frameBar #frameButtonDarwin_restoredown:hover {
     background-color: #D6FFA6;
 }
-#frameButtonDarwin_restoredown:active {
+#frameBar #frameButtonDarwin_restoredown:active {
     background-color: #bfff76;
 }
 
 /* =============================================== */
+#frameMain {
+    height: calc(100% - 22px);
+    display: flex;
+    flex-direction: column;
+}
 
 #main {
-    width: 100%;
-    height: 100%;
-    padding: 22px 0 48px 0;
-    display: block;
-    position: absolute;
+    flex: 1;
+    overflow: auto;
 }
+
 #mainBar {
-    position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
     background-color: #00000081;
     width: 100%;
     height: 48px;
 }
 
-#topBar {
+#playButton {
     position: absolute;
-    top: 22px;
+    background-color: #1aaa1a !important;
+    margin: 8px 8px 8px 8px;
+    right: 0;
+    box-sizing: border-box;
+}
+#playButton:hover {
+    background-color: #10a010 !important;
+}
+#playButton:active {
+    background-color: #008000 !important;
+}
+
+#topBar {
+    position: relative;
     right: 0;
     left: 0;
     width: 100%;
     background: #313131af;
 }
   
-#bar {
+#progress-bar {
     width: 0;
     height: 12px;
-    background-color: firebrick;
+    background-color: #b22222;
     transition: width 0.2s;
 }
 
 #nick {
-    top: 8px;
-    left: 8px;
+    margin: 8px 0 8px 8px;
     /* padding: 4px; */
     background-image: url(../images/user-icon.png);
     background-position: 4px;
@@ -267,8 +284,7 @@ body, button {
 }
 
 #version {
-    top: 8px;
-    left: 200px;
+    margin: 8px 0 8px 8px;
 }
 
 input, select {
@@ -282,6 +298,15 @@ input, select {
     font-size: 15px;
     font-family: 'Candara';
     opacity: 0.8;
-    position: absolute;
     padding: 4px;
+    position: relative;
+}
+
+button {
+    border: 0;
+    outline: 0;
+    border-width: 0px 0px 1px 0px;
+    background-color: #1a1a1a;
+    width: 10em;
+    height: 32px;
 }
