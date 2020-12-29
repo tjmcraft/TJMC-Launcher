@@ -47,7 +47,7 @@ document.addEventListener('readystatechange', function () {
             })
         })
         // =================================================================
-
+        new overlay()
         versionList.addVer = function (val){
             option = document.createElement( 'option' );
             option.value = option.text = val;
@@ -66,12 +66,14 @@ document.addEventListener('readystatechange', function () {
         nickField.oninput = function(e){
             console.log(e.target.value)
         }
+
         Minecraft.getVersionManifest.then(parsed => {
             for (const cv in parsed) {
                 versionList.addVer(parsed[cv].id)
             }
             //versionList.value = parsed.release
         })
+
         playButton.addEventListener('click', (e) => {
             startMine()
         })
@@ -108,4 +110,20 @@ Element.prototype.toggle = function(s = null) {
     } else {
         cl.add(c)
     }
+}
+
+
+
+class overlay {
+    constructor () {
+        this.overlayCloseButton = document.querySelector('#overlayCloseButton')
+        this.overlay = document.querySelector('#overlay')
+        this.overlayCloseButton.addEventListener('click', (e) => {
+            this.overlay.toggle(false)
+        })
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Escape') {this.overlay.toggle(false)}
+        })
+    }
+    
 }

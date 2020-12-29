@@ -289,7 +289,8 @@ body, button {
 
 
 #overlay {
-    transition: none;
+    user-select: none;
+    transition: all 0.5s ease;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -297,7 +298,7 @@ body, button {
     right: 0;
     background: #010101D9;
     text-align: center;
-    backdrop-filter: blur(3px);
+    /*backdrop-filter: blur(3px);*/
     width: 100%;
     z-index: 99;
     display: flex;
@@ -309,7 +310,7 @@ body, button {
 
 #overlay #container {
     position: relative;
-    transition: none;
+    transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  opacity 0.5s ease;
     max-width: 60vw;
     max-height: 70vh;
     background: #252626;
@@ -325,14 +326,33 @@ body, button {
     font-family: 'Candara';
 }
 
+#overlay.hidden #container {
+    transform: scale(0.3);
+    opacity: 0;
+}
+#overlay.hidden .tools {
+    opacity: 0;
+}
+
+#overlay .tools {
+    transition: all 0.5s ease;
+    position: absolute;
+    top: -18px;
+    right: -18px;
+}
+
+#overlay .tools .container {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 #overlay #overlayCloseButton {
     transition: none;
     border: 2px solid #777;
     border-radius: 50%;
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 16px;
     display: flex;
     justify-content: center;
     align-items: center;

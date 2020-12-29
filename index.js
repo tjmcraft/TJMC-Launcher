@@ -16,8 +16,8 @@ let win
 
 function createWindow () {
   win = new BrowserWindow({
-    width: 1000,
-    height: 580,
+    width: 1280,
+    height: 720,
     minWidth: 800,
     minHeight: 500,
     frame: false,
