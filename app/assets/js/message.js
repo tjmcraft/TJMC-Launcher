@@ -3,7 +3,7 @@ const fs = require('fs');
 class message {
     constructor(params) {
         if (document.querySelector('#overlay')) {
-            document.querySelector('#overlay').toggle();
+            document.querySelector('#overlay').toggle(false);
             setTimeout(() => {
                 document.querySelector('#overlay').remove();
             }, 1000);
