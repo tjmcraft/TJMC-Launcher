@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { param } = require('jquery');
 
 class message {
     constructor(params) {
