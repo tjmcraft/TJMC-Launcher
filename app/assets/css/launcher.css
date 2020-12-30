@@ -31,12 +31,6 @@ body, html, div {
     padding: 0px;
 }
 
-/* Reset p presets. */
-p {
-    -webkit-margin-before: 0em;
-    -webkit-margin-after: 0em;
-}
-
 /* Set default font and color. */
 body, button {
     font-family: 'Minecraft Rus';
@@ -337,7 +331,7 @@ body, button {
 #overlay .tools {
     transition: all 0.5s ease;
     position: absolute;
-    top: -18px;
+    top: 0;
     right: -18px;
 }
 
@@ -347,6 +341,11 @@ body, button {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+#overlay .tools .keycode {
+    font-size: 16px; 
+    color: #616161;
 }
 
 #overlay #overlayCloseButton {
@@ -362,6 +361,14 @@ body, button {
 
 #overlay #overlayCloseButton:hover {
     background: #7F7F7F5d;
+}
+
+#overlay .okButton {
+    margin: 1em;
+}
+
+#overlay p {
+    margin: 2em 0;
 }
 
 ::-webkit-scrollbar {
@@ -407,7 +414,15 @@ button {
     border: 0;
     outline: 0;
     border-width: 0px 0px 1px 0px;
-    background-color: #1a1a1a;
+    background-color: #444444;
     width: 10em;
     height: 32px;
+}
+
+button:hover {
+    background-color: #3F3F3F;
+}
+
+button:active {
+    background-color: #3A3A3A;
 }
