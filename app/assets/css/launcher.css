@@ -310,8 +310,8 @@ body, button {
     background: #252626;
     display: inline;
     border-radius: 8px;
-    min-width: 400px;
-    min-height: 230px;
+    min-width: 380px;
+    min-height: 180px;
     padding: 1em;
     overflow-y: auto;
     overflow-x: hidden;
@@ -325,6 +325,7 @@ body, button {
     opacity: 0;
 }
 #overlay.hidden .tools {
+    transform: scale(2);
     opacity: 0;
 }
 
@@ -332,7 +333,9 @@ body, button {
     transition: all 0.5s ease;
     position: absolute;
     top: 0;
-    right: -18px;
+    right: -10px;
+    font-size: 16px;
+    font-family: 'Candara';
 }
 
 #overlay .tools .container {
@@ -364,7 +367,12 @@ body, button {
 }
 
 #overlay .okButton {
+    font-family: 'Candara';
+    font-size: 16px;
+    font-weight: 900;
     margin: 1em;
+    border-radius: 8px;
+    width: 8em;
 }
 
 #overlay p {
@@ -425,4 +433,17 @@ button:hover {
 
 button:active {
     background-color: #3A3A3A;
+}
+
+svg[data-icon="info-circle"] {
+    color: #3f70da;
+}
+svg[data-icon="warn-circle"] {
+    color: #e1a111;
+}
+svg[data-icon="error-circle"] {
+    color: #e14141;
+}
+svg[data-icon="success-circle"] {
+    color: #31e131;
 }

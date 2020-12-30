@@ -47,7 +47,6 @@ document.addEventListener('readystatechange', function () {
             })
         })
         // =================================================================
-        new overlay()
         versionList.addVer = function (val){
             option = document.createElement( 'option' );
             option.value = option.text = val;
@@ -115,15 +114,102 @@ Element.prototype.toggle = function(s = null) {
 
 
 class overlay {
-    constructor () {
-        /*this.overlayCloseButton = document.querySelector('#overlayCloseButton')
-        this.overlay = document.querySelector('#overlay')
-        this.overlayCloseButton.addEventListener('click', (e) => {
-            this.overlay.toggle(false)
+    constructor (header = null, text = null, type = null, closeButton = null, okButton = null) {
+        if (document.querySelector('#overlay')) {
+            document.querySelector('#overlay').toggle() 
+            setTimeout(()=>{
+                document.querySelector('#overlay').remove()
+            }, 1000)
+        }
+
+        this.overlay = this.createElementWithId('div', 'overlay')
+        this.overlay.toggle(false)
+
+        let container = this.createElementWithId('div', 'container')
+        container.onclick = (event) => {event.stopPropagation()}
+
+        if (closeButton) {
+            let tools = this.createToolsContainer(null, null)
+            tools.querySelector('#overlayCloseButton').onclick = () => {
+                this.destroy()
+            }
+            container.append(tools)
+        }
+
+        if (type) {
+            let path = null
+            switch (type) {
+                case 'info':
+                    path = './app/assets/css/info-circle.svg'
+                    break
+                case 'error':
+                    path = './app/assets/css/error-circle.svg'
+                    break
+                case 'warn':
+                    path = './app/assets/css/warn-circle.svg'
+                    break
+                case 'success':
+                    path = './app/assets/css/success-circle.svg'
+                    break
+                default:
+                    path = ''
+                    break                
+            }
+            
+            let data = fs.readFileSync(path, 'utf8')
+                
+            let img = document.createElement('h2')
+            img.innerHTML = data
+            
+            container.append(img)
+        }
+
+        if (header){
+            let h = document.createElement('h1')
+            h.innerText = header
+            container.append(h)
+        }
+
+        if (text) {
+            let p = document.createElement('p')
+            p.innerText = text
+            container.append(p)
+        }
+
+        if (okButton) {
+            let button = this.createElementWithClass('button', 'okButton')
+            button.innerText = 'Ок'
+            button.onclick = () => {
+                this.destroy()
+            }
+            container.append(button)
+        }
+
+        this.overlay.onclick = (e) => {
+            this.destroy()
+        }
+
+        document.onkeydown = (evt) => {
+            evt = evt || window.event
+            let isEscape = false
+            if ("key" in evt) {
+                isEscape = (evt.key === "Escape" || evt.key === "Esc")
+            } else {
+                isEscape = (evt.keyCode === 27)
+            }
+            if (isEscape) {
+                this.destroy()
+            }
+        }
+
+        this.overlay.append(container)
+
+        document.body.appendChild(this.overlay)
+        setTimeout(() => {
+            this.overlay.toggle(true)
         })
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'Escape') {this.overlay.toggle(false)}
-        })*/
+        
+        return this.overlay
     }
 
     createElementWithId (el, id) {
@@ -163,76 +249,5 @@ class overlay {
         setTimeout(() => {
             this.overlay.remove();
         }, 500)
-    }
-    
-    fire (header = null, text = null, type = null, closeButton = null, okButton = null) {
-        
-        if (document.querySelector('#overlay')) {
-            document.querySelector('#overlay').toggle() 
-            setTimeout(()=>{
-                document.querySelector('#overlay').remove()
-            }, 1000)
-        }
-
-        this.overlay = this.createElementWithId('div', 'overlay')
-        this.overlay.toggle(false)
-
-        let container = this.createElementWithId('div', 'container')
-        container.onclick = (event) => {event.stopPropagation()}
-
-        if (closeButton) {
-            let tools = this.createToolsContainer(null, null)
-            tools.querySelector('#overlayCloseButton').onclick = () => {
-                this.destroy()
-            }
-            container.append(tools)
-        }
-        
-        if (header){
-            let h = document.createElement('h1')
-            h.innerText = header
-            container.append(h)
-        }
-
-        if (text) {
-            let p = document.createElement('p')
-            p.innerText = text
-            container.append(p)
-        }
-
-        if (okButton) {
-            let button = this.createElementWithClass('button', 'okButton')
-            button.innerText = 'ОК'
-            button.onclick = () => {
-                this.destroy()
-            }
-            container.append(button)
-        }
-
-        this.overlay.onclick = (e) => {
-            this.destroy()
-        }
-
-        document.onkeydown = (evt) => {
-            evt = evt || window.event
-            let isEscape = false
-            if ("key" in evt) {
-                isEscape = (evt.key === "Escape" || evt.key === "Esc")
-            } else {
-                isEscape = (evt.keyCode === 27)
-            }
-            if (isEscape) {
-                this.destroy()
-            }
-        }
-
-        this.overlay.append(container)
-
-        document.body.appendChild(this.overlay)
-        setTimeout(() => {
-            this.overlay.toggle(true)
-        })
-        
-        return this.overlay
     }
 }
