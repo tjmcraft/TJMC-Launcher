@@ -35,11 +35,11 @@ class message {
                     data = ''
                     break
             }
-
-            let img = document.createElement('h2')
-            img.innerHTML += data
-
-            container.append(img)
+            if (data) {
+                let ie = document.createElement('h2')
+                ie.innerHTML += data
+                container.append(ie)
+            }
         }
 
         if (params.header) {
@@ -55,6 +55,8 @@ class message {
         }
 
         if (params.buttons) {
+            let hr = document.createElement('hr')
+            container.append(hr)
             for (let bp of params.buttons) {
                 let button = this.createElementWithClass('button', bp.class ? bp.class : '')
                 button.innerText = bp.name

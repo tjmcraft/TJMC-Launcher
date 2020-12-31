@@ -326,7 +326,7 @@ body, button {
 #overlay.hidden .tools {
     opacity: 0;
 }
-#overlay.hidden svg {
+#overlay.hidden #container svg {
     transform: scale(0);
     opacity: 0;
 }
@@ -365,7 +365,19 @@ body, button {
     background: #7F7F7F5d;
 }
 
-#overlay .okButton {
+/* === Primary Button for overlay === */
+#overlay #container .primary-button {
+    background-color: #10a010;
+}
+#overlay #container .primary-button:hover {
+    background-color: #109010;
+}
+#overlay #container .primary-button:active {
+    background-color: #108010;
+}
+/* ---------------------------------- */
+
+#overlay #container button {
     font-family: 'Candara';
     font-size: 16px;
     font-weight: 900;
@@ -374,18 +386,24 @@ body, button {
     width: 8em;
 }
 
-#overlay p {
+#overlay #container p {
     margin: 2em 0;
 }
 
-#overlay svg {
+#overlay #container svg {
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;    
 }
 
+#overlay #container hr {
+    border: 0;
+    height: 1px;
+    background: #333;
+    margin: 0 1em;
+}
+
 ::-webkit-scrollbar {
-    height: 10px;
-    width: 10px;
-    background: var(--header-background);
+    width: 8px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -394,7 +412,7 @@ body, button {
 
 ::-webkit-scrollbar-thumb,::-webkit-scrollbar-track-piece {
     background-clip: padding-box;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
     border-radius: 10px;
 }
 
@@ -403,7 +421,7 @@ body, button {
 }
 
 ::-webkit-scrollbar-corner { 
-    background: var(--header-background);
+    background: transparent;
 }
 
 input, select {
