@@ -12,30 +12,13 @@ const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 document.addEventListener('readystatechange', function () {
     const window = remote.getCurrentWindow()
     if (document.readyState === 'interactive'){
-        if (window.isFullScreen()) {document.body.classList.add('fullscreen')}
+        webFrame.setZoomFactor(2)
+
+        if (window.isFullScreen()) {
+            document.body.classList.add('fullscreen')
+        }
         window.on('enter-full-screen', (e, cmd) => {
             document.body.classList.add('fullscreen')
-            new Message({
-                header:'Уведомление', 
-                text:"Вы вошли в полноэкранный режим", 
-                type:'info', 
-                closeButton: false, 
-                buttons: [
-                    {
-                        class: 'primary-button',
-                        name: 'Ok',
-                        closeOverlay: true
-                    },
-                    {
-                        class: 'default-button',
-                        name: 'Выйти',
-                        closeOverlay: true,
-                        callback: function () {
-                            window.setFullScreen(false)
-                        }
-                    }
-                ]
-            });
         })
         window.on('leave-full-screen', (e, cmd) => {
             document.body.classList.remove('fullscreen')
