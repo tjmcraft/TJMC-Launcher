@@ -25,25 +25,13 @@ class launcher extends EventEmitter{
         }
         return
     }
-    async construct () {
-        this.options = {
+    async construct (options = null) {
+        this.options = options ? options :
+        {
             javaPath: 'java',
-            os: null,
             version: {
-                number: 'OptiFine 1.16.4',
+                number: 'OptiFine 1.15.2',
                 type: 'modified'
-            },
-            request: {
-                maxSockets: 32,
-                timeout: 10000
-            },
-            path: {
-                root: path.join(this.constructor.getAppData, 'minecraft'),
-                version: path.join(this.constructor.getAppData, 'minecraft', 'versions'),
-                directory: path.join(this.constructor.getAppData, 'minecraft', 'versions')
-            },
-            url: {
-                resource: "https://resources.download.minecraft.net"
             },
             authorization: {
                 access_token: 'null',
@@ -55,7 +43,7 @@ class launcher extends EventEmitter{
                 fullscreen: false,
                 width: 1280,
                 height: 720,
-                detached: false,
+                detached: true,
                 cwd: ''
             },
             memory: {
@@ -63,6 +51,19 @@ class launcher extends EventEmitter{
                 min: 512
             }
         }
+
+        this.options.os = getOS()
+        this.options.request = 
+        {
+            maxSockets: 32,
+            timeout: 10000
+        }
+        this.options.path = 
+        {
+            root: path.join(this.constructor.getAppData, 'minecraft'),
+            directory: path.join(this.constructor.getAppData, 'minecraft', 'versions')
+        }
+        this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)
         logg.debug(`Minecraft folder ${this.options.path.root}`)
 
         this.handler = new Minecraft(this)

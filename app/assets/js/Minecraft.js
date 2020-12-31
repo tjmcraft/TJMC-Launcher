@@ -250,7 +250,7 @@ class Minecraft{
         }
     
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }))
-    
+        const res_url = "https://resources.download.minecraft.net"
         this.client.emit('progress', {
             type: 'assets',
             task: 0,
@@ -263,7 +263,7 @@ class Minecraft{
             const subAsset = path.join(assetDirectory, 'objects', subhash)
     
             if (!fs.existsSync(path.join(subAsset, hash)) || !await this.checkSum(hash, path.join(subAsset, hash))) {
-                await this.downloadAsync(`${this.options.url.resource}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
+                await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
                 counter++
                 this.client.emit('progress', {
                     type: 'assets',

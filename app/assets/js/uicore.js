@@ -12,7 +12,7 @@ const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 document.addEventListener('readystatechange', function () {
     const window = remote.getCurrentWindow()
     if (document.readyState === 'interactive'){
-        webFrame.setZoomFactor(2)
+        webFrame.setZoomFactor(1)
 
         if (window.isFullScreen()) {
             document.body.classList.add('fullscreen')

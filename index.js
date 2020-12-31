@@ -47,7 +47,7 @@ function createWindow () {
   win.on('closed', () => {
       win = null
   })
-  win.webContents.openDevTools()
+  //win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow)
