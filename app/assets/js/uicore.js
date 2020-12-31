@@ -39,11 +39,9 @@ document.addEventListener('readystatechange', function () {
         })
         document.querySelector('.fRb').addEventListener('click', e => {
             window.isMaximized() ? window.unmaximize() : window.maximize()
-            document.activeElement.blur()
         })
         document.querySelector('.fMb').addEventListener('click', e => {
             window.minimize()
-            document.activeElement.blur()
         })
         // =================================================================
 
