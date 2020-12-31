@@ -44,13 +44,13 @@ class message {
 
         if (params.header) {
             let h = document.createElement('h1')
-            h.innerText = params.header
+            h.innerHTML = params.header
             container.append(h)
         }
 
         if (params.text) {
             let p = document.createElement('p')
-            p.innerText = params.text
+            p.innerHTML = params.text
             container.append(p)
         }
 
