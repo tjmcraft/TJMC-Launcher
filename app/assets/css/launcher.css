@@ -11,36 +11,51 @@
     src: url('candara.ttf');
 }
 
+@keyframes box-shadow-rise {
+    from {
+        box-shadow: 0 0 10px 0px #0000DF;
+    }
+    to {
+        box-shadow: 0 0 50px 10px #1122FF;
+    }
+}
 /*******************************************************************************
  *                                                                             *
  * Element Styles                                                              *
  *                                                                             *
  ******************************************************************************/
-* {box-sizing: border-box;}
-div {transition: 0.5s all;}
+
+ * {box-sizing: border-box;}
+.preload *, .preload {
+    -moz-animation: none !important;
+    -webkit-animation: none !important;
+    -ms-animation: none !important;
+    animation: none !important;
+    -moz-transition: none !important;
+    -webkit-transition: none !important;
+    -ms-transition: none !important;
+    transition: none !important;
+}
 .hidden {visibility: hidden; opacity: 0;}
+
+div {transition: 0.5s all;}
 html, body {
+    transition: 1s all;
     overflow: hidden;
     height: 100%;
     margin: 0;
 }
-/* Reset body, html, and div presets. */
+
 body, html, div {
     margin: 0px;
     padding: 0px;
 }
 
-/* Set default font and color. */
 body, button {
-    font-family: 'Minecraft Rus';
+    font-family: 'Candara';
     background-color: #30303010;
     color: white;
 }
-
-/*body {
-    background: url('./../images/backgrounds/0.jpg') no-repeat center center fixed;
-    background-size: cover;
-}*/
 
 /*******************************************************************************
  *                                                                             *
@@ -48,43 +63,39 @@ body, button {
  *                                                                             *
  ******************************************************************************/
 
-/* Frame Bar */
+/* ================ Frame Bar ================ */
 #frameBar {
     z-index: 100;
     display: flex;
     flex-direction: column;
-    transition: background-color 1s ease;
-    background-color: #1a1a1ada;
+    transition: all 0.6s ;
+    background-color: #000000ca;
     -webkit-user-select: none;
     width: 100%;
     height: 22px;
     left: 0;
     right: 0;
     top: 0;
-    position: relative;
+    position: absolute;
 }
 
-/* Undraggable region on the top of the frame. */
 #frameBar #frameResizableTop {
     height: 2px;
     width: 100%;
     -webkit-app-region: no-drag;
 }
 
-/* Flexbox to wrap the main frame content. */
 #frameBar .content {
     display: flex;
     height: 22px;
     flex-direction: row-reverse;
 }
 
-/* Undraggable region on the left and right of the frame. */
 #frameBar .frameResizableVert {
     width: 2px;
     -webkit-app-region: no-drag;
 }
 
-/* Main frame content for windows. */
 #frameBar #frameContentWin {
     display: flex;
     width: 100%;
@@ -94,7 +105,6 @@ body, button {
     justify-content: space-between;
 }
 
-/* Main frame content for darwin. */
 #frameBar #frameContentDarwin {
     display: flex;
     justify-content: flex-start;
@@ -114,17 +124,15 @@ body, button {
     z-index: -1;
 }
 
-/* Frame logo (windows only). */
 #frameBar #frameTitleDock {
     padding: 0 10px;
 }
 #frameBar #frameTitleText {
-    font-size: 14px;
+    font-size: 12px;
     color: white;
-    font-family: 'Candara';
+    font-family: 'Segoe UI Bold';
 }
 
-/* Windows frame button dock. */
 #frameBar #frameButtonDockWin {
     -webkit-app-region: no-drag !important;
     position: relative;
@@ -136,7 +144,6 @@ body, button {
     margin-left: -4px;
 }
 
-/* Darwin frame button dock: NaN; */
 #frameBar #frameButtonDockDarwin {
     -webkit-app-region: no-drag !important;
     position: relative;
@@ -144,7 +151,6 @@ body, button {
     right: -1px;
 }
 
-/* Windows Frame Button Styles. */
 #frameBar .frameButton {
     background: none;
     border: none;
@@ -165,7 +171,6 @@ body, button {
     outline: 0px;
 }
 
-/* Close button is red. */
 #frameBar #frameButton_close:hover {
     background: rgba(255, 53, 53, 0.61) !important;
 }
@@ -173,7 +178,7 @@ body, button {
     background: rgba(235, 0, 0, 0.61) !important;
 }
 
-/* Darwin Frame Button Styles. */
+
 #frameBar .frameButtonDarwin {
     height: 12px;
     width: 12px;
@@ -218,8 +223,60 @@ body, button {
 }
 
 /* =============================================== */
+
+.preload #frameMain {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.preload #mainBar {
+    bottom: -48px;
+    opacity: 0.3;
+    visibility: hidden;
+}
+
+#preloader {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+#preloader img {
+    animation: box-shadow-rise 2s infinite alternate ease-in-out !important;
+    box-shadow: 0 0 50px 20px #1122FF;
+    backface-visibility: hidden;
+    border-radius: 50%;
+    overflow: hidden;
+    height: 25%;
+    padding: 0;
+}
+.big-text {
+    font-family: 'Segoe UI Bold';
+    font-size: 48px;
+    font-weight: 900;
+}
+
+.preload #preloader {
+    opacity: 1;
+    visibility: visible;
+}
+
+.fullscreen #frameBar {
+    top: -22px;
+    opacity: 0;
+    visibility: hidden;
+}
+
 #frameMain {
-    height: calc(100% - 22px);
+    padding-top: 22px;
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -230,40 +287,30 @@ body, button {
 }
 
 #mainBar {
+    position: absolute;
     left: 0;
     right: 0;
-    background-color: #00000081;
+    bottom: 0;
+    background-color: #000000a0;
     width: 100%;
     height: 48px;
 }
 
-#playButton {
+#mainBar #playButton {
     position: absolute;
     background-color: #1aaa1a !important;
     margin: 8px 8px 8px 8px;
     right: 0;
     box-sizing: border-box;
+    font-size: 18px;
+    font-weight: 800;
+    width: 8em;
 }
-#playButton:hover {
+#mainBar #playButton:hover {
     background-color: #10a010 !important;
 }
-#playButton:active {
+#mainBar #playButton:active {
     background-color: #008000 !important;
-}
-
-#topBar {
-    position: relative;
-    right: 0;
-    left: 0;
-    width: 100%;
-    background: #313131af;
-}
-  
-#progress-bar {
-    width: 0;
-    height: 12px;
-    background-color: #b22222;
-    transition: width 0.2s;
 }
 
 #nick {
@@ -280,7 +327,23 @@ body, button {
     margin: 8px 0 8px 8px;
 }
 
+/* ================= Top Bar ================= */
+#topBar {
+    position: relative;
+    right: 0;
+    left: 0;
+    width: 100%;
+    background: #313131af;
+}
+  
+#progress-bar {
+    width: 0;
+    height: 12px;
+    background-color: #b22222;
+    transition: width 0.2s;
+}
 
+/* ================= Overlay ================= */
 #overlay {
     user-select: none;
     transition: all 0.5s ease;
@@ -375,7 +438,6 @@ body, button {
 #overlay #container .primary-button:active {
     background-color: #108010;
 }
-/* ---------------------------------- */
 
 #overlay #container button {
     font-family: 'Candara';
@@ -400,6 +462,16 @@ body, button {
     background: #333;
     margin: 0 1em;
 }
+/* ------------------------------------------- */
+
+
+#container::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+#container:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170, 0.7);
+}
+
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -413,7 +485,7 @@ body, button {
 ::-webkit-scrollbar-thumb,::-webkit-scrollbar-track-piece {
     background-clip: padding-box;
     border: 1px solid transparent;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-track-piece {

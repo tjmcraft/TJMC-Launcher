@@ -8,7 +8,7 @@
     <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
     <style>
         #frameMain {
-            background: url(assets/images/default.png);
+            background: url('https://picsum.photos/1280/720');
             background-size: cover;
             -webkit-user-select: none;
             background-repeat: no-repeat;
@@ -17,8 +17,12 @@
         }
     </style>
 </head>
-<body>
+<body class="preload">
     <%- include('frame') %>
+    <div id="preloader">
+        <!--<div class="big-text">TJMC-Launcher</div>-->
+        <img src="./assets/images/tjm.png">
+    </div>
     <div id="frameMain">
         <div id="topBar" class="hidden">
             <div id="progress-bar"></div>
