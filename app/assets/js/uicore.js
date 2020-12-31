@@ -33,31 +33,20 @@ document.addEventListener('readystatechange', function () {
         /* ================================= */
         
         logg.log('UICore Initializing..')
-        // Bind close button.
-        Array.from(document.getElementsByClassName('fCb')).map((val) => {
-            val.addEventListener('click', e => {
-                window.close()
-            })
+
+        document.querySelector('.fCb').addEventListener('click', e => {
+            window.close()
         })
-        // Bind restore down button.
-        Array.from(document.getElementsByClassName('fRb')).map((val) => {
-            val.addEventListener('click', e => {
-                if(window.isMaximized()){
-                    window.unmaximize()
-                } else {
-                    window.maximize()
-                }
-                document.activeElement.blur()
-            })
+        document.querySelector('.fRb').addEventListener('click', e => {
+            window.isMaximized() ? window.unmaximize() : window.maximize()
+            document.activeElement.blur()
         })
-        // Bind minimize button.
-        Array.from(document.getElementsByClassName('fMb')).map((val) => {
-            val.addEventListener('click', e => {
-                window.minimize()
-                document.activeElement.blur()
-            })
+        document.querySelector('.fMb').addEventListener('click', e => {
+            window.minimize()
+            document.activeElement.blur()
         })
         // =================================================================
+
         versionList.addVer = function (val){
             option = document.createElement( 'option' );
             option.value = option.text = val;
@@ -81,7 +70,6 @@ document.addEventListener('readystatechange', function () {
             for (const cv in parsed) {
                 versionList.addVer(parsed[cv].id)
             }
-            //versionList.value = parsed.release
         })
 
         playButton.addEventListener('click', (e) => {
@@ -105,6 +93,7 @@ document.addEventListener('readystatechange', function () {
     } else if (document.readyState === 'complete'){
         setTimeout(() => {
             document.body.classList.remove('preload')
+            document.querySelector('#preloader').remove()
         }, 1000)
     }
 })

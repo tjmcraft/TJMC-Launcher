@@ -67,6 +67,7 @@ body, button {
 #frameBar {
     z-index: 100;
     display: flex;
+    justify-content: center;
     flex-direction: column;
     transition: all 0.6s ;
     background-color: #000000ca;
@@ -87,7 +88,7 @@ body, button {
 
 #frameBar .content {
     display: flex;
-    height: 22px;
+    height: 100%;
     flex-direction: row-reverse;
 }
 
@@ -126,11 +127,12 @@ body, button {
 
 #frameBar #frameTitleDock {
     padding: 0 10px;
+    display: flex;
 }
 #frameBar #frameTitleText {
-    font-size: 12px;
+    font-size: 14px;
     color: white;
-    font-family: 'Segoe UI Bold';
+    font-family: 'Candara';
 }
 
 #frameBar #frameButtonDockWin {
