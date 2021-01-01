@@ -74,7 +74,7 @@ class message {
             this.destroy()
         }
 
-        document.onkeydown = (evt) => {
+        document.onkeyup = (evt) => {
             evt = evt || window.event
             let isEscape = false
             if ("key" in evt) {
@@ -83,6 +83,7 @@ class message {
                 isEscape = (evt.keyCode === 27)
             }
             if (isEscape) {
+                console.log('event esc')
                 this.destroy()
             }
         }
@@ -141,6 +142,7 @@ class message {
         setTimeout(() => {
             this.overlay.remove()
         }, 500)
+        document.onkeyup = null
     }
 }
 

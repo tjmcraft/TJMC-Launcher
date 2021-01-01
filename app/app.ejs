@@ -16,20 +16,7 @@
             background-position: center;
         }
         #frameSecond {
-            background: url('https://picsum.photos/1920/1080');
-            background-size: cover;
-            -webkit-user-select: none;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-        }
-        #frameThird {
-            background: url('https://picsum.photos/1280/768');
-            background-size: cover;
-            -webkit-user-select: none;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
+            background: #212121;
         }
     </style>
 </head>
@@ -40,7 +27,7 @@
         <img src="./assets/images/icon.png">
     </div>
     <div id="app-mount">
-        <div id="frameMain" class="app-layer active">
+        <div id="frameMain" class="app-layer">
             <div id="topBar" class="hidden">
                 <div id="progress-bar"></div>
             </div>
@@ -53,8 +40,8 @@
                 <button id="playButton">Играть</button>
             </div>
         </div>
-        <div id="frameSecond" class="app-layer">
-            <div class="big-text">TJMC-Launcher</div>
+        <div id="frameSecond" class="app-layer active">
+            <%- include('settings') %>
         </div>
     </div>    
 </body>

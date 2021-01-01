@@ -93,10 +93,16 @@ function createMenu() {
       let minecraftMenu = {
           label: 'Minecraft',
           submenu: [{
-            role: 'help',
+            role: 'Minecraft Directory',
             accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
+            click: () => { launcher.openMineDir() }
+          },
+          {
+            role: 'Options',
+            accelerator: process.platform === 'darwin' ? 'Alt+Cmd+P' : 'Alt+Shift+P',
             click: () => {  }
-          }]
+          }
+        ]
       }
 
       // New edit menu adds support for text-editing keyboard shortcuts

@@ -6,7 +6,7 @@ const fs = require('fs')
 const path = require('path')
 const {Minecraft} = require('./assets/js/Minecraft')
 const client = require('./assets/js/launcher')
-const { merge } = require('jquery')
+const appLayers = require('./assets/js/appLayers')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -89,6 +89,22 @@ document.addEventListener('readystatechange', function () {
             })
             
         }
+
+        let lay = new appLayers()
+
+        document.onkeydown = (evt) => {
+            evt = evt || window.event
+            let isEscape = false
+            if ("key" in evt) {
+                isEscape = (evt.key === "Escape" || evt.key === "Esc")
+            } else {
+                isEscape = (evt.keyCode === 27)
+            }
+            if (isEscape) {
+                lay.openMain()
+            }
+        }
+
     } else if (document.readyState === 'complete'){
         setTimeout(() => {
             document.body.classList.remove('preload')
@@ -109,19 +125,5 @@ Element.prototype.toggle = function(s = null) {
         cl.remove(c)
     } else {
         cl.add(c)
-    }
-}
-
-
-class appLayers {
-    constructor () {
-        this.appMount = document.querySelector('#app-mount')
-        this.layers = this.appMount.querySelectorAll('.app-layer')
-    }
-    setActive (l) {
-        for (let layer of this.layers) {
-            layer.classList.remove('active')
-            if (layer.id == l) layer.classList.add('active')
-        }
     }
 }
