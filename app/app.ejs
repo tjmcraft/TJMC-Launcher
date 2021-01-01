@@ -15,26 +15,47 @@
             background-attachment: fixed;
             background-position: center;
         }
+        #frameSecond {
+            background: url('https://picsum.photos/1920/1080');
+            background-size: cover;
+            -webkit-user-select: none;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        #frameThird {
+            background: url('https://picsum.photos/1280/768');
+            background-size: cover;
+            -webkit-user-select: none;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+        }
     </style>
 </head>
 <body class="preload">
     <%- include('frame') %>
     <div id="preloader">
         <!--<div class="big-text">TJMC-Launcher</div>-->
-        <img src="./assets/images/tjm.png">
+        <img src="./assets/images/icon.png">
     </div>
-    <div id="frameMain">
-        <div id="topBar" class="hidden">
-            <div id="progress-bar"></div>
+    <div id="app-mount">
+        <div id="frameMain" class="app-layer active">
+            <div id="topBar" class="hidden">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="main">
+                <%- include('main') %>
+            </div>
+            <div id="mainBar">
+                <input type="text" placeholder="Ник" id="nick">
+                <select id="version"></select>
+                <button id="playButton">Играть</button>
+            </div>
         </div>
-        <div id="main">
-            <%- include('main') %>
+        <div id="frameSecond" class="app-layer">
+            <div class="big-text">TJMC-Launcher</div>
         </div>
-        <div id="mainBar">
-            <input type="text" placeholder="Ник" id="nick">
-            <select id="version"></select>
-            <button id="playButton">Играть</button>
-        </div>
-    </div>
+    </div>    
 </body>
 </html>
