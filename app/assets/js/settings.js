@@ -1,8 +1,9 @@
 class Settings {
     constructor() {
         console.log('Settings init')
+        console.log(path.resolve(__dirname, '../../settings.ejs'))
         this.settings = document.querySelector('#frameSecond')
-        this.settings.innerHTML = fs.readFileSync('./app/settings.ejs', 'utf8')
+        this.settings.innerHTML = fs.readFileSync(path.resolve(__dirname, '../../settings.ejs'), 'utf8')
 
         this.sidebar = this.settings.querySelector('.sidebar')
         this.sidebarItems = this.sidebar.querySelectorAll('.settingsItem')

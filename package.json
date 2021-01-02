@@ -4,7 +4,11 @@
   "description": "An ElectronJS version if TJM-Launcher",
   "main": "index.js",
   "scripts": {
-    "test": "electron ."
+    "test": "electron .",
+    "dist": "node build.js",
+    "dist:win": "npm run dist -- WINDOWS",
+    "dist:mac": "npm run dist -- MAC",
+    "dist:linux": "npm run dist -- LINUX"
   },
   "keywords": [
     "Minecraft",
@@ -21,6 +25,25 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "electron": "^11.1.0"
+    "electron": "^11.1.0",
+    "electron-packager": "^15.2.0"
+  },
+  "build": {
+    "appId": "com.trinityinfosystem.electron.exchange.stream",
+    "productName": "Accurate",
+    "copyright": "Copyright © 2018 Trinity InfoSystem",
+    "win": {
+      "publisherName": "Trinity InfoSystem",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
   }
 }

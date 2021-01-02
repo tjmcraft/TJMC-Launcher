@@ -69,6 +69,8 @@ app.on('activate', () => {
     }
 })
 
+global.appRoot = path.resolve(__dirname)
+
 function createMenu() {
     
   if(process.platform === 'darwin') {
