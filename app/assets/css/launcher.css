@@ -41,7 +41,7 @@
     -ms-transition: none !important;
     transition: none !important;
 }
-.hidden {visibility: hidden; opacity: 0;}
+.hidden {visibility: hidden; opacity: 0;display: none;}
 
 div {transition: 0.5s all;}
 html, body {
@@ -388,7 +388,7 @@ body, button {
     transform: scale(0.5);
     opacity: 0;
 }
-#overlay.hidden .tools {
+.hidden .tools {
     opacity: 0;
 }
 #overlay.hidden #container svg {
@@ -396,7 +396,7 @@ body, button {
     opacity: 0;
 }
 
-#overlay .tools {
+.tools {
     transition: all 0.5s ease;
     position: fixed;
     top: 22px;
@@ -410,12 +410,12 @@ body, button {
     font-family: 'Candara';
 }
 
-#overlay .tools .keycode {
+.tools .keycode {
     font-size: 16px; 
     color: #616161;
 }
 
-#overlay #overlayCloseButton {
+.tools #overlayCloseButton {
     transition: none;
     border: 2px solid #777;
     border-radius: 50%;
@@ -426,7 +426,7 @@ body, button {
     height: 36px;
 }
 
-#overlay #overlayCloseButton:hover {
+.tools #overlayCloseButton:hover {
     background: #7F7F7F5d;
 }
 
@@ -576,6 +576,7 @@ svg[data-icon="success-circle"] {
 }
 
 #app-mount #frameSecond {
+    margin-top: 22px;
     opacity: 0;
     visibility: hidden;
     transform: scale(1.1);
@@ -622,7 +623,7 @@ svg[data-icon="success-circle"] {
     font-weight: 500;
 }
 
-.sidebar .item-suchka {
+.sidebar .settingsItem {
     transition: 0.2s all;
     padding: 6px 10px;
     position: relative;
@@ -633,12 +634,12 @@ svg[data-icon="success-circle"] {
     color: #b9bbbe;
 }
 
-.sidebar .item-suchka:hover {
+.sidebar .settingsItem:hover {
     color: #dcddde;
     background-color: #333333a0;
 }
 
-.sidebar .item-suchka.selected {
+.sidebar .settingsItem.selected {
     cursor: default;
     color: #F1F1F1 !important;
     background-color: #333333 !important;
@@ -654,15 +655,33 @@ svg[data-icon="success-circle"] {
 
 .sidebarView .content-region {
     background: #333333;
-    flex: 1 0 800px;
+    flex: 1 1 800px;
     display: flex;
-    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.content-region .transitionWrap {
+    flex: 1;
+    height: 100%;
 }
 
 .content-region .content {
+    height: 100%;
+    overflow: hidden scroll;
+}
+
+.content .tab {
     position: relative;
-    padding: 60px 40px 80px;
+    padding: 60px 40px 70px;
     flex: 1 1 auto;
     max-width: 800px;
     min-width: 512px;
+    min-height: 100%;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+.content:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170, 0.7);
 }

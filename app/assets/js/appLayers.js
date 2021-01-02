@@ -1,3 +1,4 @@
+const Settings = require('./settings')
 class appLayers {
     constructor() {
         this.appMount = document.querySelector('#app-mount')
@@ -11,6 +12,7 @@ class appLayers {
         }
     }
     openSettings() {
+        new Settings()
         this.setActive('frameSecond')
     }
     openMain() {
