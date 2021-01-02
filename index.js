@@ -7,7 +7,7 @@ const launcher = require('./app/assets/js/launcher')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
-//app.disableHardwareAcceleration()
+app.disableHardwareAcceleration()
 
 // https://github.com/electron/electron/issues/18397
 app.allowRendererProcessReuse = true
@@ -20,7 +20,7 @@ function createWindow () {
     height: 720,
     minWidth: 800,
     minHeight: 500,
-    frame: false,
+    frame: process.platform === 'darwin',
     webPreferences: {
         contextIsolation: false,
         nodeIntegration: true,
@@ -47,7 +47,7 @@ function createWindow () {
   win.on('closed', () => {
       win = null
   })
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow)

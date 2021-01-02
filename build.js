@@ -21,7 +21,7 @@ builder.build({
         appId: 'tjmc-launcher',
         productName: 'TJMC-Launcher',
         artifactName: '${productName}-setup-${version}.${ext}',
-        copyright: 'Copyright © 2018-2020 MakAndJo',
+        copyright: 'Copyright © 2020-2021 MakAndJo',
         directories: {
             buildResources: 'build',
             output: 'dist'

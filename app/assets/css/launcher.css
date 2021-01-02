@@ -42,6 +42,7 @@
     transition: none !important;
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
+.darwin .frame-fix {padding-top: 0;}
 .frame-fix {padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
 
@@ -114,25 +115,6 @@ body, button {
     justify-content: space-between;
 }
 
-#frameBar #frameContentDarwin {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    -webkit-app-region: drag;
-}
-
-#frameBar #frameContentDarwin #frameTitleDock {
-    position: absolute;
-    text-align: center;
-    justify-self: center;
-    align-self: center;
-    display: block;
-    left: 0;
-    right: 0;
-    z-index: -1;
-}
-
 #frameBar #frameTitleDock {
     padding: 0 10px;
     display: flex;
@@ -152,13 +134,6 @@ body, button {
 }
 #frameBar #frameButtonDockWin > .frameButton:not(:first-child) {
     margin-left: -4px;
-}
-
-#frameBar #frameButtonDockDarwin {
-    -webkit-app-region: no-drag !important;
-    position: relative;
-    top: -1px;
-    right: -1px;
 }
 
 #frameBar .frameButton {
@@ -188,49 +163,6 @@ body, button {
     background: rgba(235, 0, 0, 0.61) !important;
 }
 
-
-#frameBar .frameButtonDarwin {
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-    border: 0px;
-    margin-left: 5px;
-    -webkit-app-region: no-drag !important;
-    cursor: pointer;
-}
-#frameBar .frameButtonDarwin:focus {
-    outline: 0px;
-}
-
-#frameBar #frameButtonDarwin_close {
-    background-color: #e74c32;
-}
-#frameBar #frameButtonDarwin_close:hover {
-    background-color: #FF9A8A;
-}
-#frameBar #frameButtonDarwin_close:active {
-    background-color: #ff8d7b;
-}
-
-#frameBar #frameButtonDarwin_minimize {
-    background-color: #fed045;
-}
-#frameBar #frameButtonDarwin_minimize:hover {
-    background-color: #FFE9A9;
-}
-#frameBar #frameButtonDarwin_minimize:active {
-    background-color: #ffde7b;
-}
-
-#frameBar #frameButtonDarwin_restoredown {
-    background-color: #96e734;
-}
-#frameBar #frameButtonDarwin_restoredown:hover {
-    background-color: #D6FFA6;
-}
-#frameBar #frameButtonDarwin_restoredown:active {
-    background-color: #bfff76;
-}
 
 /* =============================================== */
 
