@@ -83,7 +83,6 @@ class message {
                 isEscape = (evt.keyCode === 27)
             }
             if (isEscape) {
-                console.log('event esc')
                 this.destroy()
             }
         }
