@@ -20,7 +20,7 @@ function createWindow () {
     height: 720,
     minWidth: 800,
     minHeight: 500,
-    frame: false,
+    frame: process.platform === 'darwin',
     webPreferences: {
         contextIsolation: false,
         nodeIntegration: true,
@@ -47,7 +47,7 @@ function createWindow () {
   win.on('closed', () => {
       win = null
   })
-  //win.webContents.openDevTools()
+  win.webContents.openDevTools()
 }
 
 app.on('ready', createWindow)

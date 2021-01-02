@@ -1,18 +1,6 @@
-
-<div id="frameBar">
-    <div class="content">
-        <%if (process.platform === 'darwin') { %>
-            <div id="frameContentDarwin">
-                <div id="frameButtonDockDarwin">
-                    <button class="frameButtonDarwin fCb" id="frameButtonDarwin_close" tabIndex="-1"></button>
-                    <button class="frameButtonDarwin fMb" id="frameButtonDarwin_minimize" tabIndex="-1"></button>
-                    <button class="frameButtonDarwin fRb" id="frameButtonDarwin_restoredown" tabIndex="-1"></button>
-                </div>
-                <div id="frameTitleDock">
-                    <span id="frameTitleText">TJMC-Launcher</span>
-                </div>
-            </div>
-        <% } else{ %>  
+<%if (process.platform !== 'darwin') { %>
+    <div id="frameBar">
+        <div class="content">
             <div id="frameContentWin">
                 <div id="frameButtonDockWin">
                     <button class="frameButton fMb" id="frameButton_minimize" tabIndex="-1">
@@ -29,6 +17,6 @@
                     <span id="frameTitleText">TJMC-Launcher</span>
                 </div>
             </div>
-        <% } %>
+        </div>
     </div>
-</div>
+<% } %>

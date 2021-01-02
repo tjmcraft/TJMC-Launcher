@@ -34,16 +34,19 @@ document.addEventListener('readystatechange', function () {
         /* ================================= */
         
         logg.log('UICore Initializing..')
-
-        document.querySelector('.fCb').addEventListener('click', e => {
-            window.close()
-        })
-        document.querySelector('.fRb').addEventListener('click', e => {
-            window.isMaximized() ? window.unmaximize() : window.maximize()
-        })
-        document.querySelector('.fMb').addEventListener('click', e => {
-            window.minimize()
-        })
+        if (process.platform !== 'darwin') {
+            document.querySelector('.fCb').addEventListener('click', e => {
+                window.close()
+            })
+            document.querySelector('.fRb').addEventListener('click', e => {
+                window.isMaximized() ? window.unmaximize() : window.maximize()
+            })
+            document.querySelector('.fMb').addEventListener('click', e => {
+                window.minimize()
+            })
+        } else {
+            document.body.classList.add('darwin')
+        }
         // =================================================================
 
         versionList.addVer = function (val){
