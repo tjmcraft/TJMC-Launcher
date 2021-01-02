@@ -115,25 +115,6 @@ body, button {
     justify-content: space-between;
 }
 
-#frameBar #frameContentDarwin {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 100%;
-    -webkit-app-region: drag;
-}
-
-#frameBar #frameContentDarwin #frameTitleDock {
-    position: absolute;
-    text-align: center;
-    justify-self: center;
-    align-self: center;
-    display: block;
-    left: 0;
-    right: 0;
-    z-index: -1;
-}
-
 #frameBar #frameTitleDock {
     padding: 0 10px;
     display: flex;
@@ -153,17 +134,6 @@ body, button {
 }
 #frameBar #frameButtonDockWin > .frameButton:not(:first-child) {
     margin-left: -4px;
-}
-
-#frameBar #frameButtonDockDarwin {
-    -webkit-app-region: no-drag !important;
-    position: relative;
-    top: 0;
-    right: 0;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #frameBar .frameButton {
