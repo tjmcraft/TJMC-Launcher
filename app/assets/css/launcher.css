@@ -608,6 +608,16 @@ svg[data-icon="success-circle"] {
     display: flex;
     justify-content: flex-end;
     user-select: none;
+    overflow: hidden scroll;
+}
+.sidebar-region::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-region::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+.sidebar-region:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170, 0.7);
 }
 
 .sidebar-region .sidebar {
@@ -653,6 +663,12 @@ svg[data-icon="success-circle"] {
     text-transform: uppercase;
 }
 
+.sidebar .separator {
+    margin: 8px 10px;
+    height: 1px;
+    background-color: #ffffff0f;
+}
+
 .sidebarView .content-region {
     background: #333333;
     flex: 1 1 800px;
@@ -668,6 +684,16 @@ svg[data-icon="success-circle"] {
 .content-region .content {
     height: 100%;
     overflow: hidden scroll;
+}
+
+.content h3{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.content h3 {
+    margin-bottom: 20px;
 }
 
 .content .tab {
