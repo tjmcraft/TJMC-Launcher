@@ -18,7 +18,7 @@ function getCurrentPlatform(){
 builder.build({
     targets: (process.argv[2] != null && Platform[process.argv[2]] != null ? Platform[process.argv[2]] : getCurrentPlatform()).createTarget(),
     config: {
-        appId: 'tjmc-launcher',
+        appId: 'tjmc.launcher',
         productName: 'TJMC-Launcher',
         artifactName: '${productName}-setup-${version}.${ext}',
         copyright: 'Copyright © 2020-2021 MakAndJo',
@@ -27,30 +27,43 @@ builder.build({
             output: 'dist'
         },
         win: {
-            target: [
-                {
-                    target: 'nsis',
-                    arch: 'x64'
-                }
-            ]
-        },
-        nsis: {
-            oneClick: false,
-            perMachine: false,
-            allowElevation: true,
-            allowToChangeInstallationDirectory: true
+            publisherName: "MakAndJo",
+            target: "nsis"
         },
         mac: {
             target: 'dmg',
-            category: 'public.app-category.games'
+            category: 'public.app-category.games',
+            icon: 'icon.icns'
         },
         linux: {
             target: 'AppImage',
             maintainer: 'MakAndJo',
             vendor: 'MakAndJo',
-            synopsis: 'Modded Minecraft Launcher',
-            description: 'Custom launcher which allows users to join modded servers. All mods, configurations, and updates are handled automatically.',
+            synopsis: 'TJMC Minecraft Launcher',
+            description: 'Our custom minecraft launcher which contains Vanilla, OptiFine, Forge, ForgeOptiFine and other cool versions in one app',
             category: 'Game'
+        },
+        nsis: {
+            oneClick: true,
+            perMachine: false,
+            allowElevation: true,
+            allowToChangeInstallationDirectory: false,
+            createDesktopShortcut: true,
+            createStartMenuShortcut: true,
+            license: "",
+            installerIcon: 'icon.ico',
+            installerSidebar: "",
+            installerHeader: "",
+            installerHeaderIcon: "",
+            uninstallDisplayName: "",
+            uninstallerIcon: "",
+            uninstallerSidebar: "",
+            deleteAppDataOnUninstall: false
+        },
+        dmg: {
+            background: "",
+            icon: "icon.icns",
+            title: "Welcome to TJMC"
         },
         compression: 'maximum',
         files: [

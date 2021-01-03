@@ -27,23 +27,5 @@
   "devDependencies": {
     "electron": "^11.1.0",
     "electron-builder": "^22.9.1"
-  },
-  "build": {
-    "appId": "com.trinityinfosystem.electron.exchange.stream",
-    "productName": "Accurate",
-    "copyright": "Copyright © 2018 Trinity InfoSystem",
-    "win": {
-      "publisherName": "Trinity InfoSystem",
-      "target": [
-        "nsis"
-      ]
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
-    }
   }
 }
