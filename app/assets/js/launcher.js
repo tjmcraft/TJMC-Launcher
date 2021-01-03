@@ -118,7 +118,7 @@ class launcher extends EventEmitter{
         minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
 
         logg.log('nice')
-        return true
+        return minecraft
     }
 }
 

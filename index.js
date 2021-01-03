@@ -3,7 +3,6 @@ const ejse = require('ejs-electron')
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
-const launcher = require('./app/assets/js/launcher')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
@@ -12,7 +11,36 @@ const launcher = require('./app/assets/js/launcher')
 // https://github.com/electron/electron/issues/18397
 app.allowRendererProcessReuse = true
 
+const gotTheLock = app.requestSingleInstanceLock()
+
 let win
+
+if (!gotTheLock) {
+    app.quit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      // Кто-то пытался запустить второй экземпляр, мы должны сфокусировать наше окно.
+      if (win) {
+        if (win.isMinimized()) win.restore()
+        win.focus()
+      }
+    })
+    
+    app.on('ready', createWindow)
+    app.on('ready', createMenu)
+
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') {
+            app.quit()
+        }
+    })
+
+    app.on('activate', () => {
+        if (win === null) {
+            createWindow()
+        }
+    })
+}
 
 function createWindow () {
   win = new BrowserWindow({
@@ -50,103 +78,110 @@ function createWindow () {
   win.webContents.openDevTools()
 }
 
-app.on('ready', createWindow)
-app.on('ready', createMenu)
-
-app.on('window-all-closed', () => {
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
-
-app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (win === null) {
-        createWindow()
-    }
-})
-
-global.appRoot = path.resolve(__dirname)
-
 function createMenu() {
+    const isMac = process.platform === 'darwin'
+
+    const template = [
+        ...(isMac ? [{
+            label: 'Application',
+            submenu: [{
+                label: 'About Application',
+                selector: 'orderFrontStandardAboutPanel:'
+            },
+            {
+                type: 'separator'
+            },
+            {
+                label: 'Quit',
+                accelerator: 'Command+Q',
+                click: () => {
+                    app.quit()
+                }
+            }]
+        }] : []),
+        {
+            label: 'Minecraft',
+            submenu: [
+                {
+                    label: 'Root Directory',
+                    accelerator: isMac ? 'Alt+Cmd+D' : 'Ctrl+Shift+D',
+                    click: () => {
+                        win.webContents.send('open-minecraft-dir')
+                    }
+                },
+                {
+                    label: 'Options',
+                    accelerator: isMac ? 'Alt+Cmd+P' : 'Ctrl+Shift+P',
+                    click: () => {
+                        win.webContents.send('open-settings')
+                    }
+                }
+            ]
+        },
+        // { role: 'editMenu' }
+        {
+            label: 'Edit',
+            submenu: [
+                { role: 'undo' },
+                { role: 'redo' },
+                { type: 'separator' },
+                { role: 'cut' },
+                { role: 'copy' },
+                { role: 'paste' },
+                ...(isMac ? [
+                    { role: 'pasteAndMatchStyle' },
+                    { role: 'delete' },
+                    { role: 'selectAll' },
+                    { type: 'separator' },
+                    {
+                    label: 'Speech',
+                    submenu: [
+                        { role: 'startSpeaking' },
+                        { role: 'stopSpeaking' }
+                    ]
+                    }
+                ] : [
+                    { role: 'delete' },
+                    { type: 'separator' },
+                    { role: 'selectAll' }
+                ])
+            ]
+        },
+        // { role: 'viewMenu' }
+        {
+            label: 'View',
+            submenu: [
+                { role: 'reload' },
+                { role: 'forceReload'},
+                { role: 'toggleDevTools', accelerator: 'F12' },
+                { type: 'separator' },
+                { role: 'resetZoom' },
+                { role: 'zoomIn', accelerator: 'Alt+=' },
+                { role: 'zoomOut', accelerator: 'Alt+-' },
+                { type: 'separator' },
+                { role: 'togglefullscreen', accelerator: 'F11' }
+            ]
+        },
+        // { role: 'windowMenu' }
+        {
+            label: 'Window',
+            submenu: [
+                { role: 'minimize' },
+                { role: 'zoom' },
+                ...(isMac ? [
+                    { type: 'separator' },
+                    { role: 'front' },
+                    { type: 'separator' },
+                    { role: 'window' }
+                ] : [
+                    { role: 'close' }
+                ])
+            ]
+        }
+    ]
     
-  if(process.platform === 'darwin') {
-
-      // Extend default included application menu to continue support for quit keyboard shortcut
-      let applicationSubMenu = {
-          label: 'Application',
-          submenu: [{
-              label: 'About Application',
-              selector: 'orderFrontStandardAboutPanel:'
-          }, {
-              type: 'separator'
-          }, {
-              label: 'Quit',
-              accelerator: 'Command+Q',
-              click: () => {
-                  app.quit()
-              }
-          }]
-      }
-
-      let minecraftMenu = {
-          label: 'Minecraft',
-          submenu: [{
-            role: 'Minecraft Directory',
-            accelerator: process.platform === 'darwin' ? 'Alt+Cmd+I' : 'Alt+Shift+I',
-            click: () => { launcher.openMineDir() }
-          },
-          {
-            role: 'Options',
-            accelerator: process.platform === 'darwin' ? 'Alt+Cmd+P' : 'Alt+Shift+P',
-            click: () => {  }
-          }
-        ]
-      }
-
-      // New edit menu adds support for text-editing keyboard shortcuts
-      let editSubMenu = {
-          label: 'Edit',
-          submenu: [{
-              label: 'Undo',
-              accelerator: 'CmdOrCtrl+Z',
-              selector: 'undo:'
-          }, {
-              label: 'Redo',
-              accelerator: 'Shift+CmdOrCtrl+Z',
-              selector: 'redo:'
-          }, {
-              type: 'separator'
-          }, {
-              label: 'Cut',
-              accelerator: 'CmdOrCtrl+X',
-              selector: 'cut:'
-          }, {
-              label: 'Copy',
-              accelerator: 'CmdOrCtrl+C',
-              selector: 'copy:'
-          }, {
-              label: 'Paste',
-              accelerator: 'CmdOrCtrl+V',
-              selector: 'paste:'
-          }, {
-              label: 'Select All',
-              accelerator: 'CmdOrCtrl+A',
-              selector: 'selectAll:'
-          }]
-      }
-
-      // Bundle submenus into a single template and build a menu object with it
-      let menuTemplate = [applicationSubMenu, minecraftMenu, editSubMenu]
-      let menuObject = Menu.buildFromTemplate(menuTemplate)
-
-      // Assign it to the application
-      Menu.setApplicationMenu(menuObject)
-
-  }
+    const menuObject = Menu.buildFromTemplate(template)
+    Menu.setApplicationMenu(menuObject)
 
 }
 
