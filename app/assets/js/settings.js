@@ -93,7 +93,7 @@ class Settings {
         new appLayers().openMain()
         setTimeout(() => {
             this.settings.innerHTML = null
-        }, 500)
+        }, 100)
         document.onkeyup = null
     }
 }

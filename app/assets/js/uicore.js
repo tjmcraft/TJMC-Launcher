@@ -7,12 +7,19 @@ const path = require('path')
 const {Minecraft} = require('./assets/js/Minecraft')
 const client = require('./assets/js/launcher')
 const appLayers = require('./assets/js/appLayers')
+const launcher = require('./assets/js/launcher')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
 document.addEventListener('readystatechange', function () {
     const window = remote.getCurrentWindow()
     if (document.readyState === 'interactive'){
+        ipcRenderer.on('open-settings', function() {
+            new appLayers().openSettings()
+        })
+        ipcRenderer.on('open-minecraft-dir', function() {
+            launcher.openMineDir()
+        })
         webFrame.setZoomFactor(1)
 
         if (window.isFullScreen()) {
