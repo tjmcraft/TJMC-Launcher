@@ -1,4 +1,4 @@
-const {escBinder} = require('./uibind')
+const {escBinder, toggleButtonBinder} = require('./uibind')
 class Settings {
     constructor() {
         console.log('Settings init')

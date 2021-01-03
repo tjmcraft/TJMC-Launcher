@@ -6,6 +6,7 @@ const path                                   = require('path')
 const checksum                               = require('checksum')
 const os = require('os')
 const Zip = require('adm-zip')
+const {merge, getOS} = require('./Tools')
 const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 let counter = 0
@@ -19,8 +20,8 @@ class Minecraft{
         this.client = client
         this.options = client.options
         this.baseRequest = request.defaults({
-            pool: { maxSockets: this.options.request.maxSockets || 4 },
-            timeout: this.options.request.timeout || 10000
+            pool: { maxSockets: this.options.overrides.request.maxSockets || 4 },
+            timeout: this.options.overrides.request.timeout || 10000
         })
     }
 
@@ -91,7 +92,7 @@ class Minecraft{
      */
     async getVersion (version) {
         logg.debug('Loading Version JSON for: '+version)
-        const versionJsonPath = path.join(this.options.path.directory, version, `${version}.json`)
+        const versionJsonPath = path.join(this.options.overrides.path.directory, version, `${version}.json`)
         var c_version = null;
         if (fs.existsSync(versionJsonPath)) {
             c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
@@ -117,7 +118,7 @@ class Minecraft{
             }
             delete c_version.inheritsFrom
         }
-        fs.mkdirSync(path.join(this.options.path.directory, version), {recursive: true})
+        fs.mkdirSync(path.join(this.options.overrides.path.directory, version), {recursive: true})
         fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
         return c_version
     }
@@ -127,7 +128,7 @@ class Minecraft{
      * @param version Main version JSON
      */
     async getJar (version) {
-        const versionPath = path.join(this.options.path.version)
+        const versionPath = path.join(this.options.overrides.path.version)
         await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.number}.jar`, true, 'version-jar')
         logg.debug('Downloaded version jar')
     }
@@ -139,7 +140,7 @@ class Minecraft{
     async getClasses (classJson) {
         let libs = []
 
-        const libraryDirectory = path.resolve(path.join(this.options.path.root, 'libraries'))
+        const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'))
 
         if (classJson.mavenFiles) {
             await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven-custom')
@@ -167,7 +168,7 @@ class Minecraft{
      * @param version Main version JSON
      */
     async getNatives (version) {
-        const nativeDirectory = path.resolve(path.join(this.options.path.version, 'natives'))
+        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
 
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
@@ -244,7 +245,7 @@ class Minecraft{
      * @param version Main version JSON
      */
     async getAssets (version) {
-        const assetDirectory = path.resolve(path.join(this.options.path.root, 'assets'))
+        const assetDirectory = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
         }
@@ -463,20 +464,20 @@ class Minecraft{
     }
 
     getMemory () {
-        if (!this.options.memory) {
+        if (!this.options.java.memory) {
             logg.debug('Memory not set! Setting 1GB as MAX!')
-            this.options.memory = {
+            this.options.java.memory = {
                 min: 512,
                 max: 1024
             }
         }
-        if (!isNaN(this.options.memory.max) && !isNaN(this.options.memory.min)) {
-            if (this.options.memory.max < this.options.memory.min) {
+        if (!isNaN(this.options.java.memory.max) && !isNaN(this.options.java.memory.min)) {
+            if (this.options.java.memory.max < this.options.java.memory.min) {
                 logg.debug('MIN memory is higher then MAX! Resetting!')
-                this.options.memory.max = 1024
-                this.options.memory.min = 512
+                this.options.java.memory.max = 1024
+                this.options.java.memory.min = 512
             }
-            return [`${this.options.memory.max}M`, `${this.options.memory.min}M`]
+            return [`${this.options.java.memory.max}M`, `${this.options.java.memory.min}M`]
         }
     }
 
@@ -485,9 +486,9 @@ class Minecraft{
      * 
      */
     constructJVMArguments(versionFile, tempNativePath, cp){
-        const assetRoot = path.resolve(path.join(this.options.path.root, 'assets'))
+        const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)}`)
         this.fields = {
             '${auth_access_token}': this.options.authorization.access_token,
             '${auth_session}': this.options.authorization.access_token,
@@ -497,15 +498,15 @@ class Minecraft{
             '${user_type}': 'mojang',
             '${version_name}': this.options.version.number,
             '${assets_index_name}': versionFile.assetIndex.id,
-            '${game_directory}': this.options.path.gameDirectory || this.options.path.root,
+            '${game_directory}': this.options.overrides.path.gameDirectory || this.options.overrides.path.root,
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
             '${version_type}': this.options.version.type,
-            '${resolution_width}': this.options.launch.width,
-            '${resolution_height}': this.options.launch.height,
+            '${resolution_width}': this.options.minecraft.launch.width,
+            '${resolution_height}': this.options.minecraft.launch.height,
             '${classpath}': `${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`,
             '${natives_directory}': tempNativePath,
-            '${game_libraries_directory}': this.options.path.directory,
+            '${game_libraries_directory}': this.options.overrides.path.directory,
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }
@@ -523,7 +524,7 @@ class Minecraft{
     getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.path.version, `${this.options.version.number}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)}`)
 
         // Java Arguments
         if(process.platform === 'darwin'){
@@ -591,7 +592,7 @@ class Minecraft{
                         // We don't have many 'features' in the index at the moment.
                         // This should be fine for a while.
                         if(rule.features.has_custom_resolution != null && rule.features.has_custom_resolution === true){
-                            if(this.options.launch.fullscreen){
+                            if(this.options.minecraft.launch.fullscreen){
                                 args[i].value = [
                                     '--fullscreen',
                                     'true'
@@ -661,14 +662,14 @@ class Minecraft{
         }
 
         // Prepare game resolution
-        if(this.options.launch.fullscreen){
+        if(this.options.minecraft.launch.fullscreen){
             mcArgs.push('--fullscreen')
             mcArgs.push(true)
         } else {
             mcArgs.push('--width')
-            mcArgs.push(this.options.launch.width)
+            mcArgs.push(this.options.minecraft.launch.width)
             mcArgs.push('--height')
-            mcArgs.push(this.options.launch.height)
+            mcArgs.push(this.options.minecraft.launch.height)
         }
 
         return mcArgs
@@ -676,32 +677,4 @@ class Minecraft{
 
 }
 
-    /**
-     * Function return current os name
-     */
-    function getOS () {
-        switch (process.platform) {
-            case 'win32': return 'windows'
-            case 'darwin': return 'osx'
-            case 'linux': return 'linux'
-            default: return 'unknown_os'
-        }
-    }
-
-    /**
-    * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
-    *
-    * @params ...args Function accept multiple array input (merges them to single array with no duplicates)
-    * it also can be used to filter duplicates in single array
-    */
-    var merge = (...args) => {
-        let set = new Set()
-        for (let arr of args) {
-            arr.map((value) => {
-                set.add(value)
-            })
-        }
-        return [...set]
-    }
-
-    module.exports = {Minecraft, merge, getOS}
+module.exports = Minecraft

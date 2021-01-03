@@ -4,10 +4,12 @@ const Message = require('./assets/js/message')
 const request = require('request')
 const fs = require('fs')
 const path = require('path')
-const {Minecraft} = require('./assets/js/Minecraft')
+const Minecraft = require('./assets/js/Minecraft')
 const client = require('./assets/js/launcher')
 const appLayers = require('./assets/js/appLayers')
 const launcher = require('./assets/js/launcher')
+const {escBinder, toggleButtonBinder} = require('./assets/js/uibind')
+const ConfigManager = require('./assets/js/ConfigManager')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -25,7 +27,9 @@ document.addEventListener('readystatechange', function () {
         /* ================================= */
         
         logg.log('UICore Initializing..')
-
+        ConfigManager.load()
+        Layers.openMain()
+        
         webFrame.setZoomFactor(1)
 
         if (window.isFullScreen()) {
@@ -84,7 +88,7 @@ document.addEventListener('readystatechange', function () {
             startMine()
         })
         // ----------------------------------
-        function startMine () {
+        async function startMine () {
             let launcher = new client()
             launcher.on('progress', (e) => {
                 progressBar.setValue((e.task/e.total)*100)
@@ -93,12 +97,12 @@ document.addEventListener('readystatechange', function () {
                 if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
             })
             topBar.toggle(true)
-            launcher.construct().then((minecraft) => {
-              topBar.toggle(false)
-            })
+            launcher.construct(ConfigManager.getAllOptions()).then((minecraftArguments) =>
+                launcher.createJVM(minecraftArguments).then((e) => {
+                    topBar.toggle(false)
+                })
+            )
         }
-
-        Layers.openMain()
 
     } else if (document.readyState === 'complete'){
         setTimeout(() => {

@@ -14,4 +14,19 @@ class escBinder {
     }
 }
 
-module.exports = {escBinder}
+class toggleButtonBinder {
+    constructor (b) {
+        this.button = b
+    }
+    bind (f) {
+        this.button.onclick = (e) => {
+            typeof f === 'function' ? f(this.button.checked) : ''
+        }
+    }
+    unbind () {
+        this.button.onclick = null
+        this.button = null
+    }
+}
+
+module.exports = {escBinder, toggleButtonBinder}

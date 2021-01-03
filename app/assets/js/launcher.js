@@ -4,7 +4,8 @@ const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const {Minecraft, merge, getOS}              = require('./Minecraft')
+const Minecraft              = require('./Minecraft')
+const {merge} = require('./Tools')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter{
@@ -25,71 +26,34 @@ class launcher extends EventEmitter{
         }
         return
     }
-    async construct (options = null) {
-        this.options = options ? options :
-        {
-            javaPath: 'java',
-            version: {
-                number: 'OptiFine 1.15.2',
-                type: 'modified'
-            },
-            authorization: {
-                access_token: 'null',
-                name: 'MakAndJo',
-                uuid: 'null',
-                user_properties: ''
-            },
-            launch: {
-                fullscreen: false,
-                width: 1280,
-                height: 720,
-                detached: true,
-                cwd: ''
-            },
-            memory: {
-                max: 1024,
-                min: 512
-            }
-        }
-
-        this.options.os = getOS()
-        this.options.request = 
-        {
-            maxSockets: 32,
-            timeout: 10000
-        }
-        this.options.path = 
-        {
-            root: path.join(this.constructor.getAppData, 'minecraft'),
-            directory: path.join(this.constructor.getAppData, 'minecraft', 'versions')
-        }
-        this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)
-        logg.debug(`Minecraft folder ${this.options.path.root}`)
+    async construct (options) {
+        this.options = options
+        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.number)
+        logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
 
         this.handler = new Minecraft(this)
 
-        const java = await this.handler.checkJava(this.options.javaPath || 'java')
+        const java = await this.handler.checkJava(this.options.java.javaPath || 'java')
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
             return null
         }
-        if (!fs.existsSync(this.options.path.root)) {
+        if (!fs.existsSync(this.options.overrides.path.root)) {
             logg.log('Attempting to create root folder')
-            fs.mkdirSync(this.options.path.root, {recursive: true})
+            fs.mkdirSync(this.options.overrides.path.root, {recursive: true})
         }
-        if (this.options.path.gameDirectory) {
-            this.options.path.gameDirectory = path.resolve(this.options.path.gameDirectory)
-            if (!fs.existsSync(this.options.path.gameDirectory)) {
-              fs.mkdirSync(this.options.path.gameDirectory, {recursive: true})
+        if (this.options.overrides.path.gameDirectory) {
+            this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path.gameDirectory)
+            if (!fs.existsSync(this.options.overrides.path.gameDirectory)) {
+              fs.mkdirSync(this.options.overrides.path.gameDirectory, {recursive: true})
             }
         }
-        this.options.path.version = path.join(this.options.path.root, 'versions', this.options.version.number)
 
         logg.log('Attempting to load main json')
         const versionFile = await this.handler.getVersion(this.options.version.number)
         const nativePath = await this.handler.getNatives(versionFile)
         logg.warn(versionFile)
-        this.options.mcPath = path.join(this.options.path.version, `${this.options.version.number}.jar`)
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)
@@ -102,22 +66,24 @@ class launcher extends EventEmitter{
         await this.handler.getAssets(versionFile)
 
         const launchArguments = this.handler.constructJVMArguments(versionFile, nativePath, classes)
-        logg.debug(`Launching with arguments ${this.options.javaPath} ${launchArguments.join(' ')}`)
+        logg.debug(`Launching with arguments ${this.options.java.javaPath} ${launchArguments.join(' ')}`)
 
+        logg.log('nice')
+        return launchArguments
+    }
+    async createJVM (launchArguments) {
         const minecraft = child.spawn(
-            this.options.javaPath, 
+            this.options.java.javaPath, 
             launchArguments,
             {
-                cwd: this.options.launch.cwd || this.options.path.root, 
-                detached: this.options.launch.detached 
+                cwd: this.options.java.cwd || this.options.overrides.path.root,
+                detached: this.options.java.detached
             }
         )
         
         minecraft.stdout.on('data', (data) => logg.log(data.toString('utf-8')))
         minecraft.stderr.on('data', (data) => logg.error(data.toString('utf-8')))
         minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
-
-        logg.log('nice')
         return minecraft
     }
 }

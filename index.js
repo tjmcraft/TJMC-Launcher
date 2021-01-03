@@ -156,8 +156,8 @@ function createMenu() {
                 { role: 'toggleDevTools', accelerator: 'F12' },
                 { type: 'separator' },
                 { role: 'resetZoom' },
-                { role: 'zoomIn', accelerator: 'Alt+=' },
-                { role: 'zoomOut', accelerator: 'Alt+-' },
+                { role: 'zoomIn', accelerator: 'Ctrl+=' },
+                { role: 'zoomOut', accelerator: 'Ctrl+-' },
                 { type: 'separator' },
                 { role: 'togglefullscreen', accelerator: 'F11' }
             ]
