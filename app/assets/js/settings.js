@@ -1,3 +1,4 @@
+const {escBinder} = require('./uibind')
 class Settings {
     constructor() {
         console.log('Settings init')
@@ -17,18 +18,10 @@ class Settings {
 
         this.bindSidebarItems()
 
-        document.onkeyup = (evt) => {
-            evt = evt || window.event
-            let isEscape = false
-            if ("key" in evt) {
-                isEscape = (evt.key === "Escape" || evt.key === "Esc")
-            } else {
-                isEscape = (evt.keyCode === 27)
-            }
-            if (isEscape) {
-                this.destroy()
-            }
-        }
+        this.escBinder = new escBinder()
+        this.escBinder.bind(() => {
+            this.destroy()
+        })
 
         this.setTab('my-account-tab')
     }
@@ -94,7 +87,7 @@ class Settings {
         setTimeout(() => {
             this.settings.innerHTML = null
         }, 100)
-        document.onkeyup = null
+        this.escBinder.uibind()
     }
 }
 

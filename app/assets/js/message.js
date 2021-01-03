@@ -1,14 +1,14 @@
 const fs = require('fs')
-
+const {escBinder} = require('./uibind')
 class message {
     constructor(params) {
-        let oldOverlay = document.querySelector('#overlay')
+        /*let oldOverlay = document.querySelector('#overlay')
         if (oldOverlay) {
             oldOverlay.toggle(false)
             setTimeout(() => {
                 oldOverlay.remove()
             }, 1000)
-        }
+        }*/
 
         this.overlay = this.createOverlay(params.closeButton)
         this.overlay.toggle(false)
@@ -73,19 +73,11 @@ class message {
         this.overlay.onclick = (e) => {
             this.destroy()
         }
-
-        document.onkeyup = (evt) => {
-            evt = evt || window.event
-            let isEscape = false
-            if ("key" in evt) {
-                isEscape = (evt.key === "Escape" || evt.key === "Esc")
-            } else {
-                isEscape = (evt.keyCode === 27)
-            }
-            if (isEscape) {
-                this.destroy()
-            }
-        }
+        
+        this.escBinder = new escBinder()
+        this.escBinder.bind(() => {
+            this.destroy()
+        })
 
         this.overlay.append(container)
 
@@ -141,7 +133,7 @@ class message {
         setTimeout(() => {
             this.overlay.remove()
         }, 500)
-        document.onkeyup = null
+        this.escBinder.uibind()
     }
 }
 
