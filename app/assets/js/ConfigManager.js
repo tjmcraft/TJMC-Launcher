@@ -178,3 +178,10 @@ exports.setWindowMaximized = function(maximized) {
 exports.setWindowMinimized = function(minimized) {
     config.launcher.window.minimized = typeof minimized === 'boolean' ? minimized : DEFAULT_CONFIG.launcher.window.minimized
 }
+
+exports.getWindowState = function() {
+    return config.launcher.window
+}
+exports.setWindowState = function(state) {
+    config.launcher.window = state
+}

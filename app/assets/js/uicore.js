@@ -108,43 +108,11 @@ document.addEventListener('readystatechange', function () {
 })
 
 function track(win) {
-    win.on('resize', () => {
-        !(win.isMaximized() || win.isFullScreen()) &&
-        ConfigManager.setWindowSize(win.getBounds()['width'], win.getBounds()['height'])
-    })
-    win.on('move', () => {
-        !(win.isMaximized() || win.isFullScreen()) &&
-        ConfigManager.setWindowPosition(win.getBounds()['x'], win.getBounds()['y'])
-    })
-    win.on('maximize', () => {
-        ConfigManager.setWindowMaximized(win.isMaximized())
-    })
-    win.on('unmaximize', () => {
-        ConfigManager.setWindowMaximized(win.isMaximized())
-    })
-    win.on('minimize', () => {
-        ConfigManager.setWindowMinimized(win.isMinimized())
-    })
-    win.on('restore', () => {
-        ConfigManager.setWindowMinimized(win.isMinimized())
-    })
     win.on('enter-full-screen', (e) => {
-        ConfigManager.setWindowFullScreen(win.isFullScreen())
         document.body.classList.add('fullscreen')
     })
     win.on('leave-full-screen', (e) => {
-        ConfigManager.setWindowFullScreen(win.isFullScreen())
         document.body.classList.remove('fullscreen')
-    })
-    win.once('ready-to-show', () => {
-        win.setSize(ConfigManager.getWindowWidth(), ConfigManager.getWindowHeight())
-        if (ConfigManager.getWindowPositionX() > 0 && ConfigManager.getWindowPositionY() > 0) win.setPosition(ConfigManager.getWindowPositionX(), ConfigManager.getWindowPositionY())
-        if (ConfigManager.getWindowFullScreen()) win.setFullScreen(ConfigManager.getWindowFullScreen())
-        if (ConfigManager.getWindowMaximized()) win.maximize()
-        if (ConfigManager.getWindowMinimized()) {win.minimize()} else {win.show()}
-    })
-    win.on('close', () => {
-        ConfigManager.save()
     })
 }
 

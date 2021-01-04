@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu } = require('electron')
 const ejse = require('ejs-electron')
 const path = require('path')
 const url = require('url')
+const WindowState = require('./app/assets/js/libs/WindowState')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
@@ -42,9 +43,15 @@ if (!gotTheLock) {
 }
 
 function createWindow () {
-    win = new BrowserWindow({
+    let windowState = WindowState({
         width: 1280,
-        height: 720,
+        height: 720
+    })
+    win = new BrowserWindow({
+        x: windowState.x,
+        y: windowState.y,
+        width: windowState.width,
+        height: windowState.height,
         minWidth: 800,
         minHeight: 580,
         show: false,
@@ -59,6 +66,8 @@ function createWindow () {
         icon: getPlatformIcon('icon'),
         backgroundColor: '#171614'
     })
+
+    windowState.manage(win)
 
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'app', 'app.ejs'),
