@@ -11,7 +11,7 @@ const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold'
 
 let counter = 0
 
-class Minecraft{
+class Minecraft {
     /**
      * This is just constructor
      * @param client U may set here this

@@ -1,14 +1,14 @@
-const child = require('child_process')
-const EventEmitter = require('events').EventEmitter
+const child                                  = require('child_process')
+const EventEmitter                           = require('events')
 const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const Minecraft              = require('./Minecraft')
-const {merge} = require('./Tools')
+const Minecraft                              = require('./Minecraft')
+const {merge}                                = require('./Tools')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
-class launcher extends EventEmitter{
+class launcher extends EventEmitter {
     static get getAppData(){
         return path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
     }
@@ -26,13 +26,15 @@ class launcher extends EventEmitter{
         }
         return
     }
-    async construct (options) {
+    constructor (options) {
+        super()
         this.options = options
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.number)
         logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
 
         this.handler = new Minecraft(this)
-
+    }
+    async construct () {
         const java = await this.handler.checkJava(this.options.java.javaPath || 'java')
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)

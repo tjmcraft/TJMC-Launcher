@@ -1,7 +1,6 @@
 const { app, BrowserWindow, Menu } = require('electron')
 const ejse = require('ejs-electron')
 const path = require('path')
-const fs = require('fs')
 const url = require('url')
 
 // Disable hardware acceleration.
@@ -43,39 +42,39 @@ if (!gotTheLock) {
 }
 
 function createWindow () {
-  win = new BrowserWindow({
-    width: 1280,
-    height: 720,
-    minWidth: 800,
-    minHeight: 500,
-    frame: process.platform === 'darwin',
-    webPreferences: {
-        contextIsolation: false,
-        nodeIntegration: true,
-        enableRemoteModule: true
-    },
-    icon: getPlatformIcon('icon'),
-    backgroundColor: '#171614'
-  })
+    win = new BrowserWindow({
+        width: 1280,
+        height: 720,
+        minWidth: 800,
+        minHeight: 580,
+        show: false,
+        frame: process.platform === 'darwin',
+        webPreferences: {
+            preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+            worldSafeExecuteJavaScript: true
+        },
+        icon: getPlatformIcon('icon'),
+        backgroundColor: '#171614'
+    })
 
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'app', 'app.ejs'),
-    protocol: 'file:',
-    slashes: true
-  }))
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, 'app', 'app.ejs'),
+        protocol: 'file:',
+        slashes: true
+    }))
 
-  win.once('ready-to-show', () => {
-    win.show()
-  })
+    //win.removeMenu()
 
-  //win.removeMenu()
+    win.resizable = true
 
-  win.resizable = true
+    win.on('closed', () => {
+        win = null
+    });
 
-  win.on('closed', () => {
-      win = null
-  })
-  win.webContents.openDevTools()
+    //win.webContents.openDevTools()
 }
 
 function createMenu() {

@@ -36,17 +36,6 @@ class Settings {
     }
     setTab (tab) {
         console.log('Setting tab: '+tab)
-        /*let src = "./tabs/"+tab+".html"
-        fetch(src).then(response => response.text())
-        .then((response) => {
-            this.content.innerHTML = response
-        })
-        .then(() => {
-            this.sidebarItems.forEach((i) => {
-                i.classList.remove('selected')
-                if (i.getAttribute('rTi') === tab) i.classList.add('selected')
-            })
-        })*/
         this.content.forEach((el) => {
             el.toggle(false)
             if (el.id === tab) el.toggle(true)

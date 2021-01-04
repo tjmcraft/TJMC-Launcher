@@ -1,9 +1,5 @@
-const launcher = require('./launcher')
 const fs = require('fs-extra')
 const path = require('path')
-const os = require('os')
-const { getOS } = require('./Minecraft')
-const { settings } = require('cluster')
 const logg = require('./loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold')
 
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
@@ -23,12 +19,13 @@ const DEFAULT_CONFIG =
     launcher: {
         backgroundImage: '',
         window: {
-            x: -1,
-            y: -1,
-            width: 0,
-            height: 0,
+            x: 0,
+            y: 0,
+            width: 1280,
+            height: 720,
             maximized: false,
-            minimized: false
+            minimized: false,
+            fullScreen: false
         }
     },
     overrides: {
@@ -74,7 +71,7 @@ exports.getDataDirectory = function(def = false){
 const configPath = path.join(exports.getLauncherDirectory(), 'config.json')
 
 exports.save = function(){
-    fs.writeFileSync(configPath, JSON.stringify(config), 'UTF-8')
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8')
 }
 
 exports.load = function(){
@@ -125,4 +122,59 @@ exports.isLoaded = function(){
 
 exports.getAllOptions = function() {
     return config
+}
+
+/* =====================   Window Properties   ===================== */
+exports.getWindowBounds = function() {
+    return config.launcher.window
+}
+
+exports.getWindowPositionX = function() {
+    return config.launcher.window.x
+}
+
+exports.getWindowPositionY = function() {
+    return config.launcher.window.y
+}
+
+exports.getWindowWidth = function() {
+    return config.launcher.window.width
+}
+
+exports.getWindowHeight = function() {
+    return config.launcher.window.height
+}
+
+exports.getWindowFullScreen = function() {
+    return config.launcher.window.fullScreen
+}
+
+exports.getWindowMaximized = function() {
+    return config.launcher.window.maximized
+}
+
+exports.getWindowMinimized = function() {
+    return config.launcher.window.minimized
+}
+
+exports.setWindowPosition = function(x, y) {
+    config.launcher.window.x = x > 0 ? x : DEFAULT_CONFIG.launcher.window.x
+    config.launcher.window.y = y > 0 ? y : DEFAULT_CONFIG.launcher.window.y
+}
+
+exports.setWindowSize = function(width, height) {
+    config.launcher.window.width = Number.isInteger(width) && width > 1 ? width : DEFAULT_CONFIG.launcher.window.width
+    config.launcher.window.height = Number.isInteger(height) && height > 1 ? height : DEFAULT_CONFIG.launcher.window.height
+}
+
+exports.setWindowFullScreen = function(fullScreen) {
+    config.launcher.window.fullScreen = typeof fullScreen === 'boolean' ? fullScreen : DEFAULT_CONFIG.launcher.window.fullScreen
+}
+
+exports.setWindowMaximized = function(maximized) {
+    config.launcher.window.maximized = typeof maximized === 'boolean' ? maximized : DEFAULT_CONFIG.launcher.window.maximized
+}
+
+exports.setWindowMinimized = function(minimized) {
+    config.launcher.window.minimized = typeof minimized === 'boolean' ? minimized : DEFAULT_CONFIG.launcher.window.minimized
 }
