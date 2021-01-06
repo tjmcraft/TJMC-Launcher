@@ -9,7 +9,7 @@ module.exports = function (config) {
     let state, winRef
 
     function isNormal(win) {
-        return !win.isMaximized() && !win.isMinimized() && !win.isFullScreen()
+        return !win.isMinimized() && !win.isMaximized() && !win.isFullScreen()
     }
 
     function hasBounds() {
@@ -54,7 +54,7 @@ module.exports = function (config) {
     }
 
     function validateState() {
-        const isValid = state && (hasBounds() || state.isMaximized || state.isFullScreen)
+        const isValid = state && (hasBounds() || state.isMinimized ||state.isMaximized || state.isFullScreen)
         if (!isValid) {
             state = null
             return
@@ -77,6 +77,7 @@ module.exports = function (config) {
                 state.width = winBounds.width
                 state.height = winBounds.height
             }
+            state.isMinimized = win.isMinimized()
             state.isMaximized = win.isMaximized()
             state.isFullScreen = win.isFullScreen()
             state.displayBounds = screen.getDisplayMatching(winBounds).bounds
@@ -100,6 +101,9 @@ module.exports = function (config) {
     }
 
     function manage(win) {
+        if (state.isMinimized) {
+            win.minimize()
+        }
         if (state.isMaximized) {
             win.maximize()
         }
@@ -110,9 +114,6 @@ module.exports = function (config) {
         win.on('move', stateHandler)
         win.on('close', stateHandler)
         win.on('closed', closedHandler)
-        win.once('ready-to-show', () => {
-            win.show()
-        })
         winRef = win
     }
 
@@ -127,6 +128,7 @@ module.exports = function (config) {
     }
 
     state = ConfigManager.getWindowState()
+
     validateState()
 
     state = Object.assign({
@@ -141,6 +143,7 @@ module.exports = function (config) {
         get height() { return state.height },
         get displayBounds() { return state.displayBounds },
         get isMaximized() { return state.isMaximized },
+        get isMinimized() { return state.isMinimized },
         get isFullScreen() { return state.isFullScreen },
         saveState,
         unmanage,

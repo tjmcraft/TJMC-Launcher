@@ -1,24 +1,16 @@
 const {ipcRenderer, remote, shell, webFrame} = require('electron')
-const LoggerUtil = require('./assets/js/loggerutil')
-const Message = require('./assets/js/message')
-const request = require('request')
-const fs = require('fs')
-const path = require('path')
-const Minecraft = require('./assets/js/Minecraft')
-const client = require('./assets/js/launcher')
-const appLayers = require('./assets/js/appLayers')
-const launcher = require('./assets/js/launcher')
-const {escBinder, toggleButtonBinder} = require('./assets/js/uibind')
-const ConfigManager = require('./assets/js/ConfigManager')
+const LoggerUtil = require('./loggerutil')
+const Minecraft = require('./Minecraft')
+const client = require('./launcher')
+const appLayers = require('./appLayers')
+const launcher = require('./launcher')
+const ConfigManager = require('./ConfigManager')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
-webFrame.setZoomLevel(0)
-webFrame.setVisualZoomLevelLimits(1, 1)
-
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
-        const window = remote.getCurrentWindow()
+        const c_window = remote.getCurrentWindow()
         let Layers = new appLayers()
 
         /* ================================= */
@@ -32,10 +24,10 @@ document.addEventListener('readystatechange', function () {
         logg.log('UICore Initializing..')
 
         Layers.openMain()
-        track(window)
-
-        if (window.isFullScreen()) {
-            document.body.classList.add('fullscreen')
+        track(c_window)
+        window.onbeforeunload = function() {
+            logg.log('untrack')
+            untrack(c_window)
         }
 
         ipcRenderer.on('open-settings', function() {
@@ -47,13 +39,13 @@ document.addEventListener('readystatechange', function () {
 
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb').addEventListener('click', e => {
-                window.close()
+                c_window.close()
             })
             document.querySelector('.fRb').addEventListener('click', e => {
-                window.isMaximized() ? window.unmaximize() : window.maximize()
+                c_window.isMaximized() ? c_window.unmaximize() : c_window.maximize()
             })
             document.querySelector('.fMb').addEventListener('click', e => {
-                window.minimize()
+                c_window.minimize()
             })
         } else {
             document.body.classList.add('darwin')
@@ -108,12 +100,20 @@ document.addEventListener('readystatechange', function () {
 })
 
 function track(win) {
-    win.on('enter-full-screen', (e) => {
-        document.body.classList.add('fullscreen')
-    })
-    win.on('leave-full-screen', (e) => {
-        document.body.classList.remove('fullscreen')
-    })
+    win.addListener('enter-full-screen', enterFullScreen)
+    win.addListener('leave-full-screen', leaveFullScreen)
+}
+
+function untrack(win) {
+    win.removeListener('enter-full-screen', enterFullScreen)
+    win.removeListener('leave-full-screen', leaveFullScreen)
+}
+
+function enterFullScreen () {
+    document.body.classList.add('fullscreen')
+}
+function leaveFullScreen () {
+    document.body.classList.remove('fullscreen')
 }
 
 /**

@@ -700,3 +700,15 @@ input:checked + .toggleSwitchSlider {
 input:checked + .toggleSwitchSlider:before {
     transform: translateX(22px);
 }
+
+#frameMain {
+    background: url('https://picsum.photos/1280/720');
+    background-size: cover;
+    -webkit-user-select: none;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+#frameSecond {
+    background: #212121;
+}

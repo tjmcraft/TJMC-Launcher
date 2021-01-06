@@ -23,9 +23,8 @@ const DEFAULT_CONFIG =
             y: 0,
             width: 1280,
             height: 720,
-            maximized: false,
-            minimized: false,
-            fullScreen: false
+            isMaximized: false,
+            isFullScreen: false
         }
     },
     overrides: {
@@ -125,59 +124,6 @@ exports.getAllOptions = function() {
 }
 
 /* =====================   Window Properties   ===================== */
-exports.getWindowBounds = function() {
-    return config.launcher.window
-}
-
-exports.getWindowPositionX = function() {
-    return config.launcher.window.x
-}
-
-exports.getWindowPositionY = function() {
-    return config.launcher.window.y
-}
-
-exports.getWindowWidth = function() {
-    return config.launcher.window.width
-}
-
-exports.getWindowHeight = function() {
-    return config.launcher.window.height
-}
-
-exports.getWindowFullScreen = function() {
-    return config.launcher.window.fullScreen
-}
-
-exports.getWindowMaximized = function() {
-    return config.launcher.window.maximized
-}
-
-exports.getWindowMinimized = function() {
-    return config.launcher.window.minimized
-}
-
-exports.setWindowPosition = function(x, y) {
-    config.launcher.window.x = x > 0 ? x : DEFAULT_CONFIG.launcher.window.x
-    config.launcher.window.y = y > 0 ? y : DEFAULT_CONFIG.launcher.window.y
-}
-
-exports.setWindowSize = function(width, height) {
-    config.launcher.window.width = Number.isInteger(width) && width > 1 ? width : DEFAULT_CONFIG.launcher.window.width
-    config.launcher.window.height = Number.isInteger(height) && height > 1 ? height : DEFAULT_CONFIG.launcher.window.height
-}
-
-exports.setWindowFullScreen = function(fullScreen) {
-    config.launcher.window.fullScreen = typeof fullScreen === 'boolean' ? fullScreen : DEFAULT_CONFIG.launcher.window.fullScreen
-}
-
-exports.setWindowMaximized = function(maximized) {
-    config.launcher.window.maximized = typeof maximized === 'boolean' ? maximized : DEFAULT_CONFIG.launcher.window.maximized
-}
-
-exports.setWindowMinimized = function(minimized) {
-    config.launcher.window.minimized = typeof minimized === 'boolean' ? minimized : DEFAULT_CONFIG.launcher.window.minimized
-}
 
 exports.getWindowState = function() {
     return config.launcher.window

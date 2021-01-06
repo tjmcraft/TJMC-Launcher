@@ -61,7 +61,8 @@ function createWindow () {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: true,
-            worldSafeExecuteJavaScript: true
+            worldSafeExecuteJavaScript: true,
+            spellcheck: true
         },
         icon: getPlatformIcon('icon'),
         backgroundColor: '#171614'
@@ -74,6 +75,10 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     }))
+
+    win.once('ready-to-show', () => {
+        win.show()
+    })
 
     //win.removeMenu()
 
