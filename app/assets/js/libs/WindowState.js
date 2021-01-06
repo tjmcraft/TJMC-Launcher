@@ -4,7 +4,7 @@ const electron = require('electron')
 const logg = require('../loggerutil')('%c[WindowState]', 'color: #1052a5; font-weight: bold')
 
 module.exports = function (config) {
-    ConfigManager.load()
+    ConfigManager.loadWindowState()
     const screen = electron.screen || electron.remote.screen
     let state, winRef
 
@@ -88,7 +88,7 @@ module.exports = function (config) {
         logg.info(state)
         if (win) updateState(win)
         ConfigManager.setWindowState(state)
-        ConfigManager.save()
+        ConfigManager.saveWindowState()
     }
 
     function stateHandler() {

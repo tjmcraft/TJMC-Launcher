@@ -17,15 +17,7 @@ const DEFAULT_CONFIG =
         cwd: ''
     },
     launcher: {
-        backgroundImage: '',
-        window: {
-            x: 0,
-            y: 0,
-            width: 1280,
-            height: 720,
-            isMaximized: false,
-            isFullScreen: false
-        }
+        backgroundImage: ''
     },
     overrides: {
         request: {
@@ -67,7 +59,7 @@ exports.getDataDirectory = function(def = false){
     return def ? DEFAULT_CONFIG.path.root : config.path.root
 }
 
-const configPath = path.join(exports.getLauncherDirectory(), 'config.json')
+const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.json')
 
 exports.save = function(){
     fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8')
@@ -99,7 +91,7 @@ exports.load = function(){
             exports.save()
         }
     }
-    logg.log('Successfully Loaded')
+    logg.log('Successfully Loaded Launcher Config')
 }
 
 function validateKeySet(srcObj, destObj){
@@ -125,9 +117,55 @@ exports.getAllOptions = function() {
 
 /* =====================   Window Properties   ===================== */
 
-exports.getWindowState = function() {
-    return config.launcher.window
+const DEFAULT_WINDOW_CONFIG = {
+    x: 0,
+    y: 0,
+    width: 1280,
+    height: 720,
+    isMaximized: false,
+    isFullScreen: false
 }
+
+let windowStateConfigPath = path.join(exports.getLauncherDirectory(), 'window-config.json')
+let windowConfig = null
+
+exports.saveWindowState = function(){
+    fs.writeFileSync(windowStateConfigPath, JSON.stringify(windowConfig, null, 4), 'UTF-8')
+}
+
+exports.loadWindowState = function(){
+    let loaded = false
+    if(!fs.existsSync(windowStateConfigPath)){
+        fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+        loaded = true
+        windowConfig = DEFAULT_WINDOW_CONFIG
+        exports.saveWindowState()
+    }
+    if(!loaded){
+        let Validate = false
+        try {
+            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8'))
+            Validate = true
+        } catch (err){
+            logg.error(err)
+            logg.log('Configuration file contains malformed JSON or is corrupt.')
+            logg.log('Generating a new configuration file.')
+            fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+            windowConfig = DEFAULT_WINDOW_CONFIG
+            exports.saveWindowState()
+        }
+        if(Validate){
+            windowConfig = validateKeySet(DEFAULT_WINDOW_CONFIG, windowConfig)
+            exports.saveWindowState()
+        }
+    }
+    logg.log('Successfully Loaded Window Config')
+}
+
+exports.getWindowState = function() {
+    return windowConfig
+}
+
 exports.setWindowState = function(state) {
-    config.launcher.window = state
+    windowConfig = state
 }
