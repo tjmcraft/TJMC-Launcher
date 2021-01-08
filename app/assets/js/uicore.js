@@ -5,12 +5,13 @@ const client = require('./launcher')
 const appLayers = require('./appLayers')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
+const { fadeIn, fadeOut } = require('./libs/Animation')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
-        const c_window = remote.getCurrentWindow()
+        let c_window = remote.getCurrentWindow()
         let Layers = new appLayers()
 
         /* ================================= */
@@ -24,18 +25,15 @@ document.addEventListener('readystatechange', function () {
         logg.log('UICore Initializing..')
 
         Layers.openMain()
-        track(c_window)
-        window.onbeforeunload = function() {
-            logg.log('untrack')
-            untrack(c_window)
-        }
 
-        ipcRenderer.on('open-settings', function() {
+        ipcRenderer.on('open-settings', () => {
             Layers.openSettings()
         })
-        ipcRenderer.on('open-minecraft-dir', function() {
+        ipcRenderer.on('open-minecraft-dir', () => {
             launcher.openMineDir()
         })
+        ipcRenderer.on('enter-full-screen', enterFullScreen)
+        ipcRenderer.on('leave-full-screen', leaveFullScreen)
 
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb').addEventListener('click', e => {
@@ -65,8 +63,7 @@ document.addEventListener('readystatechange', function () {
         nickField.oninput = function(e){
             console.log(e.target.value)
         }
-
-        Minecraft.getVersionManifest.then(parsed => {
+        Minecraft.getVersionManifest.then((parsed) => {
             for (const cv in parsed) {
                 versionList.addVer(parsed[cv].id)
             }
@@ -92,22 +89,21 @@ document.addEventListener('readystatechange', function () {
             )
         }
     } else if (document.readyState === 'complete'){
+
         setTimeout(() => {
             document.body.classList.remove('preload')
             document.querySelector('#preloader').remove()
         }, 1000)
+        setTimeout(() => {
+            document.getElementById('playButton').fadeIn({
+                duration: 5000,
+                complete: function() {
+                    alert('Complete');
+                }
+            })
+        }, 100)
     }
 })
-
-function track(win) {
-    win.addListener('enter-full-screen', enterFullScreen)
-    win.addListener('leave-full-screen', leaveFullScreen)
-}
-
-function untrack(win) {
-    win.removeListener('enter-full-screen', enterFullScreen)
-    win.removeListener('leave-full-screen', leaveFullScreen)
-}
 
 function enterFullScreen () {
     document.body.classList.add('fullscreen')

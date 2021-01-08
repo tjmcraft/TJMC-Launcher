@@ -80,6 +80,9 @@ function createWindow () {
         win.show()
     })
 
+    win.on('enter-full-screen', () => {win.webContents.send('enter-full-screen')})
+    win.on('leave-full-screen', () => {win.webContents.send('leave-full-screen')})
+
     //win.removeMenu()
 
     win.resizable = true
