@@ -26,14 +26,13 @@ function animate(options) {
 
 /**
  * The Function animates object from opacity 1 to 0
- * @param {Object} options - The options of animation
- * @param {Number} options.duration - The duration of animation 
- * @param {Function} options.complete - The callback function after all animation complete
+ * @param {Number} duration - The duration of animation 
+ * @param {Function} complete - The callback function after all animation complete
  */
-Element.prototype.fadeOut = function(options) {
+Element.prototype.fadeOut = function(duration, complete) {
     let element = this
     animate({
-        duration: options.duration,
+        duration: duration,
         delta: function(progress) {
             progress = this.progress
             return easing.swing(progress)
@@ -41,20 +40,19 @@ Element.prototype.fadeOut = function(options) {
         step: function(delta) {
             element.style.opacity = 1 - delta
         },
-        complete: options.complete
+        complete: complete
     })
 }
 
 /**
  * The Function animates object from opacity 0 to 1
- * @param {Object} options - The options of animation
- * @param {Number} options.duration - The duration of animation 
- * @param {Function} options.complete - The callback function after all animation complete
+ * @param {Number} duration - The duration of animation 
+ * @param {Function} complete - The callback function after all animation complete
  */
-Element.prototype.fadeIn = function(options) {
+Element.prototype.fadeIn = function(duration, complete) {
     let element = this
     animate({
-        duration: options.duration,
+        duration: duration,
         delta: function(progress) {
             progress = this.progress
             return easing.swing(progress)
@@ -62,7 +60,55 @@ Element.prototype.fadeIn = function(options) {
         step: function(delta) {
             element.style.opacity = 0 + delta
         },
-        complete: options.complete
+        complete: complete
+    })
+}
+
+/**
+ * The Function animates object transform, opacity
+ * @param {Number} duration - The duration of animation 
+ * @param {Function} complete - The callback function after all animation complete
+ */
+Element.prototype.back = function(duration = 500, complete = () => {} ) {
+    let element = this
+    animate({
+        duration: duration,
+        delta: function(progress) {
+            progress = this.progress
+            return easing.swing(progress)
+        },
+        step: function(delta) {
+            element.style.opacity = 1 - delta
+            element.style.transform = `scale(${delta.map(0,1,1,0.9)})`
+        },
+        complete: function() {
+            element.style.visibility = `hidden`
+            complete()
+        }
+    })
+}
+
+/**
+ * The Function animates object transform, opacity
+ * @param {Number} duration - The duration of animation 
+ * @param {Function} complete - The callback function after all animation complete
+ */
+Element.prototype.top = function(duration = 500, complete = () => {} ) {
+    let element = this
+    element.style.visibility = `visible`
+    animate({
+        duration: duration,
+        delta: function(progress) {
+            progress = this.progress
+            return easing.swing(progress)
+        },
+        step: function(delta) {
+            element.style.opacity = 0 + delta
+            element.style.transform = `scale(${delta.map(0,1,0.9,1)})`
+        },
+        complete: function() {
+            complete()
+        }
     })
 }
 
@@ -92,5 +138,17 @@ let easing = {
     },
     elastic (progress, x) {
         return Math.pow(2, 10 * (progress - 1)) * Math.cos(20 * Math.PI * x / 3 * progress);
+    },
+    easeInOutBack(x) {
+        const c1 = 1.70158;
+        const c2 = c1 * 1.525;
+        
+        return x < 0.5
+          ? (pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
+          : (pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
     }
+}
+
+Number.prototype.map = function (in_min, in_max, out_min, out_max) {
+    return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

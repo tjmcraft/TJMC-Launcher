@@ -1,5 +1,8 @@
 const {escBinder, toggleButtonBinder} = require('./uibind')
 const path = require('path')
+const fs = require('fs')
+const appLayers = require('./appLayers')
+
 class Settings {
     constructor() {
         console.log('Settings init')

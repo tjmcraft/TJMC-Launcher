@@ -2,7 +2,6 @@ const {ipcRenderer, remote, shell, webFrame} = require('electron')
 const LoggerUtil = require('./loggerutil')
 const Minecraft = require('./Minecraft')
 const client = require('./launcher')
-const appLayers = require('./appLayers')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
 const { fadeIn, fadeOut } = require('./libs/Animation')
@@ -12,7 +11,7 @@ const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
         let c_window = remote.getCurrentWindow()
-        let Layers = new appLayers()
+        //let Layers = new appLayers()
 
         /* ================================= */
         const versionList = document.querySelector('#version')
@@ -24,7 +23,7 @@ document.addEventListener('readystatechange', function () {
         
         logg.log('UICore Initializing..')
 
-        Layers.openMain()
+        //Layers.openMain()
 
         ipcRenderer.on('open-settings', () => {
             Layers.openSettings()
@@ -95,12 +94,7 @@ document.addEventListener('readystatechange', function () {
             document.querySelector('#preloader').remove()
         }, 1000)
         setTimeout(() => {
-            document.getElementById('playButton').fadeIn({
-                duration: 5000,
-                complete: function() {
-                    alert('Complete');
-                }
-            })
+            //switchView(getCurrentView(), VIEWS.landing, 500, 500)
         }, 100)
     }
 })
@@ -110,28 +104,4 @@ function enterFullScreen () {
 }
 function leaveFullScreen () {
     document.body.classList.remove('fullscreen')
-}
-
-/**
- * Open web links in the user's default browser.
- */
-document.addEventListener('click', function (event) {
-    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-      event.preventDefault()
-      shell.openExternal(event.target.href)
-    }
-  })
-
-/**
- * Functions toogle all elements using css
- * @param {boolean} s state to toggle (it can be null)
- */
-Element.prototype.toggle = function(s = null) {
-    let cl = this.classList,
-        c = 'hidden'
-    if (s != null ? s : cl.contains(c) == 1){
-        cl.remove(c)
-    } else {
-        cl.add(c)
-    }
 }
