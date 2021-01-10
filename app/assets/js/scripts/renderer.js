@@ -3,7 +3,7 @@ const VIEWS = {
     settings: '#frameSecond'
 }
 
-let currentView
+var currentView
 
 /**
  * Switch launcher views.

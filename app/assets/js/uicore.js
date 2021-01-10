@@ -1,10 +1,9 @@
-const {ipcRenderer, remote, shell, webFrame} = require('electron')
+const {ipcRenderer, remote} = require('electron')
 const LoggerUtil = require('./loggerutil')
-const Minecraft = require('./Minecraft')
+const Minecraft = require('./libs/Minecraft')
 const client = require('./launcher')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
-const { fadeIn, fadeOut } = require('./libs/Animation')
 const Settings = require('./settings')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
@@ -31,9 +30,13 @@ document.addEventListener('readystatechange', function () {
         ipcRenderer.on('open-minecraft-dir', () => {
             launcher.openMineDir()
         })
+
         ipcRenderer.on('enter-full-screen', enterFullScreen)
         ipcRenderer.on('leave-full-screen', leaveFullScreen)
         if (c_window.isFullScreen()) enterFullScreen()
+
+        ipcRenderer.on('blur', windowBlur)
+        ipcRenderer.on('focus', windowFocus)
 
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb').addEventListener('click', e => {
@@ -55,9 +58,13 @@ document.addEventListener('readystatechange', function () {
             versionList.add( option );
         }
 
+        versionList.addEventListener('change', (e) => {
+            //e.target.value
+        })
+
         progressBar.setValue = (v) => {
             progressBar.style.width = v + "%"
-            window.setProgressBar(v/100)
+            c_window.setProgressBar(v/100)
         }
 
         nickField.oninput = function(e){
@@ -102,4 +109,10 @@ function enterFullScreen () {
 }
 function leaveFullScreen () {
     document.body.classList.remove('fullscreen')
+}
+function windowBlur () {
+    document.body.classList.add('blur')
+}
+function windowFocus () {
+    document.body.classList.remove('blur')
 }

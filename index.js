@@ -76,20 +76,18 @@ function createWindow () {
         slashes: true
     }))
 
-    win.once('ready-to-show', () => {
-        win.show()
-    })
+    win.once('ready-to-show', () => {win.show()})
 
     win.on('enter-full-screen', () => {win.webContents.send('enter-full-screen')})
     win.on('leave-full-screen', () => {win.webContents.send('leave-full-screen')})
+    win.on('blur', () => {win.webContents.send('blur')})
+    win.on('focus', () => {win.webContents.send('focus')})
 
     //win.removeMenu()
 
     win.resizable = true
 
-    win.on('closed', () => {
-        win = null
-    });
+    win.on('closed', () => {win = null})
 
     //win.webContents.openDevTools()
 }

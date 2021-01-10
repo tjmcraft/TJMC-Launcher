@@ -1,12 +1,12 @@
 const child = require('child_process')
-const LoggerUtil                             = require('./loggerutil')
+const LoggerUtil                             = require('../loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const checksum                               = require('checksum')
 const os = require('os')
 const Zip = require('adm-zip')
-const {merge, getOS} = require('./Tools')
+const {merge, getOS} = require('../Tools')
 const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 let counter = 0

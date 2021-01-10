@@ -4,7 +4,7 @@ const LoggerUtil                             = require('./loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const Minecraft                              = require('./Minecraft')
+const Minecraft                              = require('./libs/Minecraft')
 const {merge}                                = require('./Tools')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
@@ -54,7 +54,7 @@ class launcher extends EventEmitter {
         logg.log('Attempting to load main json')
         const versionFile = await this.handler.getVersion(this.options.version.number)
         const nativePath = await this.handler.getNatives(versionFile)
-        logg.warn(versionFile)
+
         this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.log('Attempting to download Minecraft version jar')
