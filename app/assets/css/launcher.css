@@ -500,27 +500,8 @@ svg[data-icon="success-circle"] {
 #app-mount > .app-layer {
     opacity: 0;
     visibility: hidden;
-    /*transform: scale(0.9);*/
-}
-/*
-#app-mount #frameMain {
-    opacity: 0;
-    visibility: hidden;
     transform: scale(0.9);
 }
-
-#app-mount #frameSecond {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(1.1);
-}
-
-#app-mount > .active {
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-}
-*/
 
 /* =============== SideBar View =============== */
 

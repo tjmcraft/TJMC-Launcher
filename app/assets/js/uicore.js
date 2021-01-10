@@ -5,6 +5,7 @@ const client = require('./launcher')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
 const { fadeIn, fadeOut } = require('./libs/Animation')
+const Settings = require('./settings')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -26,7 +27,10 @@ document.addEventListener('readystatechange', function () {
         //Layers.openMain()
 
         ipcRenderer.on('open-settings', () => {
-            Layers.openSettings()
+            //Layers.openSettings()
+            switchView(VIEWS.settings, 35, 35, () => {
+                new Settings()
+            })
         })
         ipcRenderer.on('open-minecraft-dir', () => {
             launcher.openMineDir()
@@ -88,14 +92,11 @@ document.addEventListener('readystatechange', function () {
             )
         }
     } else if (document.readyState === 'complete'){
-
+        switchView(VIEWS.landing, 100, 100)
         setTimeout(() => {
             document.body.classList.remove('preload')
             document.querySelector('#preloader').remove()
         }, 1000)
-        setTimeout(() => {
-            //switchView(getCurrentView(), VIEWS.landing, 500, 500)
-        }, 100)
     }
 })
 

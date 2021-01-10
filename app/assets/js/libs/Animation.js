@@ -83,6 +83,7 @@ Element.prototype.back = function(duration = 500, complete = () => {} ) {
         },
         complete: function() {
             element.style.visibility = `hidden`
+            element.removeAttribute('style')
             complete()
         }
     })

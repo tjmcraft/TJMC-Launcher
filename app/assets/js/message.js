@@ -2,18 +2,10 @@ const fs = require('fs')
 const {escBinder} = require('./uibind')
 class message {
     constructor(params) {
-        /*let oldOverlay = document.querySelector('#overlay')
-        if (oldOverlay) {
-            oldOverlay.toggle(false)
-            setTimeout(() => {
-                oldOverlay.remove()
-            }, 1000)
-        }*/
-
         this.overlay = this.createOverlay(params.closeButton)
         this.overlay.toggle(false)
 
-        let container = this.createElementWithId('div', 'container')
+        let container = createElementWithId('div', 'container')
         container.onclick = (event) => {event.stopPropagation()}
 
         if (params.type) {
@@ -58,7 +50,7 @@ class message {
             let hr = document.createElement('hr')
             container.append(hr)
             for (let bp of params.buttons) {
-                let button = this.createElementWithClass('button', bp.class ? bp.class : '')
+                let button = createElementWithClass('button', bp.class ? bp.class : '')
                 button.innerText = bp.name
                 button.onclick = () => {
                     if (bp.callback && typeof bp.callback === 'function') {
@@ -89,23 +81,11 @@ class message {
         return this.overlay
     }
 
-    createElementWithId(el, id) {
-        let e = document.createElement(el)
-        e.id = id
-        return e
-    }
-
-    createElementWithClass(el, cl) {
-        let e = document.createElement(el)
-        e.className = cl
-        return e
-    }
-
     createOverlay(closeButton = null){
-        let overlay = this.createElementWithId('div', 'overlay')
+        let overlay = createElementWithId('div', 'overlay')
 
         if (closeButton) {
-            let tools = this.createToolsContainer()
+            let tools = createToolsContainer()
             tools.querySelector('#overlayCloseButton').onclick = () => {
                 this.destroy()
             }
@@ -113,19 +93,6 @@ class message {
         }
         
         return overlay
-    }
-
-    createToolsContainer() {
-        let tools = this.createElementWithClass('div', 'tools frame-fix')
-        let overlayCloseButton = this.createElementWithId('div', 'overlayCloseButton')
-        let cross = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#dcddde" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"></path></svg>'
-        let keycode = this.createElementWithClass('div', 'keycode')
-        keycode.innerText = 'ESC'
-
-        overlayCloseButton.innerHTML += cross
-        tools.append(overlayCloseButton, keycode)
-
-        return tools
     }
 
     destroy() {
