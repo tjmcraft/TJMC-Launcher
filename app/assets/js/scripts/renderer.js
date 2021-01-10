@@ -1,10 +1,8 @@
-// Mapping of each view to their container IDs.
 const VIEWS = {
     landing: '#frameMain',
     settings: '#frameSecond'
 }
 
-// The currently shown view container.
 let currentView
 
 /**
@@ -33,11 +31,6 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onBeforeFad
         })
 }
 
-/**
- * Get the currently shown view container.
- * 
- * @returns {string} The currently shown view container.
- */
 function getCurrentView(){
     return currentView
 }
@@ -66,6 +59,9 @@ document.addEventListener('click', function (event) {
     }
 })
 
+/**
+ * The function creates and returns tools container for overlay
+ */
 function createToolsContainer() {
     let tools = createElementWithClass('div', 'tools frame-fix')
     let overlayCloseButton = createElementWithId('div', 'overlayCloseButton')
@@ -79,14 +75,40 @@ function createToolsContainer() {
     return tools
 }
 
+/**
+ * Function creates new element with given ID
+ * @param {Element} el - The type of element to create
+ * @param {*} id - The ID for created element
+ */
 function createElementWithId(el, id) {
     let e = document.createElement(el)
     e.id = id
     return e
 }
 
+/**
+ * Function creates new element with given ClassName
+ * @param {Element} el - The type of element to create
+ * @param {*} cl - The ClassName for created element
+ */
 function createElementWithClass(el, cl) {
     let e = document.createElement(el)
     e.className = cl
     return e
+}
+
+/**
+* This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
+*
+* @params ...args Function accept multiple array input (merges them to single array with no duplicates)
+* it also can be used to filter duplicates in single array
+*/
+function merge (...args) {
+    let set = new Set()
+    for (let arr of args) {
+        arr.map((value) => {
+            set.add(value)
+        })
+    }
+    return [...set]
 }

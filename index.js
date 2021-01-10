@@ -58,7 +58,7 @@ function createWindow () {
         frame: process.platform === 'darwin',
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
-            nodeIntegration: true,
+            nodeIntegration: false,
             contextIsolation: false,
             enableRemoteModule: true,
             worldSafeExecuteJavaScript: true,

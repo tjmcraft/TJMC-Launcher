@@ -12,7 +12,6 @@ const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
         let c_window = remote.getCurrentWindow()
-        //let Layers = new appLayers()
 
         /* ================================= */
         const versionList = document.querySelector('#version')
@@ -24,10 +23,7 @@ document.addEventListener('readystatechange', function () {
         
         logg.log('UICore Initializing..')
 
-        //Layers.openMain()
-
         ipcRenderer.on('open-settings', () => {
-            //Layers.openSettings()
             switchView(VIEWS.settings, 35, 35, () => {
                 new Settings()
             })
@@ -37,6 +33,7 @@ document.addEventListener('readystatechange', function () {
         })
         ipcRenderer.on('enter-full-screen', enterFullScreen)
         ipcRenderer.on('leave-full-screen', leaveFullScreen)
+        if (c_window.isFullScreen()) enterFullScreen()
 
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb').addEventListener('click', e => {

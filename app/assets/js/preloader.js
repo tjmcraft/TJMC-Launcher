@@ -10,3 +10,4 @@ ConfigManager.load()
 process.once('loaded', () => {
     global.Message = require('./message')
 })
+
