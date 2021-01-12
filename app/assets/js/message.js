@@ -1,4 +1,3 @@
-const fs = require('fs')
 const {escBinder} = require('./uibind')
 class message {
     constructor(params) {

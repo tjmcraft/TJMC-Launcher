@@ -1,7 +1,6 @@
 const {ipcRenderer, remote} = require('electron')
 const LoggerUtil = require('./loggerutil')
 const Minecraft = require('./libs/Minecraft')
-const client = require('./launcher')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
 const Settings = require('./settings')
@@ -11,14 +10,6 @@ const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
         let c_window = remote.getCurrentWindow()
-
-        /* ================================= */
-        const versionList = document.querySelector('#version')
-        const topBar = document.querySelector('#topBar')
-        const progressBar = document.querySelector('#progress-bar')
-        const nickField = document.querySelector('#nick')
-        const playButton = document.querySelector('#playButton')
-        /* ================================= */
         
         logg.log('UICore Initializing..')
 
@@ -81,7 +72,7 @@ document.addEventListener('readystatechange', function () {
         })
         // ----------------------------------
         function startMine () {
-            let launcher = new client(ConfigManager.getAllOptions())
+            let launcher = new launcher(ConfigManager.getAllOptions())
             launcher.on('progress', (e) => {
                 progressBar.setValue((e.task/e.total)*100)
             })

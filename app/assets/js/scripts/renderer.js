@@ -1,3 +1,13 @@
+/* ================================= */
+const versionList = document.querySelector('#version')
+const topBar = document.querySelector('#topBar')
+const progressBar = document.querySelector('#progress-bar')
+const nickField = document.querySelector('#nick')
+const playButton = document.querySelector('#playButton')
+/* ================================= */
+
+console.log('Renderer init')
+
 const VIEWS = {
     landing: '#frameMain',
     settings: '#frameSecond'

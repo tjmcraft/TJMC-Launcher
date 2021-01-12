@@ -7,7 +7,8 @@ logger.log('Loading..')
 
 // Load ConfigManager
 ConfigManager.load()
+
+// Init global instances
 process.once('loaded', () => {
     global.Message = require('./message')
 })
-

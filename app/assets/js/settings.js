@@ -1,6 +1,4 @@
 const {escBinder, toggleButtonBinder} = require('./uibind')
-const path = require('path')
-const fs = require('fs')
 
 class Settings {
     constructor() {
@@ -56,18 +54,3 @@ class Settings {
 }
 
 module.exports = Settings
-
-
-/**
- * Functions toogle all elements using css
- * @param {boolean} s state to toggle (it can be null)
- */
-Element.prototype.toggle = function(s = null) {
-    let cl = this.classList,
-        c = 'hidden'
-    if (s != null ? s : cl.contains(c) == 1){
-        cl.remove(c)
-    } else {
-        cl.add(c)
-    }
-}
