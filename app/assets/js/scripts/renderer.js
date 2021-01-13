@@ -8,9 +8,23 @@ const playButton = document.querySelector('#playButton')
 
 console.log('Renderer init')
 
+switch (API.getOS()) {
+    case 'windows':
+        document.documentElement.classList.add('platform-win')
+        break;
+    case 'osx':
+        document.documentElement.classList.add('platform-darwin')
+        break;
+    case 'linux':
+        document.documentElement.classList.add('platform-linux')
+        break;    
+    default:
+        break;
+}
+
 const VIEWS = {
-    landing: '#frameMain',
-    settings: '#frameSecond'
+    landing: '#main-layer',
+    settings: '#settings-layer'
 }
 
 var currentView

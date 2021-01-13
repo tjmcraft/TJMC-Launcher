@@ -14,7 +14,7 @@ document.addEventListener('readystatechange', function () {
         logg.log('UICore Initializing..')
 
         ipcRenderer.on('open-settings', () => {
-            switchView(VIEWS.settings, 35, 35, () => {
+            switchView(VIEWS.settings, 350, 350, () => {
                 new Settings()
             })
         })
@@ -89,8 +89,10 @@ document.addEventListener('readystatechange', function () {
     } else if (document.readyState === 'complete'){
         switchView(VIEWS.landing, 100, 100)
         setTimeout(() => {
-            document.body.classList.remove('preload')
-            document.querySelector('#preloader').remove()
+            document.documentElement.classList.remove('preload')
+            setTimeout(() => {
+                document.querySelector('#preloader').remove()
+            }, 1000)
         }, 1000)
     }
 })

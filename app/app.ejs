@@ -1,35 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html class="preload dark-theme">
 <head>
     <meta charset="UTF-8">
     <title>TJMC-Launcher</title>
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
-    <!--<script src="./assets/js/uicore.js"></script>-->
     <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
 </head>
-<body class="preload">
-    <%- include('frame') %>
-    <div id="preloader">
-        <!--<div class="big-text">TJMC-Launcher</div>-->
-        <img src="./assets/images/icon.png">
-    </div>
-    <div id="app-mount">
-        <div id="frameMain" class="app-layer frame-fix">
-            <div id="topBar" class="hidden">
-                <div id="progress-bar"></div>
+<body>
+    <div id="app-mount" class="app-mount">
+        <%- include('frame') %>
+        <div class="app">
+            <div class="app-container frame-fix">
+                <div class="bg"></div>
+                <div class="app-layers">
+                    <div class="layer base-layer" id="main-layer">
+                        <%- include('main') %>
+                    </div>
+                    <div class="layer" id="settings-layer">
+                        <%- include('settings') %>
+                    </div>
+                </div>
+                <div class="uploadArea">
+                    <div class="uploadDropModal"></div>
+                </div>
             </div>
-            <div id="main">
-                <%- include('main') %>
-            </div>
-            <div id="mainBar">
-                <input type="text" placeholder="Ник" id="nick">
-                <select id="version"></select>
-                <button id="playButton">Играть</button>
+            <div id="preloader">
+                <img src="./assets/images/icon.png">
             </div>
         </div>
-        <div id="frameSecond" class="app-layer frame-fix">
-            <%- include('settings') %> 
-        </div>
+        <div class="layerContainer"></div>
+        <div></div>
+        <div></div>
+        <div style="position: fixed; opacity: 0; pointer-events: none;"></div>
     </div>
     <script src="./assets/js/libs/Animation.js"></script>
     <script src="./assets/js/scripts/renderer.js"></script>

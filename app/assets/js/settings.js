@@ -2,27 +2,32 @@ const {escBinder, toggleButtonBinder} = require('./uibind')
 
 class Settings {
     constructor() {
-        this.settings = document.querySelector('#frameSecond')
+        this.settings = document.querySelector('#settings-layer')
+        fetch('./settings.ejs').then(response => response.text()).then(text => {
+            this.settings.innerHTML = text
+
+            this.sidebar = this.settings.querySelector('.sidebar')
+            this.sidebarItems = this.sidebar.querySelectorAll('.settingsItem')
+            this.content = this.settings.querySelectorAll('.content .tab')
+
+            let tools = createToolsContainer()
+            tools.querySelector('#overlayCloseButton').onclick = () => {
+                this.destroy()
+            }
+            this.settings.querySelector('.content').append(tools)
+
+            this.bindSidebarItems()
+
+            this.escBinder = new escBinder()
+            this.escBinder.bind(() => {
+                this.destroy()
+            })
+
+            this.setTab('my-account-tab')
+        })
         //this.settings.innerHTML = fs.readFileSync(path.resolve(__dirname, '../../settings.ejs'), 'utf8')
 
-        this.sidebar = this.settings.querySelector('.sidebar')
-        this.sidebarItems = this.sidebar.querySelectorAll('.settingsItem')
-        this.content = this.settings.querySelectorAll('.content .tab')
-
-        let tools = createToolsContainer()
-        tools.querySelector('#overlayCloseButton').onclick = () => {
-            this.destroy()
-        }
-        this.settings.querySelector('.content').append(tools)
-
-        this.bindSidebarItems()
-
-        this.escBinder = new escBinder()
-        this.escBinder.bind(() => {
-            this.destroy()
-        })
-
-        this.setTab('my-account-tab')
+        
     }
     bindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
@@ -46,8 +51,8 @@ class Settings {
     }
 
     destroy() {
-        switchView(VIEWS.landing, 35, 35, () => {}, () => {}, () => {
-            //this.settings.innerHTML = null
+        switchView(VIEWS.landing, 350, 350, () => {}, () => {}, () => {
+            this.settings.innerHTML = null
             this.escBinder.uibind()
         })
     }

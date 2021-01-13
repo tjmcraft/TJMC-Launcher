@@ -43,28 +43,13 @@
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
 .darwin .frame-fix {padding-top: 0;}
-.frame-fix {padding-top: 22px;}
+.frame-fix {transition: all 0.6s; padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
 
-div {transition: 0.5s all;}
-html, body {
-    transition: 1s all;
-    overflow: hidden;
-    height: 100%;
-    margin: 0;
+/************* DARK THEME ***************/
+.dark-theme {
+    --background-tertiary: #202225;
 }
-
-body, html, div {
-    margin: 0px;
-    padding: 0px;
-}
-
-body, button {
-    font-family: 'Candara';
-    background-color: #30303010;
-    color: white;
-}
-
 /*******************************************************************************
  *                                                                             *
  * Frame Styles (frame.ejs)                                                    *
@@ -78,14 +63,14 @@ body, button {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    transition: all 0.6s ;
+    transition: all 0.6s;
     background-color: #000000ca;
     -webkit-user-select: none;
     width: 100%;
     height: 22px;
+    top: 0;
     left: 0;
     right: 0;
-    top: 0;
     position: absolute;
 }
 
@@ -165,20 +150,13 @@ body, button {
 
 
 /* =============================================== */
-
-.preload #app-mount {
+.preload > .app-container {
     opacity: 0;
     visibility: hidden;
 }
 
-.preload #mainBar {
-    bottom: -48px;
-    opacity: 0.3;
-    visibility: hidden;
-}
-
 #preloader {
-    animation: fadein 1s !important;
+    /*animation: fadein 1s !important;*/
     opacity: 0;
     visibility: hidden;
     position: absolute;
@@ -190,6 +168,7 @@ body, button {
     bottom: 0;
     right: 0;
     left: 0;
+    background: #1a1a1a;
 }
 #preloader img {
     animation: box-shadow-rise 2s infinite alternate ease-in-out !important;
@@ -480,13 +459,7 @@ svg[data-icon="success-circle"] {
 
 /* =============== APP LAYERS =============== */
 
-#app-mount {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-#app-mount > .app-layer {
+.app-layer {
     flex-direction: column;
     transition: all 0.35s cubic-bezier(0.35, 1.4, 0.5, 1);
     position: absolute;
@@ -497,7 +470,7 @@ svg[data-icon="success-circle"] {
     align-items: center;
 }
 
-#app-mount > .app-layer {
+.app-layer {
     opacity: 0;
     visibility: hidden;
     transform: scale(0.9);
@@ -712,4 +685,113 @@ input:checked + .toggleSwitchSlider:before {
     -ms-flex-negative: 0;
     flex-shrink: 0;
     background-color: #202225;
+}
+
+/* === app === */
+.app-mount, body, html {
+    width: 100%;
+    height: 100%;
+}
+.app-mount, body {
+    background-color: var(--background-tertiary);
+    text-rendering: optimizeLegibility;
+}
+.app-mount {
+    position: absolute;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.app {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    z-index: auto;
+}
+.app-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: var(--background-tertiary);
+    display: flex;
+    flex-direction: column;
+}
+.app-layers {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    overflow: hidden;
+    min-width: 0;
+    min-height: 0;
+}
+.app-layers > .layer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.9);
+    transition: none;
+}
+.app-layers > .layer.base-layer {
+    background: transparent;
+}
+.platform-win .bg {
+    top: -22px;
+}
+.platform-win #preloader {
+    top: -22px;
+}
+.bg {
+    background-color: var(--background-tertiary);
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+.bg {
+    background: url('https://picsum.photos/1280/720');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+
+div {transition: all 0.6s;}
+html, body {
+    transition: 1s all;
+    overflow: hidden;
+    height: 100%;
+}
+
+body, html, div {
+    margin: 0px;
+    padding: 0px;
+}
+
+body, button {
+    font-family: 'Candara';
+    color: white;
+    background-color: #30303010;
+}
+a, button, div, input, label, select, span, strong, textarea {
+    outline: 0;
+}
+
+a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, dd, del, dfn, div, dl, dt, em, fieldset, form, h1, h2, h3, h4, h5, h6, html, iframe, img, ins, kbd, label, legend, li, object, ol, p, pre, q, s, samp, small, span, strike, strong, table, tbody, td, tfoot, th, thead, tr, tt, ul, var {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline;
 }
