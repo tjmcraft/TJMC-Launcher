@@ -51,7 +51,7 @@ class Settings {
     }
 
     destroy() {
-        switchView(VIEWS.landing, 350, 350, () => {}, () => {}, () => {
+        switchView(VIEWS.landing, 150, 150, () => {}, () => {}, () => {
             this.settings.innerHTML = null
             this.escBinder.uibind()
         })

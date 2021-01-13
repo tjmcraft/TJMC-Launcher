@@ -40,7 +40,11 @@ Element.prototype.fadeOut = function(duration, complete) {
         step: function(delta) {
             element.style.opacity = 1 - delta
         },
-        complete: complete
+        complete: function () {
+            element.style.visibility = `hidden`
+            element.removeAttribute('style')
+            complete()
+        }
     })
 }
 
@@ -51,6 +55,7 @@ Element.prototype.fadeOut = function(duration, complete) {
  */
 Element.prototype.fadeIn = function(duration, complete) {
     let element = this
+    element.style.visibility = `visible`
     animate({
         duration: duration,
         delta: function(progress) {
@@ -60,7 +65,9 @@ Element.prototype.fadeIn = function(duration, complete) {
         step: function(delta) {
             element.style.opacity = 0 + delta
         },
-        complete: complete
+        complete: function () {
+            complete()
+        }
     })
 }
 

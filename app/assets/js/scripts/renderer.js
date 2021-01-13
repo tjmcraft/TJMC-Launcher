@@ -46,11 +46,11 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onBeforeFad
     let current = getCurrentView()
     currentView = next
     if (current)
-        document.querySelector(`${current}`).back(currentFadeTime, () => {
+        document.querySelector(`${current}`).fadeOut(currentFadeTime, () => {
             onCurrentFade()
         })
     if (next)
-        document.querySelector(`${next}`).top(nextFadeTime, () => {
+        document.querySelector(`${next}`).fadeIn(nextFadeTime, () => {
             onNextFade()
         })
 }
