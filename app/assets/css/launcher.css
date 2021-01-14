@@ -208,6 +208,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     left: 0;
     background-repeat: no-repeat;
     background: #1a1a1a;
+    z-index: 99999;
 }
 #preloader img {
     /*animation: box-shadow-rise 2s infinite alternate ease-in-out !important;*/
@@ -218,7 +219,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     overflow: hidden;
     height: 20%;
     padding: 0;
-    z-index: 1;
+    z-index: 100001;
 }
 .circle {
     border-radius: 50%;
@@ -229,7 +230,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     opacity: 0;
     animation: pulsate 1.5s infinite ease-out !important;
     animation-delay: .7s !important;
-    z-index: 0;
+    z-index: 100000;
 }
 
 .big-text {
@@ -792,8 +793,6 @@ input:checked + .toggleSwitchSlider:before {
     overflow: hidden;
     flex-direction: column;
     transition: none;
-    opacity: 0;
-    visibility: hidden;
 }
 .app-layers > .layer.base-layer {
     background: transparent;
@@ -818,4 +817,10 @@ input:checked + .toggleSwitchSlider:before {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
+}
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }

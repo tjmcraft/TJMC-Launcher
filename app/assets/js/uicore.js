@@ -14,9 +14,7 @@ document.addEventListener('readystatechange', function () {
         logg.log('UICore Initializing..')
 
         ipcRenderer.on('open-settings', () => {
-            switchView(VIEWS.settings, 150, 150, () => {
-                new Settings()
-            })
+            new Settings()
         })
         ipcRenderer.on('open-minecraft-dir', () => {
             launcher.openMineDir()
@@ -72,16 +70,16 @@ document.addEventListener('readystatechange', function () {
         })
         // ----------------------------------
         function startMine () {
-            let launcher = new launcher(ConfigManager.getAllOptions())
-            launcher.on('progress', (e) => {
+            let _launcher = new launcher(ConfigManager.getAllOptions())
+            _launcher.on('progress', (e) => {
                 progressBar.setValue((e.task/e.total)*100)
             })
-            launcher.on('download-status', (e) => {
+            _launcher.on('download-status', (e) => {
                 if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
             })
             topBar.toggle(true)
-            launcher.construct().then((minecraftArguments) =>
-                launcher.createJVM(minecraftArguments).then((e) => {
+            _launcher.construct().then((minecraftArguments) =>
+                _launcher.createJVM(minecraftArguments).then((e) => {
                     topBar.toggle(false)
                 })
             )

@@ -1,8 +1,11 @@
 const {escBinder, toggleButtonBinder} = require('./uibind')
-
+const label = 'USER_SETTINGS'
 class Settings {
     constructor() {
-        this.settings = document.querySelector('#settings-layer')
+        if (document.querySelector(`[aria-label=${label}]`)) return
+        this.appLayers = document.querySelector('.app-layers')
+        this.settings = createElementWithClass('div', 'layer')
+        this.settings.setAttribute('aria-label', `${label}`)
         fetch('./settings.ejs').then(response => response.text()).then(text => {
             this.settings.innerHTML = text
 
@@ -24,10 +27,10 @@ class Settings {
             })
 
             this.setTab('my-account-tab')
+            switchView(this.settings, 150, 150)
         })
-        //this.settings.innerHTML = fs.readFileSync(path.resolve(__dirname, '../../settings.ejs'), 'utf8')
-
-        
+        this.settings.style.opacity = 0
+        this.appLayers.append(this.settings)
     }
     bindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
@@ -35,6 +38,13 @@ class Settings {
                 val.onclick = () => {
                     this.setTab(val.getAttribute('rTi'))
                 }
+            }
+        })
+    }
+    unbindSidebarItems(){
+        Array.from(this.sidebarItems).map((val) => {
+            if(val.hasAttribute('rTi')){
+                val.onclick = () => {}
             }
         })
     }
@@ -52,7 +62,8 @@ class Settings {
 
     destroy() {
         switchView(VIEWS.landing, 150, 150, () => {}, () => {}, () => {
-            this.settings.innerHTML = null
+            this.unbindSidebarItems()
+            this.settings.remove()
             this.escBinder.uibind()
         })
     }

@@ -1,4 +1,6 @@
 /* ================================= */
+
+/* --------------------------------- */
 const versionList = document.querySelector('#version')
 const topBar = document.querySelector('#topBar')
 const progressBar = document.querySelector('#progress-bar')
@@ -23,8 +25,8 @@ switch (API.getOS()) {
 }
 
 const VIEWS = {
-    landing: '#main-layer',
-    settings: '#settings-layer'
+    landing: document.querySelector('#main-layer'),
+    settings: document.querySelector('#settings-layer')
 }
 
 var currentView
@@ -46,11 +48,11 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onBeforeFad
     let current = getCurrentView()
     currentView = next
     if (current)
-        document.querySelector(`${current}`).fadeOut(currentFadeTime, () => {
+        current.fadeOut(currentFadeTime, () => {
             onCurrentFade()
         })
     if (next)
-        document.querySelector(`${next}`).fadeIn(nextFadeTime, () => {
+        next.fadeIn(nextFadeTime, () => {
             onNextFade()
         })
 }
