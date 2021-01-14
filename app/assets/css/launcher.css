@@ -209,11 +209,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     background-repeat: no-repeat;
     background: #1a1a1a;
     z-index: 99999;
+    -webkit-user-select: none;
 }
 #preloader img {
-    /*animation: box-shadow-rise 2s infinite alternate ease-in-out !important;*/
     animation: bounce 1s ease !important;
-    /*box-shadow: 0 0 50px 20px #1122FF;*/
     backface-visibility: hidden;
     border-radius: 50%;
     overflow: hidden;
