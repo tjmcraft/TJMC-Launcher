@@ -1,7 +1,8 @@
 /* ================================= */
 
 /* --------------------------------- */
-const versionList = document.querySelector('#version')
+const mvl = document.querySelector('#main-version-list')
+const stb = document.querySelector('#settings-button')
 const topBar = document.querySelector('#topBar')
 const progressBar = document.querySelector('#progress-bar')
 const nickField = document.querySelector('#nick')
@@ -81,7 +82,7 @@ Element.prototype.toggle = function(s = null) {
 document.addEventListener('click', function (event) {
     if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
       event.preventDefault()
-      shell.openExternal(event.target.href)
+      API.shell.openExternal(event.target.href)
     }
 })
 
@@ -138,3 +139,17 @@ function merge (...args) {
     }
     return [...set]
 }
+
+mvl.addItem = function (item) {
+    let c = this.querySelector('.sidebar')
+    let i = createElementWithClass('div', 'item navItem')
+    i.setAttribute('item-data', item)
+    i.innerHTML = item
+    c.append(i)
+}
+mvl.remItem = function (item) {
+    let c = this.querySelector('.sidebar')
+    let i = c.querySelector(`[item-data=${item}]`)
+    c.removeChild(i)
+}
+

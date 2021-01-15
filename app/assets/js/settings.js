@@ -10,7 +10,7 @@ class Settings {
             this.settings.innerHTML = text
 
             this.sidebar = this.settings.querySelector('.sidebar')
-            this.sidebarItems = this.sidebar.querySelectorAll('.settingsItem')
+            this.sidebarItems = this.sidebar.querySelectorAll('.navItem')
             this.content = this.settings.querySelectorAll('.content .tab')
 
             let tools = createToolsContainer()

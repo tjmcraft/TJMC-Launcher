@@ -87,6 +87,9 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 /************* DARK THEME ***************/
 .dark-theme {
     --background-tertiary: #202225;
+    --background-primary: #313131;
+    --background-secondary: #2A2A2A;
+    --background-secondary-alt: #212121;
 }
 /*******************************************************************************
  *                                                                             *
@@ -247,12 +250,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     top: -22px;
     opacity: 0;
     visibility: hidden;
-}
-
-
-#main {
-    flex: 1;
-    overflow: auto;
 }
 
 #mainBar {
@@ -541,13 +538,16 @@ svg[data-icon="success-circle"] {
     left: 0;
 }
 
-.sidebarView .sidebar-region {
-    background-color: #292929;
-    flex: 1 0 220px;
+.sidebar-region {
+    background-color: var(--background-secondary);
     display: flex;
-    justify-content: flex-end;
+    flex-direction: row;
     user-select: none;
     overflow: hidden scroll;
+}
+.sidebarView .sidebar-region {
+    flex: 1 0 220px;
+    justify-content: flex-end;
 }
 .sidebar-region::-webkit-scrollbar {
     width: 4px;
@@ -572,7 +572,7 @@ svg[data-icon="success-circle"] {
     font-weight: 500;
 }
 
-.sidebar .settingsItem {
+.navItem {
     border-radius: 2px;
     transition: 0.2s all;
     padding: 6px 10px;
@@ -580,25 +580,24 @@ svg[data-icon="success-circle"] {
     font-size: 16px;
     line-height: 20px;
     cursor: pointer;
-    background-color: #292929;
     color: #b9bbbe;
 }
 
-.sidebar .settingsItem:hover {
+.navItem:hover {
     color: #dcddde;
-    background-color: #333333a0;
+    background-color: var(--background-primary);
 }
 
-.sidebar .settingsItem.selected {
+.navItem.selected {
     cursor: default;
     color: #F1F1F1 !important;
-    background-color: #333333 !important;
+    background-color: var(--background-primary) !important;
 }
 
-.sidebar .header {
+.header {
     padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 12px !important;
+    font-weight: 700 !important;
     line-height: 16px;
     text-transform: uppercase;
 }
@@ -610,7 +609,7 @@ svg[data-icon="success-circle"] {
 }
 
 .sidebarView .content-region {
-    background: #333333;
+    background: var(--background-primary);
     flex: 1 1 800px;
     display: flex;
     align-items: flex-start;
@@ -708,39 +707,6 @@ input:checked + .toggleSwitchSlider:before {
     transform: translateX(22px);
 }
 
-#frameMain {
-    background: url('https://picsum.photos/1280/720');
-    background-size: cover;
-    -webkit-user-select: none;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-}
-#frameSecond {
-    background: #212121;
-}
-
-/* === Main === */
-.guilds {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    overflow: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    height: 100%;
-    width: 72px;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -ms-flex-negative: 0;
-    flex-shrink: 0;
-    background-color: var(--background-tertiary);
-}
-
 /* === app === */
 .app-mount, body, html {
     width: 100%;
@@ -811,27 +777,65 @@ input:checked + .toggleSwitchSlider:before {
     right: 0;
 }
 .bg {
-    background: url('https://picsum.photos/1280/720');
+    /*background: url('https://picsum.photos/1280/720');*/
+    background: var(--background-primary);
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
+}
+/* === Main === */
+.sidebar-main {
+    overflow: hidden;
+    display: flex;
+    height: 100%;
+    min-width: 240px;
+    max-width: 25vw;
+    flex: 1 0 240px;
+    flex-direction: column;
+    flex-shrink: 0;
+    background-color: var(--background-secondary);
+}
+.sidebar-main > .sidebar-region {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    min-height: 0;
+    box-sizing: border-box;
+}
+.sidebar-main > .sidebar-region > .sidebar {
+    width: 100%;
+    padding: 20px 10px 20px 10px;
+}
+.sidebar-main > .panel {
+    flex: 0 0 auto;
+    height: 48px;
+    background-color: var(--background-secondary-alt);
+}
+.sidebar-main > .panel > .container {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
 }
 .container {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-shrink: 0;
+    justify-content: center;
 }
 
-.scrollerBase {
+.container > .base {
+    flex: 1 1 80%;
     position: relative;
-    box-sizing: border-box;
-    min-height: 0;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
+    background-color: var(--background-primary);
 }
+
 .listItem {
     position: relative;
     margin: 0 0 8px;
@@ -845,8 +849,8 @@ input:checked + .toggleSwitchSlider:before {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    width: 48px;
-    height: 48px;
+    width: 32px;
+    height: 32px;
     position: relative;
     cursor: pointer;
 }

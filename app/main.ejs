@@ -1,29 +1,19 @@
 <div class="container">
-    <nav class="guilds">
-        <ul>
-            <div class="scrollerBase">
-                <div class="listItem">
-                    <div class="wrapper">1</div>
-                </div>
-                <div class="listItem">
-                    <div class="wrapper">2</div>
-                </div>
-                <div class="listItem">
-                    <div class="wrapper">3</div>
-                </div>
+    <div class="sidebar-main" id="main-version-list">
+        <div class="sidebar-region">
+            <div class="sidebar">
+                <div class="item header">Версии</div>
             </div>
-            У тебя хуй во рту застрял
-            Алё, Алё
-            Ничего не слышно
-            Вытащи хуй изо рта
-
-            Алё, Федя блядь
-            Я понимаю что гловка вкусная
-            Но вытащи хуй
-            Я тебя не слышу
-        </ul>
-    </nav>
-    <div id="main">
+        </div>
+        
+        <section class="panel">
+            <div class="container">
+                <button href="#">Add Version</button>
+                <button href="#" id="settings-button">Settings</button>
+            </div>
+        </section>
+    </div>
+    <div id="main" class="base">
         <div id="topBar" class="hidden">
             <div id="progress-bar"></div>
         </div>
@@ -31,7 +21,6 @@
         </div>
         <div id="mainBar">
             <input type="text" placeholder="Ник" id="nick">
-            <select id="version"></select>
             <button id="playButton">Играть</button>
         </div>
     </div>

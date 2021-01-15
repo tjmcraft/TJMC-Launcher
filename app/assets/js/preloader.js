@@ -1,8 +1,6 @@
 const uiCore = require('./uicore')
-const animation = require('./libs/Animation')
-
 const ConfigManager = require('./ConfigManager')
-const { getOS } = require('./Tools')
+const { shell } = require('electron')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
 logger.log('Loading..')
@@ -14,6 +12,7 @@ ConfigManager.load()
 process.once('loaded', () => {
     global.API = {
         Message: require('./message'),
-        getOS: require('./Tools').getOS
+        getOS: require('./Tools').getOS,
+        shell: shell
     }
 })

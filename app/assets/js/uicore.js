@@ -41,15 +41,6 @@ document.addEventListener('readystatechange', function () {
             document.body.classList.add('darwin')
         }
 // =================================================================
-        versionList.addVer = function (val){
-            option = document.createElement( 'option' );
-            option.value = option.text = val;
-            versionList.add( option );
-        }
-
-        versionList.addEventListener('change', (e) => {
-            //e.target.value
-        })
 
         progressBar.setValue = (v) => {
             progressBar.style.width = v + "%"
@@ -59,14 +50,18 @@ document.addEventListener('readystatechange', function () {
         nickField.oninput = function(e){
             console.log(e.target.value)
         }
+        
         Minecraft.getVersionManifest.then((parsed) => {
             for (const cv in parsed) {
-                versionList.addVer(parsed[cv].id)
+                mvl.addItem(parsed[cv].id)
             }
         })
 
         playButton.addEventListener('click', (e) => {
             startMine()
+        })
+        stb.addEventListener('click', (e) => {
+            new Settings()
         })
         // ----------------------------------
         function startMine () {
