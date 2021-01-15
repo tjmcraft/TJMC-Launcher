@@ -262,23 +262,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     height: 48px;
 }
 
-#mainBar #playButton {
-    position: absolute;
-    background-color: #1aaa1a !important;
-    margin: 8px 8px 8px 8px;
-    right: 0;
-    box-sizing: border-box;
-    font-size: 18px;
-    font-weight: 800;
-    width: 8em;
-}
-#mainBar #playButton:hover {
-    background-color: #10a010 !important;
-}
-#mainBar #playButton:active {
-    background-color: #008000 !important;
-}
-
 #nick {
     margin: 8px 0 8px 8px;
     /* padding: 4px; */
@@ -482,7 +465,7 @@ button {
     outline: 0;
     border-width: 0px 0px 1px 0px;
     background-color: #444444;
-    width: 10em;
+    width: 8em;
     height: 32px;
 }
 
@@ -853,4 +836,62 @@ input:checked + .toggleSwitchSlider:before {
     height: 32px;
     position: relative;
     cursor: pointer;
+}
+
+#main > .main-content {
+    position: relative;
+    padding: 10px;
+    height: 100%;
+    width: 100%;
+}
+
+#main > .main-content > .top {
+    width: 100%;
+    max-height: 50vh;
+    position: relative;
+    overflow: hidden;
+}
+#main > .main-content > .top > img {
+    width: 100%;
+    min-height: 240px;
+}
+#main > .main-content > .top > .top-overlay {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    bottom: 0;
+    background: linear-gradient(180deg,transparent,rgba(10,10,10,0.8));
+}
+
+#main > .main-content > .top > .top-overlay > .top-toolbar {
+    width: 100%;
+    height: 5em;
+    position: absolute;
+    bottom: 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    backdrop-filter: saturate(180%) blur(15px);
+}
+#main > .main-content > .top h2 {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+#playButton {
+    position: relative;
+    background-color: #1aaa1a !important;
+    box-sizing: border-box;
+    font-size: 20px;
+    font-weight: 800;
+    height: 2em;
+}
+#playButton:hover {
+    background-color: #10a010 !important;
+}
+#playButton:active {
+    background-color: #008000 !important;
 }

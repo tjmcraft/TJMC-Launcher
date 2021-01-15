@@ -47,19 +47,19 @@ document.addEventListener('readystatechange', function () {
             c_window.setProgressBar(v/100)
         }
 
-        nickField.oninput = function(e){
+        /*nickField.oninput = function(e){
             console.log(e.target.value)
-        }
-        
+        }*/
+
         Minecraft.getVersionManifest.then((parsed) => {
             for (const cv in parsed) {
                 mvl.addItem(parsed[cv].id)
             }
         })
 
-        playButton.addEventListener('click', (e) => {
+        /*playButton.addEventListener('click', (e) => {
             startMine()
-        })
+        })*/
         stb.addEventListener('click', (e) => {
             new Settings()
         })
