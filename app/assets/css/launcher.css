@@ -52,10 +52,10 @@
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
 .darwin .frame-fix {padding-top: 0;}
-.frame-fix {transition: all 0.6s; padding-top: 22px;}
+.frame-fix {transition: all 0.5s; padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
 
-div {transition: all 0.6s;}
+div {transition: all 0.5s;}
 html, body {
     transition: 1s all;
     overflow: hidden;
@@ -108,7 +108,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     display: flex;
     justify-content: center;
     flex-direction: column;
-    transition: all 0.6s;
+    transition: all 0.5s;
     background-color: var(--background-tertiary);
     -webkit-user-select: none;
     width: 100%;
@@ -571,6 +571,7 @@ svg[data-icon="success-circle"] {
 }
 
 .navItem:hover {
+    transition: all .2s;
     color: #dcddde;
     background-color: var(--background-primary);
 }
@@ -921,6 +922,7 @@ input:checked + .toggleSwitchSlider:before {
     color: var(--interactive-normal);
     background: transparent;
     cursor: pointer;
+    transition: all .2s;
 }
 .button:hover {
     color: var(--interactive-hover);
@@ -937,10 +939,15 @@ input:checked + .toggleSwitchSlider:before {
     margin-right: 8px;
     overflow: hidden;
     flex-shrink: 0;
+    transition: all 0.2s;
 }
 .avatar img {
     width: 100%;
     height: 100%;
+}
+.avatar:hover {
+    filter: brightness(0.7);
+    cursor: pointer;
 }
 
 .nameTag {
@@ -972,5 +979,4 @@ input:checked + .toggleSwitchSlider:before {
     border-radius: 25%;
     border: 1px solid green;
     box-shadow: 0 0 5px #666;
-    margin: 0.5em;
 }
