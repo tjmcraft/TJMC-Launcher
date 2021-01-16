@@ -90,6 +90,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-primary: #313131;
     --background-secondary: #2A2A2A;
     --background-secondary-alt: #212121;
+    --interactive-normal: #b9bbbe;
+    --interactive-hover:#dcddde;
+    --background-modifier-selected: #313131;
+
 }
 /*******************************************************************************
  *                                                                             *
@@ -903,4 +907,70 @@ input:checked + .toggleSwitchSlider:before {
 #main > .main-content > .main {
     position: relative;
     padding: 10px;
+}
+
+.button {
+    line-height: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    position: relative;
+    color: var(--interactive-normal);
+    background: transparent;
+    cursor: pointer;
+}
+.button:hover {
+    color: var(--interactive-hover);
+    background-color: var(--background-modifier-selected);
+}
+.bb {
+    flex-grow: 1;
+}
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 30%;
+    position: relative;
+    margin-right: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.avatar img {
+    width: 100%;
+    height: 100%;
+}
+
+.nameTag {
+    user-select: text;
+    flex-grow: 1;
+    margin-right: 4px;
+    min-width: 0;
+}
+.nameTag > .title {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #f2f2f2;
+    line-height: 18px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 18px;
+}
+.nameTag > .subtitle {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #f2f2f2;
+    line-height: 13px;
+    font-size: 12px;
+    line-height: 16px;
+}
+.round {
+    border-radius: 25%;
+    border: 1px solid green;
+    box-shadow: 0 0 5px #666;
+    margin: 0.5em;
 }
