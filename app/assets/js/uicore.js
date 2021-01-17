@@ -3,7 +3,7 @@ const LoggerUtil = require('./loggerutil')
 const Minecraft = require('./libs/Minecraft')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
-const Settings = require('./settings')
+//const Settings = require('./settings')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -14,7 +14,7 @@ document.addEventListener('readystatechange', function () {
         logg.log('UICore Initializing..')
 
         ipcRenderer.on('open-settings', () => {
-            new Settings()
+            openSettings()
         })
         ipcRenderer.on('open-minecraft-dir', () => {
             launcher.openMineDir()
@@ -60,9 +60,6 @@ document.addEventListener('readystatechange', function () {
         /*playButton.addEventListener('click', (e) => {
             startMine()
         })*/
-        stb.addEventListener('click', (e) => {
-            new Settings()
-        })
         // ----------------------------------
         function startMine () {
             let _launcher = new launcher(ConfigManager.getAllOptions())

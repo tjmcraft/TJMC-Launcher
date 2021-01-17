@@ -1,4 +1,4 @@
-const {escBinder, toggleButtonBinder} = require('./uibind')
+//const {escBinder, toggleButtonBinder} = require('./uibind')
 const label = 'USER_SETTINGS'
 class Settings {
     constructor() {
@@ -69,4 +69,4 @@ class Settings {
     }
 }
 
-module.exports = Settings
+//module.exports = Settings

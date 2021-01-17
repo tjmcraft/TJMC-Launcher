@@ -62,6 +62,10 @@ function getCurrentView(){
     return currentView
 }
 
+function openSettings() {
+    new Settings()
+}
+
 /**
  * Functions toogle all elements using css
  * @param {boolean} s state to toggle (it can be null)
@@ -79,11 +83,15 @@ Element.prototype.toggle = function(s = null) {
 /**
  * Open web links in the user's default browser.
  */
-document.addEventListener('click', function (event) {
+document.addEventListener('click', (event) => {
     if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
       event.preventDefault()
       API.shell.openExternal(event.target.href)
     }
+})
+
+stb.addEventListener('click', (e) => {
+    openSettings()
 })
 
 /**

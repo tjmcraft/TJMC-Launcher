@@ -955,25 +955,24 @@ input:checked + .toggleSwitchSlider:before {
     flex-grow: 1;
     margin-right: 4px;
     min-width: 0;
+    line-height: 16px;
 }
 .nameTag > .title {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #f2f2f2;
+    color: #dcddde;
     line-height: 18px;
     font-weight: 600;
     font-size: 14px;
-    line-height: 18px;
 }
 .nameTag > .subtitle {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #f2f2f2;
+    color: #b9bbbe;
     line-height: 13px;
     font-size: 12px;
-    line-height: 16px;
 }
 .round {
     border-radius: 25%;

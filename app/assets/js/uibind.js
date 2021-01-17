@@ -20,7 +20,7 @@ class toggleButtonBinder {
     }
     bind (f) {
         this.button.onclick = (e) => {
-            typeof f === 'function' ? f(this.button.checked) : ''
+            if (typeof f === 'function') f(this.button.checked)
         }
     }
     unbind () {
@@ -29,4 +29,4 @@ class toggleButtonBinder {
     }
 }
 
-module.exports = {escBinder, toggleButtonBinder}
+//module.exports = {escBinder, toggleButtonBinder}
