@@ -56,7 +56,11 @@ exports.getLauncherDirectory = function(){
 }
 
 exports.getDataDirectory = function(def = false){
-    return def ? DEFAULT_CONFIG.path.root : config.path.root
+    return def ? DEFAULT_CONFIG.overrides.path.root : config.overrides.path.root
+}
+
+exports.getVersionsDirectory = function(def = false){
+    return def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory
 }
 
 const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.json')
@@ -121,6 +125,7 @@ exports.getVersion = function() {
 
 exports.setVersion = function(v) {
     config.version = (typeof v !== 'undefined' && v != null) ? v : DEFAULT_CONFIG.version
+    exports.save()
 }
 
 /* =====================   Window Properties   ===================== */

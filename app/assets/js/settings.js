@@ -60,7 +60,7 @@ class Settings {
     }
 
     destroy() {
-        switchView(VIEWS.landing, 150, 150, () => {}, () => {}, () => {
+        switchView(VIEWS.landing, 150, 150, () => {}, () => {
             this.escBinder.uibind()
             this.unbindSidebarItems()
             this.settings.remove()

@@ -2,7 +2,6 @@ const {ipcRenderer, remote} = require('electron')
 const LoggerUtil = require('./loggerutil')
 const Minecraft = require('./libs/Minecraft')
 const launcher = require('./launcher')
-const ConfigManager = require('./ConfigManager')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -46,19 +45,12 @@ document.addEventListener('readystatechange', function () {
             c_window.setProgressBar(v/100)
         }
 
-        /*nickField.oninput = function(e){
-            console.log(e.target.value)
-        }*/
-
         Minecraft.getVersionManifest.then((parsed) => {
             for (const cv in parsed) {
-                mvl.addItem(parsed[cv].id)
+                mvl.addItem(parsed[cv])
             }
         })
 
-        /*playButton.addEventListener('click', (e) => {
-            startMine()
-        })*/
         // ----------------------------------
     } else if (document.readyState === 'complete'){
         switchView(VIEWS.landing, 100, 100)

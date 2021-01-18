@@ -113,7 +113,11 @@ mvl.addItem = function (item) {
     let c = this.qsl('.sidebar')
     let i = createElementWithClass('div', 'item navItem')
     i.setAttribute('item-data', item)
-    i.innerHTML = item
+    i.innerHTML = item.id
+    i.onclick = function() {
+        console.debug(item)
+        selectVersion(item)
+    }
     c.append(i)
 }
 mvl.remItem = function (item) {
@@ -125,7 +129,8 @@ mvl.remItem = function (item) {
 function selectVersion(version) {
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
-        d = m.qsl('h2')
+        d = m.qsl('h5')
     API.ConfigManager.setVersion(version)
-    let vn = version.id
+    n.innerText = version.id
+    d.innerText = version.type
 }
