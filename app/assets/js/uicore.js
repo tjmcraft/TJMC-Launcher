@@ -3,7 +3,6 @@ const LoggerUtil = require('./loggerutil')
 const Minecraft = require('./libs/Minecraft')
 const launcher = require('./launcher')
 const ConfigManager = require('./ConfigManager')
-//const Settings = require('./settings')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
 
@@ -61,21 +60,6 @@ document.addEventListener('readystatechange', function () {
             startMine()
         })*/
         // ----------------------------------
-        function startMine () {
-            let _launcher = new launcher(ConfigManager.getAllOptions())
-            _launcher.on('progress', (e) => {
-                progressBar.setValue((e.task/e.total)*100)
-            })
-            _launcher.on('download-status', (e) => {
-                if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
-            })
-            topBar.toggle(true)
-            _launcher.construct().then((minecraftArguments) =>
-                _launcher.createJVM(minecraftArguments).then((e) => {
-                    topBar.toggle(false)
-                })
-            )
-        }
     } else if (document.readyState === 'complete'){
         switchView(VIEWS.landing, 100, 100)
         setTimeout(() => {

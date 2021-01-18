@@ -1,12 +1,14 @@
 /* ================================= */
 
 /* --------------------------------- */
-const mvl = document.querySelector('#main-version-list')
-const stb = document.querySelector('#settings-button')
-const topBar = document.querySelector('#topBar')
-const progressBar = document.querySelector('#progress-bar')
-const nickField = document.querySelector('#nick')
-const playButton = document.querySelector('#playButton')
+const mvl = qsl('#main-version-list')
+const avb = qsl('#add-version-button')
+const stb = qsl('#settings-button')
+const plb = qsl('#playButton')
+const topBar = qsl('#topBar')
+const progressBar = qsl('#progress-bar')
+const nickField = qsl('#nick')
+const playButton = qsl('#playButton')
 /* ================================= */
 
 console.log('Renderer init')
@@ -26,8 +28,8 @@ switch (API.getOS()) {
 }
 
 const VIEWS = {
-    landing: document.querySelector('#main-layer'),
-    settings: document.querySelector('#settings-layer')
+    landing: qsl('#main-layer'),
+    settings: qsl('#settings-layer')
 }
 
 var currentView
@@ -35,17 +37,15 @@ var currentView
 /**
  * Switch launcher views.
  * 
- * @param {*} next The ID of the next view container.
- * @param {*} currentFadeTime Optional. The fade out time for the current view.
- * @param {*} nextFadeTime Optional. The fade in time for the next view.
- * @param {*} onBeforeFade Optional. Callback function to execute before animation starts
- * @param {*} onCurrentFade Optional. Callback function to execute when the current
+ * @param {String} next (requied) The ID of the next view container
+ * @param {Number} currentFadeTime The fade out time for the current view
+ * @param {Number} nextFadeTime The fade in time for the next view
+ * @param {Function} onCurrentFade Callback function to execute when the current
  * view fades out.
- * @param {*} onNextFade Optional. Callback function to execute when the next view
+ * @param {Function} onNextFade Callback function to execute when the next view
  * fades in.
  */
-function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onBeforeFade = () => {}, onCurrentFade = () => {}, onNextFade = () => {}){
-    onBeforeFade()
+function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFade = () => {}, onNextFade = () => {}){
     let current = getCurrentView()
     currentView = next
     if (current)
@@ -58,26 +58,18 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onBeforeFad
         })
 }
 
+/**
+ * Returns current active view
+ */
 function getCurrentView(){
     return currentView
 }
 
+/**
+ * Creates new settings layer
+ */
 function openSettings() {
     new Settings()
-}
-
-/**
- * Functions toogle all elements using css
- * @param {boolean} s state to toggle (it can be null)
- */
-Element.prototype.toggle = function(s = null) {
-    let cl = this.classList,
-        c = 'hidden'
-    if (s != null ? s : cl.contains(c) == 1){
-        cl.remove(c)
-    } else {
-        cl.add(c)
-    }
 }
 
 /**
@@ -90,8 +82,15 @@ document.addEventListener('click', (event) => {
     }
 })
 
+/**
+ * Open setting by clicking a button
+ */
 stb.addEventListener('click', (e) => {
     openSettings()
+})
+
+plb.addEventListener('click', (e) => {
+    API.startMine()
 })
 
 /**
@@ -110,54 +109,23 @@ function createToolsContainer() {
     return tools
 }
 
-/**
- * Function creates new element with given ID
- * @param {Element} el - The type of element to create
- * @param {*} id - The ID for created element
- */
-function createElementWithId(el, id) {
-    let e = document.createElement(el)
-    e.id = id
-    return e
-}
-
-/**
- * Function creates new element with given ClassName
- * @param {Element} el - The type of element to create
- * @param {*} cl - The ClassName for created element
- */
-function createElementWithClass(el, cl) {
-    let e = document.createElement(el)
-    e.className = cl
-    return e
-}
-
-/**
-* This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
-*
-* @params ...args Function accept multiple array input (merges them to single array with no duplicates)
-* it also can be used to filter duplicates in single array
-*/
-function merge (...args) {
-    let set = new Set()
-    for (let arr of args) {
-        arr.map((value) => {
-            set.add(value)
-        })
-    }
-    return [...set]
-}
-
 mvl.addItem = function (item) {
-    let c = this.querySelector('.sidebar')
+    let c = this.qsl('.sidebar')
     let i = createElementWithClass('div', 'item navItem')
     i.setAttribute('item-data', item)
     i.innerHTML = item
     c.append(i)
 }
 mvl.remItem = function (item) {
-    let c = this.querySelector('.sidebar')
-    let i = c.querySelector(`[item-data=${item}]`)
+    let c = this.qsl('.sidebar')
+    let i = c.qsl(`[item-data=${item}]`)
     c.removeChild(i)
 }
 
+function selectVersion(version) {
+    let m = qsl('.top-toolbar'),
+        n = m.qsl('h2'),
+        d = m.qsl('h2')
+    API.ConfigManager.setVersion(version)
+    let vn = version.id
+}

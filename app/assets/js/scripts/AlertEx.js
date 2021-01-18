@@ -1,5 +1,4 @@
-//const {escBinder} = require('./uibind')
-class message {
+class AlertEx {
     constructor(params) {
         this.overlay = this.createOverlay(params.closeButton)
         this.overlay.toggle(false)
@@ -102,5 +101,3 @@ class message {
         this.escBinder.uibind()
     }
 }
-
-//module.exports = message

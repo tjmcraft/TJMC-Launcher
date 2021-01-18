@@ -6,7 +6,6 @@ const path                                   = require('path')
 const checksum                               = require('checksum')
 const os = require('os')
 const Zip = require('adm-zip')
-const {merge, getOS} = require('../Tools')
 const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 let counter = 0
@@ -129,7 +128,7 @@ class Minecraft {
      */
     async getJar (version) {
         const versionPath = path.join(this.options.overrides.path.version)
-        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.number}.jar`, true, 'version-jar')
+        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.id}.jar`, true, 'version-jar')
         logg.debug('Downloaded version jar')
     }
 
@@ -181,13 +180,13 @@ class Minecraft {
 
                     const native = 
                     lib.classifiers ? (
-                        getOS() === 'osx' 
+                        API.getOS() === 'osx' 
                         ? (lib.classifiers['natives-osx'] || lib.classifiers['natives-macos']) 
-                        : (lib.classifiers[`natives-${getOS()}`]) 
+                        : (lib.classifiers[`natives-${API.getOS()}`]) 
                     ) : lib.downloads.classifiers ? (
-                        getOS() === 'osx' 
+                        API.getOS() === 'osx' 
                         ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
-                        : (lib.downloads.classifiers[`natives-${getOS()}`]) 
+                        : (lib.downloads.classifiers[`natives-${API.getOS()}`]) 
                     ) : null
                     //natives = merge(natives, native)
                     natives.push(native)
@@ -451,12 +450,12 @@ class Minecraft {
             if (lib.rules[0].action === 'allow' &&
                         lib.rules[1].action === 'disallow' &&
                         lib.rules[1].os.name === 'osx') {
-                return getOS() === 'osx'
+                return API.getOS() === 'osx'
             } else {
                 return true
             }
             } else {
-            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return getOS() !== 'osx'
+            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return API.getOS() !== 'osx'
             }
         } else {
             return false
@@ -488,7 +487,7 @@ class Minecraft {
     constructJVMArguments(versionFile, tempNativePath, cp){
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)}`)
         this.fields = {
             '${auth_access_token}': this.options.authorization.access_token,
             '${auth_session}': this.options.authorization.access_token,
@@ -496,7 +495,7 @@ class Minecraft {
             '${auth_uuid}': this.options.authorization.uuid,
             '${user_properties}': this.options.authorization.user_properties,
             '${user_type}': 'mojang',
-            '${version_name}': this.options.version.number,
+            '${version_name}': this.options.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
             '${game_directory}': this.options.overrides.path.gameDirectory || this.options.overrides.path.root,
             '${assets_root}': assetPath,
@@ -524,7 +523,7 @@ class Minecraft {
     getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)}`)
 
         // Java Arguments
         if(process.platform === 'darwin'){
@@ -578,7 +577,7 @@ class Minecraft {
                 let checksum = 0
                 for(let rule of args[i].rules){
                     if(rule.os != null){
-                        if(rule.os.name === getOS()
+                        if(rule.os.name === API.getOS()
                             && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
                             if(rule.action === 'allow'){
                                 checksum++

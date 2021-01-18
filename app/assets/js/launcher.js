@@ -1,11 +1,9 @@
 const child                                  = require('child_process')
 const EventEmitter                           = require('events')
 const LoggerUtil                             = require('./loggerutil')
-const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./libs/Minecraft')
-const {merge}                                = require('./Tools')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter {
@@ -14,7 +12,7 @@ class launcher extends EventEmitter {
     }
     static openMineDir(){
         logg.debug('Using default path: '+this.getAppData)
-        switch (getOS()) {
+        switch (API.getOS()) {
             case 'windows': 
                 child.exec(`explorer "${this.getAppData}"`)
                 break
@@ -29,7 +27,7 @@ class launcher extends EventEmitter {
     constructor (options) {
         super()
         this.options = options
-        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.number)
+        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.id)
         logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
 
         this.handler = new Minecraft(this)
@@ -52,10 +50,10 @@ class launcher extends EventEmitter {
         }
 
         logg.log('Attempting to load main json')
-        const versionFile = await this.handler.getVersion(this.options.version.number)
+        const versionFile = await this.handler.getVersion(this.options.version.id)
         const nativePath = await this.handler.getNatives(versionFile)
 
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.number}.jar`)
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)
         if (!fs.existsSync(this.options.mcPath)) {
           logg.log('Attempting to download Minecraft version jar')
           await this.handler.getJar(versionFile)

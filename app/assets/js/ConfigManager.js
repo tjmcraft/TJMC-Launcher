@@ -37,7 +37,7 @@ const DEFAULT_CONFIG =
         }
     },
     version: {
-        number: 'OptiFine 1.15.2',
+        id: 'OptiFine 1.15.2',
         type: 'modified'
     },
     authorization: {
@@ -113,6 +113,14 @@ exports.isLoaded = function(){
 
 exports.getAllOptions = function() {
     return config
+}
+
+exports.getVersion = function() {
+    return config.version ?? DEFAULT_CONFIG.version
+}
+
+exports.setVersion = function(v) {
+    config.version = (typeof v !== 'undefined' && v != null) ? v : DEFAULT_CONFIG.version
 }
 
 /* =====================   Window Properties   ===================== */

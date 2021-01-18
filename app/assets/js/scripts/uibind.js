@@ -1,9 +1,8 @@
 class escBinder {
-    constructor () {
-        this.Lonkeyup = null
+    constructor (f = null) {
+        this.Lonkeyup = f ?? document.onkeyup
     }
     bind (f) {
-        this.Lonkeyup = document.onkeyup
         document.onkeyup = (e) => {
             e = e || window.event
             if (((e.key === "Escape" || e.key === "Esc" || e.keyCode === 27) || false) && typeof f === 'function') f()
@@ -15,8 +14,8 @@ class escBinder {
 }
 
 class toggleButtonBinder {
-    constructor (b) {
-        this.button = b
+    constructor (b = null) {
+        this.button = b ?? document.body
     }
     bind (f) {
         this.button.onclick = (e) => {
@@ -25,8 +24,5 @@ class toggleButtonBinder {
     }
     unbind () {
         this.button.onclick = null
-        this.button = null
     }
 }
-
-//module.exports = {escBinder, toggleButtonBinder}

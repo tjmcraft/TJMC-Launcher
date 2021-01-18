@@ -1,4 +1,3 @@
-//const {escBinder, toggleButtonBinder} = require('./uibind')
 const label = 'USER_SETTINGS'
 class Settings {
     constructor() {
@@ -49,7 +48,7 @@ class Settings {
         })
     }
     setTab (tab) {
-        console.log('Setting tab: '+tab)
+        console.debug('Setting tab: '+tab)
         this.content.forEach((el) => {
             el.toggle(false)
             if (el.id === tab) el.toggle(true)
@@ -62,11 +61,9 @@ class Settings {
 
     destroy() {
         switchView(VIEWS.landing, 150, 150, () => {}, () => {}, () => {
+            this.escBinder.uibind()
             this.unbindSidebarItems()
             this.settings.remove()
-            this.escBinder.uibind()
         })
     }
 }
-
-//module.exports = Settings
