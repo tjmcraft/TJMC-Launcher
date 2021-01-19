@@ -1,8 +1,7 @@
 const uiCore = require('./uicore')
 const ConfigManager = require('./ConfigManager')
 const { shell } = require('electron')
-const fs = require('fs')
-const path = require('path')
+const VersionManager = require('./VersionManager')
 const launcher = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
@@ -15,33 +14,13 @@ ConfigManager.load()
 process.once('loaded', () => {
     global.API = {
         ConfigManager: ConfigManager,
-        getLocalVersions: getLocalVersions,
+        VersionManager: VersionManager,
         launcher: launcher,
         startMine: startMine,
         getOS: getOS,
         shell: shell
     }
 })
-
-async function getLocalVersions() {
-    let dir_path = API.ConfigManager.getVersionsDirectory()
-        fs.readdir(dir_path, (err, _folder) => {
-            _folder.forEach(folder => {
-            let ver_path = path.join(dir_path, folder, folder + '.json')
-            if (fs.existsSync(ver_path)){
-                let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
-                let version =  {
-                    id: file_c.id,
-                    type: file_c.type,
-                    time: file_c.time,
-                    releaseTime: file_c.releaseTime
-                }
-                console.debug(version)
-                return version
-            }
-        })
-    })
-}
 
 function getOS() {
     switch (process.platform) {
