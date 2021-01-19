@@ -70,22 +70,6 @@ class Minecraft {
     }
 
     /**
-     * Function just download a single file and return its body
-     * @param url give url of file
-     */
-    downloadFile(url) {
-        return new Promise((resolve, reject) => {
-            request(url, (error, response, body) => {
-                if (error) reject(error);
-                if (response.statusCode != 200) {
-                    reject('Invalid status code <' + response.statusCode + '>');
-                }
-                resolve(body);
-            });
-        });
-    }
-
-    /**
      * Gets Main JSON of given version
      * @param version Version of Minecraft
      */
@@ -99,7 +83,7 @@ class Minecraft {
             const parsed = await this.constructor.getVersionManifest
             for (const cv in parsed) {
                 if (parsed[cv].id === version) {
-                        const body = await this.downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`)
+                        const body = await API.downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`)
                         c_version = JSON.parse(body)
                 }
             }
