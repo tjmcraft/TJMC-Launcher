@@ -1,6 +1,5 @@
 const {ipcRenderer, remote} = require('electron')
 const LoggerUtil = require('./loggerutil')
-const Minecraft = require('./libs/Minecraft')
 const launcher = require('./launcher')
 
 const logg = LoggerUtil('%c[UICore]', 'color: #00aeae; font-weight: bold')
@@ -44,12 +43,6 @@ document.addEventListener('readystatechange', function () {
             progressBar.style.width = v + "%"
             c_window.setProgressBar(v/100)
         }
-        
-        API.VersionManager.getGlobalVersions().then((parsed) => {
-            for (const cv in parsed) {
-                mvl.addItem(parsed[cv])
-            }
-        })
 
         // ----------------------------------
     } else if (document.readyState === 'complete'){

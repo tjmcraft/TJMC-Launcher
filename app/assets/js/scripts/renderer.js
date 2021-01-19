@@ -93,6 +93,12 @@ plb.addEventListener('click', (e) => {
     API.startMine()
 })
 
+API.VersionManager.getLocalVersions().then((parsed) => {
+    for (const cv in parsed) {
+        mvl.addItem(parsed[cv])
+    }
+})
+
 /**
  * The function creates and returns tools container for overlay
  */
