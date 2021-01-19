@@ -23,24 +23,24 @@ process.once('loaded', () => {
     }
 })
 
-function getLocalVersions() {
+async function getLocalVersions() {
     let dir_path = API.ConfigManager.getVersionsDirectory()
-    let versions = []
-    fs.readdirSync(dir_path).forEach(folder => {
-        let ver_path = path.join(dir_path, folder, folder + '.json')
-        if (fs.existsSync(ver_path)){
-            let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
-            let version =  {
-                id: file_c.id,
-                type: file_c.type,
-                time: file_c.time,
-                releaseTime: file_c.releaseTime
+        fs.readdir(dir_path, (err, _folder) => {
+            _folder.forEach(folder => {
+            let ver_path = path.join(dir_path, folder, folder + '.json')
+            if (fs.existsSync(ver_path)){
+                let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
+                let version =  {
+                    id: file_c.id,
+                    type: file_c.type,
+                    time: file_c.time,
+                    releaseTime: file_c.releaseTime
+                }
+                console.debug(version)
+                return version
             }
-            console.debug(version)
-            versions.push(version)
-        }
+        })
     })
-    return versions
 }
 
 function getOS() {
