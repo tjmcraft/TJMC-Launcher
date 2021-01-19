@@ -7,17 +7,14 @@ const Minecraft                              = require('./libs/Minecraft')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter {
-    static get getAppData(){
-        return path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
-    }
     static openMineDir(){
-        logg.debug('Using default path: '+this.getAppData)
+        logg.debug('Using default path: '+API.ConfigManager.getDataDirectory())
         switch (API.getOS()) {
             case 'windows': 
-                child.exec(`explorer "${this.getAppData}"`)
+                child.exec(`explorer "${API.ConfigManager.getDataDirectory()}"`)
                 break
             case 'osx':
-                child.exec(`open "" "${this.getAppData}"`)
+                child.exec(`open "" "${API.ConfigManager.getDataDirectory()}"`)
                 break
             default:
                 break

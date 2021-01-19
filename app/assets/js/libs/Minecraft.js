@@ -41,34 +41,6 @@ class Minecraft {
         })
     }
 
-    static get getVersionManifest () {
-        return new Promise(resolve => {
-            this.getMVM.then(m => {
-                this.getTVM.then(t => {
-                    return resolve(merge(m.versions,t.versions))
-                })
-            })
-        })
-    }
-    static get getMVM (){
-        return new Promise(resolve => {
-            request.get(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, (error, response, body) => {
-                if (error) resolve(error)
-                const parsed = JSON.parse(body)
-                return resolve(parsed)
-            })
-        })
-    }
-    static get getTVM (){
-        return new Promise(resolve => {
-            request.get(`http://u.tlauncher.ru/repo/versions/versions.json`, (error, response, body) => {
-                if (error) resolve(error)
-                const parsed = JSON.parse(body)
-                return resolve(parsed)
-            })
-        })
-    }
-
     /**
      * Gets Main JSON of given version
      * @param version Version of Minecraft
@@ -80,7 +52,7 @@ class Minecraft {
         if (fs.existsSync(versionJsonPath)) {
             c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
         } else {
-            const parsed = await this.constructor.getVersionManifest
+            const parsed = await API.VersionManager.getGlobalVersions()
             for (const cv in parsed) {
                 if (parsed[cv].id === version) {
                         const body = await API.downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`)

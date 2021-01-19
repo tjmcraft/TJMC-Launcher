@@ -44,8 +44,8 @@ document.addEventListener('readystatechange', function () {
             progressBar.style.width = v + "%"
             c_window.setProgressBar(v/100)
         }
-
-        Minecraft.getVersionManifest.then((parsed) => {
+        
+        API.VersionManager.getGlobalVersions().then((parsed) => {
             for (const cv in parsed) {
                 mvl.addItem(parsed[cv])
             }
