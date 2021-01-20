@@ -203,7 +203,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 #preloader {
     /*animation: fadein 1s !important;*/
     opacity: 0;
-    visibility: hidden;
     position: absolute;
     display: flex;
     justify-content: center;
@@ -217,6 +216,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     background: #1a1a1a;
     z-index: 99999;
     -webkit-user-select: none;
+    transition: none;
 }
 #preloader img {
     animation: bounce 1s ease !important;

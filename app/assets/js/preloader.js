@@ -1,6 +1,6 @@
 //const uiCore = require('./uicore')
 const ConfigManager = require('./ConfigManager')
-const { shell, remote, ipcRenderer } = require('electron')
+const { shell, remote, ipcRenderer, TouchBarScrubber } = require('electron')
 const request = require('request')
 const VersionManager = require('./VersionManager')
 const launcher = require('./launcher')
@@ -90,13 +90,13 @@ document.addEventListener('readystatechange', function () {
         logger.log('UICore Initializing..')
 
         if (process.platform !== 'darwin') {
-            document.querySelector('.fCb').addEventListener('click', e => {
+            document.querySelector('.fCb').addEventListener('click', (e) => {
                 win.close()
             })
-            document.querySelector('.fRb').addEventListener('click', e => {
+            document.querySelector('.fRb').addEventListener('click', (e) => {
                 win.isMaximized() ? win.unmaximize() : win.maximize()
             })
-            document.querySelector('.fMb').addEventListener('click', e => {
+            document.querySelector('.fMb').addEventListener('click', (e) => {
                 win.minimize()
             })
         } else {
@@ -109,12 +109,13 @@ document.addEventListener('readystatechange', function () {
         }
 
     } else if (document.readyState === 'complete'){
+        const preloader = qsl('#preloader')
         switchView(VIEWS.landing, 100, 100)
         setTimeout(() => {
             document.documentElement.classList.remove('preload')
-            /*setTimeout(() => {
-                document.querySelector('#preloader').remove()
-            }, 1000)*/
+            preloader.fadeOut(500, () => {
+                preloader.remove()
+            })
         }, 1000)
     }
 })
