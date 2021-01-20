@@ -196,8 +196,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 /* =============================================== */
 .preload > .app-container {
-    opacity: 0;
-    visibility: hidden;
+    /*opacity: 0;*/
+    /*visibility: hidden;*/
 }
 
 #preloader {
@@ -217,6 +217,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     z-index: 99999;
     -webkit-user-select: none;
     transition: none;
+    -webkit-app-region: drag;
 }
 #preloader img {
     animation: bounce 1s ease !important;
@@ -248,6 +249,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .preload #preloader {
     opacity: 1;
     visibility: visible;
+}
+
+.preload #frameBar * {
+    -webkit-app-region: no-drag;
 }
 
 .fullscreen #frameBar {

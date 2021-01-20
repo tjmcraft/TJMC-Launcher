@@ -29,8 +29,9 @@ function animate(options) {
  * @param {Number} duration - The duration of animation 
  * @param {Function} complete - The callback function after all animation complete
  */
-Element.prototype.fadeOut = function(duration, complete) {
+Element.prototype.fadeOut = function(duration, complete = () => {}) {
     let element = this
+    const c_op = element.style.opacity || 1
     animate({
         duration: duration,
         delta: function(progress) {
@@ -38,7 +39,7 @@ Element.prototype.fadeOut = function(duration, complete) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = 1 - delta
+            element.style.opacity = delta.map(0, 1, c_op, 0)
         },
         complete: function () {
             complete()
@@ -51,8 +52,9 @@ Element.prototype.fadeOut = function(duration, complete) {
  * @param {Number} duration - The duration of animation 
  * @param {Function} complete - The callback function after all animation complete
  */
-Element.prototype.fadeIn = function(duration, complete) {
+Element.prototype.fadeIn = function(duration, complete = () => {}) {
     let element = this
+    const c_op = element.style.opacity || 0
     animate({
         duration: duration,
         delta: function(progress) {
@@ -60,7 +62,7 @@ Element.prototype.fadeIn = function(duration, complete) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = 0 + delta
+            element.style.opacity = delta.map(0, 1, c_op, 1)
         },
         complete: function () {
             element.removeAttribute('style')
@@ -76,6 +78,7 @@ Element.prototype.fadeIn = function(duration, complete) {
  */
 Element.prototype.back = function(duration = 500, complete = () => {} ) {
     let element = this
+    const c_op = element.style.opacity || 1
     animate({
         duration: duration,
         delta: function(progress) {
@@ -83,7 +86,7 @@ Element.prototype.back = function(duration = 500, complete = () => {} ) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = 1 - delta
+            element.style.opacity = delta.map(0, 1, c_op, 0)
             element.style.transform = `scale(${delta.map(0,1,1,0.9)})`
         },
         complete: function() {
@@ -100,6 +103,7 @@ Element.prototype.back = function(duration = 500, complete = () => {} ) {
  */
 Element.prototype.top = function(duration = 500, complete = () => {} ) {
     let element = this
+    const c_op = element.style.opacity || 0
     element.style.visibility = `visible`
     animate({
         duration: duration,
@@ -108,7 +112,7 @@ Element.prototype.top = function(duration = 500, complete = () => {} ) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = 0 + delta
+            element.style.opacity = delta.map(0, 1, c_op, 1)
             element.style.transform = `scale(${delta.map(0,1,0.9,1)})`
         },
         complete: function() {
