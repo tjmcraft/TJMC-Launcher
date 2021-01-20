@@ -1,5 +1,5 @@
 'use strict'
-const ConfigManager = require('../ConfigManager')
+const ConfigManager = require('./ConfigManager')
 const electron = require('electron')
 const logg = require('../loggerutil')('%c[WindowState]', 'color: #1052a5; font-weight: bold')
 

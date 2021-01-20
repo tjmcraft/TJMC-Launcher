@@ -1,15 +1,17 @@
-//const uiCore = require('./uicore')
-const ConfigManager = require('./ConfigManager')
-const { shell, remote, ipcRenderer, TouchBarScrubber } = require('electron')
+const ConfigManager = require('./libs/ConfigManager')
+const { shell, remote, ipcRenderer } = require('electron')
 const request = require('request')
-const VersionManager = require('./VersionManager')
+const VersionManager = require('./libs/VersionManager')
 const launcher = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
-const win = remote.getCurrentWindow()
+
 logger.log('Loading..')
 
 // Load ConfigManager
 ConfigManager.load()
+
+//Set Current Window as win
+const win = remote.getCurrentWindow()
 
 // Init global instances
 process.once('loaded', () => {
@@ -43,6 +45,9 @@ process.once('loaded', () => {
     ipcRenderer.on('focus', windowFocus)
 })
 
+/**
+ * Function returns current platform
+ */
 function getOS() {
     switch (process.platform) {
         case 'win32': return 'windows'
