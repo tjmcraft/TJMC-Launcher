@@ -39,7 +39,6 @@ process.once('loaded', () => {
 
     ipcRenderer.on('enter-full-screen', enterFullScreen)
     ipcRenderer.on('leave-full-screen', leaveFullScreen)
-    if (win.isFullScreen()) enterFullScreen()
 
     ipcRenderer.on('blur', windowBlur)
     ipcRenderer.on('focus', windowFocus)
@@ -94,6 +93,8 @@ document.addEventListener('readystatechange', function () {
 
         logger.log('UICore Initializing..')
 
+        if (win.isFullScreen()) enterFullScreen()
+
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb').addEventListener('click', (e) => {
                 win.close()
@@ -104,8 +105,20 @@ document.addEventListener('readystatechange', function () {
             document.querySelector('.fMb').addEventListener('click', (e) => {
                 win.minimize()
             })
-        } else {
-            document.body.classList.add('darwin')
+        }
+
+        switch (API.getOS()) {
+            case 'windows':
+                document.documentElement.classList.add('platform-win')
+                break;
+            case 'osx':
+                document.documentElement.classList.add('platform-darwin')
+                break;
+            case 'linux':
+                document.documentElement.classList.add('platform-linux')
+                break;    
+            default:
+                break;
         }
 
         progressBar.setValue = (v) => {

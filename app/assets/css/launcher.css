@@ -51,7 +51,7 @@
     transition: none !important;
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
-.darwin .frame-fix {padding-top: 0;}
+.platform-darwin .frame-fix {padding-top: 0;}
 .frame-fix {transition: all 0.5s; padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
 

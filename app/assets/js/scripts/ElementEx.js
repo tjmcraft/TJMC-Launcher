@@ -13,7 +13,7 @@ Element.prototype.toggle = function(s = null) {
 }
 
 /**
- * The alternative function to qsl
+ * The alternative function to querySelector
  * - It's more compact
  * - Ignores null and undefined
  * - Also support multiple select
@@ -24,6 +24,19 @@ function qsl(s) {
     if (typeof s !== 'undefined' && s != null) return document.querySelector(s)
 }
 Element.prototype.qsl = qsl
+
+/**
+ * The alternative function to querySelector
+ * - It's more compact
+ * - Ignores null and undefined
+ * - Also support multiple select
+ * - You can select the inherit element with element.qsl()
+ * @param {Object} selector - The selector + object to select
+ */
+function qsla(s) {
+    if (typeof s !== 'undefined' && s != null) return document.querySelectorAll(s)
+}
+Element.prototype.qsl = qsla
 
 /**
  * Function creates new element with given ID

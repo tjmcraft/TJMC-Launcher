@@ -13,20 +13,6 @@ const playButton = qsl('#playButton')
 
 console.log('Renderer init')
 
-switch (API.getOS()) {
-    case 'windows':
-        document.documentElement.classList.add('platform-win')
-        break;
-    case 'osx':
-        document.documentElement.classList.add('platform-darwin')
-        break;
-    case 'linux':
-        document.documentElement.classList.add('platform-linux')
-        break;    
-    default:
-        break;
-}
-
 const VIEWS = {
     landing: qsl('#main-layer'),
     settings: qsl('#settings-layer')
@@ -115,7 +101,7 @@ function createToolsContainer() {
 }
 
 mvl.addItem = function (item) {
-    let c = this.qsl('.sidebar')
+    let c = qsl('.sidebar')
     let i = createElementWithClass('div', 'item navItem')
     i.setAttribute('item-data', item)
     i.innerHTML = item.id
@@ -126,7 +112,7 @@ mvl.addItem = function (item) {
     c.append(i)
 }
 mvl.remItem = function (item) {
-    let c = this.qsl('.sidebar')
+    let c = qsl('.sidebar')
     let i = c.qsl(`[item-data=${item}]`)
     c.removeChild(i)
 }
