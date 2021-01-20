@@ -93,8 +93,7 @@ plb.addEventListener('click', (e) => {
     API.startMine()
 })
 
-API.VersionManager.getLocalVersions().then((parsed) => {
-    for (const cv in parsed) {
+API.VersionManager.getLocalVersions().then((parsed) => { for (const cv in parsed) {
         mvl.addItem(parsed[cv])
     }
 })

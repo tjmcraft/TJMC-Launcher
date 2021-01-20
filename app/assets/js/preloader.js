@@ -1,11 +1,11 @@
-const uiCore = require('./uicore')
+//const uiCore = require('./uicore')
 const ConfigManager = require('./ConfigManager')
-const { shell } = require('electron')
+const { shell, remote, ipcRenderer } = require('electron')
 const request = require('request')
 const VersionManager = require('./VersionManager')
 const launcher = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
-
+const win = remote.getCurrentWindow()
 logger.log('Loading..')
 
 // Load ConfigManager
@@ -13,6 +13,9 @@ ConfigManager.load()
 
 // Init global instances
 process.once('loaded', () => {
+    /**
+     * Global API
+     */
     global.API = {
         ConfigManager: ConfigManager,
         VersionManager: VersionManager,
@@ -20,8 +23,24 @@ process.once('loaded', () => {
         startMine: startMine,
         getOS: getOS,
         downloadFile: downloadFile,
-        shell: shell
+        shell: shell,
+        ipc: ipcRenderer,
+        window: remote.getCurrentWindow()
     }
+
+    ipcRenderer.on('open-settings', () => {
+        openSettings()
+    })
+    ipcRenderer.on('open-minecraft-dir', () => {
+        launcher.openMineDir()
+    })
+
+    ipcRenderer.on('enter-full-screen', enterFullScreen)
+    ipcRenderer.on('leave-full-screen', leaveFullScreen)
+    if (win.isFullScreen()) enterFullScreen()
+
+    ipcRenderer.on('blur', windowBlur)
+    ipcRenderer.on('focus', windowFocus)
 })
 
 function getOS() {
@@ -63,4 +82,52 @@ function startMine () {
             topBar.toggle(false)
         })
     )
+}
+
+document.addEventListener('readystatechange', function () {
+    if (document.readyState === 'interactive'){
+
+        logger.log('UICore Initializing..')
+
+        if (process.platform !== 'darwin') {
+            document.querySelector('.fCb').addEventListener('click', e => {
+                win.close()
+            })
+            document.querySelector('.fRb').addEventListener('click', e => {
+                win.isMaximized() ? win.unmaximize() : win.maximize()
+            })
+            document.querySelector('.fMb').addEventListener('click', e => {
+                win.minimize()
+            })
+        } else {
+            document.body.classList.add('darwin')
+        }
+
+        progressBar.setValue = (v) => {
+            progressBar.style.width = v + "%"
+            win.setProgressBar(v/100)
+        }
+
+    } else if (document.readyState === 'complete'){
+        switchView(VIEWS.landing, 100, 100)
+        setTimeout(() => {
+            document.documentElement.classList.remove('preload')
+            /*setTimeout(() => {
+                document.querySelector('#preloader').remove()
+            }, 1000)*/
+        }, 1000)
+    }
+})
+
+function enterFullScreen () {
+    document.body.classList.add('fullscreen')
+}
+function leaveFullScreen () {
+    document.body.classList.remove('fullscreen')
+}
+function windowBlur () {
+    document.body.classList.add('blur')
+}
+function windowFocus () {
+    document.body.classList.remove('blur')
 }
