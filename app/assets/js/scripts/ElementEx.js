@@ -36,7 +36,7 @@ Element.prototype.qsl = qsl
 function qsla(s) {
     if (typeof s !== 'undefined' && s != null) return document.querySelectorAll(s)
 }
-Element.prototype.qsl = qsla
+Element.prototype.qsla = qsla
 
 /**
  * Function creates new element with given ID

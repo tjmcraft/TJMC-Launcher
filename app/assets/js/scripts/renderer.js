@@ -79,10 +79,12 @@ plb.addEventListener('click', (e) => {
     API.startMine()
 })
 
-API.VersionManager.getLocalVersions().then((parsed) => { for (const cv in parsed) {
+API.VersionManager.getLocalVersions().then((parsed) => { 
+    for (const cv in parsed) {
         mvl.addItem(parsed[cv])
     }
 })
+renderSelectVersion(API.ConfigManager.getVersion())
 
 /**
  * The function creates and returns tools container for overlay
@@ -106,7 +108,6 @@ mvl.addItem = function (item) {
     i.setAttribute('item-data', item)
     i.innerHTML = item.id
     i.onclick = function() {
-        console.debug(item)
         selectVersion(item)
     }
     c.append(i)
@@ -118,10 +119,14 @@ mvl.remItem = function (item) {
 }
 
 function selectVersion(version) {
+    API.ConfigManager.setVersion(version)
+    renderSelectVersion(version)
+}
+
+function renderSelectVersion (version) {
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
-        d = m.qsl('h5')
-    API.ConfigManager.setVersion(version)
+        d = m.qsl('h5');
     n.innerText = version.id
     d.innerText = version.type
 }
