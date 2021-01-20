@@ -119,8 +119,8 @@ exports.getAllOptions = function() {
     return config
 }
 
-exports.getVersion = function() {
-    return config.version ?? DEFAULT_CONFIG.version
+exports.getVersion = async function() {
+    return config.version || DEFAULT_CONFIG.version
 }
 
 exports.setVersion = function(v) {
@@ -128,6 +128,13 @@ exports.setVersion = function(v) {
     exports.save()
 }
 
+exports.getAuth = async function() {
+    return config.authorization || DEFAULT_CONFIG.authorization
+}
+
+exports.setAuth = function(a) {
+    config.authorization = (typeof a !== 'undefined' && a != null) ? a : DEFAULT_CONFIG.authorization
+}
 /* =====================   Window Properties   ===================== */
 
 const DEFAULT_WINDOW_CONFIG = {

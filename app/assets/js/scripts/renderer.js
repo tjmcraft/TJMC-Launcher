@@ -84,7 +84,12 @@ API.VersionManager.getLocalVersions().then((parsed) => {
         mvl.addItem(parsed[cv])
     }
 })
-renderSelectVersion(API.ConfigManager.getVersion())
+API.ConfigManager.getVersion().then((version) => {
+    renderSelectVersion(version)
+})
+API.ConfigManager.getAuth().then((auth) => {
+    
+})
 
 /**
  * The function creates and returns tools container for overlay
