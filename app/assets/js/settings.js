@@ -1,22 +1,22 @@
 const label = 'USER_SETTINGS'
 class Settings {
     constructor() {
-        if (document.querySelector(`[aria-label=${label}]`)) return
-        this.appLayers = document.querySelector('.app-layers')
+        if (qsl(`[aria-label=${label}]`)) return
+        this.appLayers = qsl('.app-layers')
         this.settings = createElementWithClass('div', 'layer')
         this.settings.setAttribute('aria-label', `${label}`)
         fetch('./settings.ejs').then(response => response.text()).then(text => {
             this.settings.innerHTML = text
 
-            this.sidebar = this.settings.querySelector('.sidebar')
-            this.sidebarItems = this.sidebar.querySelectorAll('.navItem')
-            this.content = this.settings.querySelectorAll('.content .tab')
+            this.sidebar = this.settings.qsl('.sidebar')
+            this.sidebarItems = this.sidebar.qsla('.navItem')
+            this.content = this.settings.qsla('.content .tab')
 
             let tools = createToolsContainer()
-            tools.querySelector('#overlayCloseButton').onclick = () => {
+            tools.qsl('#overlayCloseButton').onclick = () => {
                 this.destroy()
             }
-            this.settings.querySelector('.content').append(tools)
+            this.settings.qsl('.content').append(tools)
 
             this.bindSidebarItems()
 
@@ -33,29 +33,23 @@ class Settings {
     }
     bindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
-            if(val.hasAttribute('rTi')){
+            if(val.hasAttribute('rTi'))
                 val.onclick = () => {
                     this.setTab(val.getAttribute('rTi'))
                 }
-            }
         })
     }
     unbindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
-            if(val.hasAttribute('rTi')){
-                val.onclick = () => {}
-            }
+            if(val.hasAttribute('rTi')) val.onclick = () => {}
         })
     }
     setTab (tab) {
-        console.debug('Setting tab: '+tab)
         this.content.forEach((el) => {
-            el.toggle(false)
-            if (el.id === tab) el.toggle(true)
+            el.toggle(el.id === tab)
         })
         this.sidebarItems.forEach((i) => {
-            i.classList.remove('selected')
-            if (i.getAttribute('rTi') === tab) i.classList.add('selected')
+            i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
     }
 

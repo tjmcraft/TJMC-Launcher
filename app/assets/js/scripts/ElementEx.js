@@ -5,11 +5,7 @@
 Element.prototype.toggle = function(s = null) {
     let cl = this.classList,
         c = 'hidden'
-    if (s != null ? s : cl.contains(c) == 1){
-        cl.remove(c)
-    } else {
-        cl.add(c)
-    }
+    if (s != null ? s : cl.contains(c) == 1) cl[(s != null ? s : cl.contains(c) == 1) ? 'remove' : 'add'](c)
 }
 
 /**
@@ -21,7 +17,7 @@ Element.prototype.toggle = function(s = null) {
  * @param {Object} selector - The selector + object to select
  */
 function qsl(s) {
-    if (typeof s !== 'undefined' && s != null) return document.querySelector(s)
+    if (typeof s !== 'undefined' && s != null) return (typeof this === 'object' && this.nodeName ? this : document).querySelector(s)
 }
 Element.prototype.qsl = qsl
 
@@ -34,7 +30,7 @@ Element.prototype.qsl = qsl
  * @param {Object} selector - The selector + object to select
  */
 function qsla(s) {
-    if (typeof s !== 'undefined' && s != null) return document.querySelectorAll(s)
+    if (typeof s !== 'undefined' && s != null) return (typeof this === 'object' && this.nodeName ? this : document).querySelectorAll(s)
 }
 Element.prototype.qsla = qsla
 
