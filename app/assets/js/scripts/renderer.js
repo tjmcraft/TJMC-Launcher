@@ -88,8 +88,15 @@ API.ConfigManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 API.ConfigManager.getAuth().then((auth) => {
-
+    renderNameTag(auth)
 })
+
+function renderNameTag(auth) {
+    let c = qsl('.nameTag'),
+        n = c.qsl('.title'),
+        s = c.qsl('.subtitle')
+    n.innerText = auth.name
+}
 
 /**
  * The function creates and returns tools container for overlay
