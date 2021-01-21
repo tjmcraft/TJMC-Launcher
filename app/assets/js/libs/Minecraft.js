@@ -42,43 +42,6 @@ class Minecraft {
     }
 
     /**
-     * Gets Main JSON of given version
-     * @param version Version of Minecraft
-     */
-    async getVersion (version) {
-        logg.debug('Loading Version JSON for: '+version)
-        const versionJsonPath = path.join(this.options.overrides.path.directory, version, `${version}.json`)
-        var c_version = null;
-        if (fs.existsSync(versionJsonPath)) {
-            c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
-        } else {
-            const parsed = await API.VersionManager.getGlobalVersions()
-            for (const cv in parsed) {
-                if (parsed[cv].id === version) {
-                        const body = await API.downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`)
-                        c_version = JSON.parse(body)
-                }
-            }
-        }
-        if (c_version.inheritsFrom) {
-            const inherit = await this.getVersion(c_version.inheritsFrom)
-            c_version.libraries = merge(c_version.libraries, inherit.libraries)
-            c_version.mainClass = c_version.mainClass ?? inherit.mainClass
-            c_version.minecraftArguments = c_version.minecraftArguments ?? inherit.minecraftArguments
-            c_version.assetIndex = c_version.assetIndex ?? inherit.assetIndex
-            c_version.downloads = c_version.downloads ?? inherit.downloads
-            if (c_version.arguments || inherit.arguments){
-                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game ?? inherit.arguments.game
-                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm ?? inherit.arguments.jvm
-            }
-            delete c_version.inheritsFrom
-        }
-        fs.mkdirSync(path.join(this.options.overrides.path.directory, version), {recursive: true})
-        fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
-        return c_version
-    }
-
-    /**
      * Function downloads main jar 
      * @param version Main version JSON
      */
@@ -445,11 +408,11 @@ class Minecraft {
         const assetPath = path.join(assetRoot)
         const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)}`)
         this.fields = {
-            '${auth_access_token}': this.options.authorization.access_token,
-            '${auth_session}': this.options.authorization.access_token,
-            '${auth_player_name}': this.options.authorization.name,
-            '${auth_uuid}': this.options.authorization.uuid,
-            '${user_properties}': this.options.authorization.user_properties,
+            '${auth_access_token}': this.options.auth.access_token,
+            '${auth_session}': this.options.auth.access_token,
+            '${auth_player_name}': this.options.auth.username,
+            '${auth_uuid}': this.options.auth.uuid,
+            '${user_properties}': this.options.auth.user_properties,
             '${user_type}': 'mojang',
             '${version_name}': this.options.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,

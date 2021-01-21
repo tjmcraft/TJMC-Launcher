@@ -47,7 +47,7 @@ class launcher extends EventEmitter {
         }
 
         logg.log('Attempting to load main json')
-        const versionFile = await this.handler.getVersion(this.options.version.id)
+        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
         const nativePath = await this.handler.getNatives(versionFile)
 
         this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)

@@ -84,7 +84,7 @@ API.VersionManager.getLocalVersions().then((parsed) => {
         mvl.addItem(parsed[cv])
     }
 })
-API.ConfigManager.getVersion().then((version) => {
+API.VersionManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 API.ConfigManager.getAuth().then((auth) => {
@@ -95,7 +95,8 @@ function renderNameTag(auth) {
     let c = qsl('.nameTag'),
         n = c.qsl('.title'),
         s = c.qsl('.subtitle')
-    n.innerText = auth.name
+    n.innerText = auth.username
+    s.innerText = auth.permission
 }
 
 /**

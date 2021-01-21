@@ -4,7 +4,6 @@ const logg = require('../loggerutil')('%c[ConfigManager]', 'color: #1052a5; font
 
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
 const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
-
 const DEFAULT_CONFIG = 
 {
     java: {
@@ -40,9 +39,10 @@ const DEFAULT_CONFIG =
         id: 'OptiFine 1.15.2',
         type: 'modified'
     },
-    authorization: {
+    auth: {
         access_token: 'null',
-        name: 'MakAndJo',
+        username: 'MakAndJo',
+        permission: 'Default',
         uuid: 'null',
         user_properties: ''
     }
@@ -119,7 +119,7 @@ exports.getAllOptions = function() {
     return config
 }
 
-exports.getVersion = async function() {
+exports.getVersion = function() {
     return config.version || DEFAULT_CONFIG.version
 }
 
@@ -129,11 +129,11 @@ exports.setVersion = function(v) {
 }
 
 exports.getAuth = async function() {
-    return config.authorization || DEFAULT_CONFIG.authorization
+    return config.auth || DEFAULT_CONFIG.auth
 }
 
 exports.setAuth = function(a) {
-    config.authorization = (typeof a !== 'undefined' && a != null) ? a : DEFAULT_CONFIG.authorization
+    config.auth = (typeof a !== 'undefined' && a != null) ? a : DEFAULT_CONFIG.auth
 }
 /* =====================   Window Properties   ===================== */
 

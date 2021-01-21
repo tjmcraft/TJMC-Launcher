@@ -195,11 +195,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 
 /* =============================================== */
-.preload > .app-container {
-    /*opacity: 0;*/
-    /*visibility: hidden;*/
-}
-
 #preloader {
     /*animation: fadein 1s !important;*/
     opacity: 0;
@@ -287,17 +282,19 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 /* ================= Top Bar ================= */
 #topBar {
-    position: relative;
+    position: absolute;
     right: 0;
     left: 0;
+    top: 0;
     width: 100%;
     background: #313131af;
+    z-index: 10;
 }
   
 #progress-bar {
     width: 0;
     height: 12px;
-    background-color: #b22222;
+    background-color: #1aaa1a;
     transition: width 0.2s;
 }
 
@@ -951,7 +948,7 @@ input:checked + .toggleSwitchSlider:before {
     height: 100%;
 }
 .avatar:hover {
-    filter: brightness(0.7);
+    /*filter: brightness(0.7);*/
     cursor: pointer;
 }
 
@@ -981,6 +978,9 @@ input:checked + .toggleSwitchSlider:before {
 }
 .round {
     border-radius: 25%;
-    border: 1px solid green;
-    box-shadow: 0 0 5px #666;
+    box-shadow: 0 0 4px #666;
+    transition: 0.5 all ease;
+}
+.round:hover {
+    box-shadow: 0 0 8px #555;
 }
