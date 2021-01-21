@@ -88,7 +88,7 @@ API.ConfigManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 API.ConfigManager.getAuth().then((auth) => {
-    
+
 })
 
 /**
@@ -110,7 +110,7 @@ function createToolsContainer() {
 mvl.addItem = function (item) {
     let c = qsl('.sidebar')
     let i = createElementWithClass('div', 'item navItem')
-    i.setAttribute('item-data', item)
+    i.setAttribute('version-id', item.id)
     i.innerHTML = item.id
     i.onclick = function() {
         selectVersion(item)
@@ -119,7 +119,7 @@ mvl.addItem = function (item) {
 }
 mvl.remItem = function (item) {
     let c = qsl('.sidebar')
-    let i = c.qsl(`[item-data=${item}]`)
+    let i = c.qsl(`[version-id=${item.id}]`)
     c.removeChild(i)
 }
 
@@ -131,7 +131,11 @@ function selectVersion(version) {
 function renderSelectVersion (version) {
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
-        d = m.qsl('h5');
+        d = m.qsl('h5'),
+        s = mvl.qsla('.sidebar .navItem')
+    s.forEach((el) => {
+        el.classList[el.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
+    })   
     n.innerText = version.id
     d.innerText = version.type
 }
