@@ -1,7 +1,8 @@
-const label = 'USER_SETTINGS'
 class Settings {
     constructor() {
+        const label = 'USER_SETTINGS'
         if (qsl(`[aria-label=${label}]`)) return
+        this.pV = getCurrentView()
         this.appLayers = qsl('.app-layers')
         this.settings = createElementWithClass('div', 'layer')
         this.settings.setAttribute('aria-label', `${label}`)
@@ -54,7 +55,7 @@ class Settings {
     }
 
     destroy() {
-        switchView(VIEWS.landing, 150, 150, () => {}, () => {
+        switchView(this.pV, 150, 150, () => {}, () => {
             this.escBinder.uibind()
             this.unbindSidebarItems()
             this.settings.remove()

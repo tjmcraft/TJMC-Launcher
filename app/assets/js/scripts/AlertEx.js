@@ -51,9 +51,7 @@ class AlertEx {
                 let button = createElementWithClass('button', bp.class ? bp.class : '')
                 button.innerText = bp.name
                 button.onclick = () => {
-                    if (bp.callback && typeof bp.callback === 'function') {
-                        bp.callback()
-                    }
+                    if (bp.callback && typeof bp.callback === 'function') bp.callback()
                     if (bp.closeOverlay) this.destroy()
                 }
                 container.append(button)
@@ -94,10 +92,10 @@ class AlertEx {
     }
 
     destroy() {
+        this.escBinder.uibind()
         this.overlay.toggle(false)
         setTimeout(() => {
             this.overlay.remove()
         }, 500)
-        this.escBinder.uibind()
     }
 }
