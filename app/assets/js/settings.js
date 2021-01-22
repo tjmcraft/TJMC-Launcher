@@ -13,10 +13,9 @@ class Settings {
             this.sidebarItems = this.sidebar.qsla('.navItem')
             this.content = this.settings.qsla('.content .tab')
 
-            let tools = createToolsContainer()
-            tools.qsl('#overlayCloseButton').onclick = () => {
+            let tools = createToolsContainer(() => {
                 this.destroy()
-            }
+            })
             this.settings.qsl('.content').append(tools)
 
             this.bindSidebarItems()

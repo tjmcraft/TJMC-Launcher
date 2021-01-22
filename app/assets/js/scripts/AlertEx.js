@@ -81,10 +81,9 @@ class AlertEx {
         let overlay = createElementWithId('div', 'overlay')
 
         if (closeButton) {
-            let tools = createToolsContainer()
-            tools.querySelector('#overlayCloseButton').onclick = () => {
+            let tools = createToolsContainer(() => {
                 this.destroy()
-            }
+            })
             overlay.append(tools)
         }
         
