@@ -153,6 +153,13 @@ function renderSelectVersion (version) {
     d.innerText = version.type
 }
 
+qsla('#dropdown-list').forEach(el => {
+    el.onclick = (e) => {
+        el.qsl('.button-1w5pas').classList.toggle('open')
+        el.qsl('.dropdown').toggle()
+    }
+})
+
 /*new AlertEx({
     closeButton: true,
     type: 'warn',

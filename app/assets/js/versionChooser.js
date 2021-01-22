@@ -28,7 +28,8 @@ class VersionChooser {
         this.appLayers.append(this.vs)
     }
     refreshVersions() {
-        API.VersionManager.getGlobalVersions().then((parsed) => { 
+        API.VersionManager.getGlobalVersions().then((parsed) => {
+            this.sidebar.removeAllChildNodes()
             for (const cv in parsed) {
                 this.addItem(parsed[cv])
             }

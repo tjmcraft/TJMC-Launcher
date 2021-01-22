@@ -11,6 +11,15 @@
     src: url('candara.ttf');
 }
 
+@keyframes placeHolderShimmer {
+    0% {
+        background-position: 100% 0
+    }
+    100% {
+        background-position: -100% 0
+    }
+}
+
 @keyframes bounce {
     0% {
         transform: scale(1.2);
@@ -563,6 +572,7 @@ svg[data-icon="success-circle"] {
     overflow: hidden;
     flex-shrink: 0;
     font-weight: 500;
+    min-height: 28px;
 }
 
 .navItem {
@@ -1076,4 +1086,15 @@ input:checked + .toggleSwitchSlider:before {
     stroke-dashoffset: 1;
     -webkit-transition: stroke-dasharray .2s ease;
     transition: stroke-dasharray .2s ease
+}
+
+.bgL {
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: linear-gradient(to right, var(--background-primary) 8%, #dddddd 18%, var(--background-primary) 33%);
+    background-size: 200% 1px;
+    margin: 5px 0;
 }

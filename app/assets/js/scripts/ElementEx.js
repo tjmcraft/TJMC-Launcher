@@ -71,3 +71,10 @@ function merge (...args) {
     }
     return [...set]
 }
+
+Element.prototype.removeAllChildNodes = function() {
+    let parent = this
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
