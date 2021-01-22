@@ -337,6 +337,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-family: 'Candara';
 }
 
+#overlay #container h1 {
+    font-size: 2.5em;
+}
+
 #overlay.hidden #container {
     transform: scale(0.5);
     opacity: 0;

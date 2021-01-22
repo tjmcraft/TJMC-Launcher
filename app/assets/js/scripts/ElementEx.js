@@ -5,7 +5,7 @@
 Element.prototype.toggle = function(s = null) {
     let cl = this.classList,
         c = 'hidden'
-    if (s != null ? s : cl.contains(c) == 1) cl[(s != null ? s : cl.contains(c) == 1) ? 'remove' : 'add'](c)
+    cl[(s != null ? s : cl.contains(c) == 1) ? 'remove' : 'add'](c)
 }
 
 /**
