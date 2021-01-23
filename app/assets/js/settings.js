@@ -1,22 +1,19 @@
 class Settings {
     constructor() {
-        const label = 'USER_SETTINGS'
-        if (qsl(`[aria-label=${label}]`)) return
-        this.pV = getCurrentView()
-        this.appLayers = qsl('.app-layers')
-        this.settings = createElementWithClass('div', 'layer')
-        this.settings.setAttribute('aria-label', `${label}`)
+        this.layer = new Layer({
+            label: 'USER_SETTINGS'
+        })
         fetch('./settings.ejs').then(response => response.text()).then(text => {
-            this.settings.innerHTML = text
+            this.layer.appendHTML(text)
 
-            this.sidebar = this.settings.qsl('.sidebar')
+            this.sidebar = this.layer.content.qsl('.sidebar')
             this.sidebarItems = this.sidebar.qsla('.navItem')
-            this.content = this.settings.qsla('.content .tab')
+            this.content = this.layer.content.qsla('.content .tab')
 
-            let tools = createToolsContainer(() => {
+            this.tools = createToolsContainer(() => {
                 this.destroy()
             })
-            this.settings.qsl('.content').append(tools)
+            this.layer.append(this.tools)
 
             this.bindSidebarItems()
 
@@ -26,10 +23,8 @@ class Settings {
             })
 
             this.setTab('my-account-tab')
-            switchView(this.settings, 150, 150)
+            this.layer.show()
         })
-        this.settings.style.opacity = 0
-        this.appLayers.append(this.settings)
     }
     bindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
@@ -54,10 +49,7 @@ class Settings {
     }
 
     destroy() {
-        switchView(this.pV, 150, 150, () => {}, () => {
-            this.escBinder.uibind()
-            this.unbindSidebarItems()
-            this.settings.remove()
-        })
+        this.escBinder.uibind()
+        this.layer.destroy()
     }
 }

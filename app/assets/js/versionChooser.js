@@ -42,7 +42,7 @@ class VersionChooser {
         i.setAttribute('version-id', item.id)
         i.innerHTML = item.id
         i.onclick = function() {
-            selectVersion(item)
+            //selectVersion(item)
         }
         c.append(i)
     }
