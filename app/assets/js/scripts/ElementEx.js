@@ -1,3 +1,4 @@
+'use strict'
 /**
  * Functions toogle elements using css
  * @param {Boolean} state state to toggle TRUE/FALSE (it can be also null)
@@ -79,7 +80,18 @@ Element.prototype.removeAllChildNodes = function() {
     }
 }
 
-function randomInteger(min, max) {
+function randomInteger(max) {
+    let min = 0
     let rand = min + Math.random() * (max + 1 - min)
     return Math.floor(rand)
+}
+
+function randomString(length) {
+    var result           = ''
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var charactersLength = characters.length
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
 }
