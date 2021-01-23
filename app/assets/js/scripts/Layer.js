@@ -1,3 +1,14 @@
+/**
+ * Class Layer creates new layer container
+ * with all functions to control it
+ * - join
+ * - show
+ * - hide
+ * - destroy
+ * - append
+ * - removeChild
+ * - get content
+ */
 class Layer {
     /**
      * 
