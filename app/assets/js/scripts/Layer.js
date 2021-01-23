@@ -24,12 +24,20 @@ class Layer {
         this.layer.setAttribute('aria-label', `${this.label}`)
         if (qsl(`[aria-label=${this.label}]`)) return
     }
+    /**
+     * Join created layer to appLayers container
+     * @param {Function} callback 
+     */
     join(callback = () => {}) {
         this.layer.style.opacity = 0
         if (qsl(`[aria-label=${this.label}]`)) return
         this.appLayers.append(this.layer)
         callback()
     }
+    /**
+     * Show created layer
+     * @param {Function} callback 
+     */
     show(callback = () => {}) {
         this.pView = getCurrentView()
         let fadeTime = this.options.fadeTime || 150
@@ -37,23 +45,42 @@ class Layer {
         this.layer.style.visibility = 'visible'
         switchView(this.layer, fadeTime, fadeTime, () => {}, callback)
     }
+    /**
+     * Hide created layer
+     * @param {Function} callback 
+     */
     hide(callback = () => {}) {
         let fadeTime = this.options.fadeTime || 150
         this.layer.style.visibility = 'hidden'
         switchView(this.pView, fadeTime, fadeTime, () => {}, callback)
     }
+    /**
+     * Destroy created layer
+     * @param {Function} callback 
+     */
     destroy(callback = () => {}) {
         this.hide(() => {
             this.layer.remove()
             callback()
         })
     }
+    /**
+     * Append content to created layer
+     * @param {*} content 
+     */
     append(content) {
         this.layer.append(content)
     }
+    /**
+     * Remove child from created layer
+     * @param {*} content 
+     */
     removeChild(content) {
         this.layer.removeChild(content)
     }
+    /**
+     * Get current content(innerHTML) of created layer
+     */
     content() {
         return this.layer
     }
