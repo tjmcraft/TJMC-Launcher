@@ -75,6 +75,11 @@ function merge (...args) {
 Element.prototype.removeAllChildNodes = function() {
     let parent = this
     while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
+        parent.removeChild(parent.firstChild)
     }
+}
+
+function randomInteger(min, max) {
+    let rand = min + Math.random() * (max + 1 - min)
+    return Math.floor(rand)
 }

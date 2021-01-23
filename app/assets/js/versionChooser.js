@@ -34,6 +34,12 @@ class VersionChooser {
                 this.addItem(parsed[cv])
             }
         })
+        qsla('#dropdown-list').forEach(el => {
+            el.onclick = (e) => {
+                el.qsl('.button-1w5pas').classList.toggle('open')
+                el.qsl('.dropdown').toggle()
+            }
+        })
     }
     addItem(item) {
         let c = this.sidebar
