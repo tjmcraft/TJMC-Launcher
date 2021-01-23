@@ -65,11 +65,18 @@ class Layer {
         })
     }
     /**
-     * Append content to created layer
+     * Append dom content to created layer
      * @param {*} content 
      */
     append(content) {
         this.layer.append(content)
+    }
+    /**
+     * Append HTML (text) content to created layer
+     * @param {String} content 
+     */
+    appendHTML(content) {
+        this.layer.innerHTML = (content)
     }
     /**
      * Remove child from created layer
@@ -81,7 +88,7 @@ class Layer {
     /**
      * Get current content(innerHTML) of created layer
      */
-    content() {
+    get content() {
         return this.layer
     }
 }
