@@ -4,13 +4,18 @@ class PopupEl {
         this.id = options.id || `popup-${randomString(5)}`
         this.popupLayer = qsl('.layerContainer')
         this.pel = options.parent || document.body
-        this.popup = createElementWithClass('div', 'popup')
+        this.popup = createElementWithClass('div', 'tooltip')
         this.popup.id = this.id
+        this.pointerEl = createElementWithClass('div', 'pointer')
+        this.contentEl = createElementWithClass('div', 'content')
+        this.popup.setAttribute('position', this.options.position || 'bottom')
+        this.popup.append(this.pointerEl, this.contentEl)
         if (this.popupLayer.qsl(`#${this.id}`)) return
     }
 
     join(callback = () => {}) {
-        this.hide()
+        this.popup.style.opacity = 0
+        this.popup.style.visibility = 'hidden'
         if (this.popupLayer.qsl(`#${this.id}`)) return
         this.popupLayer.append(this.popup)
         this.setPopupPos(this.popup, this.options.position || 'bottom', this.options.margin || 10)
@@ -42,7 +47,8 @@ class PopupEl {
 
     getPopupPos(el, pos, m) {
         let offset = getPos( this.pel ),
-            x = ( offset.left + m ) || 0,
+            //x = ( offset.left + m ) || 0,
+            x = ( (this.pel.offsetWidth - el.offsetWidth) / 2 ) + offset.left,
             y = pos == 'top' 
             ? ( offset.top - m - el.offsetHeight) 
             : ( pos == 'bottom' ? ( offset.top + this.pel.offsetHeight + m ) : 0 ),
@@ -63,21 +69,21 @@ class PopupEl {
      * @param {*} content 
      */
     append(content) {
-        this.popup.append(content)
+        this.contentEl.append(content)
     }
     /**
      * Append HTML (text) content to created popup
      * @param {String} content 
      */
     appendHTML(content) {
-        this.popup.innerHTML = (content)
+        this.contentEl.innerHTML = (content)
     }
     /**
      * Remove child from created popup
      * @param {*} content 
      */
     removeChild(content) {
-        this.popup.removeChild(content)
+        this.contentEl.removeChild(content)
     }
 
     get content() {
@@ -91,8 +97,8 @@ window.popup = function (config) {
         popup = new PopupEl({
             parent: parent,
             position: 'bottom',
-            margin: 10,
-            fadeTime: 150
+            margin: 8,
+            fadeTime: 50
         })
     popup.appendHTML(text)
     parent.addEventListener('mouseenter', show)

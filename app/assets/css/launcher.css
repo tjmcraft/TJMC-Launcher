@@ -1105,7 +1105,7 @@ input:checked + .toggleSwitchSlider:before {
     margin: 5px 0;
 }
 
-.popup {
+.tooltip {
     position: absolute;
     padding: 8px 12px;
     z-index: 1000;
@@ -1117,6 +1117,30 @@ input:checked + .toggleSwitchSlider:before {
     border-radius: 5px;
     font-size: 14px;
     line-height: 16px;
-    overflow: hidden;
     transition: none !important;
+}
+
+.tooltip[position='top'] .pointer {
+    border: 5px solid transparent;
+    margin-left: -5px;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    pointer-events: none;
+    outline: 0;
+    width: 0;
+    height: 0;
+    border-top-color: var(--background-floating);
+}
+.tooltip[position='bottom'] .pointer {
+    border: 5px solid transparent;
+    margin-left: -5px;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    pointer-events: none;
+    outline: 0;
+    width: 0;
+    height: 0;
+    border-bottom-color: var(--background-floating);
 }
