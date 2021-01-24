@@ -166,3 +166,4 @@ function renderSelectVersion (version) {
         closeOverlay: true
     }]
 })*/
+//var x = getOffset( document.querySelector('#dropdown-list') ).left; 

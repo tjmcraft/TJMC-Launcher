@@ -26,6 +26,10 @@ class Settings {
             this.layer.show()
         })
     }
+    destroy() {
+        this.escBinder.uibind()
+        this.layer.destroy()
+    }
     bindSidebarItems(){
         Array.from(this.sidebarItems).map((val) => {
             if(val.hasAttribute('rTi'))
@@ -46,10 +50,5 @@ class Settings {
         this.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
-    }
-
-    destroy() {
-        this.escBinder.uibind()
-        this.layer.destroy()
     }
 }

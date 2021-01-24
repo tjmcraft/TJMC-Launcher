@@ -1100,7 +1100,7 @@ input:checked + .toggleSwitchSlider:before {
     animation-timing-function: linear;
     background: linear-gradient(to right, var(--background-primary) 8%, #dddddd 18%, var(--background-primary) 33%);
     background-size: 200% 1px;
-    cursor: pointer;
+    cursor: default;
     user-select: none;
     margin: 5px 0;
 }

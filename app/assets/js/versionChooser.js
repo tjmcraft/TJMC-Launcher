@@ -22,6 +22,10 @@ class VersionChooser {
             this.layer.show()
         })
     }
+    destroy() {
+        this.escBinder.uibind()
+        this.layer.destroy()
+    }
     refreshVersions() {
         API.VersionManager.getGlobalVersions().then((parsed) => {
             this.sidebar.removeAllChildNodes()
@@ -29,10 +33,15 @@ class VersionChooser {
                 this.addItem(parsed[cv])
             }
         })
-        qsla('#dropdown-list').forEach(el => {
+        this.layer.content.qsla('#dropdown-list').forEach(el => {
             el.onclick = (e) => {
                 el.qsl('.button-1w5pas').classList.toggle('open')
                 el.qsl('.dropdown').toggle()
+            }
+        })
+        this.layer.content.qsla('#dropdown-list #dd-elements a').forEach(el => {
+            el.onclick = (e) => {
+                console.log(el.innerHTML)
             }
         })
     }
@@ -50,9 +59,5 @@ class VersionChooser {
         let c = this.sidebar
         let i = c.qsl(`[version-id=${item.id}]`)
         c.removeChild(i)
-    }
-    destroy() {
-        this.escBinder.uibind()
-        this.layer.destroy()
     }
 }

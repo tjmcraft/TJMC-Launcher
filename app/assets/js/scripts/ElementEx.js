@@ -95,3 +95,18 @@ function randomString(length) {
     }
     return result
 }
+
+/**
+ * Get Offset of the element
+ * @param {Element} Element - The element to get offset to
+ */
+function getOffset(el) {
+    let x = 0
+    let y = 0
+    while(el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+        x += el.offsetLeft - el.scrollLeft
+        y += el.offsetTop - el.scrollTop
+        el = el.offsetParent
+    }
+    return { top: y, left: x }
+}
