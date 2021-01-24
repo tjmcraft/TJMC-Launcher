@@ -31,7 +31,6 @@ function animate(options) {
  */
 Element.prototype.fadeOut = function(duration, complete = () => {}) {
     let element = this
-    const c_op = element.style.opacity || 1
     animate({
         duration: duration,
         delta: function(progress) {
@@ -39,7 +38,7 @@ Element.prototype.fadeOut = function(duration, complete = () => {}) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = delta.map(0, 1, c_op, 0)
+            element.style.opacity = delta.map(0, 1, 1, 0)
         },
         complete: function () {
             complete()
@@ -54,7 +53,6 @@ Element.prototype.fadeOut = function(duration, complete = () => {}) {
  */
 Element.prototype.fadeIn = function(duration, complete = () => {}) {
     let element = this
-    const c_op = element.style.opacity || 0
     animate({
         duration: duration,
         delta: function(progress) {
@@ -62,10 +60,10 @@ Element.prototype.fadeIn = function(duration, complete = () => {}) {
             return easing.swing(progress)
         },
         step: function(delta) {
-            element.style.opacity = delta.map(0, 1, c_op, 1)
+            element.style.opacity = delta.map(0, 1, 0, 1)
         },
         complete: function () {
-            element.removeAttribute('style')
+            if (element.style == null) element.removeAttribute('style')
             complete()
         }
     })
@@ -162,3 +160,4 @@ let easing = {
 Number.prototype.map = function (in_min, in_max, out_min, out_max) {
     return (this - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;

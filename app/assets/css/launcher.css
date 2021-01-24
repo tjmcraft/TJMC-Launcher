@@ -1104,3 +1104,19 @@ input:checked + .toggleSwitchSlider:before {
     user-select: none;
     margin: 5px 0;
 }
+
+.popup {
+    position: absolute;
+    padding: 8px 12px;
+    z-index: 1000;
+    background-color: var(--background-floating);
+    max-width: 200px;
+    width: auto;
+    display: block;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    font-size: 14px;
+    line-height: 16px;
+    overflow: hidden;
+    transition: none !important;
+}
