@@ -1108,42 +1108,37 @@ input:checked + .toggleSwitchSlider:before {
 .tooltip {
     position: absolute;
     padding: 8px 12px;
-    z-index: 1000;
+    z-index: 1001;
     background-color: var(--background-floating);
-    max-width: 200px;
+    max-width: 190px;
     width: auto;
     display: block;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     border-radius: 5px;
     font-size: 14px;
     line-height: 16px;
-    /*transition: none !important;*/
     transition: .1s all;
 }
 
-.tooltip[position='top'] .pointer {
+.tooltip .pointer {
     border: 5px solid transparent;
     margin-left: -5px;
     position: absolute;
-    top: 100%;
-    left: 50%;
     pointer-events: none;
     outline: 0;
     width: 0;
     height: 0;
-    border-top-color: var(--background-floating);
+    
     transition: none !important;
 }
+
+.tooltip[position='top'] .pointer {
+    top: 100%;
+    left: 50%;
+    border-top-color: var(--background-floating);
+}
 .tooltip[position='bottom'] .pointer {
-    border: 5px solid transparent;
-    margin-left: -5px;
-    position: absolute;
     top: -10px;
     left: 50%;
-    pointer-events: none;
-    outline: 0;
-    width: 0;
-    height: 0;
     border-bottom-color: var(--background-floating);
-    transition: none !important;
 }

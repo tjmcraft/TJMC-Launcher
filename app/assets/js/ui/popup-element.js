@@ -2,7 +2,7 @@ class PopupEl {
     constructor(options = {}) {
         this.options = options
         this.popupLayer = qsl('.layerContainer')
-        this.pel = options.parent || document.body
+        this.options.parent = this.options.parent || document.body
         this.popup = createElementWithClass('div', 'tooltip')
         this.pointerEl = createElementWithClass('div', 'pointer')
         this.contentEl = createElementWithClass('div', 'content')
@@ -44,15 +44,15 @@ class PopupEl {
     }
 
     getPopupPos(el, m = 5) {
-        let offset = getPos( this.pel ),
+        let offset = getPos( this.options.parent ),
             pos = '',
-            x_o = ( (this.pel.offsetWidth - el.offsetWidth) / 2 ) + offset.left,
+            x_o = ( (this.options.parent.offsetWidth - el.offsetWidth) / 2 ) + offset.left,
             x = (x_o > 0) ? x_o : 0,
             y_t = ( offset.top - m - el.offsetHeight ),
-            y_b = ( offset.top + this.pel.offsetHeight + m ),
+            y_b = ( offset.top + this.options.parent.offsetHeight + m ),
             y = (y_t > 0) && (pos = 'top') ? y_t : 
                 (y_b) && (pos = 'bottom') ? y_b : 0,
-            width = (this.pel.offsetWidth - m*2)
+            width = (this.options.parent.offsetWidth - m*2)
         return { left: x, top: y, width: width, height: 'auto', position: pos }
     }
 
@@ -93,13 +93,14 @@ class PopupEl {
 }
 
 Element.prototype.tooltip = function(text = null) {
+    text = text || this.dataset.tooltip || this.title
+    if (!text) return
     let parent = this,
     popup = new PopupEl({
         parent: parent,
         margin: 8,
         fadeTime: 50
     })
-    text = text || this.dataset.tooltip || this.title
     popup.appendHTML(text)
     parent.addEventListener('mouseenter', show)
     parent.addEventListener('mouseleave', hide)
