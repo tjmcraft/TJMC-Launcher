@@ -110,3 +110,22 @@ function getPos(el) {
     }
     return { top: y, left: x }
 }
+
+const on = (selector, eventType, childSelector, eventHandler) => {
+    const elements = document.querySelectorAll(selector)
+    for (element of elements) {
+        element.addEventListener(eventType, eventOnElement => {
+            if (eventOnElement.target.matches(childSelector)) {
+                eventHandler(eventOnElement)
+            }
+        })
+    }
+}
+
+const _on = (eventType, childSelector, eventHandler) => {
+    document.addEventListener(eventType, eventOnElement => {
+        //if (eventOnElement.target.matches(childSelector)) {
+            eventHandler(eventOnElement)
+        //}
+    })
+}

@@ -1117,7 +1117,8 @@ input:checked + .toggleSwitchSlider:before {
     border-radius: 5px;
     font-size: 14px;
     line-height: 16px;
-    transition: none !important;
+    /*transition: none !important;*/
+    transition: .1s all;
 }
 
 .tooltip[position='top'] .pointer {
@@ -1131,6 +1132,7 @@ input:checked + .toggleSwitchSlider:before {
     width: 0;
     height: 0;
     border-top-color: var(--background-floating);
+    transition: none !important;
 }
 .tooltip[position='bottom'] .pointer {
     border: 5px solid transparent;
@@ -1143,4 +1145,5 @@ input:checked + .toggleSwitchSlider:before {
     width: 0;
     height: 0;
     border-bottom-color: var(--background-floating);
+    transition: none !important;
 }
