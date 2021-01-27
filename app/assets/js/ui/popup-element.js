@@ -23,17 +23,18 @@ class PopupEl {
     show(callback = () => {}) {
         let fadeTime = this.options.fadeTime || 150
         if (!this.popupLayer.qsl(`#${this.popup.id}`)) this.join()
-        //this.popup.style.visibility = 'visible'
-        //this.popup.style.opacity = 1
-        //callback()
-        this.popup.fadeIn(fadeTime, callback)
+        this.popup.style.visibility = 'visible'
+        this.popup.style.opacity = 1
+        callback()
+        //this.popup.fadeIn(fadeTime, callback)
     }
 
     hide(callback = () => {}) {
         let fadeTime = this.options.fadeTime || 150
-        //this.popup.style.opacity = 0
-        //this.popup.style.visibility = 'hidden'
-        this.popup.fadeOut(fadeTime, callback)
+        this.popup.style.opacity = 0
+        this.popup.style.visibility = 'hidden'
+        callback()
+        //this.popup.fadeOut(fadeTime, callback)
     }
 
     destroy(callback = () => {}) {
@@ -105,10 +106,10 @@ Element.prototype.tooltip = function(text = null) {
     parent.addEventListener('mouseenter', show)
     parent.addEventListener('mouseleave', hide)
 
-    function show() {
+    function show(e) {
         popup.show()
     }
-    function hide() {
+    function hide(e) {
         popup.destroy()
     }
     function destroy() {

@@ -1105,6 +1105,9 @@ input:checked + .toggleSwitchSlider:before {
     margin: 5px 0;
 }
 
+
+/* ========= Tooltip ========= */
+
 .tooltip {
     position: absolute;
     padding: 8px 12px;
@@ -1117,7 +1120,7 @@ input:checked + .toggleSwitchSlider:before {
     border-radius: 5px;
     font-size: 14px;
     line-height: 16px;
-    transition: .1s all;
+    transition: .1s opacity;
 }
 
 .tooltip .pointer {
@@ -1142,3 +1145,5 @@ input:checked + .toggleSwitchSlider:before {
     left: 50%;
     border-bottom-color: var(--background-floating);
 }
+
+*[data-tooltip] > * {pointer-events: none;}
