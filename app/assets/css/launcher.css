@@ -103,6 +103,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --interactive-hover:#dcddde;
     --background-modifier-selected: #313131;
     --background-floating: #18191c;
+    --header-primary: #fff;
+    --header-secondary: #b9bbbe;
 }
 /*******************************************************************************
  *                                                                             *
@@ -630,14 +632,27 @@ svg[data-icon="success-circle"] {
     overflow: hidden scroll;
 }
 
-.content h3{
-    margin: 0;
-    padding: 0;
-    border: 0;
+h2 {
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
 }
 
-.content h3 {
+h5 {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.content h2 {
     margin-bottom: 20px;
+    color: var(--header-primary);
+}
+.content h5 {
+    margin-bottom: 4px;
+    color: var(--header-secondary);
 }
 
 .content .tab {
@@ -904,6 +919,7 @@ input:checked + .toggleSwitchSlider:before {
 #main > .main-content > .top h2 {
     font-size: 25px;
     font-weight: 900;
+    line-height: 25px;
 }
 
 #playButton {
@@ -977,7 +993,7 @@ input:checked + .toggleSwitchSlider:before {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #dcddde;
+    color: var(--header-primary);
     line-height: 18px;
     font-weight: 600;
     font-size: 14px;
@@ -986,9 +1002,10 @@ input:checked + .toggleSwitchSlider:before {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    color: #b9bbbe;
+    color: var(--header-secondary);
     line-height: 13px;
     font-size: 12px;
+    font-weight: 600;
 }
 .round {
     border-radius: 25%;
