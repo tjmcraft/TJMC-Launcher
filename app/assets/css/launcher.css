@@ -74,6 +74,9 @@ html, body {
 body, html, div {
     margin: 0px;
     padding: 0px;
+    user-select: none;
+    background: transparent;
+    line-height: 1;
 }
 
 body, button {
@@ -664,23 +667,48 @@ h5 {
     min-height: 100%;
 }
 
-.content .field {
+.content .children > .container-cc3V {
     position: relative;
+    margin-bottom: 40px;
 }
 
 .content .separator {
     margin: 40px 0;
 }
 
-.content .FieldContainer {
+.content .children > .container-cc3V .labelRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
 }
-.content .FieldContainer .Field {
+.content .children > .container-cc3V .labelRow label {
+    flex: 1;
+    display: block;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.content .children > .container-cc3V .labelRow .control {
+    flex: 0 0 auto;
+}
+.content .children > .container-cc3V .note {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--header-secondary);
+    margin-top: 8px;
+}
+.content .children > .container-cc3V .divider {
+    margin: 20px 0 0 0;
+}
+
+.container-icf3v {
     display: flex;
-    flex-direction: column;
 }
 
 /* Toggle Switch */
