@@ -108,6 +108,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
+    --text-link: #00b0f4;
 }
 /*******************************************************************************
  *                                                                             *
@@ -382,8 +383,11 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .tools .keycode {
-    font-size: 16px; 
     color: #616161;
+    margin-top: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    text-align: center;
 }
 
 .tools #overlayCloseButton {
@@ -667,7 +671,7 @@ h5 {
     min-height: 100%;
 }
 
-.content .children > .container-cc3V {
+.container-cc3V {
     position: relative;
     margin-bottom: 40px;
 }
@@ -676,13 +680,13 @@ h5 {
     margin: 40px 0;
 }
 
-.content .children > .container-cc3V .labelRow {
+.container-cc3V .labelRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
 }
-.content .children > .container-cc3V .labelRow label {
+.title-3uvn {
     flex: 1;
     display: block;
     overflow: hidden;
@@ -690,25 +694,27 @@ h5 {
     margin-bottom: 0;
     line-height: 24px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
 }
-.content .children > .container-cc3V .labelRow .control {
+.container-cc3V .labelRow .control {
     flex: 0 0 auto;
 }
-.content .children > .container-cc3V .note {
+.container-cc3V .note {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
     color: var(--header-secondary);
     margin-top: 8px;
 }
-.content .children > .container-cc3V .divider {
+.container-cc3V .divider {
     margin: 20px 0 0 0;
 }
 
 .container-icf3v {
     display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
 }
 
 /* Toggle Switch */
@@ -1196,3 +1202,11 @@ input:checked + .toggleSwitchSlider:before {
 }
 
 *[data-tooltip] > * {pointer-events: none;}
+
+a.anchor {
+    color: var(--text-link);
+    text-decoration: none;
+}
+a.anchor:hover {
+    text-decoration: underline;
+}
