@@ -200,6 +200,8 @@ class Minecraft {
         })
     
         logg.debug('Downloaded assets')
+
+        return
     }
 
     /**

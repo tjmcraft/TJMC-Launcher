@@ -62,13 +62,12 @@ class launcher extends EventEmitter {
         logg.log('Attempting to download assets')
         await this.handler.getAssets(versionFile)
 
-        const launchArguments = this.handler.constructJVMArguments(versionFile, nativePath, classes)
-        logg.debug(`Launching with arguments ${this.options.java.javaPath} ${launchArguments.join(' ')}`)
-
-        logg.log('nice')
-        return launchArguments
+        return this.handler.constructJVMArguments(versionFile, nativePath, classes)
+        
+        return
     }
     async createJVM (launchArguments) {
+        logg.debug(`Launching with arguments ${this.options.java.javaPath} ${launchArguments.join(' ')}`)
         const minecraft = child.spawn(
             this.options.java.javaPath, 
             launchArguments,
