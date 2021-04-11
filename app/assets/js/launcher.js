@@ -47,7 +47,7 @@ class launcher extends EventEmitter {
 
         if (!fs.existsSync(this.options.mcPath)) {
             logg.log('Attempting to download Minecraft version jar')
-            await this.handler.getJar(versionFile)
+            const mcpath = await this.handler.getJar(versionFile)
         }
         
         logg.log('Attempting to download natives')

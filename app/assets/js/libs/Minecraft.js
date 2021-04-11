@@ -49,6 +49,7 @@ class Minecraft {
         const versionPath = path.join(this.options.overrides.path.version)
         await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.id}.jar`, true, 'version-jar')
         logg.debug('Downloaded version jar')
+        return path.join(versionPath, `${this.options.version.id}.jar`)
     }
 
     /**
