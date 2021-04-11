@@ -80,16 +80,16 @@ plb.addEventListener('click', (e) => {
 })
 
 function startMine () {
-    let _launcher = new API.launcher(API.ConfigManager.getAllOptions())
-    _launcher.on('progress', (e) => {
+    let launcher = new API.launcher(API.ConfigManager.getAllOptions())
+    launcher.on('progress', (e) => {
         progressBar.setValue((e.task/e.total)*100)
     })
-    _launcher.on('download-status', (e) => {
+    launcher.on('download-status', (e) => {
         if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
     })
     topBar.toggle(true)
-    _launcher.construct().then((minecraftArguments) =>
-        _launcher.createJVM(minecraftArguments).then((e) => {
+    launcher.construct().then((minecraftArguments) =>
+        launcher.createJVM(minecraftArguments).then((e) => {
             topBar.toggle(false)
         })
     )
@@ -182,4 +182,21 @@ new AlertEx({
         closeOverlay: true
     }]
 })
-//var x = getOffset( document.querySelector('#dropdown-list') ).left; 
+//var x = getOffset( document.querySelector('#dropdown-list') ).left;
+
+
+progressBar.setValue = (v) => {
+    progressBar.style.width = v + "%"
+    API.window.setProgressBar(v/100)
+}
+
+window.onload = function(e) {
+    const preloader = qsl('#preloader')
+    switchView(VIEWS.landing, 100, 100)
+    setTimeout(() => {
+        preloader.fadeOut(500, () => {
+            preloader.remove()
+            document.documentElement.classList.remove('preload')
+        })
+    }, 1000)
+}

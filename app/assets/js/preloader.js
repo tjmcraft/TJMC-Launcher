@@ -26,7 +26,7 @@ process.once('loaded', () => {
         downloadFile: downloadFile,
         shell: shell,
         ipc: ipcRenderer,
-        window: remote.getCurrentWindow()
+        window: win
     }
 
     ipcRenderer.on('open-settings', () => {
@@ -104,20 +104,6 @@ document.addEventListener('readystatechange', function () {
                 break;
         }
 
-        progressBar.setValue = (v) => {
-            progressBar.style.width = v + "%"
-            win.setProgressBar(v/100)
-        }
-
-    } else if (document.readyState === 'complete'){
-        const preloader = qsl('#preloader')
-        switchView(VIEWS.landing, 100, 100)
-        setTimeout(() => {
-            document.documentElement.classList.remove('preload')
-            preloader.fadeOut(500, () => {
-                preloader.remove()
-            })
-        }, 1000)
     }
 })
 
