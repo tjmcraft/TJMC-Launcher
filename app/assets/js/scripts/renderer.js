@@ -169,7 +169,7 @@ function renderSelectVersion (version) {
     d.innerText = version.type
 }
 
-new AlertEx({
+/*new AlertEx({
     closeButton: true,
     type: 'warn',
     header: 'Внимание!',
@@ -181,7 +181,7 @@ new AlertEx({
         },
         closeOverlay: true
     }]
-})
+})*/
 //var x = getOffset( document.querySelector('#dropdown-list') ).left;
 
 

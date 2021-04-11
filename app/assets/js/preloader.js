@@ -103,7 +103,6 @@ document.addEventListener('readystatechange', function () {
             default:
                 break;
         }
-
     }
 })
 

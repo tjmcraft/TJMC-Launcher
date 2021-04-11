@@ -188,8 +188,9 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     width: 28px;
     cursor: pointer;
     color: #ddd;
-    display: inline-block;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 #frameBar .frameButton:hover{
     background: rgba(189, 189, 189, 0.43);
