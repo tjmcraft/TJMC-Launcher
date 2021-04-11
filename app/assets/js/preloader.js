@@ -4,7 +4,7 @@ const VersionManager = require('./libs/VersionManager')
 const launcher = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
-logger.debug('Loading..')
+//logger.debug('Application loading..')
 
 // Load ConfigManager
 ConfigManager.load()
@@ -56,7 +56,7 @@ function getOS() {
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
 
-        logger.debug('UICore Initializing..')
+        logger.debug('Initializing..')
 
         if (win.isFullScreen()) enterFullScreen()
 
