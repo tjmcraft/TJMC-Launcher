@@ -105,6 +105,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --interactive-normal: #b9bbbe;
     --interactive-hover:#dcddde;
     --background-modifier-selected: #313131;
+    --background-modifier-accent: hsla(0,0%,100%,0.06);
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -125,7 +126,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     flex-direction: column;
     transition: all 0.5s;
     background-color: var(--background-tertiary);
-    -webkit-user-select: none;
+    user-select: none;
     width: 100%;
     height: 22px;
     top: 0;
@@ -226,7 +227,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     background-repeat: no-repeat;
     background: #1a1a1a;
     z-index: 99999;
-    -webkit-user-select: none;
+    user-select: none;
     transition: none;
     -webkit-app-region: drag;
 }
@@ -885,9 +886,47 @@ input:checked + .toggleSwitchSlider:before {
 }
 
 .container > .base {
+    display: flex;
+    -webkit-box-align: stretch;
+    align-items: stretch;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    min-width: 0;
+    min-height: 0;
+    -webkit-box-flex: 1;
     flex: 1 1 80%;
     position: relative;
     background-color: var(--background-primary);
+}
+
+.guilds {
+    overflow: hidden;
+    display: flex;
+    width: 72px;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+    background-color: var(--background-tertiary);
+}
+
+.guilds > .tree {
+    height: 100%;
+    display: flex;
+}
+
+.scroller {
+    position: relative;
+    box-sizing: border-box;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden scroll;
+    
+    user-select: none;
+    padding: 12px 0 0;
+    background-color: var(--background-tertiary);
+    contain: layout size;
+    padding-top: 4px;
+    padding-right: 0px;
 }
 
 .listItem {
@@ -897,16 +936,63 @@ input:checked + .toggleSwitchSlider:before {
     justify-content: center;
     align-items: center;
     width: 100%;
+    /*background-color: #333;*/
 }
 .listItem > .wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     position: relative;
     cursor: pointer;
+
+    border-radius: 50%;
+    overflow: auto;
+}
+
+.listItem > .wrapper:hover {
+    border-radius: 25%;
+}
+
+.listItem > .guildSeparator {
+    height: 2px;
+    width: 32px;
+    border-radius: 1px;
+    background-color: var(--background-modifier-accent);
+}
+
+.listItem > .wrapper > .singleIconBtn { 
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 48px;
+    height: 48px;
+    transition: color .15s ease-out,background-color .15s ease-out;
+    color: var(--interactive-normal);
+    background-color: var(--background-primary);
+}
+.listItem > .wrapper:hover > .singleIconBtn {
+    color: #1aaa1a;
+}
+
+.listItem img {
+    width: 48px;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-scrollbar {
+    scrollbar-width: none
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0
 }
 
 #main > .main-content {
