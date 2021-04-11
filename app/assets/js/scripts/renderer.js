@@ -76,8 +76,8 @@ stb.addEventListener('click', (e) => {
 })
 
 plb.addEventListener('click', (e) => {
-    //startMine()
-    removeMine()
+    startMine()
+    //removeMine()
 })
 
 function startMine () {
