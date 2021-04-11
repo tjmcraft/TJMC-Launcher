@@ -7,20 +7,26 @@ const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bo
 exports.getLocalVersions = async function() {
     let dir_path = API.ConfigManager.getVersionsDirectory()
     let ver_list = []
-    fs.readdirSync(dir_path).forEach(folder => {
-        let ver_path = path.join(dir_path, folder, folder + '.json')
-        if (fs.existsSync(ver_path)){
-            let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
-            let version =  {
-                id: file_c.id,
-                type: file_c.type,
-                time: file_c.time,
-                releaseTime: file_c.releaseTime
+    try {
+        if (!fs.existsSync(dir_path)) return
+        fs.readdirSync(dir_path)?.forEach(folder => {
+            let ver_path = path.join(dir_path, folder, folder + '.json')
+            if (fs.existsSync(ver_path)){
+                let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
+                let version =  {
+                    id: file_c.id,
+                    type: file_c.type,
+                    time: file_c.time,
+                    releaseTime: file_c.releaseTime
+                }
+                ver_list.push(version)
             }
-            ver_list.push(version)
-        }
-    })
-    return (ver_list)
+        })
+        return (ver_list)
+    } catch (error) {
+        console.error(error)
+        return
+    }
 }
 
 exports.getGlobalVersions = async function() {
