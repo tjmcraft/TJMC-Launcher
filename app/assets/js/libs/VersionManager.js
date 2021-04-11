@@ -33,8 +33,8 @@ exports.getLocalVersions = async function() {
 }
 
 exports.getGlobalVersions = async function() {
-    let m = JSON.parse(await API.downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`)),
-        t = JSON.parse(await API.downloadFile(`http://u.tlauncher.ru/repo/versions/versions.json`))
+    let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`)),
+        t = JSON.parse(await downloadFile(`http://u.tlauncher.ru/repo/versions/versions.json`))
     return merge(m.versions, t.versions)
 }
 
@@ -61,7 +61,7 @@ exports.getVersionManifest = async function(version) {
         const parsed = await this.getGlobalVersions()
         for (const cv in parsed) {
             if (parsed[cv].id === version) {
-                    c_version = JSON.parse(await API.downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`))
+                    c_version = JSON.parse(await downloadFile(parsed[cv].url || `http://u.tlauncher.ru/repo/versions/${version}.json`))
             }
         }
     }
@@ -81,4 +81,20 @@ exports.getVersionManifest = async function(version) {
     fs.mkdirSync(versionPath, {recursive: true})
     fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
     return c_version
+}
+
+/**
+ * Function just download a single file and return its body
+ * @param url give url of file
+ */
+function downloadFile(url) {
+    return new Promise((resolve, reject) => {
+        request(url, (error, response, body) => {
+            if (error) reject(error)
+            if (response.statusCode != 200) {
+                reject('Invalid status code <' + response.statusCode + '>')
+            }
+            resolve(body)
+        })
+    })
 }
