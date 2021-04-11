@@ -11,7 +11,7 @@ const nickField = qsl('#nick')
 const playButton = qsl('#playButton')
 /* ================================= */
 
-console.log('Renderer init')
+console.debug('Renderer init')
 
 const VIEWS = {
     landing: qsl('#main-layer'),

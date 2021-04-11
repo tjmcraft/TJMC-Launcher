@@ -1,11 +1,10 @@
 const ConfigManager = require('./libs/ConfigManager')
 const { shell, remote, ipcRenderer } = require('electron')
-const request = require('request')
 const VersionManager = require('./libs/VersionManager')
 const launcher = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
-logger.log('Loading..')
+logger.debug('Loading..')
 
 // Load ConfigManager
 ConfigManager.load()
@@ -57,7 +56,7 @@ function getOS() {
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
 
-        logger.log('UICore Initializing..')
+        logger.debug('UICore Initializing..')
 
         if (win.isFullScreen()) enterFullScreen()
 
