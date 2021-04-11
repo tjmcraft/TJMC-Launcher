@@ -76,7 +76,8 @@ stb.addEventListener('click', (e) => {
 })
 
 plb.addEventListener('click', (e) => {
-    startMine()
+    //startMine()
+    removeMine()
 })
 
 function startMine () {
@@ -93,6 +94,11 @@ function startMine () {
             topBar.toggle(false)
         })
     )
+}
+
+function removeMine() {
+    let version = API.ConfigManager.getVersion()
+    API.VersionManager.removeVersion(version.id)
 }
 
 avb.addEventListener('click', (e) => {

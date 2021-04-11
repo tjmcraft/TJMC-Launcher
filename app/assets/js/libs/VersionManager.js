@@ -53,7 +53,7 @@ exports.setVersion = function(v) {
  */
 exports.getVersionManifest = async function(version) {
     logger.debug('Loading Version JSON for: '+version)
-    let versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
+    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
     const versionJsonPath = path.join(versionPath, `${version}.json`)
     var c_version = null;
     if (fs.existsSync(versionJsonPath)) {
@@ -82,6 +82,15 @@ exports.getVersionManifest = async function(version) {
     fs.mkdirSync(versionPath, {recursive: true})
     fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
     return c_version
+}
+
+exports.removeVersion = async function(version) {
+    const versionFile = await exports.getVersionManifest(version)
+    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
+    const assetsIndexDir = path.join(ConfigManager.getDataDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
+    fs.rmdirSync(versionPath, {recursive: true})
+    fs.rmdirSync(assetsIndexDir, {recursive: true})
+    logger.log(`${version} was removed!`)
 }
 
 /**
