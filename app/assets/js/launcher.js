@@ -7,35 +7,28 @@ const Minecraft                              = require('./libs/Minecraft')
 const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter {
+
     static openMineDir(){
-        logg.debug('Using default path: '+API.ConfigManager.getDataDirectory())
-        switch (API.getOS()) {
-            case 'windows': 
-                child.exec(`explorer "${API.ConfigManager.getDataDirectory()}"`)
-                break
-            case 'osx':
-                child.exec(`open "" "${API.ConfigManager.getDataDirectory()}"`)
-                break
-            default:
-                break
-        }
-        return
+        let path = API.ConfigManager.getDataDirectory();
+        logg.debug('Using default path: '+path)
+        API.shell.openPath(path);
     }
+
     constructor (options) {
         super()
         this.options = options
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.id)
         this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)
-        logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
-        
         this.handler = new Minecraft(this)
+        logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
     }
+
     async construct () {
 
         const java = await this.handler.checkJava(this.options.java.javaPath || 'java')
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
-            return null
+            return
         }
 
         if (!fs.existsSync(this.options.overrides.path.root)) {
