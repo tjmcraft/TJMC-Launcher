@@ -25,16 +25,19 @@ class launcher extends EventEmitter {
         super()
         this.options = options
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.id)
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)
         logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
         
         this.handler = new Minecraft(this)
     }
     async construct () {
+
         const java = await this.handler.checkJava(this.options.java.javaPath || 'java')
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
             return null
         }
+
         if (!fs.existsSync(this.options.overrides.path.root)) {
             logg.log('Attempting to create root folder')
             fs.mkdirSync(this.options.overrides.path.root, {recursive: true})
@@ -48,19 +51,20 @@ class launcher extends EventEmitter {
 
         logg.log('Attempting to load main json')
         const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
+
+        if (!fs.existsSync(this.options.mcPath)) {
+            logg.log('Attempting to download Minecraft version jar')
+            await this.handler.getJar(versionFile)
+        }
+        
+        logg.log('Attempting to download natives')
         const nativePath = await this.handler.getNatives(versionFile)
 
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)
-        if (!fs.existsSync(this.options.mcPath)) {
-          logg.log('Attempting to download Minecraft version jar')
-          await this.handler.getJar(versionFile)
-        }
-
         logg.log('Attempting to download libraries')
-        const classes = merge(await this.handler.getClasses(versionFile))
+        const classes = await this.handler.getClasses(versionFile)
 
         logg.log('Attempting to download assets')
-        await this.handler.getAssets(versionFile)
+        const assets = await this.handler.getAssets(versionFile)
 
         return this.handler.constructJVMArguments(versionFile, nativePath, classes)
         
