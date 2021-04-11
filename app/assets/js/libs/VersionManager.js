@@ -35,7 +35,7 @@ exports.getLocalVersions = async function() {
 
 exports.getGlobalVersions = async function() {
     let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, true)),
-        t = JSON.parse(await downloadFile(`http://tlauncher.rus/repo/versions/versions.json`, true))
+        t = JSON.parse(await downloadFile(`http://tlauncher.ru/repo/versions/versions.json`, true))
     return merge(m.versions, t.versions)
 }
 
