@@ -76,8 +76,24 @@ stb.addEventListener('click', (e) => {
 })
 
 plb.addEventListener('click', (e) => {
-    API.startMine()
+    startMine()
 })
+
+function startMine () {
+    let _launcher = new API.launcher(API.ConfigManager.getAllOptions())
+    _launcher.on('progress', (e) => {
+        progressBar.setValue((e.task/e.total)*100)
+    })
+    _launcher.on('download-status', (e) => {
+        if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
+    })
+    topBar.toggle(true)
+    _launcher.construct().then((minecraftArguments) =>
+        _launcher.createJVM(minecraftArguments).then((e) => {
+            topBar.toggle(false)
+        })
+    )
+}
 
 avb.addEventListener('click', (e) => {
     new VersionChooser()
@@ -153,7 +169,7 @@ function renderSelectVersion (version) {
     d.innerText = version.type
 }
 
-/*new AlertEx({
+new AlertEx({
     closeButton: true,
     type: 'warn',
     header: 'Внимание!',
@@ -165,5 +181,5 @@ function renderSelectVersion (version) {
         },
         closeOverlay: true
     }]
-})*/
+})
 //var x = getOffset( document.querySelector('#dropdown-list') ).left; 

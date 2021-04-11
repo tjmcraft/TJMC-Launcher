@@ -22,7 +22,6 @@ process.once('loaded', () => {
         ConfigManager: ConfigManager,
         VersionManager: VersionManager,
         launcher: launcher,
-        startMine: startMine,
         getOS: getOS,
         downloadFile: downloadFile,
         shell: shell,
@@ -70,22 +69,6 @@ function downloadFile(url) {
             resolve(body)
         })
     })
-}
-
-function startMine () {
-    let _launcher = new launcher(ConfigManager.getAllOptions())
-    _launcher.on('progress', (e) => {
-        progressBar.setValue((e.task/e.total)*100)
-    })
-    _launcher.on('download-status', (e) => {
-        if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
-    })
-    topBar.toggle(true)
-    _launcher.construct().then((minecraftArguments) =>
-        _launcher.createJVM(minecraftArguments).then((e) => {
-            topBar.toggle(false)
-        })
-    )
 }
 
 document.addEventListener('readystatechange', function () {

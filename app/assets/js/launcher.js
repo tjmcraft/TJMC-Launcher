@@ -26,7 +26,7 @@ class launcher extends EventEmitter {
         this.options = options
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.id)
         logg.debug(`Minecraft folder ${this.options.overrides.path.root}`)
-
+        
         this.handler = new Minecraft(this)
     }
     async construct () {
