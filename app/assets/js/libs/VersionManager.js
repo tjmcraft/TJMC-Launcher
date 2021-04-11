@@ -8,7 +8,10 @@ exports.getLocalVersions = async function() {
     let dir_path = API.ConfigManager.getVersionsDirectory()
     let ver_list = []
     try {
-        if (!fs.existsSync(dir_path)) return
+        if (!fs.existsSync(dir_path)) {
+            logger.log('Attempting to create versions folder')
+            fs.mkdirSync(dir_path, {recursive: true})
+        }
         fs.readdirSync(dir_path)?.forEach(folder => {
             let ver_path = path.join(dir_path, folder, folder + '.json')
             if (fs.existsSync(ver_path)){
@@ -24,7 +27,7 @@ exports.getLocalVersions = async function() {
         })
         return (ver_list)
     } catch (error) {
-        console.error(error)
+        logger.error("Error while parsing local versions: " + error)
         return
     }
 }
@@ -49,8 +52,8 @@ exports.setVersion = function(v) {
  */
 exports.getVersionManifest = async function(version) {
     logger.debug('Loading Version JSON for: '+version)
-    let options = ConfigManager.getAllOptions()
-    const versionJsonPath = path.join(options.overrides.path.directory, version, `${version}.json`)
+    let versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
+    const versionJsonPath = path.join(versionPath, `${version}.json`)
     var c_version = null;
     if (fs.existsSync(versionJsonPath)) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
@@ -75,7 +78,7 @@ exports.getVersionManifest = async function(version) {
         }
         delete c_version.inheritsFrom
     }
-    fs.mkdirSync(path.join(options.overrides.path.directory, version), {recursive: true})
+    fs.mkdirSync(versionPath, {recursive: true})
     fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
     return c_version
 }
