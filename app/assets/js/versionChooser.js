@@ -47,7 +47,7 @@ class VersionChooser {
     }
     addItem(item) {
         let c = this.sidebar
-        let i = createElementWithClass('div', 'item navItem')
+        let i = createElement('div', {class: 'item navItem'})
         i.setAttribute('version-id', item.id)
         i.innerHTML = item.id
         i.onclick = function() {

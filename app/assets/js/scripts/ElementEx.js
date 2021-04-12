@@ -36,25 +36,30 @@ function qsla(s) {
 Element.prototype.qsla = qsla
 
 /**
- * Function creates new element with given ID
- * @param {Element} element - The type of element to create
- * @param {*} id - The ID for created element
+ * Creates new element with given attributes
+ * @param {String} tag - The element tag
+ * @param {Object} attrs - The attributes for this element
+ * @param  {Element} childrens - Childrens for element
+ * @returns {Element} instance of element
  */
-function createElementWithId(el, id) {
-    let e = document.createElement(el)
-    e.id = id
-    return e
-}
-
-/**
- * Function creates new element with given ClassName
- * @param {Element} element - The type of element to create
- * @param {String} class - The ClassName for created element
- */
-function createElementWithClass(el, cl) {
-    let e = document.createElement(el)
-    e.className = cl
-    return e
+function createElement(tag, attrs, ...childrens) {
+    var element = document.createElement((typeof tag == 'string') ? tag : 'div');
+    for (let name in attrs) {
+        if (name && attrs.hasOwnProperty(name)) {
+            let value = attrs[name];
+            if (value === true) {
+                element.setAttribute(name, name);
+            } else if (value !== false && value != null) {
+                element.setAttribute(name, value.toString());
+            }
+        }
+    }
+    for (let child of childrens) {
+        element.appendChild(
+            child.nodeType == null ?
+                document.createTextNode(child.toString()) : child);
+    }
+    return element;
 }
 
 /**

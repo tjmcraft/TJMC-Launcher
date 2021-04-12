@@ -129,11 +129,11 @@ function renderNameTag(auth) {
  * The function creates and returns tools container for overlay
  */
 function createToolsContainer(click = () => {}) {
-    let tools = createElementWithClass('div', 'tools frame-fix')
-    let overlayCloseButton = createElementWithId('div', 'overlayCloseButton')
+    let tools = createElement('div', {class: 'tools frame-fix'})
+    let overlayCloseButton = createElement('div', {id: 'overlayCloseButton'})
     overlayCloseButton.onclick = click
     let cross = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#dcddde" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"></path></svg>'
-    let keycode = createElementWithClass('div', 'keycode')
+    let keycode = createElement('div', {class: 'keycode'})
     keycode.innerText = 'ESC'
 
     overlayCloseButton.innerHTML += cross
@@ -144,7 +144,7 @@ function createToolsContainer(click = () => {}) {
 
 mvl.addItem = function (item) {
     let c = qsl('.sidebar')
-    let i = createElementWithClass('div', 'item navItem')
+    let i = createElement('div', {class: 'item navItem'})
     i.setAttribute('version-id', item.id)
     i.innerHTML = item.id
     i.onclick = function() {

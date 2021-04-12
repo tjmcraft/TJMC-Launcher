@@ -3,7 +3,7 @@ class AlertEx {
         this.overlay = this.createOverlay(params.closeButton)
         this.overlay.toggle(false)
 
-        let container = createElementWithId('div', 'container')
+        let container = createElement('div', {id: 'container'})
         container.onclick = (event) => {event.stopPropagation()}
 
         if (params.type) {
@@ -48,7 +48,7 @@ class AlertEx {
             let hr = document.createElement('hr')
             container.append(hr)
             for (let bp of params.buttons) {
-                let button = createElementWithClass('button', bp.class ? bp.class : '')
+                let button = createElement('button', {class: bp.class ? bp.class : ''})
                 button.innerText = bp.name
                 button.onclick = () => {
                     if (bp.callback && typeof bp.callback === 'function') bp.callback()
@@ -78,7 +78,7 @@ class AlertEx {
     }
 
     createOverlay(closeButton = null){
-        let overlay = createElementWithId('div', 'overlay')
+        let overlay = createElement('div', {id: 'overlay'})
 
         if (closeButton) {
             let tools = createToolsContainer(() => {
