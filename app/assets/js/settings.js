@@ -7,7 +7,9 @@ class Settings {
             let text = this.getBase;
             this.layer.appendHTML(text)
 
-            this.sidebar = this.layer.content.qsl('.sidebar')
+            this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
+            this.sidebarRegion.append(this.sideBar);
+            this.sidebar = this.sidebarRegion.qsl('.sidebar')
             this.sidebarItems = this.sidebar.qsla('.navItem')
             this.content = this.layer.content.qsla('.content .tab')
 
@@ -16,7 +18,7 @@ class Settings {
             })
             this.layer.append(this.tools)
 
-            this.bindSidebarItems()
+            //this.bindSidebarItems()
 
             this.escBinder = new escBinder()
             this.escBinder.bind(() => {
@@ -31,19 +33,6 @@ class Settings {
         this.escBinder.uibind()
         this.layer.destroy()
     }
-    bindSidebarItems(){
-        Array.from(this.sidebarItems).map((val) => {
-            if(val.hasAttribute('rTi'))
-                val.onclick = () => {
-                    this.setTab(val.getAttribute('rTi'))
-                }
-        })
-    }
-    unbindSidebarItems(){
-        Array.from(this.sidebarItems).map((val) => {
-            if(val.hasAttribute('rTi')) val.onclick = () => {}
-        })
-    }
     setTab (tab) {
         this.content.forEach((el) => {
             el.toggle(el.id === tab)
@@ -55,11 +44,7 @@ class Settings {
     get getBase() {
         return /*html*/`
         <div class="sidebarView" id="user-settings">
-            <div class="sidebar-region">
-                <div class="sidebar">
-                    ${this.getSideBar}
-                </div>
-            </div>
+            <div class="sidebar-region"></div>
             <div class="content-region">
                 <div class="transitionWrap">
                     <div class="content">
@@ -87,20 +72,27 @@ class Settings {
         </div>
         `
     }
-    get getSideBar() {
-        return /*html*/`
-            <div class="item header">Настройки пользователя</div>
-            <div class="item navItem" rTi="my-account-tab">Моя учётная запись</div>
-            <div class="item navItem" rTi="skin-tab">Сменить скин</div>
-            <div class="item separator"></div>
-            <div class="item header">Настройки Игры</div>
-            <div class="item navItem" rTi="minecraft-settings">Игровые настройки</div>
-            <div class="item navItem" rTi="java-settings">Настройки Java</div>
-            <div class="item separator"></div>
-            <div class="item navItem" rTi="launcher-settings">Настройки Лаунчера</div>
-            <div class="item separator"></div>
-            <div class="item navItem" rTi="about-tab">О нас</div>
-        `
+    get sideBar() {
+        let sidebar_items = [
+            {type: 'header', content: 'Настройки пользователя'},
+            {type: 'navItem', content: 'Моя учётная запись', rti: 'my-account-tab'},
+            {type: 'navItem', content: 'Сменить скин', rti: 'skin-tab'},
+            {type: 'separator'},
+            {type: 'header', content: 'Настроки Игры'},
+            {type: 'navItem', content: 'Игровые настройки', rti: 'minecraft-settings'},
+            {type: 'navItem', content: 'Настройки Java', rti: 'java-settings'},
+            {type: 'separator'},
+            {type: 'navItem', content: 'Настроки Лаунчера', rti: 'launcher-settings'},
+            {type: 'separator'},
+            {type: 'navItem', content: 'О нас', rti: 'about-tab'}
+        ];
+        const root_sidebar = createElement('div', {class: 'sidebar'});
+        sidebar_items.forEach(i => {
+            let root_item = createElement('div', {class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti}, i.content);
+            if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
+            root_sidebar.appendChild(root_item);
+        });
+        return root_sidebar;
     }
     content = {
         get my_account_tab() {

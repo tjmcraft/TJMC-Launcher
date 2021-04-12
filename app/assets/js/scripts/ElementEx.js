@@ -55,9 +55,10 @@ function createElement(tag, attrs, ...childrens) {
         }
     }
     for (let child of childrens) {
-        element.appendChild(
-            child.nodeType == null ?
-                document.createTextNode(child.toString()) : child);
+        if (child)
+            element.appendChild(
+                child.nodeType == null ?
+                    document.createTextNode(child.toString()) : child);
     }
     return element;
 }
