@@ -42,39 +42,19 @@ class Settings {
         this.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
-        let getTab = (tab) => {
-            switch (tab) {
-                case 'my-account-tab':
-                    return this.content.my_account_tab;
-                    break;
-
-                case 'skin-tab':
-                    return this.content.skin_tab;
-                    break;
-
-                case 'minecraft-settings':
-                    return this.content.minecraft_settings_tab;
-                    break;
-
-                case 'java-settings':
-                    return this.content.java_settings_tab;
-                    break;
-                
-                case 'launcher-settings':
-                    return this.content.launcher_settings_tab;
-                    break;
-                
-                case 'about-tab':
-                    return this.content.about_tab;
-                    break;
-            
-                default:
-                    return this.content.my_account_tab;
-                    break;
-            }
-        }
+        let tablist = [
+            {name: 'my-account-tab', content: this.content.my_account_tab},
+            {name: 'skin-tab', content: this.content.skin_tab},
+            {name: 'minecraft-settings', content: this.content.minecraft_settings_tab},
+            {name: 'java-settings', content: this.content.java_settings_tab},
+            {name: 'launcher-settings', content: this.content.launcher_settings_tab},
+            {name: 'about-tab', content: this.content.about_tab}
+        ];
+        let tab_p = tablist.find((i) => {
+            return i.name === tab;
+        }) || tablist[0];
         this.el.content.removeAllChildNodes();
-        this.el.content.appendChild(getTab(tab));
+        this.el.content.appendChild(tab_p.content);
     }
     get getBase() {
         return /*html*/`
@@ -82,26 +62,7 @@ class Settings {
             <div class="sidebar-region"></div>
             <div class="content-region">
                 <div class="transitionWrap">
-                    <div class="content">
-                        <div id="my-account-tab" class="tab hidden">
-                            ${this.content.my_account_tab}
-                        </div>
-                        <div id="skin-tab" class="tab hidden">
-                            ${this.content.skin_tab}
-                        </div>
-                        <div id="minecraft-settings" class="tab hidden">
-                            ${this.content.minecraft_settings_tab}
-                        </div>
-                        <div id="java-settings" class="tab hidden">
-                            ${this.content.java_settings_tab}
-                        </div>
-                        <div id="launcher-settings" class="tab hidden">
-                            ${this.content.launcher_settings_tab}
-                        </div>
-                        <div id="about-tab" class="tab hidden">
-                            ${this.content.about_tab}
-                        </div>
-                    </div>
+                    <div class="content"></div>
                 </div>
             </div>
         </div>
@@ -111,7 +72,7 @@ class Settings {
         let sidebar_items = [
             {type: 'header', content: 'Настройки пользователя'},
             {type: 'navItem', content: 'Моя учётная запись', rti: 'my-account-tab'},
-            {type: 'navItem', content: 'Сменить скин', rti: 'skin-tab'},
+            {type: 'navItem', content: 'Сменить скин', rti: 'skins-tab'},
             {type: 'separator'},
             {type: 'header', content: 'Настроки Игры'},
             {type: 'navItem', content: 'Игровые настройки', rti: 'minecraft-settings'},
@@ -132,6 +93,11 @@ class Settings {
     content = {
         base(id, ...e) {
             return createElement('div', {class: 'tab', id: id}, ...e);
+        },
+        createChilderContainer(...e) {
+            return createElement('div', {class: 'children'}, 
+                createElement('div', {class: 'container-cc3V'}, ...e)
+            );
         },
         get my_account_tab() {
             let heading = createElement('h2', null, 'Моя учётная запись');
@@ -195,18 +161,12 @@ class Settings {
             return this.base('launcher-settings-tab', heading);
         },
         get about_tab() {
-            return /*html*/`
-                <h2>О нас</h2>
-                <div class="children">
-                    <div class="container-cc3V">
-                        <h5>Просмотр информации о текущем релизе и заметки к выпуску</h5>
-                        <div class="note">Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.</div>
-                    </div>
-                </div>
-            `
             let heading = createElement('h2', null, 'О нас');
-            let children = createElement('div', {class: 'children'});
-            return this.base('about-tab', heading);
+            let children = this.createChilderContainer( 
+                createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'), 
+                createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+            );
+            return this.base('about-tab', heading, children);
         }
     }
 }
