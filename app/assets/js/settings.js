@@ -4,7 +4,7 @@ class Settings {
         this.layer = new Layer({
             label: 'USER_SETTINGS'
         })
-        
+
         let text = this.getBase;
         this.layer.appendHTML(text)
 
@@ -100,13 +100,15 @@ class Settings {
         },
         get minecraft_settings_tab() {
             let icf3v_ints = (props) => {
+                let cb = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked || false});
+                cb.addEventListener('change', function (event) {alert('changed') });
                 return (
                     createElement('div', {class: 'container-icf3v'},
                         createElement('div', {class: 'labelRow'},
                             createElement('label', {for: props.id, class: 'title-3uvn'}, props.header),
                             createElement('div', {class: 'control'},
                                 createElement('label', {class: 'toggleSwitch'},
-                                    createElement('input', {type: 'checkbox', id: props.id, checked: props.checked || false}),
+                                    cb,
                                     createElement('span', {class: 'toggleSwitchSlider'})
                                 )
                             )
