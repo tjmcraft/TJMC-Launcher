@@ -1,4 +1,5 @@
 class Settings {
+    el = []
     constructor() {
         this.layer = new Layer({
             label: 'USER_SETTINGS'
@@ -11,7 +12,8 @@ class Settings {
             this.sidebarRegion.append(this.sideBar);
             this.sidebar = this.sidebarRegion.qsl('.sidebar')
             this.sidebarItems = this.sidebar.qsla('.navItem')
-            this.content = this.layer.content.qsla('.content .tab')
+            this.el.content = this.layer.content.qsl('.content')
+            console.debug(this.el.content);
 
             this.tools = createToolsContainer(() => {
                 this.destroy()
@@ -34,12 +36,45 @@ class Settings {
         this.layer.destroy()
     }
     setTab (tab) {
-        this.content.forEach((el) => {
+        /*this.el.content.forEach((el) => {
             el.toggle(el.id === tab)
-        })
+        })*/
         this.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
+        let getTab = (tab) => {
+            switch (tab) {
+                case 'my-account-tab':
+                    return this.content.my_account_tab;
+                    break;
+
+                case 'skin-tab':
+                    return this.content.skin_tab;
+                    break;
+
+                case 'minecraft-settings':
+                    return this.content.minecraft_settings_tab;
+                    break;
+
+                case 'java-settings':
+                    return this.content.java_settings_tab;
+                    break;
+                
+                case 'launcher-settings':
+                    return this.content.launcher_settings_tab;
+                    break;
+                
+                case 'about-tab':
+                    return this.content.about_tab;
+                    break;
+            
+                default:
+                    return this.content.my_account_tab;
+                    break;
+            }
+        }
+        this.el.content.removeAllChildNodes();
+        this.el.content.appendChild(getTab(tab));
     }
     get getBase() {
         return /*html*/`
@@ -95,19 +130,20 @@ class Settings {
         return root_sidebar;
     }
     content = {
+        base(id, ...e) {
+            return createElement('div', {class: 'tab', id: id}, ...e);
+        },
         get my_account_tab() {
-            return /*html*/`
-                <h2>Моя учётная запись</h2>
-            `
+            let heading = createElement('h2', null, 'Моя учётная запись');
+            return this.base('my-account-tab', heading);
         },
         get skin_tab() {
-            return /*html*/`
-                <h2>Конфигурация скина</h2>
-            `
+            let heading = createElement('h2', null, 'Конфигурация скина');
+            return this.base('skin-tab', heading);
         },
         get minecraft_settings_tab() {
-            return /*html*/`
-                <h2>Настройки Minecraft</h2>
+            let heading = createElement('h2', null, 'Настройки Minecraft');
+            let root = /*html*/`
                 <div class="children">
                     <div class="container-cc3V">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.
@@ -148,16 +184,15 @@ class Settings {
                     </div>
                 </div>
             `
+            return this.base('minecraft-settings-tab', heading, root);
         },
         get java_settings_tab() {
-            return /*html*/`
-                <h2>Настройки Java</h2>
-            `
+            let heading = createElement('h2', null, 'Настройки Java');
+            return this.base('java-settings-tab', heading);
         },
         get launcher_settings_tab() {
-            return /*html*/`
-                <h2>Настройки Лаунчера</h2>
-            `
+            let heading = createElement('h2', null, 'Настройки Лаунчера');
+            return this.base('launcher-settings-tab', heading);
         },
         get about_tab() {
             return /*html*/`
@@ -169,6 +204,9 @@ class Settings {
                     </div>
                 </div>
             `
+            let heading = createElement('h2', null, 'О нас');
+            let children = createElement('div', {class: 'children'});
+            return this.base('about-tab', heading);
         }
     }
 }
