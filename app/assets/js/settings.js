@@ -4,41 +4,34 @@ class Settings {
         this.layer = new Layer({
             label: 'USER_SETTINGS'
         })
-        //fetch('./settings.ejs').then(response => response.text()).then(text => {
-            let text = this.getBase;
-            this.layer.appendHTML(text)
+        
+        let text = this.getBase;
+        this.layer.appendHTML(text)
 
-            this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
-            this.sidebarRegion.append(this.sideBar);
-            this.sidebar = this.sidebarRegion.qsl('.sidebar')
-            this.sidebarItems = this.sidebar.qsla('.navItem')
-            this.el.content = this.layer.content.qsl('.content')
-            console.debug(this.el.content);
+        this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
+        this.sidebarRegion.append(this.sideBar);
+        this.sidebar = this.sidebarRegion.qsl('.sidebar')
+        this.sidebarItems = this.sidebar.qsla('.navItem')
+        this.el.content = this.layer.content.qsl('.content')
 
-            this.tools = createToolsContainer(() => {
-                this.destroy()
-            })
-            this.layer.append(this.tools)
+        this.tools = createToolsContainer(() => {
+            this.destroy()
+        })
+        this.layer.append(this.tools)
 
-            //this.bindSidebarItems()
+        this.escBinder = new escBinder()
+        this.escBinder.bind(() => {
+            this.destroy()
+        })
 
-            this.escBinder = new escBinder()
-            this.escBinder.bind(() => {
-                this.destroy()
-            })
-
-            this.setTab('my-account-tab')
-            this.layer.show()
-        //})
+        this.setTab('my-account-tab')
+        this.layer.show()
     }
     destroy() {
         this.escBinder.uibind()
         this.layer.destroy()
     }
     setTab (tab) {
-        /*this.el.content.forEach((el) => {
-            el.toggle(el.id === tab)
-        })*/
         this.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
