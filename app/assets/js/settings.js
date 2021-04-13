@@ -38,7 +38,7 @@ class Settings {
             el.toggle(el.id === tab)
         })
         this.sidebarItems.forEach((i) => {
-            i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
+            i.classList['remove']('selected')
         })
     }
     get getBase() {
@@ -89,7 +89,12 @@ class Settings {
         const root_sidebar = createElement('div', {class: 'sidebar'});
         sidebar_items.forEach(i => {
             let root_item = createElement('div', {class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti}, i.content);
-            if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
+            if (i.rti) {
+                root_item.onclick = () => {
+                    this.setTab(i.rti)
+                    root_item.classList.add('selected')
+                }
+            }
             root_sidebar.appendChild(root_item);
         });
         return root_sidebar;
