@@ -95,9 +95,7 @@ class Settings {
             return createElement('div', {class: 'tab', id: id}, ...e);
         },
         createChilderContainer(...e) {
-            return createElement('div', {class: 'children'}, 
-                createElement('div', {class: 'container-cc3V'}, ...e)
-            );
+            return createElement('div', {class: 'children'}, ...e);
         },
         get my_account_tab() {
             let heading = createElement('h2', null, 'Моя учётная запись');
@@ -108,49 +106,47 @@ class Settings {
             return this.base('skin-tab', heading);
         },
         get minecraft_settings_tab() {
+            let icf3v_ints = (props) => {
+                return (
+                    createElement('div', {class: 'container-icf3v'},
+                        createElement('div', {class: 'labelRow'},
+                            createElement('label', {for: props.id, class: 'title-3uvn'}, props.header),
+                            createElement('div', {class: 'control'},
+                                createElement('label', {class: 'toggleSwitch'},
+                                    createElement('input', {type: 'checkbox', id: props.id, checked: props.checked || false}),
+                                    createElement('span', {class: 'toggleSwitchSlider'})
+                                )
+                            )
+                        ),
+                        createElement('div', {class: 'note'}, props.note),
+                        createElement('div', {class: 'divider separator'})
+                    )
+                )
+            }
             let heading = createElement('h2', null, 'Настройки Minecraft');
-            let root = /*html*/`
-                <div class="children">
-                    <div class="container-cc3V">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.
-                    </div>
-                    <div class="separator"></div>
-                    <div class="container-cc3V">
-                        <h5>Как мы используем ваши данные</h5>
-                        <div class="container-icf3v">
-                            <div class="labelRow">
-                                <label for="uid_1" class="title-3uvn">Использование данных для улучшения TJMC</label>
-                                <div class="control">
-                                    <label class="toggleSwitch">
-                                        <input type="checkbox" cValue="Fullscreen" id="uid_1">
-                                        <span class="toggleSwitchSlider"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="note">
-                                Эта настройка позволяет нам в аналитических целях использовать и обрабатывать информацию о том, как вы перемещаетесь по TJMC и используете его. Это позволяет, к примеру, давать вам доступ к тестированию новых функций.
-                            </div>
-                            <div class="divider separator"></div>
-                        </div>
-                        <div class="container-icf3v">
-                            <div class="labelRow">
-                                <label for="uid_2" class="title-3uvn">Использование данных для персонализации опыта использования TJMC</label>
-                                <div class="control">
-                                    <label class="toggleSwitch">
-                                        <input type="checkbox" cValue="Fullscreen" id="uid_2">
-                                        <span class="toggleSwitchSlider"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="note">
-                                Этот параметр позволяет нам использовать информацию (например, о том, с кем вы общаетесь или во что играете), чтобы настроить TJMC лично для вас. <a class="anchor" href="#">Подробнее</a>
-                            </div>
-                            <div class="divider separator"></div>
-                        </div>
-                    </div>
-                </div>
-            `
-            return this.base('minecraft-settings-tab', heading, root);
+            let children = this.createChilderContainer(
+                createElement('div', {class: 'container-cc3V'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.'),
+                createElement('div', {class: 'separator'}),
+                createElement('div', {class: 'container-cc3V'}, 
+                    createElement('h5', null, 'Как мы используем ваши данные'),
+                    icf3v_ints({
+                        id: 'uid_1',
+                        header: 'Использование данных для улучшения TJMC',
+                        note: 'Эта настройка позволяет нам в аналитических целях использовать и обрабатывать информацию о том, как вы перемещаетесь по TJMC и используете его. Это позволяет, к примеру, давать вам доступ к тестированию новых функций.',
+                        checked: true,
+                        action: ()=>{}
+                    }),
+                    icf3v_ints({
+                        id: 'uid_2',
+                        header: 'Использование данных для персонализации опыта использования TJMC',
+                        note: ' Этот параметр позволяет нам использовать информацию (например, о том, с кем вы общаетесь или во что играете), чтобы настроить TJMC лично для вас. ',
+                        checked: true,
+                        action: ()=>{}
+                    })
+                )
+            
+            );
+            return this.base('minecraft-settings-tab', heading, children);
         },
         get java_settings_tab() {
             let heading = createElement('h2', null, 'Настройки Java');
@@ -162,9 +158,11 @@ class Settings {
         },
         get about_tab() {
             let heading = createElement('h2', null, 'О нас');
-            let children = this.createChilderContainer( 
-                createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'), 
-                createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+            let children = this.createChilderContainer(
+                createElement('div', {class: 'container-cc3V'},
+                    createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'), 
+                    createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+                )
             );
             return this.base('about-tab', heading, children);
         }
