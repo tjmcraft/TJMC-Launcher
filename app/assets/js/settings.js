@@ -6,11 +6,10 @@ class Settings {
         })
 
         let base = this.getBase;
-        //base.append(this.sideBar)
         this.layer.append(base)
 
         this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
-        this.sidebarRegion.append(this.sideBar);
+        //this.sidebarRegion.append(this.sideBar);
         this.sidebar = this.sidebarRegion.qsl('.sidebar')
         this.sidebarItems = this.sidebar.qsla('.navItem')
         this.el.content = this.layer.content.qsl('.content')
@@ -52,7 +51,7 @@ class Settings {
     }
     get getBase() {
         let root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
-            createElement('div', {class: 'sidebar-region'}),
+            createElement('div', {class: 'sidebar-region'}, this.sideBar),
             createElement('div', {class: 'content-region'},
                 createElement('div', {class: 'transitionWrap'}, 
                     createElement('div', {class: 'content'})
