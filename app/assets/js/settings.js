@@ -5,8 +5,9 @@ class Settings {
             label: 'USER_SETTINGS'
         })
 
-        let text = this.getBase;
-        this.layer.appendHTML(text)
+        let base = this.getBase;
+        //base.append(this.sideBar)
+        this.layer.append(base)
 
         this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
         this.sidebarRegion.append(this.sideBar);
@@ -50,16 +51,15 @@ class Settings {
         this.el.content.appendChild(tab_p.content);
     }
     get getBase() {
-        return /*html*/`
-        <div class="sidebarView" id="user-settings">
-            <div class="sidebar-region"></div>
-            <div class="content-region">
-                <div class="transitionWrap">
-                    <div class="content"></div>
-                </div>
-            </div>
-        </div>
-        `
+        let root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
+            createElement('div', {class: 'sidebar-region'}),
+            createElement('div', {class: 'content-region'},
+                createElement('div', {class: 'transitionWrap'}, 
+                    createElement('div', {class: 'content'})
+                )
+            )
+        );
+        return root;
     }
     get sideBar() {
         let sidebar_items = [
