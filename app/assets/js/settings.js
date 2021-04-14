@@ -8,10 +8,7 @@ class Settings {
         let base = this.getBase;
         this.layer.append(base)
 
-        this.sidebarRegion = this.layer.content.qsl('.sidebar-region')
-        //this.sidebarRegion.append(this.sideBar);
-        this.sidebar = this.sidebarRegion.qsl('.sidebar')
-        this.sidebarItems = this.sidebar.qsla('.navItem')
+        this.sidebarItems = this.layer.content.qsla('.sidebar-region > .sidebar > .navItem')
         this.el.content = this.layer.content.qsl('.content')
 
         this.tools = createToolsContainer(() => {
