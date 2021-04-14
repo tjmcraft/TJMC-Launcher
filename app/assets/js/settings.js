@@ -1,7 +1,10 @@
 class Settings {
     el = []
-    tablist = [];
+    tablist = [
+        {id: '', name: '', content: null}
+    ]
     constructor() {
+
         this.tablist = [
             {id: 'my-account-tab', name: 'Моя учётная запись', content: this.content.my_account_tab},
             {id: 'skin-tab', name: 'Сменить скин', content: this.content.skin_tab},
@@ -9,13 +12,13 @@ class Settings {
             {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
             {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
             {id: 'about-tab', name: 'О нас', content: this.content.about_tab}
-        ];
+        ]
+
         this.layer = new Layer({
             label: 'USER_SETTINGS'
         })
 
-        let base = this.getBase;
-        this.layer.append(base)
+        this.layer.append(this.Base)
 
         this.el.sidebarItems = this.layer.content.qsla('.sidebar-region > .sidebar > .navItem')
         this.el.content = this.layer.content.qsl('.content')
@@ -41,14 +44,13 @@ class Settings {
         this.el.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
-
-        let tab_p = this.tablist.find((i) => {
+        let ctab = this.tablist.find((i) => {
             return i.id === tab;
         }) || tablist[0];
         this.el.content.removeAllChildNodes();
-        this.el.content.appendChild(tab_p.content);
+        this.el.content.appendChild(ctab.content);
     }
-    get getBase() {
+    get Base() {
         let root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
             createElement('div', {class: 'sidebar-region'}, this.sideBar),
             createElement('div', {class: 'content-region'},
