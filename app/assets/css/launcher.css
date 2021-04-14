@@ -703,11 +703,13 @@ h5 {
     flex: 0 0 auto;
 }
 .container-cc3V .note {
+    margin-top: 8px;
+}
+.container-cc3V .note .description {
     font-size: 14px;
     line-height: 20px;
     font-weight: 400;
     color: var(--header-secondary);
-    margin-top: 8px;
 }
 .container-cc3V .divider {
     margin: 20px 0 0 0;

@@ -100,20 +100,29 @@ class Settings {
         },
         get minecraft_settings_tab() {
             let icf3v_ints = (props) => {
-                let cb = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked || false});
-                cb.addEventListener('change', function (event) {alert('changed') });
+                props.id = props.id || randomString(5);
+                props.header = props.header || '';
+                props.note = props.note || '';
+                props.checked = props.checked || false;
+                let checkbox = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked});
+                checkbox.addEventListener('change', function (e) {
+                    if (typeof props.action === 'function')
+                        props.action.call(this, this.checked, props.id)
+                });
+                let description = createElement('div', { class: 'description' });
+                description.innerHTML = props.note;
                 return (
                     createElement('div', {class: 'container-icf3v'},
                         createElement('div', {class: 'labelRow'},
                             createElement('label', {for: props.id, class: 'title-3uvn'}, props.header),
                             createElement('div', {class: 'control'},
                                 createElement('label', {class: 'toggleSwitch'},
-                                    cb,
+                                    checkbox,
                                     createElement('span', {class: 'toggleSwitchSlider'})
                                 )
                             )
                         ),
-                        createElement('div', {class: 'note'}, props.note),
+                        createElement('div', {class: 'note'}, description),
                         createElement('div', {class: 'divider separator'})
                     )
                 )
@@ -125,18 +134,20 @@ class Settings {
                 createElement('div', {class: 'container-cc3V'}, 
                     createElement('h5', null, 'Как мы используем ваши данные'),
                     icf3v_ints({
-                        id: 'uid_1',
                         header: 'Использование данных для улучшения TJMC',
                         note: 'Эта настройка позволяет нам в аналитических целях использовать и обрабатывать информацию о том, как вы перемещаетесь по TJMC и используете его. Это позволяет, к примеру, давать вам доступ к тестированию новых функций.',
                         checked: true,
-                        action: ()=>{}
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
                     }),
                     icf3v_ints({
-                        id: 'uid_2',
                         header: 'Использование данных для персонализации опыта использования TJMC',
-                        note: ' Этот параметр позволяет нам использовать информацию (например, о том, с кем вы общаетесь или во что играете), чтобы настроить TJMC лично для вас. ',
+                        note: ' Этот параметр позволяет нам использовать информацию (например, о том, с кем вы общаетесь или во что играете), чтобы настроить TJMC лично для вас. <a class="anchor" href="https://www.tjmcraft.ga/help">Подробнее</a>',
                         checked: true,
-                        action: ()=>{}
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
                     })
                 )
             
