@@ -1,5 +1,13 @@
 class Settings {
     el = []
+    tablist = [
+        {id: 'my-account-tab', name: 'Моя учётная запись', content: this.content.my_account_tab},
+        {id: 'skin-tab', name: 'Сменить скин', content: this.content.skin_tab},
+        {id: 'minecraft-settings', name: 'Игровые настройки', content: this.content.minecraft_settings_tab},
+        {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
+        {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
+        {id: 'about-tab', name: 'О нас', content: this.content.about_tab}
+    ];
     constructor() {
         this.layer = new Layer({
             label: 'USER_SETTINGS'
@@ -8,7 +16,7 @@ class Settings {
         let base = this.getBase;
         this.layer.append(base)
 
-        this.sidebarItems = this.layer.content.qsla('.sidebar-region > .sidebar > .navItem')
+        this.el.sidebarItems = this.layer.content.qsla('.sidebar-region > .sidebar > .navItem')
         this.el.content = this.layer.content.qsl('.content')
 
         this.tools = createToolsContainer(() => {
@@ -29,19 +37,12 @@ class Settings {
         this.layer.destroy()
     }
     setTab (tab) {
-        this.sidebarItems.forEach((i) => {
+        this.el.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
-        let tablist = [
-            {name: 'my-account-tab', content: this.content.my_account_tab},
-            {name: 'skin-tab', content: this.content.skin_tab},
-            {name: 'minecraft-settings', content: this.content.minecraft_settings_tab},
-            {name: 'java-settings', content: this.content.java_settings_tab},
-            {name: 'launcher-settings', content: this.content.launcher_settings_tab},
-            {name: 'about-tab', content: this.content.about_tab}
-        ];
-        let tab_p = tablist.find((i) => {
-            return i.name === tab;
+
+        let tab_p = this.tablist.find((i) => {
+            return i.id === tab;
         }) || tablist[0];
         this.el.content.removeAllChildNodes();
         this.el.content.appendChild(tab_p.content);
