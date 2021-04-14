@@ -1,14 +1,15 @@
 class Settings {
     el = []
-    tablist = [
-        {id: 'my-account-tab', name: 'Моя учётная запись', content: this.content.my_account_tab},
-        {id: 'skin-tab', name: 'Сменить скин', content: this.content.skin_tab},
-        {id: 'minecraft-settings', name: 'Игровые настройки', content: this.content.minecraft_settings_tab},
-        {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
-        {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
-        {id: 'about-tab', name: 'О нас', content: this.content.about_tab}
-    ];
+    tablist = [];
     constructor() {
+        this.tablist = [
+            {id: 'my-account-tab', name: 'Моя учётная запись', content: this.content.my_account_tab},
+            {id: 'skin-tab', name: 'Сменить скин', content: this.content.skin_tab},
+            {id: 'minecraft-settings', name: 'Игровые настройки', content: this.content.minecraft_settings_tab},
+            {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
+            {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
+            {id: 'about-tab', name: 'О нас', content: this.content.about_tab}
+        ];
         this.layer = new Layer({
             label: 'USER_SETTINGS'
         })
@@ -61,20 +62,20 @@ class Settings {
     get sideBar() {
         let sidebar_items = [
             {type: 'header', content: 'Настройки пользователя'},
-            {type: 'navItem', content: 'Моя учётная запись', rti: 'my-account-tab'},
-            {type: 'navItem', content: 'Сменить скин', rti: 'skins-tab'},
+            {type: 'navItem', rti: 'my-account-tab'},
+            {type: 'navItem', rti: 'skin-tab'},
             {type: 'separator'},
             {type: 'header', content: 'Настроки Игры'},
-            {type: 'navItem', content: 'Игровые настройки', rti: 'minecraft-settings'},
-            {type: 'navItem', content: 'Настройки Java', rti: 'java-settings'},
+            {type: 'navItem', rti: 'minecraft-settings'},
+            {type: 'navItem', rti: 'java-settings'},
             {type: 'separator'},
-            {type: 'navItem', content: 'Настроки Лаунчера', rti: 'launcher-settings'},
+            {type: 'navItem', rti: 'launcher-settings'},
             {type: 'separator'},
-            {type: 'navItem', content: 'О нас', rti: 'about-tab'}
+            {type: 'navItem', rti: 'about-tab'}
         ];
         const root_sidebar = createElement('div', {class: 'sidebar'});
         sidebar_items.forEach(i => {
-            let root_item = createElement('div', {class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti}, i.content);
+            let root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
             if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
             root_sidebar.appendChild(root_item);
         });
