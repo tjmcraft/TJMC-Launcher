@@ -1,3 +1,14 @@
+/**
+ * 
+ * @param {Object} props - Properties for the element
+ * @param {Object} props.id - ID for the element
+ * @param {Object} props.value - Value for the element
+ * @param {Object} props.min - Minimum value for the element
+ * @param {Object} props.max - Maximum value for the element
+ * @param {Object} props.step - Step value for the element
+ * @param {Object} props.action - Action after mouseup
+ * @returns 
+ */
 function slider(props = {}) {
     props.id = props.id || randomString(5);
     props.value = props.value || 0;
@@ -12,8 +23,8 @@ function slider(props = {}) {
 
     let updateRangedSlider = (element, value, notch) => {
         const oldVal = element.getAttribute('value')
-        
         element.setAttribute('value', value)
+        track_grabber.tooltip(value)
 
         if(notch <= 0){
             notch = 0
@@ -51,14 +62,10 @@ function slider(props = {}) {
 
     track.onmousedown = (e) => {
 
-        // Stop moving the track on mouse up.
         document.onmouseup = (e) => {
             document.onmousemove = null
             document.onmouseup = null
         }
-
-        const value = slider.getAttribute('value')
-        const sliderMeta = calculateRangeSliderMeta(slider)
 
         document.onmousemove = (e) => {
             const pos = getPos(track);
@@ -68,8 +75,7 @@ function slider(props = {}) {
             if (perc >= 100) perc = 100
 
             const notch = Number(perc/sliderMeta.inc).toFixed(0)*sliderMeta.inc
-            //console.log(perc + ' ' + notch);
-            // If we're close to that notch, stick to it.
+
             if (Math.abs(perc - notch) < sliderMeta.inc / 2) {
                 updateRangedSlider(slider, sliderMeta.min + (sliderMeta.step * (notch / sliderMeta.inc)), notch)
             }
@@ -87,6 +93,10 @@ function slider(props = {}) {
         const max = (1000000000000-1000000000)/1000000000
 
     }
+
+    const value = slider.getAttribute('value')
+    const sliderMeta = calculateRangeSliderMeta(slider)
+    updateRangedSlider(slider, value, ((value-sliderMeta.min)/sliderMeta.step)*sliderMeta.inc)
 
     return slider;
 }
