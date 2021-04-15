@@ -101,13 +101,55 @@ class Settings {
         get minecraft_settings_tab() {
             let heading = createElement('h2', null, 'Настройки Minecraft');
             let children = this.createChilderContainer(
-                createElement('div', {class: 'container-cc3V'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+                createElement('div', {class: 'container-cc3V'},
+                    createElement('h5', null, 'Параметры запуска'),
+                    this.icf3v_ints({
+                        header: 'Запускать в режиме Fullscreen',
+                        note: 'Запускать игру, принудительно в полноэкранном режиме',
+                        checked: false,
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    }),
+                    this.icf3v_ints({
+                        header: 'Автоматически подключаться к серверу',
+                        note: 'Подключаться к серверу автоматически, при запуске игры',
+                        checked: false,
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    }),
+                    this.icf3v_ints({
+                        header: 'Независимый процесс',
+                        note: 'Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры',
+                        checked: true,
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    })
+                )
             );
             return this.base('minecraft-settings-tab', heading, children);
         },
         get java_settings_tab() {
             let heading = createElement('h2', null, 'Настройки Java');
-            return this.base('java-settings-tab', heading);
+            let children = this.createChilderContainer(
+                createElement('div', { class: 'container-cc3V' },
+                    createElement('h5', null, 'Использование памяти'),
+                    slider({
+                        
+                    }),
+                    this.icf3v_ints({
+                        header: 'Запускать в режиме Fullscreen',
+                        note: 'Запускать игру, принудительно в полноэкранном режиме',
+                        checked: false,
+                        action: function (s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    })
+                )
+            );
+            return this.base('java-settings-tab', heading, children);
         },
         get launcher_settings_tab() {
             let heading = createElement('h2', null, 'Настройки Лаунчера');
@@ -129,7 +171,7 @@ class Settings {
                         action: function(s, n) {
                             console.log(n + ' ' + s);
                         }
-                    }),
+                    })
                 )
             )
             return this.base('launcher-settings-tab', heading, children);

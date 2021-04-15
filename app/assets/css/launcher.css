@@ -110,7 +110,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
     --text-link: #00b0f4;
+    --background-accent: #1aaa1a;
+    --background-accent-alt: rgba(255, 255, 255, 0.35);
 }
+
 /*******************************************************************************
  *                                                                             *
  * Frame Styles (frame.ejs)                                                    *
@@ -311,7 +314,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 #progress-bar {
     width: 0;
     height: 12px;
-    background-color: #1aaa1a;
+    background-color: var(--background-accent);
     transition: width 0.2s;
 }
 
@@ -740,7 +743,7 @@ h5 {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.35);
+    background-color: var(--background-accent-alt);
     transition: .4s;
     border-radius: 50px;
     border: 1px solid rgba(126, 126, 126, 0.57);
@@ -763,6 +766,46 @@ input:checked + .toggleSwitchSlider {
 }
 input:checked + .toggleSwitchSlider:before {
     transform: translateX(22px);
+}
+
+.slider {
+    transition: none;
+    width: 35%;
+    height: 5px;
+    margin: 15px 0px;
+    background: var(--background-accent-alt);
+    border-radius: 3px;
+    position: relative;
+}
+.slider > .slider-bar {
+    transition: inherit;
+    position: absolute;
+    background: var(--background-accent);
+    width: 50%;
+    height: 5px;
+    border-radius: 3px 0px 0px 3px;
+}
+.slider > .slider-track {
+    transition: inherit;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.slider > .slider-track > .grabber {
+    transition: inherit;
+    left: 50%;
+    position: absolute;
+    width: 8px;
+    height: 24px;
+    margin-left: -5px;
+    top: 50%;
+    margin-top: -13px;
+    border-radius: 3px;
+    background-color: #fff;
+    box-shadow: 0 3px 1px 0 rgba(0,0,0,.05), 0 2px 2px 0 rgba(0,0,0,.1), 0 3px 3px 0 rgba(0,0,0,.05);
+    cursor: ew-resize;
 }
 
 /* === app === */
@@ -979,7 +1022,7 @@ input:checked + .toggleSwitchSlider:before {
     background-color: var(--background-primary);
 }
 .listItem > .wrapper:hover > .singleIconBtn {
-    color: #1aaa1a;
+    color: var(--background-accent);
 }
 
 .listItem img {
@@ -1047,7 +1090,7 @@ input:checked + .toggleSwitchSlider:before {
 
 #playButton {
     position: relative;
-    background-color: #1aaa1a !important;
+    background-color: var(--background-accent) !important;
     box-sizing: border-box;
     font-size: 20px;
     font-weight: 800;
@@ -1202,7 +1245,7 @@ input:checked + .toggleSwitchSlider:before {
     user-select: none;
 }
 .container-f .dropdown a:hover {
-    background-color: #1aaa1a;
+    background-color: var(--background-accent);
 }
 .button-1w5pas {
     position: relative;

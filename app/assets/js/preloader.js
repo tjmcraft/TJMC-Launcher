@@ -1,7 +1,7 @@
 const ConfigManager = require('./libs/ConfigManager')
 const { shell, remote, ipcRenderer } = require('electron')
 const VersionManager = require('./libs/VersionManager')
-const launcher = require('./launcher')
+const launcher      = require('./launcher')
 const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
 //logger.debug('Application loading..')
