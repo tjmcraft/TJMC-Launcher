@@ -135,16 +135,26 @@ class Settings {
             let heading = createElement('h2', null, 'Настройки Java');
             let children = this.createChilderContainer(
                 createElement('div', { class: 'container-cc3V' },
-                    createElement('h5', null, 'Использование памяти'),
+                    createElement('h5', null, 'Максимальное использование памяти'),
                     slider({
                         value: API.ConfigManager.getMaxRAM()/1024,
                         min: 0.5,
-                        max: (API.ConfigManager.getAbsoluteMaxRAM()/1024) || 8.5,
+                        max: (API.ConfigManager.getAbsoluteMaxRAM()/1024) || 8,
                         step: 0.1,
                         unit: 'Gb',
                         action: (e) => {
                             API.ConfigManager.setMaxRAM(e * 1024);
-                            console.log(API.ConfigManager.getAllOptions());
+                        }
+                    }),
+                    createElement('h5', null, 'Минимальное использование памяти'),
+                    slider({
+                        value: API.ConfigManager.getMinRAM()/1024,
+                        min: 0.5,
+                        max: (API.ConfigManager.getAbsoluteMinRAM()/1024) || 5,
+                        step: 0.1,
+                        unit: 'Gb',
+                        action: (e) => {
+                            API.ConfigManager.setMinRAM(e * 1024);
                         }
                     }),
                     this.icf3v_ints({

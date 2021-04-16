@@ -106,6 +106,7 @@ const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.js
 
 exports.save = function(){
     fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8')
+    logg.debug('Config saved!')
 }
 
 exports.load = function(){
