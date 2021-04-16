@@ -87,8 +87,6 @@ function slider(props = {}) {
         // Current range values
         const sMaxV = Number(slider.getAttribute('value'))
 
-        // Get reference to range bar.
-        const bar = e.target.getElementsByClassName('slider-bar')[0]
         // Calculate effective total memory.
         const max = (1000000000000-1000000000)/1000000000
 
