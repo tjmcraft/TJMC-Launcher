@@ -2,12 +2,14 @@ const ConfigManager = require('./libs/ConfigManager')
 const { shell, remote, ipcRenderer } = require('electron')
 const VersionManager = require('./libs/VersionManager')
 const launcher      = require('./launcher')
-const logger        = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
+const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
+const os = require('os')
 
 //logger.debug('Application loading..')
 
 // Load ConfigManager
 ConfigManager.load()
+
 
 //Set Current Window as win
 const win = remote.getCurrentWindow()
@@ -24,7 +26,8 @@ process.once('loaded', () => {
         getOS: getOS,
         shell: shell,
         ipc: ipcRenderer,
-        window: win
+        window: win,
+        os: os
     }
 
     ipcRenderer.on('open-settings', () => {

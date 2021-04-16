@@ -86,17 +86,12 @@ function slider(props = {}) {
             if (Math.abs(perc - notch) < sliderMeta.inc / 2) {
                 updateRangedSlider(slider, sliderMeta.min + (sliderMeta.step * (notch / sliderMeta.inc)), notch)
             }
-            
-            
         }
     }
 
     slider.onchange = (e) => {
         // Current range values
         const sMaxV = Number(slider.getAttribute('value'))
-
-        // Calculate effective total memory.
-        const max = (1000000000000-1000000000)/1000000000
 
     }
 
