@@ -23,6 +23,7 @@ function slider(props = {}) {
     const slider = createElement('div', { class: 'slider', id: props.id, value: props.value, min: props.min, max: props.max, step: props.step }, bar, track);
 
     let updateRangedSlider = (element, value, notch) => {
+        value = Math.round(value*100)/100
         const oldVal = element.getAttribute('value')
         element.setAttribute('value', value)
 
@@ -31,6 +32,8 @@ function slider(props = {}) {
         } else if(notch >= 100) {
             notch = 100
         }
+
+        console.log(value + ' ' + notch)
 
         const event = new MouseEvent('change', {
             target: element,
@@ -74,7 +77,7 @@ function slider(props = {}) {
         document.onmousemove = (e) => {
             const pos = getPos(track);
             const diff = e.pageX - pos.left
-            let perc = (diff / track.offsetWidth) * 100
+            let perc = Number((diff / track.offsetWidth) * 100).toFixed(1)
             if (perc <= 0) perc = 0
             if (perc >= 100) perc = 100
 
@@ -83,6 +86,7 @@ function slider(props = {}) {
             if (Math.abs(perc - notch) < sliderMeta.inc / 2) {
                 updateRangedSlider(slider, sliderMeta.min + (sliderMeta.step * (notch / sliderMeta.inc)), notch)
             }
+            
             
         }
     }

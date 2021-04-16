@@ -137,9 +137,10 @@ class Settings {
                 createElement('div', { class: 'container-cc3V' },
                     createElement('h5', null, 'Использование памяти'),
                     slider({
-                        value: 1,
-                        max: 100,
-                        unit: '%'
+                        value: 2,
+                        max: 8.5,
+                        step: 0.01,
+                        unit: 'Gb'
                     }),
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
