@@ -7,6 +7,7 @@
  * @param {Object} props.max - Maximum value for the element
  * @param {Object} props.step - Step value for the element
  * @param {Object} props.action - Action after mouseup
+ * @param {Object} props.unit - Unit for value
  * @returns 
  */
 function slider(props = {}) {
@@ -24,7 +25,6 @@ function slider(props = {}) {
     let updateRangedSlider = (element, value, notch) => {
         const oldVal = element.getAttribute('value')
         element.setAttribute('value', value)
-        track_grabber.tooltip(value)
 
         if(notch <= 0){
             notch = 0
@@ -47,6 +47,7 @@ function slider(props = {}) {
         } else {
             element.setAttribute('value', oldVal)
         }
+        popup.update(value + props.unit);
     }
 
     let calculateRangeSliderMeta = (v) => {
@@ -61,8 +62,11 @@ function slider(props = {}) {
     }
 
     track.onmousedown = (e) => {
+        track_grabber.removeEventListener('mouseout', destroy);
 
         document.onmouseup = (e) => {
+            track_grabber.addEventListener('mouseout', hide);
+            hide();
             document.onmousemove = null
             document.onmouseup = null
         }
@@ -94,9 +98,32 @@ function slider(props = {}) {
 
     }
 
-    const value = slider.getAttribute('value')
-    const sliderMeta = calculateRangeSliderMeta(slider)
-    updateRangedSlider(slider, value, ((value-sliderMeta.min)/sliderMeta.step)*sliderMeta.inc)
+    const value = slider.getAttribute('value');
+    const sliderMeta = calculateRangeSliderMeta(slider);
+    
+    let popup = new PopupEl({
+            parent: track_grabber,
+            margin: 8,
+            fadeTime: 50
+        });
+    track_grabber.addEventListener('mouseenter', show);
+    track_grabber.addEventListener('mouseout', hide);
+
+    function show(e) {
+        popup.show();
+    }
+    function hide(e) {
+        //popup.destroy();
+        popup.hide();
+    }
+    function destroy() {
+        hide();
+        track_grabber.removeEventListener('mouseenter', show);
+        track_grabber.removeEventListener('mouseout', destroy);
+    }
+
+    updateRangedSlider(slider, value, ((value - sliderMeta.min) / sliderMeta.step) * sliderMeta.inc);
+    hide();
 
     return slider;
 }

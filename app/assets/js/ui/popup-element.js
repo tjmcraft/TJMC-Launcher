@@ -16,13 +16,13 @@ class PopupEl {
         this.popup.style.visibility = 'hidden'
         if (this.popupLayer.qsl(`#${this.popup.id}`)) return
         this.popupLayer.append(this.popup)
-        this.setPopupPos(this.popup, this.options.margin || 10)
         callback()
     }
 
     show(callback = () => {}) {
         let fadeTime = this.options.fadeTime || 150
         if (!this.popupLayer.qsl(`#${this.popup.id}`)) this.join()
+        this.setPopupPos(this.popup, this.options.margin || 10)
         this.popup.style.visibility = 'visible'
         this.popup.style.opacity = 1
         callback()
@@ -90,6 +90,11 @@ class PopupEl {
 
     get content() {
         return this.popup
+    }
+
+    update(content) {
+        this.contentEl.innerHTML = (content)
+        this.show();
     }
 }
 
