@@ -143,7 +143,8 @@ class Settings {
                         step: 0.1,
                         unit: 'Gb',
                         action: (e) => {
-
+                            API.ConfigManager.setMaxRAM(e * 1024);
+                            console.log(API.ConfigManager.getAllOptions());
                         }
                     }),
                     this.icf3v_ints({

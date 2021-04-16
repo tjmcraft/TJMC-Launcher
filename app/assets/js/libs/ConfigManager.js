@@ -89,7 +89,8 @@ exports.getMinRAM = function(def = false){
 }
 
 exports.setMinRAM = function(minRAM){
-    config.java.memory.min = minRAM
+    config.java.memory.min = Math.floor(minRAM)
+    exports.save()
 }
 
 exports.getMaxRAM = function(def = false){
@@ -97,7 +98,8 @@ exports.getMaxRAM = function(def = false){
 }
 
 exports.setMaxRAM = function(maxRAM){
-    config.java.memory.max = maxRAM
+    config.java.memory.max = Math.floor(maxRAM)
+    exports.save()
 }
 
 const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.json')

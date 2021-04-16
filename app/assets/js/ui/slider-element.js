@@ -33,7 +33,7 @@ function slider(props = {}) {
             notch = 100
         }
 
-        console.log(value + ' ' + notch)
+        //console.log(value + ' ' + notch)
 
         const event = new MouseEvent('change', {
             target: element,
@@ -72,6 +72,8 @@ function slider(props = {}) {
             hide();
             document.onmousemove = null
             document.onmouseup = null
+            if (typeof props.action === 'function')
+                props.action.call(this, slider.getAttribute('value'));
         }
 
         document.onmousemove = (e) => {
