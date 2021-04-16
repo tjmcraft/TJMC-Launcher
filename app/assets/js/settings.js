@@ -135,28 +135,38 @@ class Settings {
             let heading = createElement('h2', null, 'Настройки Java');
             let children = this.createChilderContainer(
                 createElement('div', { class: 'container-cc3V' },
-                    createElement('h5', null, 'Максимальное использование памяти'),
-                    slider({
-                        value: API.ConfigManager.getMaxRAM()/1024,
-                        min: 0.5,
-                        max: (API.ConfigManager.getAbsoluteMaxRAM()/1024) || 8,
-                        step: 0.1,
-                        unit: 'Gb',
-                        action: (e) => {
-                            API.ConfigManager.setMaxRAM(e * 1024);
-                        }
-                    }),
-                    createElement('h5', null, 'Минимальное использование памяти'),
-                    slider({
-                        value: API.ConfigManager.getMinRAM()/1024,
-                        min: 0.5,
-                        max: (API.ConfigManager.getAbsoluteMinRAM()/1024) || 5,
-                        step: 0.1,
-                        unit: 'Gb',
-                        action: (e) => {
-                            API.ConfigManager.setMinRAM(e * 1024);
-                        }
-                    }),
+                    createElement('div', { class: 'flex-group horizontal' },
+                        createElement('div', { class: 'flex-child'},
+                            createElement('h5', null, 'Максимальное использование памяти'),
+                            slider({
+                                value: API.ConfigManager.getMaxRAM()/1024,
+                                min: 0.5,
+                                max: (API.ConfigManager.getAbsoluteMaxRAM()/1024) || 8,
+                                step: 0.1,
+                                unit: 'Gb',
+                                action: (e) => {
+                                    API.ConfigManager.setMaxRAM(e * 1024);
+                                }
+                            })
+                        ),
+                        createElement('div', { class: 'flex-child'},
+                            createElement('h5', null, 'Минимальное использование памяти'),
+                            slider({
+                                value: API.ConfigManager.getMinRAM()/1024,
+                                min: 0.5,
+                                max: (API.ConfigManager.getAbsoluteMinRAM()/1024) || 5,
+                                step: 0.1,
+                                unit: 'Gb',
+                                action: (e) => {
+                                    API.ConfigManager.setMinRAM(e * 1024);
+                                }
+                            })
+                        )
+                    ),
+                    createElement('div', { class: 'divider separator'})
+                ),
+                createElement('div', { class: 'container-cc3V' },
+                    createElement('h5', null, 'Дополнительно'),
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
