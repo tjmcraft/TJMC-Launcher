@@ -64,6 +64,38 @@ function createElement(tag, attrs, ...childrens) {
 }
 
 /**
+ * Creates new svg element with given attributes
+ * @param {Object} attrs - The attributes for this element
+ * @param  {Element} childrens - Childrens for element
+ * @returns {Element} instance of element
+ */
+function createSVGElement(attrs, ...childrens) {
+    var element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    var putn = false;
+    for (let name in attrs) {
+        if (name && attrs.hasOwnProperty(name)) {
+            let value = attrs[name];
+            if (value === true) {
+                element.setAttribute(name, name);
+            } else if (value !== false && value != null) {
+                element.setAttribute(name, value.toString());
+            }
+        }
+        if (name && name == 'putn' && name == true) {
+            putn = true;
+        }
+    }
+    for (let child of childrens) {
+        let node = child.nodeType == null ? document.createTextNode(child.toString()) : child
+        if (child && putn == true)
+            element.innerHTML = node;
+        else
+            element.appendChild(node);
+    }
+    return element;
+}
+
+/**
  * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
  * - Function accept multiple array input (merges them to single array with no duplicates)
  * - it also can be used to filter duplicates in single array
