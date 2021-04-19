@@ -32,26 +32,13 @@ class VersionChooser {
                 this.addItem(parsed[cv])
             }
         })
-        this.layer.content.qsla('#dropdown-list').forEach(el => {
-            el.onclick = (e) => {
-                el.qsl('.button-1w5pas').classList.toggle('open')
-                el.qsl('.dropdown').toggle()
-            }
-        })
-        this.layer.content.qsla('#dropdown-list #dd-elements a').forEach(el => {
-            el.onclick = (e) => {
-                console.log(el.innerHTML)
-            }
-        })
     }
     addItem(item) {
         let c = this.el.sidebar
         let i = createElement('div', {class: 'item navItem'})
         i.setAttribute('version-id', item.id)
         i.innerHTML = item.id
-        i.onclick = function() {
-            //selectVersion(item)
-        }
+        i.onclick = function(e) { }
         c.append(i)
     }
     remItem(item) {
@@ -91,16 +78,28 @@ class VersionChooser {
     }
 
     get dropdown() {
+        const dropdown_items = [
+            { name: 'lol', click: function (e) { console.log(e) } },
+            { name: 'kek', click: function (e) { console.log(e) } }
+        ];
+        let dd_elements = dropdown_items.map(i => {
+            let root_item = createElement('a', null, i.name);
+            root_item.onclick = i.click;
+            return root_item;
+        });
+        const svg_element = SVG('dropdown-key');
+        const dropdown = createElement('div', { class: 'dropdown hidden', id: 'dd-elements' }, ...dd_elements);
         const root_dropdown = createElement('div', { class: 'container-f', id: 'dropdown-list' },
             createElement('div', { class: 'header' },
                 createElement('h1', null, 'Версии'),
-                SVG('dropdown-key')
+                svg_element
             ),
-            createElement('div', { class: 'dropdown hidden', id: 'dd-elements' },
-                createElement('a', null, 'lol'),
-                createElement('a', null, 'kek')
-            )
+            dropdown
         );
+        root_dropdown.onclick = (e) => {
+            svg_element.classList.toggle('open')
+            dropdown.toggle()
+        };
         return root_dropdown;
     }
 }
