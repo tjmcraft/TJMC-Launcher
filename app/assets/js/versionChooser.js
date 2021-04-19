@@ -48,7 +48,7 @@ class VersionChooser {
     }
 
     get Base() {
-        let root = createElement('div', { class: 'container', id: 'version-selector' },
+        const root = createElement('div', { class: 'container', id: 'version-selector' },
             createElement('div', { class: 'sidebar-main', id: 'version-list' },
                 this.dropdown,
                 createElement('div', { class: 'sidebar-region' }, this.sidebar)
@@ -61,7 +61,7 @@ class VersionChooser {
     }
 
     get sidebar() {
-        let sidebar_items = [
+        const sidebar_items = [
             { type: 'navItem bgL' },
             { type: 'navItem bgL' },
             { type: 'navItem bgL' },
@@ -70,7 +70,7 @@ class VersionChooser {
             { type: 'navItem bgL' }
         ];
         const items = sidebar_items.map(i => {
-            let root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
+            const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
             return root_item;
         });
         const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
@@ -82,8 +82,8 @@ class VersionChooser {
             { name: 'lol', click: function (e) { console.log(e) } },
             { name: 'kek', click: function (e) { console.log(e) } }
         ];
-        let dd_elements = dropdown_items.map(i => {
-            let root_item = createElement('a', null, i.name);
+        const dd_elements = dropdown_items.map(i => {
+            const root_item = createElement('a', null, i.name);
             root_item.onclick = i.click;
             return root_item;
         });
