@@ -69,11 +69,11 @@ class VersionChooser {
             { type: 'navItem bgL' },
             { type: 'navItem bgL' }
         ];
-        const root_sidebar = createElement('div', { class: 'sidebar' });
-        sidebar_items.forEach(i => {
-            let root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '')} );
-            root_sidebar.appendChild(root_item);
-        })
+        const items = sidebar_items.map(i => {
+            let root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
+            return root_item;
+        });
+        const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
         return root_sidebar;
     }
 
