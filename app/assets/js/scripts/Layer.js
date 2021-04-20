@@ -22,7 +22,7 @@ class Layer {
         this.appLayers = qsl('.app-layers')
         this.layer = createElement('div', {class: 'layer'})
         this.layer.setAttribute('aria-label', `${this.label}`)
-        if (qsl(`[aria-label=${this.label}]`)) return
+        if (qsl(`[aria-label=${this.label}]`)) throw new Error('Layer is already exist!')
     }
     /**
      * Join created layer to appLayers container
