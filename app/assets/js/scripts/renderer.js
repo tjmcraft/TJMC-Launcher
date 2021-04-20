@@ -2,8 +2,6 @@
 
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')
-const avb = qsl('#add-version-button')
-const stb = qsl('#settings-button')
 const plb = qsl('#playButton')
 const topBar = qsl('#topBar')
 const progressBar = qsl('#progress-bar')
@@ -68,13 +66,6 @@ document.addEventListener('click', (event) => {
     }
 })
 
-/**
- * Open setting by clicking a button
- */
-stb.addEventListener('click', (e) => {
-    openSettings()
-})
-
 plb.addEventListener('click', (e) => {
     startMine()
     //removeMine()
@@ -101,10 +92,6 @@ function removeMine() {
     API.VersionManager.removeVersion(version.id)
 }
 
-avb.addEventListener('click', (e) => {
-    new VersionChooser()
-})
-
 API.VersionManager.getLocalVersions().then((parsed) => { 
     for (const cv in parsed) {
         mvl.addItem(parsed[cv])
@@ -114,16 +101,8 @@ API.VersionManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 API.ConfigManager.getAuth().then((auth) => {
-    renderNameTag(auth)
+    qsl('.sidebar-main').appendChild(user_panel(auth))
 })
-
-function renderNameTag(auth) {
-    let c = qsl('.nameTag'),
-        n = c.qsl('.title'),
-        s = c.qsl('.subtitle')
-    n.innerText = auth.username
-    s.innerText = auth.permission
-}
 
 /**
  * The function creates and returns tools container for overlay
