@@ -16,6 +16,7 @@ Element.prototype.toggle = function(s = null) {
  * - Also support multiple select
  * - You can select the inherit element with element.qsl()
  * @param {Object} selector - The selector + object to select
+ * @return {Element} element
  */
 function qsl(s) {
     if (typeof s !== 'undefined' && s != null) return (typeof this === 'object' && this.nodeName ? this : document).querySelector(s)
@@ -29,6 +30,7 @@ Element.prototype.qsl = qsl
  * - Also support multiple select
  * - You can select the inherit element with element.qsl()
  * @param {Object} selector - The selector + object to select
+ * @return {Element} element
  */
 function qsla(s) {
     if (typeof s !== 'undefined' && s != null) return (typeof this === 'object' && this.nodeName ? this : document).querySelectorAll(s)
