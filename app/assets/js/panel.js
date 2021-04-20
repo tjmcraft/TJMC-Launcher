@@ -30,13 +30,13 @@ let user_panel = function (props) {
 
 let sidebar = function (props) {
     const sidebar_items = [
-        { type: 'header', content: 'Версии' },
+        { type: 'header', content: 'Версии' }
+        /*{ type: 'navItem bgL' },
         { type: 'navItem bgL' },
         { type: 'navItem bgL' },
         { type: 'navItem bgL' },
         { type: 'navItem bgL' },
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' }
+        { type: 'navItem bgL' }*/
     ];
     const items = sidebar_items.map(i => {
         const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') }, i.content || '');

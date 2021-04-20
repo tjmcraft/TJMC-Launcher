@@ -94,7 +94,7 @@ function removeMine() {
     API.VersionManager.removeVersion(version.id)
 }
 
-API.VersionManager.getLocalVersions().then((parsed) => { 
+API.VersionManager.getLocalVersions().then((parsed) => {
     for (const cv in parsed) {
         mvl.addItem(parsed[cv])
     }
