@@ -27,3 +27,21 @@ let user_panel = function (props) {
     )
     return root_panel;
 }
+
+let sidebar = function (props) {
+    const sidebar_items = [
+        { type: 'header', content: 'Версии' },
+        { type: 'navItem bgL' },
+        { type: 'navItem bgL' },
+        { type: 'navItem bgL' },
+        { type: 'navItem bgL' },
+        { type: 'navItem bgL' },
+        { type: 'navItem bgL' }
+    ];
+    const items = sidebar_items.map(i => {
+        const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') }, i.content || '');
+        return root_item;
+    });
+    const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
+    return root_sidebar;
+}

@@ -1,5 +1,7 @@
 /* ================================= */
 
+qsl('.sidebar-region').appendChild(sidebar(null));
+
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')
 const plb = qsl('#playButton')
