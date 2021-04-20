@@ -62,7 +62,6 @@ function createElement(tag, attrs, ...childrens) {
         } else {
             element.innerHTML += child.toString();
         }
-        
     }
     return element;
 }
@@ -75,7 +74,6 @@ function createElement(tag, attrs, ...childrens) {
  */
 function createSVGElement(attrs, ...childrens) {
     var element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    var putn = false;
     for (let name in attrs) {
         if (name && attrs.hasOwnProperty(name)) {
             let value = attrs[name];
@@ -85,16 +83,13 @@ function createSVGElement(attrs, ...childrens) {
                 element.setAttribute(name, value.toString());
             }
         }
-        if (name && name == 'putn' && name == true) {
-            putn = true;
-        }
     }
     for (let child of childrens) {
-        let node = child.nodeType == null ? document.createTextNode(child.toString()) : child
-        if (child && putn == true)
-            element.innerHTML = node;
-        else
-            element.appendChild(node);
+        if (child && child.nodeType != null) {
+            element.appendChild(child);
+        } else {
+            element.innerHTML += child.toString();
+        }
     }
     return element;
 }
