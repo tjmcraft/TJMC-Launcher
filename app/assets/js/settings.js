@@ -44,14 +44,14 @@ class Settings {
         this.el.sidebarItems.forEach((i) => {
             i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
         })
-        let ctab = this.tablist.find((i) => {
+        const ctab = this.tablist.find((i) => {
             return i.id === tab;
         }) || tablist[0];
         this.el.content.removeAllChildNodes();
         this.el.content.appendChild(ctab.content);
     }
     get Base() {
-        let root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
+        const root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
             createElement('div', {class: 'sidebar-region'}, this.sideBar),
             createElement('div', {class: 'content-region'},
                 createElement('div', {class: 'transitionWrap'}, 
@@ -62,7 +62,7 @@ class Settings {
         return root;
     }
     get sideBar() {
-        let sidebar_items = [
+        const sidebar_items = [
             {type: 'header', content: 'Настройки пользователя'},
             {type: 'navItem', rti: 'my-account-tab'},
             {type: 'navItem', rti: 'skin-tab'},
@@ -77,7 +77,7 @@ class Settings {
         ];
         const root_sidebar = createElement('div', {class: 'sidebar'});
         sidebar_items.forEach(i => {
-            let root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
+            const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
             if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
             root_sidebar.appendChild(root_item);
         });
@@ -91,16 +91,16 @@ class Settings {
             return createElement('div', {class: 'children'}, ...e);
         },
         get my_account_tab() {
-            let heading = createElement('h2', null, 'Моя учётная запись');
+            const heading = createElement('h2', null, 'Моя учётная запись');
             return this.base('my-account-tab', heading);
         },
         get skin_tab() {
-            let heading = createElement('h2', null, 'Конфигурация скина');
+            const heading = createElement('h2', null, 'Конфигурация скина');
             return this.base('skin-tab', heading);
         },
         get minecraft_settings_tab() {
-            let heading = createElement('h2', null, 'Настройки Minecraft');
-            let children = this.createChilderContainer(
+            const heading = createElement('h2', null, 'Настройки Minecraft');
+            const children = this.createChilderContainer(
                 createElement('div', {class: 'container-cc3V'},
                     createElement('h5', null, 'Параметры запуска'),
                     this.icf3v_ints({
@@ -132,8 +132,8 @@ class Settings {
             return this.base('minecraft-settings-tab', heading, children);
         },
         get java_settings_tab() {
-            let heading = createElement('h2', null, 'Настройки Java');
-            let children = this.createChilderContainer(
+            const heading = createElement('h2', null, 'Настройки Java');
+            const children = this.createChilderContainer(
                 createElement('div', { class: 'container-cc3V' },
                     createElement('div', { class: 'flex-group horizontal' },
                         createElement('div', { class: 'flex-child'},
@@ -180,8 +180,8 @@ class Settings {
             return this.base('java-settings-tab', heading, children);
         },
         get launcher_settings_tab() {
-            let heading = createElement('h2', null, 'Настройки Лаунчера');
-            let children = this.createChilderContainer(
+            const heading = createElement('h2', null, 'Настройки Лаунчера');
+            const children = this.createChilderContainer(
                 createElement('div', {class: 'container-cc3V'},
                     createElement('h5', null, 'Как мы используем ваши данные'),
                     this.icf3v_ints({
@@ -205,8 +205,8 @@ class Settings {
             return this.base('launcher-settings-tab', heading, children);
         },
         get about_tab() {
-            let heading = createElement('h2', null, 'О нас');
-            let children = this.createChilderContainer(
+            const heading = createElement('h2', null, 'О нас');
+            const children = this.createChilderContainer(
                 createElement('div', {class: 'container-cc3V'},
                     createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'), 
                     createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
@@ -219,13 +219,12 @@ class Settings {
             props.header = props.header || '';
             props.note = props.note || '';
             props.checked = props.checked || false;
-            let checkbox = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked});
+            const checkbox = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked});
             checkbox.addEventListener('change', function (e) {
                 if (typeof props.action === 'function')
                     props.action.call(this, this.checked, props.id)
             });
-            let description = createElement('div', { class: 'description' });
-            description.innerHTML = props.note;
+            const description = createElement('div', { class: 'description' }, props.note);
             return (
                 createElement('div', {class: 'container-icf3v'},
                     createElement('div', {class: 'labelRow'},
