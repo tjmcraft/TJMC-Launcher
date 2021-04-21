@@ -42,11 +42,13 @@ let sidebar = function (props) {
         const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') }, i.content || '');
         return root_item;
     });*/
+    const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
+    add_button.onclick = (e) => { new VersionChooser() }
     const root_sidebar = createElement('div', { class: 'scroller' },
         createElement('div', { class: 'content' },
             createElement('h2', { class: 'versionsHeader container-df' },
-                createElement('span', { style: 'flex: 1;' }, 'Версии'),
-                createElement('div', { class: 'simple-button'}, SVG('add-plus'))
+                createElement('span', null, 'Версии'),
+                add_button
             )
         )
     );

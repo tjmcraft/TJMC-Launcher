@@ -935,7 +935,7 @@ input:checked + .toggleSwitchSlider:before {
     position: relative;
 }
 .sidebar-main > .localVersions .version {
-    
+
 }
 .sidebar-main > .localVersions .versionsHeader {
     display: flex;
@@ -945,6 +945,9 @@ input:checked + .toggleSwitchSlider:before {
 }
 .sidebar-main > .localVersions .versionsHeader:hover {
     color: var(--interactive-hover);
+}
+.sidebar-main > .localVersions .versionsHeader span {
+    flex: 1;
 }
 .simple-button {
     width: 16px;
@@ -957,6 +960,7 @@ input:checked + .toggleSwitchSlider:before {
     justify-content: center;
     color: var(--interactive-normal);
     transition: none; 
+    cursor: pointer;
 }
 .simple-button:hover {
     color: var(--interactive-hover);
