@@ -1,6 +1,6 @@
 /* ================================= */
 
-qsl('.sidebar-region').appendChild(sidebar(null));
+qsl('.localVersions').appendChild(sidebar(null));
 
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')
@@ -124,7 +124,7 @@ function createToolsContainer(click = () => {}) {
 }
 
 mvl.addItem = function (item) {
-    let c = qsl('.sidebar')
+    let c = qsl('.scroller > .content')
     let i = createElement('div', {class: 'item navItem'})
     i.setAttribute('version-id', item.id)
     i.innerHTML = item.id
@@ -134,7 +134,7 @@ mvl.addItem = function (item) {
     c.append(i)
 }
 mvl.remItem = function (item) {
-    let c = qsl('.sidebar')
+    let c = qsl('.scroller > .content')
     let i = c.qsl(`[version-id=${item.id}]`)
     c.removeChild(i)
 }
@@ -148,7 +148,7 @@ function renderSelectVersion (version) {
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5'),
-        s = mvl.qsla('.sidebar .navItem')
+        s = mvl.qsla('.scroller > .content .navItem')
     s.forEach((el) => {
         el.classList[el.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
     })   

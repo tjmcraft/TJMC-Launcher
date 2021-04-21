@@ -658,16 +658,16 @@ h5 {
     line-height: 16px;
 }
 
-.content h2 {
+.content-region .content h2 {
     margin-bottom: 20px;
     color: var(--header-primary);
 }
-.content h5 {
+.content-region .content h5 {
     margin-bottom: 4px;
     color: var(--header-secondary);
 }
 
-.content .tab {
+.content-region .content .tab {
     position: relative;
     padding: 60px 40px 70px;
     flex: 1 1 auto;
@@ -918,6 +918,63 @@ input:checked + .toggleSwitchSlider:before {
     align-items: center;
     padding: 0 8px;
 }
+.sidebar-main > .localVersions {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-secondary);
+    overflow: hidden;
+    flex: 1;
+}
+.sidebar-main > .localVersions > .scroller {
+    padding-right: 0px;
+    overflow: hidden overlay;
+    background: var(--background-secondary);
+}
+.sidebar-main > .localVersions > .scroller > .content {
+    position: relative;
+}
+.sidebar-main > .localVersions .version {
+    
+}
+.sidebar-main > .localVersions .versionsHeader {
+    display: flex;
+    padding: 18px 8px 4px 18px;
+    height: 40px;
+    color: var(--interactive-normal);
+}
+.sidebar-main > .localVersions .versionsHeader:hover {
+    color: var(--interactive-hover);
+}
+.simple-button {
+    width: 16px;
+    flex: 0;
+    height: 16px;
+    margin-left: 0;
+    margin-right: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--interactive-normal);
+    transition: none; 
+}
+.simple-button:hover {
+    color: var(--interactive-hover);
+}
+
+.container-df {
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    text-transform: uppercase;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    flex: 1 1 auto;
+    color: var(--header-secondary);
+}
+
 .container {
     position: relative;
     width: 100%;
@@ -964,9 +1021,7 @@ input:checked + .toggleSwitchSlider:before {
     min-height: 0;
     flex: 1 1 auto;
     overflow: hidden scroll;
-    
     user-select: none;
-    padding: 12px 0 0;
     background-color: var(--background-tertiary);
     contain: layout size;
     padding-top: 4px;
