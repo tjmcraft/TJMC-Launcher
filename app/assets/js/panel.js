@@ -54,3 +54,42 @@ let sidebar = function (props) {
     );
     return root_sidebar;
 }
+
+class SidebarMain {
+    root_sidebar;
+    root_content;
+    constructor(props) {
+        this.base(null);
+    };
+    base() {
+        const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
+        add_button.onclick = (e) => { new VersionChooser() }
+        this.root_content = this.root_content || createElement('div', { class: 'content' },
+            createElement('h2', { class: 'versionsHeader container-df' },
+                createElement('span', null, 'Версии'),
+                add_button
+            )
+        )
+        this.root_sidebar = createElement('div', { class: 'scroller' },
+            this.root_content
+        );
+        return this.root_sidebar;
+    };
+    addItem(item) {
+        const root_item = createElement('div', {class: 'item navItem'})
+        root_item.setAttribute('version-id', item.id)
+        root_item.innerHTML = item.id
+        root_item.onclick = function() {
+            selectVersion(item)
+        }
+        this.root_content.appendChild(root_item)
+        this.base()
+    };
+    removeItem(item) {
+        let i = this.root_content.qsl(`[version-id=${item.id}]`)
+        c.removeChild(i)
+    };
+    content(def = false) {
+        return !def && this.root_sidebar ? this.root_sidebar : this.base();
+    };
+}

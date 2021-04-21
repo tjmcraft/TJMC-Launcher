@@ -1,6 +1,9 @@
 /* ================================= */
 
-qsl('.localVersions').appendChild(sidebar(null));
+
+const sidebar_el = new SidebarMain();
+//qsl('.localVersions').appendChild(sidebar_el.content());
+
 
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')
@@ -95,33 +98,20 @@ function removeMine() {
 }
 
 API.VersionManager.getLocalVersions().then((parsed) => {
-    for (const cv in parsed) {
-        mvl.addItem(parsed[cv])
-    }
+    parsed.forEach(i => {
+        sidebar_el.addItem(i);
+    })
+    qsl('.localVersions').appendChild(sidebar_el.content());
 })
+
+
+/*
 API.VersionManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
 })
-
-/**
- * The function creates and returns tools container for overlay
- */
-function createToolsContainer(click = () => {}) {
-    let tools = createElement('div', {class: 'tools frame-fix'})
-    let overlayCloseButton = createElement('div', {id: 'overlayCloseButton'})
-    overlayCloseButton.onclick = click
-    let cross = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#dcddde" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"></path></svg>'
-    let keycode = createElement('div', {class: 'keycode'})
-    keycode.innerText = 'ESC'
-
-    overlayCloseButton.innerHTML += cross
-    tools.append(overlayCloseButton, keycode)
-
-    return tools
-}
 
 mvl.addItem = function (item) {
     let c = qsl('.scroller > .content')
@@ -154,6 +144,23 @@ function renderSelectVersion (version) {
     })   
     n.innerText = version.id
     d.innerText = version.type
+}
+*/
+/**
+ * The function creates and returns tools container for overlay
+ */
+function createToolsContainer(click = () => {}) {
+    let tools = createElement('div', {class: 'tools frame-fix'})
+    let overlayCloseButton = createElement('div', {id: 'overlayCloseButton'})
+    overlayCloseButton.onclick = click
+    let cross = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24"><path fill="#dcddde" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"></path></svg>'
+    let keycode = createElement('div', {class: 'keycode'})
+    keycode.innerText = 'ESC'
+
+    overlayCloseButton.innerHTML += cross
+    tools.append(overlayCloseButton, keycode)
+
+    return tools
 }
 
 /*new AlertEx({

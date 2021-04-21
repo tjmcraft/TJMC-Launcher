@@ -57,10 +57,12 @@ function createElement(tag, attrs, ...childrens) {
         }
     }
     for (let child of childrens) {
-        if (child && child.nodeType != null) {
-            element.appendChild(child);
-        } else {
-            element.innerHTML += child.toString();
+        if (child && child != null) {
+            if (child.nodeType != null) {
+                element.appendChild(child);
+            } else {
+                element.innerHTML += child.toString();
+            }
         }
     }
     return element;
