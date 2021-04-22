@@ -83,7 +83,7 @@ class SidebarMain {
         root_item.addEventListener('click', (e) => {
             this.selectVersion(item)
             if (typeof click === 'function')
-                click.call(this, e, item)
+                click.call(this, item, e)
         })
         this.root_content.appendChild(root_item)
     };

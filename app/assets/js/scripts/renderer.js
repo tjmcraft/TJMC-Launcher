@@ -99,7 +99,7 @@ function removeMine() {
 
 API.VersionManager.getLocalVersions().then((parsed) => {
     parsed.forEach(i => {
-        sidebar_el.addItem(i, function (e, item) {
+        sidebar_el.addItem(i, function (item) {
             selectVersion(item)
         });
     })
@@ -111,6 +111,7 @@ API.ConfigManager.getAuth().then((auth) => {
 
 function selectVersion(version) {
     API.ConfigManager.setVersion(version)
+    sidebar_el.selectVersion(version);
 }
 
 /*
