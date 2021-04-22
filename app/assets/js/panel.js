@@ -64,7 +64,7 @@ class SidebarMain {
     base() {
         const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => { new VersionChooser() }
-        this.root_content = this.root_content || createElement('div', { class: 'content' },
+        this.root_content = createElement('div', { class: 'content' },
             createElement('h2', { class: 'versionsHeader container-df' },
                 createElement('span', null, 'Версии'),
                 add_button
@@ -75,21 +75,29 @@ class SidebarMain {
         );
         return this.root_sidebar;
     };
-    addItem(item) {
-        const root_item = createElement('div', {class: 'item navItem'})
-        root_item.setAttribute('version-id', item.id)
-        root_item.innerHTML = item.id
-        root_item.onclick = function() {
-            selectVersion(item)
-        }
+    addItem(item, click = ()=>{}) {
+        const root_item = createElement('div', {
+            class: 'item navItem',
+            'version-id': item.id
+        }, item.id);
+        root_item.addEventListener('click', (e) => {
+            this.selectVersion(item)
+            if (typeof click === 'function')
+                click.call(this, e, item)
+        })
         this.root_content.appendChild(root_item)
-        this.base()
     };
     removeItem(item) {
-        let i = this.root_content.qsl(`[version-id=${item.id}]`)
-        c.removeChild(i)
+        const selected_item = this.root_content.qsl(`.item[version-id=${item.id}]`)
+        this.root_content.removeChild(selected_item)
     };
     content(def = false) {
         return !def && this.root_sidebar ? this.root_sidebar : this.base();
+    };
+    selectVersion(version) {
+        let items = this.root_content.qsla('.item');
+        items.forEach(e => {
+            e.classList[e.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
+        });
     };
 }

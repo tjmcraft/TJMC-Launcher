@@ -99,40 +99,26 @@ function removeMine() {
 
 API.VersionManager.getLocalVersions().then((parsed) => {
     parsed.forEach(i => {
-        sidebar_el.addItem(i);
+        sidebar_el.addItem(i, function (e, item) {
+            selectVersion(item)
+        });
     })
-    qsl('.localVersions').appendChild(sidebar_el.content());
-})
-
-
-/*
-API.VersionManager.getVersion().then((version) => {
-    renderSelectVersion(version)
+    qsl('.localVersions').append(sidebar_el.content())
 })
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
 })
 
-mvl.addItem = function (item) {
-    let c = qsl('.scroller > .content')
-    let i = createElement('div', {class: 'item navItem'})
-    i.setAttribute('version-id', item.id)
-    i.innerHTML = item.id
-    i.onclick = function() {
-        selectVersion(item)
-    }
-    c.append(i)
-}
-mvl.remItem = function (item) {
-    let c = qsl('.scroller > .content')
-    let i = c.qsl(`[version-id=${item.id}]`)
-    c.removeChild(i)
-}
-
 function selectVersion(version) {
     API.ConfigManager.setVersion(version)
-    renderSelectVersion(version)
 }
+
+/*
+API.VersionManager.getVersion().then((version) => {
+    renderSelectVersion(version)
+})
+
+
 
 function renderSelectVersion (version) {
     let m = qsl('.top-toolbar'),
