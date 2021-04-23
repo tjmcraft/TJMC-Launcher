@@ -99,7 +99,7 @@ function removeMine() {
 
 API.VersionManager.getLocalVersions().then((parsed) => {
     parsed.forEach(i => {
-        sidebar_el.addItem(i, function (item) {
+        sidebar_el.addItem(i, (item) => {
             selectVersion(item)
         });
     })
@@ -108,31 +108,25 @@ API.VersionManager.getLocalVersions().then((parsed) => {
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
 })
-
-function selectVersion(version) {
-    API.ConfigManager.setVersion(version)
-    sidebar_el.selectVersion(version);
-}
-
-/*
 API.VersionManager.getVersion().then((version) => {
     renderSelectVersion(version)
 })
 
+function selectVersion(version) {
+    API.ConfigManager.setVersion(version)
+    renderSelectVersion(version);
+}
 
-
-function renderSelectVersion (version) {
+function renderSelectVersion(version) {
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
-        d = m.qsl('h5'),
-        s = mvl.qsla('.scroller > .content .navItem')
-    s.forEach((el) => {
-        el.classList[el.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
-    })   
+        d = m.qsl('h5');
+    sidebar_el.selectVersion(version);
     n.innerText = version.id
     d.innerText = version.type
 }
-*/
+
+
 /**
  * The function creates and returns tools container for overlay
  */
