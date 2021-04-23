@@ -30,33 +30,6 @@ let user_panel = function (props) {
     return root_panel;
 }
 
-let sidebar = function (props) {
-    /*const sidebar_items = [
-        { type: 'versionsHeader container-df', content: 'Версии' }
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' },
-        { type: 'navItem bgL' }
-    ];
-    const items = sidebar_items.map(i => {
-        const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') }, i.content || '');
-        return root_item;
-    });*/
-    const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
-    add_button.onclick = (e) => { new VersionChooser() }
-    const root_sidebar = createElement('div', { class: 'scroller' },
-        createElement('div', { class: 'content' },
-            createElement('h2', { class: 'versionsHeader container-df' },
-                createElement('span', null, 'Версии'),
-                add_button
-            )
-        )
-    );
-    return root_sidebar;
-}
-
 class SidebarMain {
     root_sidebar;
     root_content;
