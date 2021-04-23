@@ -599,6 +599,7 @@ svg[data-icon="success-circle"] {
     color: #b9bbbe;
     min-height: 28px;
     margin-bottom: 2px;
+    margin-left: 8px;
 }
 
 .navItem:hover {
@@ -928,7 +929,7 @@ input:checked + .toggleSwitchSlider:before {
 }
 .sidebar-main > .localVersions > .scroller {
     padding-right: 0px;
-    overflow: hidden overlay;
+    overflow: hidden scroll;
     background: var(--background-secondary);
 }
 .sidebar-main > .localVersions > .scroller > .content {

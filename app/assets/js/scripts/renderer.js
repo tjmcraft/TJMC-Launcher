@@ -175,3 +175,10 @@ window.onload = function(e) {
         })
     }, 1000)
 }
+/*
+document.addEventListener('mouseover', e => {
+    const tooltip = e.target?.dataset?.tooltip;
+    if (tooltip) {
+        e.target.tooltip(tooltip)
+    }
+})*/

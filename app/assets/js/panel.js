@@ -10,6 +10,7 @@ let user_panel = function (props) {
     props.permission = props.permission || '';
     const add_version_button = createElement('button', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
     add_version_button.onclick = (e) => { new VersionChooser() }
+    add_version_button.dataset.tooltip = 'Add Version'
     const settings_button = createElement('button', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
     settings_button.onclick = (e) => { new Settings() }
     const root_panel = createElement('section', { class: 'panel' },
