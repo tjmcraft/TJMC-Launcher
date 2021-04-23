@@ -51,7 +51,7 @@ class PopupEl {
             x = (x_o > 0) ? x_o : 0,
             y_t = ( offset.top - m - el.offsetHeight ),
             y_b = ( offset.top + this.options.parent.offsetHeight + m ),
-            y = (y_t > 0) && (pos = 'top') ? y_t : 
+            y = (y_t - 25 > 0) && (pos = 'top') ? y_t : 
                 (y_b) && (pos = 'bottom') ? y_b : 0,
             width = (this.options.parent.offsetWidth - m*2)
         return { left: x, top: y, width: width, height: 'auto', position: pos }

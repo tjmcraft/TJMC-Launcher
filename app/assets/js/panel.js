@@ -10,8 +10,9 @@ let user_panel = function (props) {
     props.permission = props.permission || '';
     const add_version_button = createElement('button', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
     add_version_button.onclick = (e) => { new VersionChooser() }
-    add_version_button.dataset.tooltip = 'Add Version'
+    add_version_button.tooltip('Добавить версию')
     const settings_button = createElement('button', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
+    settings_button.tooltip('Настройки')
     settings_button.onclick = (e) => { new Settings() }
     const root_panel = createElement('section', { class: 'panel' },
         createElement('div', { class: 'container' },
@@ -65,6 +66,7 @@ class SidebarMain {
     base() {
         const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => { new VersionChooser() }
+        add_button.tooltip('Добавить версию')
         this.root_content = createElement('div', { class: 'content' },
             createElement('h2', { class: 'versionsHeader container-df' },
                 createElement('span', null, 'Версии'),
