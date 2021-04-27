@@ -319,7 +319,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 /* ================= Overlay ================= */
-#overlay {
+.overlay {
     user-select: none;
     transition: all 0.5s ease;
     position: fixed;
@@ -339,7 +339,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     justify-items: center;
 }
 
-#overlay #container {
+.overlay #container {
     position: relative;
     transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  opacity 0.5s ease;
     max-width: 60vw;
@@ -357,18 +357,18 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-family: 'Candara';
 }
 
-#overlay #container h1 {
+.overlay #container h1 {
     font-size: 2.5em;
 }
 
-#overlay.hidden #container {
+.overlay.hidden #container {
     transform: scale(0.5);
     opacity: 0;
 }
 .hidden .tools {
     opacity: 0;
 }
-#overlay.hidden #container svg {
+.overlay.hidden #container svg {
     transform: scale(0);
     opacity: 0;
 }
@@ -395,7 +395,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     text-align: center;
 }
 
-.tools #overlayCloseButton {
+.tools .overlayCloseButton {
     transition: none;
     border: 2px solid #777;
     border-radius: 50%;
@@ -406,22 +406,22 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     height: 36px;
 }
 
-.tools #overlayCloseButton:hover {
+.tools .overlayCloseButton:hover {
     background: #7F7F7F5d;
 }
 
 /* === Primary Button for overlay === */
-#overlay #container .primary-button {
+.overlay #container .primary-button {
     background-color: #10a010;
 }
-#overlay #container .primary-button:hover {
+.overlay #container .primary-button:hover {
     background-color: #109010;
 }
-#overlay #container .primary-button:active {
+.overlay #container .primary-button:active {
     background-color: #108010;
 }
 
-#overlay #container button {
+.overlay #container button {
     font-family: 'Candara';
     font-size: 16px;
     font-weight: 900;
@@ -430,15 +430,15 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     width: 8em;
 }
 
-#overlay #container p {
+.overlay #container p {
     margin: 2em 0;
 }
 
-#overlay #container svg {
+.overlay #container svg {
     transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;    
 }
 
-#overlay #container hr {
+.overlay #container hr {
     border: 0;
     height: 1px;
     background: #333;

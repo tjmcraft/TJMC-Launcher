@@ -1,9 +1,24 @@
+/**
+ * Creates alert box
+ */
 class AlertEx {
+    /**
+     * 
+     * @param {Object} params - Parameters for alert
+     * @param {Object} params.type - Type of alert
+     * @param {Object} params.header - Header for alert
+     * @param {Object} params.text - Text for alert
+     * @param {Object} params.buttons List of buttons for alert
+     * @param {Object} params.buttons.name - Name of button
+     * @param {Object} params.buttons.class - Class of button
+     * @param {Object} params.buttons.callback - Callback function for button
+     * @param {Object} params.buttons.closeOverlay - Close overlay on button click ?
+     * @param {Object} params.closeButton - Create close(cross) button ?
+     * @returns
+     */
     constructor(params) {
-        this.overlay = this.createOverlay(params.closeButton)
-        this.overlay.toggle(false)
-
-        let container = createElement('div', {id: 'container'})
+        if (!params) return false;
+        const container = createElement('div', {id: 'container'})
         container.onclick = (event) => {event.stopPropagation()}
 
         if (params.type) {
@@ -28,24 +43,24 @@ class AlertEx {
             if (data) {
                 let ie = document.createElement('h2')
                 ie.innerHTML += data
-                container.append(ie)
+                container.appendChild(ie)
             }
         }
 
         if (params.header) {
             let h = document.createElement('h1')
             h.innerHTML = params.header
-            container.append(h)
+            container.appendChild(h)
         }
 
         if (params.text) {
             let p = document.createElement('p')
             p.innerHTML = params.text
-            container.append(p)
+            container.appendChild(p)
         }
 
         if (params.buttons) {
-            let hr = document.createElement('hr')
+            const hr = document.createElement('hr')
             container.append(hr)
             for (let bp of params.buttons) {
                 let button = createElement('button', {class: bp.class ? bp.class : ''})
@@ -54,40 +69,39 @@ class AlertEx {
                     if (bp.callback && typeof bp.callback === 'function') bp.callback()
                     if (bp.closeOverlay) this.destroy()
                 }
-                container.append(button)
+                container.appendChild(button)
             }
         }
 
-        this.overlay.onclick = (e) => {
-            this.destroy()
-        }
+        this.overlay = this.createOverlay(params.closeButton, container)
+
+        this.overlay.onclick = (e) => { this.destroy(e) }
         
         this.escBinder = new escBinder()
-        this.escBinder.bind(() => {
-            this.destroy()
-        })
-
-        this.overlay.append(container)
+        this.escBinder.bind((e) => { this.destroy(e) })
 
         document.body.appendChild(this.overlay)
+
         setTimeout(() => {
             this.overlay.toggle(true)
         })
 
-        return this.overlay
     }
 
-    createOverlay(closeButton = null){
-        let overlay = createElement('div', {id: 'overlay'})
-
+    /**
+     * Creates overlay root element
+     * @param {Boolean} closeButton - Create cross close button ?
+     * @param  {...any} nodes - Nodes for overlay
+     * @returns 
+     */
+    createOverlay(closeButton = false, ...nodes){
+        const overlay = createElement('div', { class: 'overlay' }, ...nodes);
+        overlay.toggle(false);
         if (closeButton) {
-            let tools = createToolsContainer(() => {
-                this.destroy()
-            })
-            overlay.append(tools)
+            const tools = createToolsContainer((e) => this.destroy);
+            overlay.appendChild(tools);
         }
-        
-        return overlay
+        return overlay;
     }
 
     destroy() {
