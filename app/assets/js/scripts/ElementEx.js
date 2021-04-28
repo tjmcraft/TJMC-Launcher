@@ -83,7 +83,11 @@ function createSVGElement(attrs, ...childrens) {
         }
     }
     for (let child of childrens) {
-        element.append(child);
+        if (child && child.nodeType != null) {
+            element.appendChild(child);
+        } else {
+            element.innerHTML += child.toString();
+        }
     }
     return element;
 }
