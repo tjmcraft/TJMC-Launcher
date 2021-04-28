@@ -357,8 +357,15 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-family: 'Candara';
 }
 
+.overlay #container div.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .overlay #container h1 {
     font-size: 2.5em;
+    margin: 10px 0;
 }
 
 .overlay.hidden #container {
