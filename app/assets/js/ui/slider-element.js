@@ -65,9 +65,11 @@ function slider(props = {}) {
     }
 
     track.onmousedown = (e) => {
-        track_grabber.removeEventListener('mouseout', destroy);
+        track_grabber.removeEventListener('mouseenter', show);
+        track_grabber.removeEventListener('mouseout', hide);
 
         document.onmouseup = (e) => {
+            track_grabber.addEventListener('mouseenter', show);
             track_grabber.addEventListener('mouseout', hide);
             hide();
             document.onmousemove = null
