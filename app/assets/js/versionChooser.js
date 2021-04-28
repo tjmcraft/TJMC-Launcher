@@ -1,29 +1,25 @@
 class VersionChooser {
     el = []
     constructor() {
-        this.layer = new Layer({
-            label: 'VERSION_SELECTOR'
-        })
-        
-        this.layer.append(this.Base)
-
-        this.el.sidebar = this.layer.content.qsl('#version-list .sidebar')
-
         this.tools = createToolsContainer(() => {
             this.destroy()
         })
-        this.layer.append(this.tools)
 
         this.escBinder = new escBinder()
         this.escBinder.bind(() => {
             this.destroy()
         })
+
         this.refreshVersions()
-        this.layer.show()
+
+        this.alertex = new AlertEx({ header: 'Добавление версии' },
+            createElement('div', { class: 'inner-container'}, this.Base, this.tools)
+        )
+        this.el.sidebar = this.alertex.content.qsl('#version-list .sidebar')
     }
     destroy() {
         this.escBinder.uibind()
-        this.layer.destroy()
+        this.alertex.destroy()
     }
     refreshVersions() {
         API.VersionManager.getGlobalVersions().then((parsed) => {
@@ -54,7 +50,7 @@ class VersionChooser {
                 createElement('div', { class: 'sidebar-region' }, this.sidebar)
             ),
             createElement('div', { class: 'base', id: 'main' },
-                createElement('div', { class: 'main-content'}, 'text')
+                this.mainContent
             )
         )
         return root;
@@ -101,5 +97,11 @@ class VersionChooser {
             dropdown.toggle()
         };
         return root_dropdown;
+    }
+
+    get mainContent() {
+        const header = createElement('h2', null, 'text');
+        const root_content = createElement('div', { class: 'main-content' }, header, createElement('div', {class: 'divider separator'}), 'text');
+        return root_content;
     }
 }
