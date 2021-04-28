@@ -19,8 +19,8 @@ class AlertEx {
      */
     constructor(params, ...nodes) {
         if (!params) throw new Error('No parametrs given');
-        const container = createElement('div', { id: 'container' });
-        container.onclick = (event) => { event.stopPropagation() };
+        this.root_container = createElement('div', { id: 'container' });
+        this.root_container.onclick = (event) => { event.stopPropagation() };
 
         if (params.type) {
             let data = null
@@ -44,25 +44,25 @@ class AlertEx {
             if (data) {
                 const ie = createElement('div', { class: 'icon' })
                 ie.append(data)
-                container.appendChild(ie)
+                this.root_container.appendChild(ie)
             }
         }
 
         if (params.header) {
             let h = createElement('h1')
             h.innerHTML = params.header
-            container.appendChild(h)
+            this.root_container.appendChild(h)
         }
 
         if (params.text) {
-            this.main_paragraph = createElement('p')
-            this.main_paragraph.append(params.text)
-            container.appendChild(this.main_paragraph)
+            const p = createElement('p')
+            p.append(params.text)
+            this.root_container.appendChild(p)
         }
 
         if (params.buttons) {
             const hr = createElement('hr')
-            container.append(hr)
+            this.root_container.append(hr)
             for (let bp of params.buttons) {
                 let button = createElement('button', {class: bp.class ? bp.class : ''})
                 button.innerText = bp.name
@@ -70,15 +70,15 @@ class AlertEx {
                     if (bp.callback && typeof bp.callback === 'function') bp.callback()
                     if (bp.closeOverlay) this.destroy()
                 }
-                container.appendChild(button)
+                this.root_container.appendChild(button)
             }
         }
 
         for (const node of nodes) {
-            container.append(node);
+            this.root_container.append(node);
         }
 
-        this.overlay = this.createOverlay(params.closeButton, container)
+        this.overlay = this.createOverlay(params.closeButton, this.root_container)
 
         this.overlay.onclick = (e) => { this.destroy(e) }
         
@@ -117,11 +117,26 @@ class AlertEx {
         }, 500)
     }
 
+    /**
+     * Append dom content to created layer
+     * @param {*} content 
+     */
+    append(content) {
+        this.root_container.append(content)
+    }
+
+    /**
+     * Get current content(innerHTML) of created layer
+     */
+    get content() {
+        return this.root_container
+    }
+
     set innerContent(content) {
-        this.main_paragraph.innerHTML = content;
+        this.root_container.innerHTML = content;
     }
 
     get innerContent() {
-        return this.main_paragraph.innerHTML;
+        return this.root_container.innerHTML;
     }
 }
