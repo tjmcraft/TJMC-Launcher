@@ -58,11 +58,7 @@ function createElement(tag, attrs, ...childrens) {
     }
     for (let child of childrens) {
         if (child && child != null) {
-            if (child.nodeType != null) {
-                element.appendChild(child);
-            } else {
-                element.innerHTML += child.toString();
-            }
+            element.append(child);
         }
     }
     return element;
@@ -87,11 +83,7 @@ function createSVGElement(attrs, ...childrens) {
         }
     }
     for (let child of childrens) {
-        if (child && child.nodeType != null) {
-            element.appendChild(child);
-        } else {
-            element.innerHTML += child.toString();
-        }
+        element.append(child);
     }
     return element;
 }
