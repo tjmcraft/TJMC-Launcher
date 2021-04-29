@@ -101,7 +101,11 @@ class VersionChooser {
 
     get mainContent() {
         const header = createElement('h2', null, 'text');
-        const root_content = createElement('div', { class: 'main-content' }, header, createElement('div', {class: 'divider separator'}), 'text');
+        const root_content = createElement('div', { class: 'main-content' }, 
+            header,
+            createElement('div', { class: 'divider separator' }),
+            'text'
+        );
         return root_content;
     }
 }
