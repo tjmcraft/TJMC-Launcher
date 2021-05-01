@@ -106,7 +106,10 @@ class VersionChooser {
         // ================================================ //
         let firstContent = () => {
             const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
-            next_button.onclick = () => { this.carousel.moveRight() }
+            next_button.onclick = () => {
+                this.carousel.append(secondContent())
+                this.carousel.moveRight()
+            }
             const header = createElement('h2', null, 'Выберите тип версии');
             const release_button = createElement('button', { 'data-type': 'release' }, 'Release')
             const snapshot_button = createElement('button', { 'data-type': 'snapshot' }, 'Snapshot')
@@ -131,7 +134,10 @@ class VersionChooser {
                 }
             })
             const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
-            next_button.onclick = () => { this.carousel.moveRight() }
+            next_button.onclick = () => {
+                this.carousel.append(thirdContent())
+                this.carousel.moveRight()
+            }
             const header = createElement('h2', null, 'Выберите версию');
             const root_content = createElement('div', { class: 'main-content' },
                 header,
@@ -168,7 +174,7 @@ class VersionChooser {
             return root_content;
         }
 
-        const root_slider = this.carousel.createCarousel(firstContent(), secondContent(), thirdContent());
+        const root_slider = this.carousel.createCarousel(firstContent());
         return root_slider;
     }
 }

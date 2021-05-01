@@ -89,7 +89,7 @@ class Carousel {
     createCarousel(...elements) {
         this.root_carousel = createElement('div', { class: 'carousel' });
         for (const element of elements) {
-            this.root_carousel.appendChild(createElement('div', { class: 'carousel-elm' }, element))
+            this.append(element);
         }
         return this.root_carousel;
     }
@@ -106,5 +106,10 @@ class Carousel {
             this.offset += this.step;
             this.root_carousel.style.transform = `translateX(${this.offset}%)`;
         }
+    }
+    append(content) {
+        this.root_carousel.appendChild(createElement('div', { class: 'carousel-elm' }, content));
+        const count = this.root_carousel.qsla('.carousel-elm').length;
+        this.maxX = -((this.step * count) - this.step);
     }
 }
