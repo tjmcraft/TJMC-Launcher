@@ -440,7 +440,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-size: 16px;
     font-weight: 900;
     margin: 1em;
-    border-radius: 8px;
+    border-radius: 4px;
     width: 8em;
 }
 
@@ -1018,6 +1018,7 @@ input:checked + .toggleSwitchSlider:before {
     flex: 1 1 80%;
     position: relative;
     background-color: var(--background-primary);
+    overflow: hidden;
 }
 
 .guilds {
@@ -1257,8 +1258,8 @@ input:checked + .toggleSwitchSlider:before {
 }
 
 #version-selector .main-content {
-    padding: 25px 50px 70px 25px;
-    text-align: start;
+    padding: 25px 25px 25px 25px;
+    /*text-align: start;*/
 }
 
 .container-f {
@@ -1441,4 +1442,35 @@ a.anchor:hover {
 }
 .flex-group > .flex-child:last-child {
     margin-left: 10px;
+}
+
+.VT-flex-box {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 1em;
+    width: auto;
+    box-sizing: border-box;
+}
+
+.carousel {
+    width: 100%;
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    transition: all .8s ease;
+}
+
+.carousel > .carousel-elm {
+    background: black;
+    min-width: 100%;
+    height: 100%;
+    /*margin-right: 1rem;*/
+    display: inline-block;
 }

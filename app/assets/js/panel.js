@@ -77,3 +77,34 @@ class SidebarMain {
         });
     };
 }
+
+class Carousel {
+    root_carousel;
+    offset = 0;
+    step = 100;
+    maxX = -((this.step * 3) - this.step);
+    constructor(props) {
+
+    }
+    createCarousel(...elements) {
+        this.root_carousel = createElement('div', { class: 'carousel' });
+        for (const element of elements) {
+            this.root_carousel.appendChild(createElement('div', { class: 'carousel-elm' }, element))
+        }
+        return this.root_carousel;
+    }
+    moveRight() {
+        if (!this.root_carousel) throw new Error('No carousel created');
+        if (this.offset != this.maxX) {
+            this.offset -= this.step;
+            this.root_carousel.style.transform = `translateX(${this.offset}%)`;
+        }
+    }
+    moveLeft() {
+        if (!this.root_carousel) throw new Error('No carousel created');
+        if (this.offset !== 0) {
+            this.offset += this.step;
+            this.root_carousel.style.transform = `translateX(${this.offset}%)`;
+        }
+    }
+}

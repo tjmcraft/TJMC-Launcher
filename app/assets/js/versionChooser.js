@@ -1,5 +1,7 @@
 class VersionChooser {
-    el = []
+    el = [];
+    carousel;
+    selected_props;
     constructor() {
         this.tools = createToolsContainer(() => {
             this.destroy()
@@ -100,12 +102,73 @@ class VersionChooser {
     }
 
     get mainContent() {
-        const header = createElement('h2', null, 'text');
-        const root_content = createElement('div', { class: 'main-content' }, 
-            header,
-            createElement('div', { class: 'divider separator' }),
-            'text'
-        );
-        return root_content;
+        this.carousel = new Carousel();
+        // ================================================ //
+        let firstContent = () => {
+            const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
+            next_button.onclick = () => { this.carousel.moveRight() }
+            const header = createElement('h2', null, 'Выберите тип версии');
+            const release_button = createElement('button', { 'data-type': 'release' }, 'Release')
+            const snapshot_button = createElement('button', { 'data-type': 'snapshot' }, 'Snapshot')
+            const modified_button = createElement('button', { 'data-type': 'modified' }, 'Modified')
+            const old_beta_button = createElement('button', { 'data-type': 'old_beta' }, 'Beta')
+            const old_alpha_button = createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
+            const root_content = createElement('div', { class: 'main-content' },
+                header,
+                createElement('div', { class: 'divider separator' }),
+                createElement('div', { class: 'VT-flex-box' },
+                    release_button, snapshot_button, modified_button, old_beta_button, old_alpha_button
+                ),
+                createElement('div', { class: 'divider separator' }),
+                next_button
+            );
+            return root_content;
+        }
+        let secondContent = () => {
+            API.VersionManager.getGlobalVersions().then((parsed) => {
+                for (const cv in parsed) {
+                    console.log(parsed[cv])
+                }
+            })
+            const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
+            next_button.onclick = () => { this.carousel.moveRight() }
+            const header = createElement('h2', null, 'Выберите версию');
+            const root_content = createElement('div', { class: 'main-content' },
+                header,
+                createElement('div', { class: 'divider separator' }),
+                createElement('div', { class: 'VT-flex-box'},
+                    createElement('button', { 'data-type': 'release' }, 'Release'),
+                    createElement('button', { 'data-type': 'snapshot' }, 'Snapshot'),
+                    createElement('button', { 'data-type': 'modified' }, 'Modified'),
+                    createElement('button', { 'data-type': 'old_beta' }, 'Beta'),
+                    createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
+                ),
+                createElement('div', { class: 'divider separator' }),
+                next_button
+            );
+            return root_content;
+        }
+        let thirdContent = () => {
+            const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
+            next_button.onclick = () => { this.carousel.moveRight() }
+            const header = createElement('h2', null, 'Выберите версию');
+            const root_content = createElement('div', { class: 'main-content' },
+                header,
+                createElement('div', { class: 'divider separator' }),
+                createElement('div', { class: 'VT-flex-box'},
+                    createElement('button', { 'data-type': 'release' }, 'Release'),
+                    createElement('button', { 'data-type': 'snapshot' }, 'Snapshot'),
+                    createElement('button', { 'data-type': 'modified' }, 'Modified'),
+                    createElement('button', { 'data-type': 'old_beta' }, 'Beta'),
+                    createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
+                ),
+                createElement('div', { class: 'divider separator' }),
+                next_button
+            );
+            return root_content;
+        }
+
+        const root_slider = this.carousel.createCarousel(firstContent(), secondContent(), thirdContent());
+        return root_slider;
     }
 }
