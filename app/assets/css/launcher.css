@@ -733,6 +733,9 @@ h5 {
 .divider {
     margin: 20px 0 0 0;
 }
+.full {
+    margin: 8px 0;
+}
 
 .container-icf3v {
     display: flex;
@@ -1258,7 +1261,12 @@ input:checked + .toggleSwitchSlider:before {
 }
 
 #version-selector .main-content {
-    padding: 25px 25px 25px 25px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 15px 25px 15px 25px;
+    font-size: 2em;
+    line-height: normal;
     /*text-align: start;*/
 }
 
@@ -1453,9 +1461,23 @@ a.anchor:hover {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    margin: 1em;
+    /*margin: 1em;*/
     width: auto;
     box-sizing: border-box;
+    flex: 1;
+    overflow: auto;
+    font-size: initial;
+}
+
+.VT-header {
+    position: relative;
+}
+.VT-header > h2 {
+    margin: 1em;
+}
+
+.VT-footer {
+    position: relative;
 }
 
 .carousel {
@@ -1476,4 +1498,11 @@ a.anchor:hover {
     /*margin-right: 1rem;*/
     display: inline-block;
     overflow: auto;
+}
+
+.centred {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: wrap;
 }

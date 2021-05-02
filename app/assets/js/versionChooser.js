@@ -1,6 +1,5 @@
 class VersionChooser {
     el = [];
-    carousel;
     selected_props = [];
     constructor() {
         this.tools = createToolsContainer(() => {
@@ -23,11 +22,12 @@ class VersionChooser {
         this.escBinder.uibind()
         this.alertex.destroy()
     }
-    refreshVersions() {
+    refreshVersions(type = 'all') {
         API.VersionManager.getGlobalVersions().then((parsed) => {
             this.el.sidebar.removeAllChildNodes()
-            for (const cv in parsed) {
-                this.addItem(parsed[cv])
+            let versions = parsed.filter((i) => {return type == 'all' ? true : i.type == type })
+            for (const version of versions) {
+                this.addItem(version)
             }
         })
     }
@@ -36,7 +36,9 @@ class VersionChooser {
         let i = createElement('div', {class: 'item navItem'})
         i.setAttribute('version-id', item.id)
         i.innerHTML = item.id
-        i.onclick = function(e) { }
+        i.onclick = (e) => {
+            this.renderVersion(item)
+        }
         c.append(i)
     }
     remItem(item) {
@@ -46,13 +48,14 @@ class VersionChooser {
     }
 
     get Base() {
+        this.main_content = this.createFisrtPage()
         const root = createElement('div', { class: 'container', id: 'version-selector' },
             createElement('div', { class: 'sidebar-main', id: 'version-list' },
                 this.dropdown,
                 createElement('div', { class: 'sidebar-region' }, this.sidebar)
             ),
             createElement('div', { class: 'base', id: 'main' },
-                this.mainContent
+                this.main_content
             )
         )
         return root;
@@ -87,36 +90,45 @@ class VersionChooser {
         const dropdowm_selector = dropdown.createSelector(dropdown_items);
         dropdown.onselect = (item) => {
             console.log(item)
+            this.refreshVersions(item.type)
         }
         return dropdowm_selector;
     }
 
-    get mainContent() {
-        const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
-        next_button.onclick = () => {
+    createFisrtPage(props) {
+        const root_content = createElement('div', { class: 'main-content centred' }, createElement('h1', null, 'Выберите версию'))
+        return root_content;
+    }
 
-        }
-        const header = createElement('h2', null, 'Выберите тип версии');
-        const release_button = createElement('button', { 'data-type': 'release' }, 'Release')
-        const snapshot_button = createElement('button', { 'data-type': 'snapshot' }, 'Snapshot')
-        const modified_button = createElement('button', { 'data-type': 'modified' }, 'Modified')
-        const old_beta_button = createElement('button', { 'data-type': 'old_beta' }, 'Beta')
-        const old_alpha_button = createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
-        const root_flex = createElement('div', { class: 'VT-flex-box' }, release_button, snapshot_button, modified_button, old_beta_button, old_alpha_button)
-        root_flex.onclick = (e) => {
-            let type = e.target?.dataset?.type;
-            if (type && type !== 'undefined' && type !== null) {
-                console.debug(type)
-                this.selected_props.type = type;
-            }
-        }
+    createMainContent(props) {
+        
+        const header = createElement('section', { class: 'VT-header'},
+            createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
+            createElement('div', { class: 'full separator' })
+        );
+        const root_flex = createElement('div', { class: 'VT-flex-box' }, 'Content')
+
+        const cancel_button = createElement('button', { class: '' }, 'Отмена')
+        cancel_button.onclick = () => {this.alertex.destroy()}
+        const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
+        const footer = createElement('section', { class: 'VT-footer' },
+            createElement('div', { class: 'full separator' }),
+            cancel_button, accept_button
+        )
         const root_content = createElement('div', { class: 'main-content' },
             header,
-            createElement('div', { class: 'divider separator' }),
             root_flex,
-            createElement('div', { class: 'divider separator' }),
-            next_button
+            footer
         );
         return root_content;
+    }
+
+    renderVersion(version) {
+        console.debug(version)
+        const main_content = this.createMainContent({
+            version: version
+        })
+        this.main_content.replaceWith(main_content)
+        this.main_content = main_content
     }
 }
