@@ -1282,6 +1282,7 @@ input:checked + .toggleSwitchSlider:before {
     text-transform: none !important;
     font-size: 16px !important;
     user-select: none;
+    text-align: start;
 }
 .container-f .header h1 {
     font-size: 16px;
@@ -1311,6 +1312,7 @@ input:checked + .toggleSwitchSlider:before {
     font-size: medium;
     transition: all .3s ease;
     overflow: hidden;
+    text-align: start;
 }
 .container-f .dropdown a {
     cursor: pointer;
