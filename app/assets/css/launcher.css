@@ -1473,4 +1473,5 @@ a.anchor:hover {
     height: 100%;
     /*margin-right: 1rem;*/
     display: inline-block;
+    overflow: auto;
 }

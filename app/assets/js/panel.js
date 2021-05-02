@@ -108,8 +108,17 @@ class Carousel {
         }
     }
     append(content) {
+        if (!this.root_carousel) throw new Error('No carousel created');
         this.root_carousel.appendChild(createElement('div', { class: 'carousel-elm' }, content));
         const count = this.root_carousel.qsla('.carousel-elm').length;
         this.maxX = -((this.step * count) - this.step);
+    }
+    moveTo(index) {
+        if (!this.root_carousel) throw new Error('No carousel created');
+        const count = this.root_carousel.qsla('.carousel-elm').length;
+        if (index > 0 && index < count){
+            this.offset = -((this.step * index) - this.step)
+            this.root_carousel.style.transform = `translateX(${this.offset}%)`;
+        }
     }
 }

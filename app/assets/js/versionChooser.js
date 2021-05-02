@@ -1,7 +1,7 @@
 class VersionChooser {
     el = [];
     carousel;
-    selected_props;
+    selected_props = [];
     constructor() {
         this.tools = createToolsContainer(() => {
             this.destroy()
@@ -104,11 +104,10 @@ class VersionChooser {
     get mainContent() {
         this.carousel = new Carousel();
         // ================================================ //
-        let firstContent = () => {
+        let firstContent = (props) => {
             const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
             next_button.onclick = () => {
-                this.carousel.append(secondContent())
-                this.carousel.moveRight()
+                secondContent(this.selected_props)
             }
             const header = createElement('h2', null, 'Выберите тип версии');
             const release_button = createElement('button', { 'data-type': 'release' }, 'Release')
@@ -116,45 +115,62 @@ class VersionChooser {
             const modified_button = createElement('button', { 'data-type': 'modified' }, 'Modified')
             const old_beta_button = createElement('button', { 'data-type': 'old_beta' }, 'Beta')
             const old_alpha_button = createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
+            const root_flex = createElement('div', { class: 'VT-flex-box' }, release_button, snapshot_button, modified_button, old_beta_button, old_alpha_button)
+            root_flex.onclick = (e) => {
+                let type = e.target?.dataset?.type;
+                if (type && type !== 'undefined' && type !== null) {
+                    console.debug(type)
+                    this.selected_props.type = type;
+                }
+                secondContent(this.selected_props)
+            }
             const root_content = createElement('div', { class: 'main-content' },
                 header,
                 createElement('div', { class: 'divider separator' }),
-                createElement('div', { class: 'VT-flex-box' },
-                    release_button, snapshot_button, modified_button, old_beta_button, old_alpha_button
-                ),
-                createElement('div', { class: 'divider separator' }),
-                next_button
+                root_flex,
+                //createElement('div', { class: 'divider separator' }),
+                //next_button
             );
             return root_content;
         }
-        let secondContent = () => {
+        let secondContent = (props) => {
             API.VersionManager.getGlobalVersions().then((parsed) => {
-                for (const cv in parsed) {
-                    console.log(parsed[cv])
+                if (props.type && props.type !== 'undefined' && props.type !== null) {
+                    /*for (const cv in parsed) {
+                        const version = parsed[cv];
+                        if (version.type == props.type){
+                            console.log(version)
+                        }
+                    }*/
+                    let versions = parsed.filter((e) => { return e.type == props.type })
+                    //console.log(versions)
+                    for (const version of versions) {
+                        console.debug(version)
+                        root_flex.append(createElement('button', { 'data-id': version.id, 'data-type': version.type }, version.id))
+                    }
+                } else {
+                    let versions = parsed
+                    console.log(versions)
                 }
             })
             const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
             next_button.onclick = () => {
-                this.carousel.append(thirdContent())
-                this.carousel.moveRight()
+                thirdContent(this.selected_props)
             }
             const header = createElement('h2', null, 'Выберите версию');
+            const root_flex = createElement('div', { class: 'VT-flex-box'});
             const root_content = createElement('div', { class: 'main-content' },
                 header,
                 createElement('div', { class: 'divider separator' }),
-                createElement('div', { class: 'VT-flex-box'},
-                    createElement('button', { 'data-type': 'release' }, 'Release'),
-                    createElement('button', { 'data-type': 'snapshot' }, 'Snapshot'),
-                    createElement('button', { 'data-type': 'modified' }, 'Modified'),
-                    createElement('button', { 'data-type': 'old_beta' }, 'Beta'),
-                    createElement('button', { 'data-type': 'old_alpha' }, 'Alpha')
-                ),
-                createElement('div', { class: 'divider separator' }),
-                next_button
+                root_flex,
+                //createElement('div', { class: 'divider separator' }),
+                //next_button
             );
-            return root_content;
+            //return root_content;
+            this.carousel.append(root_content);
+            this.carousel.moveRight();
         }
-        let thirdContent = () => {
+        let thirdContent = (props) => {
             const next_button = createElement('button', { class: 'primary-button' }, 'Далее');
             next_button.onclick = () => { this.carousel.moveRight() }
             const header = createElement('h2', null, 'Выберите версию');
@@ -171,7 +187,9 @@ class VersionChooser {
                 createElement('div', { class: 'divider separator' }),
                 next_button
             );
-            return root_content;
+            //return root_content;
+            this.carousel.append(root_content);
+            this.carousel.moveRight();
         }
 
         const root_slider = this.carousel.createCarousel(firstContent());
