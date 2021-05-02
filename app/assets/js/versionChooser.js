@@ -77,31 +77,18 @@ class VersionChooser {
 
     get dropdown() {
         const dropdown_items = [
-            { name: 'Release', click: function (e) { console.log(e) } },
-            { name: 'Snapshot', click: function (e) { console.log(e) } },
-            { name: 'Modified', click: function (e) { console.log(e) } },
-            { name: 'Beta', click: function (e) { console.log(e) } },
-            { name: 'Alpha', click: function (e) { console.log(e) } },
+            { name: 'Release', type: 'release' },
+            { name: 'Snapshot', type: 'snapshot' },
+            { name: 'Modified', type: 'modified' },
+            { name: 'Beta', type: 'old_beta' },
+            { name: 'Alpha', type: 'old_alpha' },
         ];
-        const dd_elements = dropdown_items.map(i => {
-            const root_item = createElement('a', null, i.name);
-            root_item.onclick = i.click;
-            return root_item;
-        });
-        const svg_element = SVG('dropdown-key');
-        const dropdown = createElement('div', { class: 'dropdown hidden', id: 'dd-elements' }, ...dd_elements);
-        const root_dropdown = createElement('div', { class: 'container-f', id: 'dropdown-list' },
-            createElement('div', { class: 'header' },
-                createElement('h1', null, 'Версии'),
-                svg_element
-            ),
-            dropdown
-        );
-        root_dropdown.onclick = (e) => {
-            svg_element.classList.toggle('open')
-            dropdown.toggle()
-        };
-        return root_dropdown;
+        const dropdown = new DropdownSelector();
+        const dropdowm_selector = dropdown.createSelector(dropdown_items);
+        dropdown.onselect = (item) => {
+            console.log(item)
+        }
+        return dropdowm_selector;
     }
 
     get mainContent() {
