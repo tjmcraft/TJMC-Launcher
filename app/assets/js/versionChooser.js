@@ -106,7 +106,11 @@ class VersionChooser {
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
-        const root_flex = createElement('div', { class: 'VT-flex-box' }, 'Content')
+        const root_flex = createElement('div', { class: 'VT-flex-box' },
+
+            createElement('label', { class: '', for: 'name'}, 'Название'),
+            createElement('input', { class: '', type: 'text', id: 'name', name: 'name', placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени'})
+        )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
         cancel_button.onclick = () => {this.alertex.destroy()}
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')

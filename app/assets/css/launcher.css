@@ -500,10 +500,10 @@ input, select {
     height: 32px;
     width: 184px;
     color: #eee;
-    font-size: 15px;
-    font-family: 'Candara';
+    font-size: 14px;
+    font-family: 'system-ui';
     opacity: 0.8;
-    padding: 4px;
+    padding: 4px 8px;
     position: relative;
 }
 
@@ -1455,18 +1455,27 @@ a.anchor:hover {
 }
 
 .VT-flex-box {
-    display: flex;
-    flex-direction: row;
-    align-content: flex-start;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    /*margin: 1em;*/
-    width: auto;
+    margin: auto;
     box-sizing: border-box;
     flex: 1;
     overflow: auto;
     font-size: initial;
+    width: 20vw;
+    min-width: 330px;
+    text-align: initial;
+    padding: 1em;
+}
+
+.VT-flex-box input {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.VT-flex-box label {
+    padding: 0 2px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
 .VT-header {
