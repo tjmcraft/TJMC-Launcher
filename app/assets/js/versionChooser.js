@@ -107,11 +107,18 @@ class VersionChooser {
             createElement('div', { class: 'full separator' })
         );
         const root_flex = createElement('div', { class: 'VT-flex-box' },
-            createElement('div', { class: 'children-zx1'},
-                createElement('label', { class: '', for: 'name'}, 'Название'),
+            createElement('div', { class: 'children-zx1' },
+                createElement('label', { class: '', for: 'name' }, 'Название'),
                 createElement('input', { class: '', type: 'text', id: 'name', name: 'name', placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени' })
             ),
-            createElement('div', { class: 'children-zx1'},
+            createElement('div', { class: 'children-zx1' },
+                createElement('div', { class: 'input-wrapper' },
+                    createElement('input', { class: 'file', type: 'file', id: 'name', name: 'name', placeholder: '<папка по умолчанию>', webkitdirectory: true }),
+                    createElement('div', { class: 'file-flex' },
+                        createElement('input', { class: 'file-name', type: 'text', id: 'file-name', name: 'file-name', readonly: true }),
+                        createElement('input', { class: 'file-button', type: 'button', value: 'Обзор'})
+                    )
+                ),
                 createElement('label', { class: '', for: 'name'}, 'Папка игры'),
                 createElement('input', { class: '', type: 'file', id: 'name', name: 'name', placeholder: '<папка по умолчанию>', webkitdirectory: true })
             )
