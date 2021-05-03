@@ -13,7 +13,7 @@ class VersionChooser {
 
         this.refreshVersions()
 
-        this.alertex = new AlertEx({ header: 'Добавление версии' },
+        this.alertex = new AlertEx({  },
             createElement('div', { class: 'inner-container'}, this.Base, this.tools)
         )
         this.el.sidebar = this.alertex.content.qsl('#version-list .sidebar')
@@ -107,10 +107,12 @@ class VersionChooser {
             createElement('div', { class: 'full separator' })
         );
         const root_flex = createElement('div', { class: 'VT-flex-box' }, 'Content')
-
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
         cancel_button.onclick = () => {this.alertex.destroy()}
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
+        accept_button.onclick = () => {
+            this.addVersion(props.version.id)
+        }
         const footer = createElement('section', { class: 'VT-footer' },
             createElement('div', { class: 'full separator' }),
             cancel_button, accept_button
@@ -130,5 +132,9 @@ class VersionChooser {
         })
         this.main_content.replaceWith(main_content)
         this.main_content = main_content
+    }
+
+    addVersion(version) {
+        API.VersionManager.getVersionManifest(version)
     }
 }

@@ -354,7 +354,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     overflow-x: hidden;
     white-space: pre-line;
     font-size: 16px;
-    font-family: 'Candara';
+    font-family: 'Segoe UI';
 }
 
 .overlay #container > div.icon {
@@ -661,10 +661,10 @@ svg[data-icon="success-circle"] {
 }
 
 h2 {
-    text-transform: uppercase;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 20px;
+    /* text-transform: uppercase; */
+    font-size: 20px;
+    /* font-weight: 600; */
+    line-height: normal;
 }
 
 h5 {
@@ -925,7 +925,7 @@ input:checked + .toggleSwitchSlider:before {
 }
 .sidebar-main > .sidebar-region > .sidebar {
     width: 100%;
-    padding: 10px 10px 20px 10px;
+    padding: 10px 5px 20px 0px;
 }
 .sidebar-main > .panel {
     flex: 0 0 auto;
@@ -1264,7 +1264,7 @@ input:checked + .toggleSwitchSlider:before {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    padding: 15px 25px 15px 25px;
+    padding: 0px 25px 10px 25px;
     font-size: 2em;
     line-height: normal;
     /*text-align: start;*/
@@ -1473,7 +1473,7 @@ a.anchor:hover {
     position: relative;
 }
 .VT-header > h2 {
-    margin: 1em;
+    margin: 1rem;
 }
 
 .VT-footer {
