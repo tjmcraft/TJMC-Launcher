@@ -371,7 +371,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay #container > .inner-container {
     position: relative;
     width: 65vw;
-    height: 55vh;
+    height: 60vh;
 
 }
 
@@ -1460,8 +1460,9 @@ a.anchor:hover {
     flex: 1;
     overflow: auto;
     font-size: initial;
-    width: 20vw;
+    width: 70%;
     min-width: 330px;
+    max-width: 450px;
     text-align: initial;
     padding: 1em;
 }
@@ -1476,6 +1477,11 @@ a.anchor:hover {
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
+}
+
+.VT-flex-box .children-zx1 {
+    position: relative;
+    margin: 1em 0;
 }
 
 .VT-header {

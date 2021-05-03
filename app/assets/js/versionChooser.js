@@ -107,9 +107,14 @@ class VersionChooser {
             createElement('div', { class: 'full separator' })
         );
         const root_flex = createElement('div', { class: 'VT-flex-box' },
-
-            createElement('label', { class: '', for: 'name'}, 'Название'),
-            createElement('input', { class: '', type: 'text', id: 'name', name: 'name', placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени'})
+            createElement('div', { class: 'children-zx1'},
+                createElement('label', { class: '', for: 'name'}, 'Название'),
+                createElement('input', { class: '', type: 'text', id: 'name', name: 'name', placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени' })
+            ),
+            createElement('div', { class: 'children-zx1'},
+                createElement('label', { class: '', for: 'name'}, 'Папка игры'),
+                createElement('input', { class: '', type: 'file', id: 'name', name: 'name', placeholder: '<папка по умолчанию>', webkitdirectory: true })
+            )
         )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
         cancel_button.onclick = () => {this.alertex.destroy()}
