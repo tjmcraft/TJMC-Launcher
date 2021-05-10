@@ -106,21 +106,17 @@ class VersionChooser {
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
+        const input = new Input({ type: 'file' });
+        input.onchange = (e, paths, files) => { console.log(paths) }
+        const file_input = input.create({ placeholder: '<папка по умолчанию>', button_name: 'Обзор' });
         const root_flex = createElement('div', { class: 'VT-flex-box' },
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'name' }, 'Название'),
                 createElement('input', { class: '', type: 'text', id: 'name', name: 'name', placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени' })
             ),
             createElement('div', { class: 'children-zx1' },
-                createElement('div', { class: 'input-wrapper' },
-                    createElement('input', { class: 'file', type: 'file', id: 'name', name: 'name', placeholder: '<папка по умолчанию>', webkitdirectory: true }),
-                    createElement('div', { class: 'file-flex' },
-                        createElement('input', { class: 'file-name', type: 'text', id: 'file-name', name: 'file-name', readonly: true }),
-                        createElement('input', { class: 'file-button', type: 'button', value: 'Обзор'})
-                    )
-                ),
                 createElement('label', { class: '', for: 'name'}, 'Папка игры'),
-                createElement('input', { class: '', type: 'file', id: 'name', name: 'name', placeholder: '<папка по умолчанию>', webkitdirectory: true })
+                file_input
             )
         )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')

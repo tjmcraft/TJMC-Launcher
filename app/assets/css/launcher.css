@@ -1549,3 +1549,76 @@ a.anchor:hover {
     text-transform: uppercase;
     margin-left: 1rem;
 }
+
+.input-wrapper input[type=file] {
+    display: none;
+    outline: 0;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none
+}
+
+.input-wrapper .label {
+    width: 120px;
+    border: 2px dashed grey;
+    border-radius: 5px;
+    display: block;
+    padding: 1.2em;
+    transition: border 300ms ease;
+    cursor: pointer;
+    text-align: center
+}
+
+.input-wrapper .input .title {
+    color: grey;
+    transition: 200ms color
+}
+
+.input-wrapper .input {
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: -internal-light-dark(black, white);
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    appearance: textfield;
+    background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+    padding: 1px 2px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+    border-image: initial;
+    border: 1px solid gray;
+    border-width: 0px 0px 1px 0px;
+    background-color: #1a1a1a !important;
+    outline: none;
+    height: 32px;
+    width: 184px;
+    color: #eee;
+    font-size: 14px;
+    font-family: 'system-ui';
+    opacity: 0.8;
+    padding: 4px 4px 4px 8px;
+    position: relative;
+    width: 100%;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-wrapper .small-button {
+    line-height: initial;
+    width: 52px;
+    height: auto;
+    display: block;
+    text-align: center;
+    border-radius: initial;
+}

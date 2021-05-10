@@ -122,3 +122,44 @@ class Carousel {
         }
     }
 }
+
+class Input {
+    input_title;
+    constructor(props) {
+        this.type = props.type || 'text';
+    }
+    createFileInput(props) {
+        const input = createElement('input', { type: 'file', webkitdirectory: true, multiple: true, directory: true });
+        this.input_title = createElement('span', { class: 'title' }, props?.placeholder || 'path/to/dir');
+        const button = createElement('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
+        const root_element = createElement('label', { class: 'input' }, input, this.input_title, button);
+        input.onchange = (e) => {
+            let files = e.target.files;
+            var path = getPath(files[0].path);
+            //console.log(files);
+            this.onchange(e, path, files);
+        }
+        return root_element;
+    }
+    createTextInput(props) {
+        const input = createElement('input', { type: 'text' });
+        const root_element = createElement('label', { class: 'input' }, input);
+        return root_element;
+    }
+    create(props) {
+        const root_element = createElement('div', { class: 'input-wrapper' },
+            this.type == 'file' ? this.createFileInput(props) :
+                this.createTextInput(props)
+        );
+        return root_element;
+    }
+    render(props) {
+        this.input_title.innerHTML = props.title;
+    }
+    onchange(e){}
+}
+
+function getPath(path){
+    path = path.match(/(^.*[\\\/]|^[^\\\/].*)/i);
+    return path != null ? path[0] : false;
+}
