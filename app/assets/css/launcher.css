@@ -1622,3 +1622,19 @@ a.anchor:hover {
     text-align: center;
     border-radius: initial;
 }
+
+.input-wrapper.resolution {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: baseline;
+}
+
+.input-wrapper.resolution > input {
+    text-align: center;
+}
+
+.input-wrapper.resolution .resolutionCross {
+    position: relative;
+    margin: 0 1em;
+}

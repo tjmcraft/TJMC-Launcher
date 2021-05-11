@@ -122,8 +122,14 @@ class VersionChooser {
                 name_input
             ),
             createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'name'}, 'Папка игры'),
+                createElement('label', { class: '', for: 'dir'}, 'Папка игры'),
                 file_input
+            ),
+            createElement('div', { class: 'children-zx1' },
+                createElement('label', { class: '', for: 'res' }, 'Разрешение'),
+                createElement('div', { class: 'input-wrapper resolution'},
+                    createElement('input', { type: 'text', placeholder: '' }, 1000), createElement('div', {class: 'resolutionCross'}, '✖'), createElement('input', { type: 'text', placeholder: '' }, 1000)
+                )
             )
         )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
