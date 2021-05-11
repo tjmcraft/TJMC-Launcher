@@ -145,9 +145,11 @@ class Input {
         return root_element;
     }
     createTextInput(props) {
-        const input = createElement('input', { type: 'text' });
-        const root_element = createElement('label', { class: 'input' }, input);
-        return root_element;
+        const input = createElement('input', { type: 'text', placeholder: props?.placeholder || '' });
+        input.onchange = (e) => {
+            this.onchange(e, input.value);
+        }
+        return input;
     }
     create(props) {
         const root_element = createElement('div', { class: 'input-wrapper' },
