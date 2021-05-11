@@ -77,7 +77,7 @@ class SidebarMain {
         });
     };
     removeAll() {
-        this.root_content.removeAllChildNodes();
+        this.root_content.qsla('.item[version-id]').forEach(e => e.remove());
     };
 }
 
