@@ -101,13 +101,17 @@ class VersionChooser {
     }
 
     createMainContent(props) {
+
         let work_dir = null;
         let version_name = props?.version?.id ? `Версия ${props.version.id}` : 'без имени';
         let javaPath = null;
+        let jvmOpts = null;
+
         const header = createElement('section', { class: 'VT-header'},
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
+
         /* ===== */
         const input_path = new Input({ type: 'path' });
         input_path.onchange = (e, path, files) => work_dir = path;
@@ -120,6 +124,12 @@ class VersionChooser {
         const input_java_path = new Input({ type: 'path' });
         input_java_path.onchange = (e, path, files) => javaPath = path;
         const java_path_input = input_java_path.create({ placeholder: '<использовать встроенную Java>', button_name: 'Обзор' });
+        /* ===== */
+        const input_jvm_opts = new Input({ type: 'text' });
+        input_jvm_opts.onchange = (e, value) => jvmOpts = value;
+        const jvm_options_input = input_jvm_opts.create({ placeholder: 'options' });
+        /* ===== */
+
         const root_flex = createElement('div', { class: 'VT-flex-box' },
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'name' }, 'Название'),
@@ -140,6 +150,10 @@ class VersionChooser {
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'dir'}, 'Путь к java'),
                 java_path_input
+            ),
+            createElement('div', { class: 'children-zx1' },
+                createElement('label', { class: '', for: 'name' }, 'Параметры JVM'),
+                jvm_options_input
             )
         )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
