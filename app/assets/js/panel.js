@@ -151,9 +151,24 @@ class Input {
         }
         return input;
     }
+    createFileInput(props) {
+        const input = createElement('input', { type: 'file', multiple: props?.multiple || false });
+        this.input_title = createElement('span', { class: 'title' }, props?.placeholder || 'path/to/file');
+        const button = createElement('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
+        const root_element = createElement('label', { class: 'input' }, input, this.input_title, button);
+        input.onchange = (e) => {
+            let files = e.target.files;
+            var path = files[0].path;
+            console.debug(path);
+            this.render({title: path})
+            this.onchange(e, path, files);
+        }
+        return root_element;
+    }
     create(props) {
         const root_element = createElement('div', { class: 'input-wrapper' },
             this.type == 'path' ? this.createPathInput(props) :
+            this.type == 'file' ? this.createFileInput(props) :
                 this.createTextInput(props)
         );
         return root_element;

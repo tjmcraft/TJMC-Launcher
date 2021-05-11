@@ -121,9 +121,9 @@ class VersionChooser {
         input_text.onchange = (e, value) => version_name = value;
         const name_input = input_text.create({ placeholder: version_name });
         /* ===== */
-        const input_java_path = new Input({ type: 'path' });
-        input_java_path.onchange = (e, path, files) => javaPath = path;
-        const java_path_input = input_java_path.create({ placeholder: '<использовать встроенную Java>', button_name: 'Обзор' });
+        const input_java_file = new Input({ type: 'file' });
+        input_java_file.onchange = (e, path, files) => javaPath = path;
+        const java_file_input = input_java_file.create({ placeholder: '<использовать встроенную Java>', button_name: 'Обзор' });
         /* ===== */
         const input_jvm_opts = new Input({ type: 'text' });
         input_jvm_opts.onchange = (e, value) => jvmOpts = value;
@@ -149,7 +149,7 @@ class VersionChooser {
             ),
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'dir'}, 'Путь к java'),
-                java_path_input
+                java_file_input
             ),
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'name' }, 'Параметры JVM'),
