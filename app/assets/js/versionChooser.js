@@ -102,7 +102,7 @@ class VersionChooser {
 
     createMainContent(props) {
         let work_dir = null;
-        let version_name = null;
+        let version_name = props?.version?.id ? `Версия ${props.version.id}` : 'без имени';
         const header = createElement('section', { class: 'VT-header'},
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
@@ -114,7 +114,7 @@ class VersionChooser {
         /* ===== */
         const input_text = new Input({ type: 'text' });
         input_text.onchange = (e, value) => version_name = value;
-        const name_input = input_text.create({ placeholder: props?.version?.id ? `Версия ${props.version.id}` : 'без имени' });
+        const name_input = input_text.create({ placeholder: version_name });
         /* ===== */
         const root_flex = createElement('div', { class: 'VT-flex-box' },
             createElement('div', { class: 'children-zx1' },
