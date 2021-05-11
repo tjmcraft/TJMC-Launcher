@@ -731,7 +731,7 @@ h5 {
     color: var(--header-secondary);
 }
 .divider {
-    margin: 20px 0 0 0;
+    margin: 20px 0 0 0 !important;
 }
 .full {
     margin: 8px 0;

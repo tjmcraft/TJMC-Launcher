@@ -106,8 +106,8 @@ class VersionChooser {
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
-        const input = new Input({ type: 'file' });
-        input.onchange = (e, paths, files) => { console.log(paths) }
+        const input = new Input({ type: 'path' });
+        input.onchange = (e, path, files) => { console.log(path) }
         const file_input = input.create({ placeholder: '<папка по умолчанию>', button_name: 'Обзор' });
         const root_flex = createElement('div', { class: 'VT-flex-box' },
             createElement('div', { class: 'children-zx1' },
@@ -123,7 +123,10 @@ class VersionChooser {
         cancel_button.onclick = () => {this.alertex.destroy()}
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
         accept_button.onclick = () => {
-            this.addVersion(props.version.id)
+            this.addVersion(props.version.id).then(() => {
+                refreshVersions();
+                this.alertex.destroy();
+            })
         }
         const footer = createElement('section', { class: 'VT-footer' },
             createElement('div', { class: 'full separator' }),
@@ -146,7 +149,7 @@ class VersionChooser {
         this.main_content = main_content
     }
 
-    addVersion(version) {
-        API.VersionManager.getVersionManifest(version)
+    async addVersion(version) {
+        await API.VersionManager.createInstallation(version, 'version name', 'directory', 1200, 700);
     }
 }

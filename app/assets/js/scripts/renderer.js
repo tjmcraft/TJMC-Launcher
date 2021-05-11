@@ -97,20 +97,11 @@ function removeMine() {
     API.VersionManager.removeVersion(version.id)
 }
 
-API.VersionManager.getLocalVersions().then((parsed) => {
-    parsed.forEach(i => {
-        sidebar_el.addItem(i, (item) => {
-            selectVersion(item)
-        });
-    })
-    qsl('.localVersions').append(sidebar_el.content())
-})
+
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
 })
-API.VersionManager.getVersion().then((version) => {
-    renderSelectVersion(version)
-})
+
 
 function selectVersion(version) {
     API.ConfigManager.setVersion(version)
@@ -125,6 +116,8 @@ function renderSelectVersion(version) {
     n.innerText = version.id
     d.innerText = version.type
 }
+
+
 
 
 /**
@@ -182,3 +175,19 @@ document.addEventListener('mouseover', e => {
         e.target.tooltip(tooltip)
     }
 })*/
+
+function refreshVersions() {
+    sidebar_el.removeAll();
+    API.VersionManager.getLocalVersions().then((parsed) => {
+        parsed.forEach(i => {
+            sidebar_el.addItem(i, (item) => {
+                selectVersion(item)
+            });
+        })
+        qsl('.localVersions').append(sidebar_el.content())
+    })
+    API.VersionManager.getVersion().then((version) => {
+        renderSelectVersion(version)
+    })
+};
+refreshVersions();

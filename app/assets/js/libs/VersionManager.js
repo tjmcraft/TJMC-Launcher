@@ -51,13 +51,13 @@ exports.setVersion = function(v) {
  * Gets Main JSON of given version
  * @param version Version of Minecraft
  */
-exports.getVersionManifest = async function(version) {
-    logger.debug('Loading Version JSON for: '+version)
-    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
-    const versionJsonPath = path.join(versionPath, `${version}.json`)
+exports.getVersionManifest = async function(version, props = {}) {
+    logger.debug('Loading Version JSON for: ' + version);
+    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version);
+    const versionJsonPath = path.join(versionPath, `${version}.json`);
     var c_version = null;
     if (fs.existsSync(versionJsonPath)) {
-        c_version = JSON.parse(fs.readFileSync(versionJsonPath)) 
+        c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
         const parsed = await this.getGlobalVersions()
         for (const cv in parsed) {
@@ -67,21 +67,36 @@ exports.getVersionManifest = async function(version) {
         }
     }
     if (c_version.inheritsFrom) {
-        const inherit = await exports.getVersionManifest(c_version.inheritsFrom)
-        c_version.libraries = merge(c_version.libraries, inherit.libraries)
-        c_version.mainClass = c_version.mainClass || inherit.mainClass
-        c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments
-        c_version.assetIndex = c_version.assetIndex || inherit.assetIndex
-        c_version.downloads = c_version.downloads || inherit.downloads
+        const inherit = await exports.getVersionManifest(c_version.inheritsFrom);
+        c_version.libraries = merge(c_version.libraries, inherit.libraries);
+        c_version.mainClass = c_version.mainClass || inherit.mainClass;
+        c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
+        c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
+        c_version.downloads = c_version.downloads || inherit.downloads;
         if (c_version.arguments || inherit.arguments){
             c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
             c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
         }
-        delete c_version.inheritsFrom
+        delete c_version.inheritsFrom;
     }
-    fs.mkdirSync(versionPath, {recursive: true})
-    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version))
+    c_version = Object.assign(c_version, props);
+    fs.mkdirSync(versionPath, { recursive: true });
+    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version));
     return c_version
+}
+
+exports.createInstallation = async function (version, name, dir, resolution_width, resolution_height, java, java_args) {
+    logger.debug("Creating installation configuration for version " + version);
+    await exports.getVersionManifest(version, {
+        name: name || version || undefined,
+        gameDir: dir || undefined,
+        resolution: {
+            width: resolution_width <= 0 ? 854 : resolution_width,
+            height: resolution_height <= 0 ? 480 : resolution_height
+        },
+        javaDir: java || undefined,
+        javaArgs: java_args || undefined
+    })
 }
 
 exports.removeVersion = async function(version) {

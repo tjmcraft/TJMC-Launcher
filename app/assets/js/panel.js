@@ -76,6 +76,9 @@ class SidebarMain {
             e.classList[e.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
         });
     };
+    removeAll() {
+        this.root_content.removeAllChildNodes();
+    };
 }
 
 class Carousel {
@@ -128,15 +131,15 @@ class Input {
     constructor(props) {
         this.type = props.type || 'text';
     }
-    createFileInput(props) {
-        const input = createElement('input', { type: 'file', webkitdirectory: true, multiple: true, directory: true });
+    createPathInput(props) {
+        const input = createElement('input', { type: 'file', webkitdirectory: true, directory: true });
         this.input_title = createElement('span', { class: 'title' }, props?.placeholder || 'path/to/dir');
         const button = createElement('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
         const root_element = createElement('label', { class: 'input' }, input, this.input_title, button);
         input.onchange = (e) => {
             let files = e.target.files;
             var path = getPath(files[0].path);
-            //console.log(files);
+            this.render({title: path})
             this.onchange(e, path, files);
         }
         return root_element;
@@ -148,7 +151,7 @@ class Input {
     }
     create(props) {
         const root_element = createElement('div', { class: 'input-wrapper' },
-            this.type == 'file' ? this.createFileInput(props) :
+            this.type == 'path' ? this.createPathInput(props) :
                 this.createTextInput(props)
         );
         return root_element;
@@ -156,7 +159,9 @@ class Input {
     render(props) {
         this.input_title.innerHTML = props.title;
     }
-    onchange(e){}
+    onchange(e) {
+        console.log(122)
+    }
 }
 
 function getPath(path){
