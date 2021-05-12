@@ -34,7 +34,7 @@ class SidebarMain {
     root_sidebar;
     root_content;
     constructor(props) {
-        this.base(null);
+        this.base();
     };
     base() {
         const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
@@ -78,6 +78,48 @@ class SidebarMain {
     };
     removeAll() {
         this.root_content.qsla('.item[version-id]').forEach(e => e.remove());
+    };
+}
+
+class versionsSidebar {
+    root_sidebar;
+    root_content;
+    constructor(props) {
+        this.createBase();
+    };
+    createBase(...content) {
+        this.root_content = createElement('div', { class: 'sidebar' }, ...content);
+        this.root_sidebar = createElement('div', { class: 'sidebar-region' },
+            this.root_content
+        );
+        return this.root_sidebar;
+    };
+    addItem(item, click = ()=>{}) {
+        const root_item = createElement('div', {
+            class: 'item navItem',
+            'version-id': item.id
+        }, item.id);
+        root_item.addEventListener('click', (e) => {
+            this.selectVersion(item);
+            if (typeof click === 'function')
+                click.call(this, e, item);
+        });
+        this.root_content.appendChild(root_item);
+    };
+    removeItem(item) {
+        const selected_item = this.root_content.qsl(`.item[version-id=${item.id}]`);
+        this.root_content.removeChild(selected_item);
+    };
+    content(def = false) {
+        return !def && this.root_sidebar ? this.root_sidebar : this.base();
+    };
+    selectVersion(version) {
+        this.root_content.qsla('.item').forEach(e => {
+            e.classList[e.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected');
+        });
+    };
+    removeAll() {
+        this.root_content.qsla('.item.navItem').forEach(e => e.remove());
     };
 }
 

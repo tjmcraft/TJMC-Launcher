@@ -16,7 +16,6 @@ class VersionChooser {
         this.alertex = new AlertEx({  },
             createElement('div', { class: 'inner-container'}, this.Base, this.tools)
         )
-        this.el.sidebar = this.alertex.content.qsl('#version-list .sidebar')
     }
     destroy() {
         this.escBinder.uibind()
@@ -24,27 +23,11 @@ class VersionChooser {
     }
     refreshVersions(type = 'all') {
         API.VersionManager.getGlobalVersions().then((parsed) => {
-            this.el.sidebar.removeAllChildNodes()
-            let versions = parsed.filter((i) => {return type == 'all' ? true : i.type == type })
-            for (const version of versions) {
-                this.addItem(version)
-            }
+            const versions = parsed.filter((i) => { return type == 'all' ? true : i.type == type });
+            const click = (e, item) => this.renderVersion(item)
+            this.sidebar.removeAll();
+            versions.forEach(version => this.sidebar.addItem(version, click));
         })
-    }
-    addItem(item) {
-        let c = this.el.sidebar
-        let i = createElement('div', {class: 'item navItem'})
-        i.setAttribute('version-id', item.id)
-        i.innerHTML = item.id
-        i.onclick = (e) => {
-            this.renderVersion(item)
-        }
-        c.append(i)
-    }
-    remItem(item) {
-        let c = this.el.sidebar
-        let i = c.qsl(`[version-id=${item.id}]`)
-        c.removeChild(i)
     }
 
     get Base() {
@@ -52,7 +35,7 @@ class VersionChooser {
         const root = createElement('div', { class: 'container', id: 'version-selector' },
             createElement('div', { class: 'sidebar-main', id: 'version-list' },
                 this.dropdown,
-                createElement('div', { class: 'sidebar-region' }, this.sidebar)
+                this.createSidebar()
             ),
             createElement('div', { class: 'base', id: 'main' },
                 this.main_content
@@ -61,7 +44,8 @@ class VersionChooser {
         return root;
     }
 
-    get sidebar() {
+    createSidebar() {
+        this.sidebar = new versionsSidebar();
         const sidebar_items = [
             { type: 'navItem bgL' },
             { type: 'navItem bgL' },
@@ -74,8 +58,10 @@ class VersionChooser {
             const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
             return root_item;
         });
-        const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
-        return root_sidebar;
+        const sidebar = this.sidebar.createBase(...items);
+
+        //const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
+        return sidebar;
     }
 
     get dropdown() {
