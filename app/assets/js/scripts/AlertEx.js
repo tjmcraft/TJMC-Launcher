@@ -89,7 +89,7 @@ class AlertEx {
 
         setTimeout(() => {
             this.overlay.toggle(true)
-        })
+        }, 10)
 
     }
 
