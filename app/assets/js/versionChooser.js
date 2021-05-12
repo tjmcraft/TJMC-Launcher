@@ -1,25 +1,14 @@
 class VersionChooser {
-    el = [];
-    selected_props = [];
+    
     constructor() {
-        this.escBinder = new escBinder()
-        this.escBinder.bind(() => {
-            this.destroy()
-        })
-
         this.sidebar = new versionsSidebar();
-
         this.alertex = new AlertEx(
             { closeButton: true },
             createElement('div', { class: 'inner-container'}, this.Base)
         )
-
         this.refreshVersions()
     }
-    destroy() {
-        this.escBinder.uibind()
-        this.alertex.destroy()
-    }
+
     refreshVersions(type = 'all') {
         API.VersionManager.getGlobalVersions().then((parsed) => {
             const versions = parsed.filter((i) => { return type == 'all' ? true : i.type == type });
