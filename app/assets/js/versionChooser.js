@@ -2,20 +2,19 @@ class VersionChooser {
     el = [];
     selected_props = [];
     constructor() {
-        this.tools = createToolsContainer(() => {
-            this.destroy()
-        })
-
         this.escBinder = new escBinder()
         this.escBinder.bind(() => {
             this.destroy()
         })
 
-        this.refreshVersions()
+        this.sidebar = new versionsSidebar();
 
-        this.alertex = new AlertEx({  },
-            createElement('div', { class: 'inner-container'}, this.Base, this.tools)
+        this.alertex = new AlertEx(
+            { closeButton: true },
+            createElement('div', { class: 'inner-container'}, this.Base)
         )
+
+        this.refreshVersions()
     }
     destroy() {
         this.escBinder.uibind()
@@ -45,7 +44,6 @@ class VersionChooser {
     }
 
     createSidebar() {
-        this.sidebar = new versionsSidebar();
         const sidebar_items = [
             { type: 'navItem bgL' },
             { type: 'navItem bgL' },
@@ -59,8 +57,6 @@ class VersionChooser {
             return root_item;
         });
         const sidebar = this.sidebar.createBase(...items);
-
-        //const root_sidebar = createElement('div', { class: 'sidebar' }, ...items);
         return sidebar;
     }
 

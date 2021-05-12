@@ -17,12 +17,12 @@ class AlertEx {
      * @param {...any} nodes - Additional nodes that will be added to main container
      * @returns
      */
-    constructor(params, ...nodes) {
+    constructor(params = {}, ...nodes) {
         if (!params) throw new Error('No parametrs given');
         this.root_container = createElement('div', { id: 'container' });
         this.root_container.onclick = (event) => { event.stopPropagation() };
 
-        if (params.type) {
+        if (params?.type) {
             let data = null
             switch (params.type) {
                 case 'info':
@@ -48,22 +48,22 @@ class AlertEx {
             }
         }
 
-        if (params.header) {
+        if (params?.header) {
             let h = createElement('h1')
             h.innerHTML = params.header
             this.root_container.appendChild(h)
         }
 
-        if (params.text) {
+        if (params?.text) {
             const p = createElement('p')
             p.append(params.text)
             this.root_container.appendChild(p)
         }
 
-        if (params.buttons) {
+        if (params?.buttons) {
             const hr = createElement('hr')
             this.root_container.append(hr)
-            for (let bp of params.buttons) {
+            for (let bp of params?.buttons) {
                 let button = createElement('button', {class: bp.class ? bp.class : ''})
                 button.innerText = bp.name
                 button.onclick = () => {
@@ -78,7 +78,7 @@ class AlertEx {
             this.root_container.append(node);
         }
 
-        this.overlay = this.createOverlay(params.closeButton, this.root_container)
+        this.overlay = this.createOverlay(params?.closeButton, this.root_container)
 
         this.overlay.onclick = (e) => { this.destroy(e) }
         
@@ -99,13 +99,9 @@ class AlertEx {
      * @param  {...any} nodes - Nodes for overlay
      * @returns 
      */
-    createOverlay(closeButton = false, ...nodes){
-        const overlay = createElement('div', { class: 'overlay' }, ...nodes);
+    createOverlay(closeButton = false, ...nodes) {
+        const overlay = createElement('div', { class: 'overlay' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
         overlay.toggle(false);
-        if (closeButton) {
-            const tools = createToolsContainer((e) => this.destroy);
-            overlay.appendChild(tools);
-        }
         return overlay;
     }
 
