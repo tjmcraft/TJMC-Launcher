@@ -78,26 +78,30 @@ class VersionChooser {
         let javaPath = null;
         let jvmOpts = null;
 
+        const version_opts = {
+            name: props?.version?.id ? `Версия ${props.version.id}` : 'без имени'
+        }
+
         const header = createElement('section', { class: 'VT-header'},
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
 
         /* ===== */
-        const input_path = new Input({ type: 'path' });
-        input_path.onchange = (e, path, files) => work_dir = path;
-        const file_input = input_path.create({ placeholder: '<папка по умолчанию>', button_name: 'Обзор' });
-        /* ===== */
         const input_text = new Input({ type: 'text' });
-        input_text.onchange = (e, value) => version_name = value;
+        input_text.onchange = (e, value) => version_opts.name = value;
         const name_input = input_text.create({ placeholder: version_name });
         /* ===== */
+        const input_path = new Input({ type: 'path' });
+        input_path.onchange = (e, path, files) => version_opts.gameDir = path;
+        const file_input = input_path.create({ placeholder: '<папка по умолчанию>', button_name: 'Обзор' });
+        /* ===== */
         const input_java_file = new Input({ type: 'file' });
-        input_java_file.onchange = (e, path, files) => javaPath = path;
+        input_java_file.onchange = (e, path, files) => version_opts.javaPath = path;
         const java_file_input = input_java_file.create({ placeholder: '<использовать встроенную Java>', button_name: 'Обзор' });
         /* ===== */
         const input_jvm_opts = new Input({ type: 'text' });
-        input_jvm_opts.onchange = (e, value) => jvmOpts = value;
+        input_jvm_opts.onchange = (e, value) => version_opts.javaArgs = value;
         const jvm_options_input = input_jvm_opts.create({ placeholder: 'options' });
         /* ===== */
 
@@ -157,7 +161,19 @@ class VersionChooser {
         this.main_content = main_content
     }
 
-    async addVersion(version, name, dir, res_w, res_h, javaPath, javaOpts) {
-        await API.VersionManager.createInstallation(version, name, dir, res_w, res_h, javaPath, javaOpts);
+    /**
+     * Create new version configuration
+     * @param {String} version - Version identifier
+     * @param {Object} options - Options for version
+     * @param {Object} options.name - Name of the version
+     * @param {Object} options.gameDir - Directory of the version
+     * @param {Object} options.javaPath - Path to executable java file
+     * @param {Object} options.javaArgs - Arguments for java machine
+     * @param {Object} options.resolution - Resolution of the game window
+     * @param {Object} options.resolution.width - Width of the game window
+     * @param {Object} options.resolution.height - Height of the game window
+     */
+    async addVersion(version, options = {}) {
+        await API.VersionManager.createInstallation(version, options);
     }
 }

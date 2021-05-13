@@ -1574,7 +1574,8 @@ a.anchor:hover {
 
 .input-wrapper .input .title {
     color: grey;
-    transition: 200ms color
+    transition: 200ms color;
+    overflow: hidden;
 }
 
 .input-wrapper .input {

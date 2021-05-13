@@ -85,17 +85,17 @@ exports.getVersionManifest = async function(version, props = {}) {
     return c_version
 }
 
-exports.createInstallation = async function (version, name, dir, resolution_width, resolution_height, java, java_args) {
+exports.createInstallation = async function (version, options) {
     logger.debug("Creating installation configuration for version " + version);
     await exports.getVersionManifest(version, {
-        name: name || version || undefined,
-        gameDir: dir || undefined,
+        name: options.name || version || undefined,
+        gameDir: options.gameDir || undefined,
         resolution: {
-            width: resolution_width <= 0 ? 854 : resolution_width,
-            height: resolution_height <= 0 ? 480 : resolution_height
+            width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
+            height: options.resolution?.height <= 0 ? 480 : options.resolution?.height
         },
-        javaDir: java || undefined,
-        javaArgs: java_args || undefined
+        javaPath: options.javaPath || undefined,
+        javaArgs: options.javaArgs || undefined
     })
 }
 
