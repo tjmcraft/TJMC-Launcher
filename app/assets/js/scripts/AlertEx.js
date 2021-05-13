@@ -19,7 +19,7 @@ class AlertEx {
      */
     constructor(params = {}, ...nodes) {
         if (!params) throw new Error('No parametrs given');
-        this.root_container = createElement('div', { id: 'container' });
+        this.root_container = createElement('div', { class: 'container-ov1' });
         this.root_container.onclick = (event) => { event.stopPropagation() };
 
         if (params?.type) {
@@ -89,7 +89,7 @@ class AlertEx {
 
         setTimeout(() => {
             this.overlay.toggle(true)
-        }, 10)
+        }, 50)
 
     }
 
