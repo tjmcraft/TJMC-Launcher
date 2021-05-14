@@ -446,7 +446,9 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .overlay > .container-ov1 > p {
-    margin: 2em 0;
+    margin: 1em 0 2em 0;
+    line-height: normal;
+    font-size: 1em;
 }
 
 .overlay > .container-ov1 > svg {

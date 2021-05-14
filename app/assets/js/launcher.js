@@ -36,18 +36,18 @@ class launcher extends EventEmitter {
 
     async construct() {
 
-        logg.log('Attempting to load main json')
+        logg.log(`Attempting to load main json for ${this.options.version.id}`)
         const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
         const javaPath = versionFile?.javaPath || this.options?.java?.javaPath || 'java';
 
         const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
-            return
+            throw new Error(java.message)
         }
 
         if (!fs.existsSync(this.options.overrides.path.root)) {
-            logg.log('Attempting to create root folder')
+            logg.log(`Attempting to create root folder (${this.options.overrides.path.root})`)
             fs.mkdirSync(this.options.overrides.path.root, {recursive: true})
         }
         if (this.options.overrides.path.gameDirectory) {
@@ -56,8 +56,6 @@ class launcher extends EventEmitter {
               fs.mkdirSync(this.options.overrides.path.gameDirectory, {recursive: true})
             }
         }
-
-
 
         if (!fs.existsSync(this.options.mcPath)) {
             logg.log('Attempting to download Minecraft version jar')
@@ -74,8 +72,6 @@ class launcher extends EventEmitter {
         const assets = await this.handler.getAssets(versionFile)
 
         return [javaPath, this.handler.constructJVMArguments(versionFile, nativePath, classes)]
-        
-        return
     }
     async createJVM (java, launchArguments) {
         logg.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`)
@@ -87,7 +83,6 @@ class launcher extends EventEmitter {
                 detached: this.options.java.detached
             }
         )
-        
         minecraft.stdout.on('data', (data) => logg.log(data.toString('utf-8')))
         minecraft.stderr.on('data', (data) => logg.error(data.toString('utf-8')))
         minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
