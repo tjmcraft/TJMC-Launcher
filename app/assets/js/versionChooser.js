@@ -123,15 +123,13 @@ class VersionChooser {
             )
         )
         const cancel_button = createElement('button', { class: '' }, 'Отмена')
-        cancel_button.onclick = () => {this.alertex.destroy()}
+        cancel_button.onclick = () => this.alertex.destroy()
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
-        accept_button.onclick = () => {
-            /*this.addVersion(props.version.id, version_opts).then(() => {
+        accept_button.onclick = () => 
+            this.addVersion(props.version.id, version_opts).then(() => {
                 refreshVersions();
                 this.alertex.destroy();
-            })*/
-            console.debug(version_opts)
-        }
+            })
         const footer = createElement('section', { class: 'VT-footer' },
             createElement('div', { class: 'full separator' }),
             cancel_button, accept_button
@@ -145,7 +143,6 @@ class VersionChooser {
     }
 
     renderVersion(version) {
-        console.debug(version)
         const main_content = this.createMainContent({
             version: version
         })
