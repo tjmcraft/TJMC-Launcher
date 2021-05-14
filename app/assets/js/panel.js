@@ -188,9 +188,7 @@ class Input {
     }
     createTextInput(props) {
         const input = createElement('input', { type: 'text', placeholder: props?.placeholder || '' });
-        input.onchange = (e) => {
-            this.onchange(e, input.value);
-        }
+        input.oninput = (e) => this.onchange(e, input.value);
         return input;
     }
     createFileInput(props) {
@@ -208,17 +206,29 @@ class Input {
         return root_element;
     }
     createResolutionInput(props) {
-        createElement('div', { class: 'input-wrapper resolution'},
-            createElement('input', { type: 'text', placeholder: 'Ширина', value: 1024 }),
+        const input_data = {}
+        const width_input = createElement('input', { type: 'text', placeholder: props?.w_placeholder || '', 'data-type': 'resolution-width' });
+        width_input.oninput = (e) => {
+            input_data.width = width_input.value
+            this.onchange(e, input_data)
+        }
+        const height_input = createElement('input', { type: 'text', placeholder: props?.h_placeholder || '', 'data-type': 'resolution-height' });
+        height_input.oninput = (e) => {
+            input_data.height = height_input.value
+            this.onchange(e, input_data)
+        }
+        return createElement('div', { class: 'resolution'},
+            width_input,
             createElement('div', { class: 'resolutionCross' }, '✖'),
-            createElement('input', { type: 'text', placeholder: 'Высота', value: 768 })
+            height_input
         )
     }
     create(props) {
-        const root_element = createElement('div', { class: 'input-wrapper' },
+        const root_element = createElement('div', { class: 'input-wrapper', inptype: props?.type },
             this.type == 'path' ? this.createPathInput(props) :
-            this.type == 'file' ? this.createFileInput(props) :
-                this.createTextInput(props)
+                this.type == 'file' ? this.createFileInput(props) :
+                    this.type == 'resolution' ? this.createResolutionInput(props) :
+                        this.createTextInput(props)
         );
         return root_element;
     }

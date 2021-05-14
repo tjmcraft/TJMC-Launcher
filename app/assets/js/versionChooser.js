@@ -72,25 +72,17 @@ class VersionChooser {
     }
 
     createMainContent(props) {
-
-        let work_dir = null;
-        let version_name = props?.version?.id ? `Версия ${props.version.id}` : 'без имени';
-        let javaPath = null;
-        let jvmOpts = null;
-
         const version_opts = {
             name: props?.version?.id ? `Версия ${props.version.id}` : 'без имени'
         }
-
         const header = createElement('section', { class: 'VT-header'},
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
         );
-
         /* ===== */
         const input_text = new Input({ type: 'text' });
         input_text.onchange = (e, value) => version_opts.name = value;
-        const name_input = input_text.create({ placeholder: version_name });
+        const name_input = input_text.create({ placeholder: version_opts.name });
         /* ===== */
         const input_path = new Input({ type: 'path' });
         input_path.onchange = (e, path, files) => version_opts.gameDir = path;
@@ -102,9 +94,12 @@ class VersionChooser {
         /* ===== */
         const input_jvm_opts = new Input({ type: 'text' });
         input_jvm_opts.onchange = (e, value) => version_opts.javaArgs = value;
-        const jvm_options_input = input_jvm_opts.create({ placeholder: 'options' });
+        const jvm_options_input = input_jvm_opts.create({ placeholder: 'Java Arguments' });
         /* ===== */
-
+        const input_resolution = new Input({ type: 'resolution' });
+        input_resolution.onchange = (e, value) => version_opts.resolution = value;
+        const resolution_input = input_resolution.create({ w_placeholder: '<авто>', h_placeholder: '<авто>'});
+        /* ===== */
         const root_flex = createElement('div', { class: 'VT-flex-box' },
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'name' }, 'Название'),
@@ -116,11 +111,7 @@ class VersionChooser {
             ),
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'res' }, 'Разрешение'),
-                createElement('div', { class: 'input-wrapper resolution'},
-                    createElement('input', { type: 'text', placeholder: 'Ширина', value: 1024 }),
-                    createElement('div', { class: 'resolutionCross' }, '✖'),
-                    createElement('input', { type: 'text', placeholder: 'Высота', value: 768 })
-                )
+                resolution_input
             ),
             createElement('div', { class: 'children-zx1' },
                 createElement('label', { class: '', for: 'dir'}, 'Путь к java'),
@@ -135,10 +126,11 @@ class VersionChooser {
         cancel_button.onclick = () => {this.alertex.destroy()}
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
         accept_button.onclick = () => {
-            this.addVersion(props.version.id, version_opts).then(() => {
+            /*this.addVersion(props.version.id, version_opts).then(() => {
                 refreshVersions();
                 this.alertex.destroy();
-            })
+            })*/
+            console.debug(version_opts)
         }
         const footer = createElement('section', { class: 'VT-footer' },
             createElement('div', { class: 'full separator' }),
