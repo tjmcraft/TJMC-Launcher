@@ -1,9 +1,6 @@
 /* ================================= */
 
-
 const sidebar_el = new SidebarMain();
-//qsl('.localVersions').appendChild(sidebar_el.content());
-
 
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')
@@ -85,10 +82,11 @@ function startMine () {
         if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
     })
     topBar.toggle(true)
-    launcher.construct().then((minecraftArguments) =>
-        launcher.createJVM(minecraftArguments).then((e) => {
+    launcher.construct().then(([java, minecraftArguments]) => {
+        launcher.createJVM(java, minecraftArguments).then((e) => {
             topBar.toggle(false)
         })
+    }
     )
 }
 
@@ -177,8 +175,8 @@ document.addEventListener('mouseover', e => {
 })*/
 
 function refreshVersions() {
-    sidebar_el.removeAll();
     API.VersionManager.getLocalVersions().then((parsed) => {
+        sidebar_el.removeAll();
         parsed.forEach(i => {
             sidebar_el.addItem(i, (item) => {
                 selectVersion(item)

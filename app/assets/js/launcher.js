@@ -14,6 +14,17 @@ class launcher extends EventEmitter {
         API.shell.openPath(path);
     }
 
+    /**
+     * Minecraft launcher constructor
+     * @param {Object} options - Options to construct the launcher 
+     * @param {Object} options.overrides.path.version - Path to directory of version (where main jar located)
+     * @param {Object} options.overrides.path.root - Path to root directory of minecraft
+     * @param {Object} options.overrides.path.mcPath - Path to version main jar
+     * @param {Object} options.overrides.path.gameDirectory - Path to game directory
+     * @param {Object} options.java.javaPath - Path to java executable
+     * @param {Object} options.version - Version config
+     * @param {Object} options.version.id - ID of current version
+     */
     constructor (options) {
         super()
         this.options = options
@@ -23,9 +34,13 @@ class launcher extends EventEmitter {
         logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
     }
 
-    async construct () {
+    async construct() {
 
-        const java = await this.handler.checkJava(this.options.java.javaPath || 'java')
+        logg.log('Attempting to load main json')
+        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
+        const javaPath = versionFile?.javaPath || this.options?.java?.javaPath || 'java';
+
+        const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
             return
@@ -42,8 +57,7 @@ class launcher extends EventEmitter {
             }
         }
 
-        logg.log('Attempting to load main json')
-        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
+
 
         if (!fs.existsSync(this.options.mcPath)) {
             logg.log('Attempting to download Minecraft version jar')
@@ -59,14 +73,14 @@ class launcher extends EventEmitter {
         logg.log('Attempting to download assets')
         const assets = await this.handler.getAssets(versionFile)
 
-        return this.handler.constructJVMArguments(versionFile, nativePath, classes)
+        return [javaPath, this.handler.constructJVMArguments(versionFile, nativePath, classes)]
         
         return
     }
-    async createJVM (launchArguments) {
-        logg.debug(`Launching with arguments ${this.options.java.javaPath} ${launchArguments.join(' ')}`)
+    async createJVM (java, launchArguments) {
+        logg.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`)
         const minecraft = child.spawn(
-            this.options.java.javaPath, 
+            java,
             launchArguments,
             {
                 cwd: this.options.java.cwd || this.options.overrides.path.root,
