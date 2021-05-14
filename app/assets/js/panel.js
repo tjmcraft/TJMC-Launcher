@@ -207,6 +207,13 @@ class Input {
         }
         return root_element;
     }
+    createResolutionInput(props) {
+        createElement('div', { class: 'input-wrapper resolution'},
+            createElement('input', { type: 'text', placeholder: 'Ширина', value: 1024 }),
+            createElement('div', { class: 'resolutionCross' }, '✖'),
+            createElement('input', { type: 'text', placeholder: 'Высота', value: 768 })
+        )
+    }
     create(props) {
         const root_element = createElement('div', { class: 'input-wrapper' },
             this.type == 'path' ? this.createPathInput(props) :

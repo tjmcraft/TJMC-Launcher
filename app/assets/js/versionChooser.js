@@ -135,7 +135,7 @@ class VersionChooser {
         cancel_button.onclick = () => {this.alertex.destroy()}
         const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
         accept_button.onclick = () => {
-            this.addVersion(props.version.id, version_name, work_dir, undefined, undefined, javaPath).then(() => {
+            this.addVersion(props.version.id, version_opts).then(() => {
                 refreshVersions();
                 this.alertex.destroy();
             })
