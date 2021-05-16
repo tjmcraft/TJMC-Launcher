@@ -90,14 +90,14 @@ function startMine () {
             })
             minecraft.on('close', (code) => {
                 if (code != 0) {
-                    showError(error_out);
+                    showStartUpError(error_out);
                 }
             })
         })
-    }).catch(e => showError(e))
+    }).catch(e => showStartUpError(e))
 }
 
-function showError(error) {
+function showStartUpError(error) {
     new AlertEx({
         closeButton: true,
         type: 'error',
