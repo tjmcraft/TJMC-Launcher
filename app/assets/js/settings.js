@@ -224,7 +224,7 @@ class Settings {
                 if (typeof props.action === 'function')
                     props.action.call(this, this.checked, props.id)
             });
-            const description = createElement('div', { class: 'description' }, props.note);
+            const description = createElement('div', { class: 'description', html: true }, props.note);
             return (
                 createElement('div', {class: 'container-icf3v'},
                     createElement('div', {class: 'labelRow'},

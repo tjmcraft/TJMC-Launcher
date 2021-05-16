@@ -46,19 +46,27 @@ Element.prototype.qsla = qsla
  */
 function createElement(tag, attrs, ...childrens) {
     var element = document.createElement((typeof tag == 'string') ? tag : 'div');
+    var insert_html = false;
     for (let name in attrs) {
         if (name && attrs.hasOwnProperty(name)) {
             let value = attrs[name];
+            if (name == 'html' && value == true) { insert_html = true; continue; }
             if (value === true) {
                 element.setAttribute(name, name);
             } else if (value !== false && value != null) {
                 element.setAttribute(name, value.toString());
             }
+            
         }
     }
     for (let child of childrens) {
         if (child && child != null) {
-            element.append(child);
+            if (insert_html && child.nodeType == null) {
+                element.innerHTML += child;
+            } else {
+                element.append(child);
+            }
+            
         }
     }
     return element;
@@ -181,12 +189,12 @@ function getOffset( el ) {
  */
 function cleanObject(obj) {
     obj = obj || this;
-  var propNames = Object.getOwnPropertyNames(obj);
-  for (var i = 0; i < propNames.length; i++) {
-    var propName = propNames[i];
-    if (obj[propName] === null || obj[propName] === undefined || obj[propName]?.length == 0) {
-      delete obj[propName];
+    var propNames = Object.getOwnPropertyNames(obj);
+    for (var i = 0; i < propNames.length; i++) {
+        var propName = propNames[i];
+        if (obj[propName] === null || obj[propName] === undefined || Object.keys(obj[propName])?.length == 0) {
+            delete obj[propName];
+        }
     }
-  }
 }
 Object.prototype.clean = cleanObject
