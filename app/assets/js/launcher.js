@@ -43,7 +43,7 @@ class launcher extends EventEmitter {
         const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
-            throw new Error(java.message)
+            throw new Error(`Wrong java (${javaPath})`)
         }
 
         if (!fs.existsSync(this.options.overrides.path.root)) {
@@ -79,13 +79,24 @@ class launcher extends EventEmitter {
             java,
             launchArguments,
             {
+                encoding: 'utf8',
                 cwd: this.options.java.cwd || this.options.overrides.path.root,
                 detached: this.options.java.detached
             }
         )
-        minecraft.stdout.on('data', (data) => logg.log(data.toString('utf-8')))
-        minecraft.stderr.on('data', (data) => logg.error(data.toString('utf-8')))
-        minecraft.on('close', (code) => logg.warn('ExitCode: '+code))
+        let logg_out;
+        let error_out;
+        minecraft.stdout.on('data', (data) => {
+            logg_out = data.toString('utf-8');
+            logg.log(logg_out);
+        })
+        minecraft.stderr.on('data', (data) => {
+            error_out = data.toString('utf-8');
+            logg.error(error_out);
+        })
+        minecraft.on('close', (code) => {
+            logg.warn('ExitCode: ' + code);
+        })
         return minecraft
     }
 }

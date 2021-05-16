@@ -83,41 +83,32 @@ function startMine () {
     topBar.toggle(true)
     launcher.construct().then(([java, minecraftArguments]) => {
         launcher.createJVM(java, minecraftArguments).then((minecraft) => {
+            topBar.toggle(false)
             let error_out;
-            minecraft.stderr.on('data', (data) => error_out = (data.toString('utf-8')))
+            minecraft.stderr.on('data', (data) => {
+                error_out = data.toString('utf-8');
+            })
             minecraft.on('close', (code) => {
-                console.warn('ExitCode: ' + code);
-                if (code > 0) {
-                    new AlertEx({
-                        closeButton: true,
-                        type: 'error',
-                        header: 'Упс...',
-                        text: `Возможно возникла ошибка при запуске:\n\r${error_out}`,
-                        buttons: [{
-                            class: '',
-                            name: 'Ладно',
-                            callback: () => { },
-                            closeOverlay: true
-                        }]
-                    })
+                if (code != 0) {
+                    showError(error_out);
                 }
             })
-            
-            topBar.toggle(false)
         })
-    }).catch(err => {
-        new AlertEx({
-            closeButton: true,
-            type: 'error',
-            header: 'Упс...',
-            text: `Возможно возникла ошибка при запуске:\n${err}`,
-            buttons: [{
-                class: '',
-                name: 'Ладно',
-                callback: () => { },
-                closeOverlay: true
-            }]
-        })
+    }).catch(e => showError(e))
+}
+
+function showError(error) {
+    new AlertEx({
+        closeButton: true,
+        type: 'error',
+        header: 'Упс...',
+        text: `Возможно возникла ошибка при запуске:\n${error}`,
+        buttons: [{
+            class: '',
+            name: 'Ладно',
+            callback: () => { },
+            closeOverlay: true
+        }]
     })
 }
 

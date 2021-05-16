@@ -437,16 +437,17 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .overlay > .container-ov1 button {
-    font-family: 'Candara';
+    font-family: 'Segoe UI';
     font-size: 16px;
-    font-weight: 900;
-    margin: 1em;
+    font-weight: 700;
+    /* margin: 1em; */
     border-radius: 4px;
     width: 8em;
+    margin: 0em 1em 0em 1em;
 }
 
 .overlay > .container-ov1 > p {
-    margin: 1em 0 2em 0;
+    margin: 1em 0 1em 0;
     line-height: normal;
     font-size: 1em;
 }
@@ -459,7 +460,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     border: 0;
     height: 1px;
     background: #333;
-    margin: 0 1em;
+    margin: 1em 1em;
 }
 /* ------------------------------------------- */
 

@@ -30,9 +30,10 @@ class Minecraft {
      */
     async checkJava (java) {
         return new Promise(resolve => {
-            child.exec(`"${java}" -version`, (error, stdout, stderr) => {
+            let cmd = `"${java}" -version`;
+            child.exec(cmd, {  }, (error, stdout, stderr) => {
                 if (error) {
-                    resolve({run: false,message: error})
+                    resolve({run: false, message: error})
                 } else {
                     logg.debug(`Using Java version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`)
                     resolve({run: true})
