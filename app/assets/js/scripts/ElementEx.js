@@ -175,3 +175,18 @@ function getOffset( el ) {
     }
     return { top: _y, left: _x };
 }
+
+/**
+ * Clean object (remove null and undefined)
+ */
+function cleanObject(obj) {
+    obj = obj || this;
+  var propNames = Object.getOwnPropertyNames(obj);
+  for (var i = 0; i < propNames.length; i++) {
+    var propName = propNames[i];
+    if (obj[propName] === null || obj[propName] === undefined || obj[propName]?.length == 0) {
+      delete obj[propName];
+    }
+  }
+}
+Object.prototype.clean = cleanObject

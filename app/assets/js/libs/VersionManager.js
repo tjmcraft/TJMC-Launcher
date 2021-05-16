@@ -17,12 +17,18 @@ exports.getLocalVersions = async function() {
             let ver_path = path.join(dir_path, folder, folder + '.json')
             if (fs.existsSync(ver_path)){
                 let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
-                let version =  {
-                    id: file_c.id,
-                    type: file_c.type,
-                    time: file_c.time,
-                    releaseTime: file_c.releaseTime
+                let version = {
+                    name: file_c?.name || file_c?.id,
+                    id: file_c?.id,
+                    type: file_c?.type,
+                    time: file_c?.time,
+                    releaseTime: file_c?.releaseTime,
+                    gameDir: file_c?.gameDir,
+                    javaPath: file_c?.javaPath,
+                    javaArgs: file_c?.javaArgs,
+                    resolution: file_c?.resolution
                 }
+                version.clean();
                 ver_list.push(version)
             }
         })

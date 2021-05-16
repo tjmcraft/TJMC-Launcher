@@ -55,7 +55,8 @@ class SidebarMain {
         const root_item = createElement('div', {
             class: 'item navItem',
             'version-id': item.id
-        }, item.id);
+        }, item.name || item.id);
+        console.debug(item);
         root_item.addEventListener('click', (e) => {
             this.selectVersion(item)
             if (typeof click === 'function')
