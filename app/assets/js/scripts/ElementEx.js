@@ -198,3 +198,59 @@ function cleanObject(obj) {
     }
 }
 Object.prototype.clean = cleanObject
+
+function naturalCompare(a, b) {
+    var ax = [], bx = [];
+
+    a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]) });
+    b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]) });
+    
+    while(ax.length && bx.length) {
+        var an = ax.shift();
+        var bn = bx.shift();
+        var nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1]);
+        if(nn) return nn;
+    }
+
+    return ax.length - bx.length;
+}
+
+function natsort(arr) {
+    arr = arr || this;
+    if (arr.isArray) {
+        return arr.sort(naturalCompare);
+    }
+}
+Array.prototype.natsort = natsort
+
+/**
+ * Sort a 2 dimensional array based on 1 or more indexes
+ * 
+ * @param {Array} arr - array to sort
+ * @param {String|Array} key - The index(es) to sort the array on.
+ * 
+ * @return {Array} sorted array
+ */
+function msort(arr, key) {
+    if (arr.isArray && arr.length > 0 && key != null) {
+        let mapping = [];
+        arr.forEach((v, k) => {
+            let sort_key = '';
+            if (!k.isArray) {
+                sort_key = v[key];
+            } else {
+                key.forEach((key_key) => {
+                    sort_key += v[key_key];
+                })
+            }
+            mapping[k] = sort_key;
+        })
+        natsort(mapping);
+        let sorted = [];
+        mapping.forEach((v, k) => {
+            sorted[k] = arr[k];
+        })
+        return sorted;
+    }
+    return arr;
+}

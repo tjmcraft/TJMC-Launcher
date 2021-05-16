@@ -11,6 +11,7 @@ class VersionChooser {
 
     refreshVersions(type = 'all') {
         API.VersionManager.getGlobalVersions().then((parsed) => {
+            parsed = msort(parsed);
             const versions = parsed.filter((i) => { return type == 'all' ? true : i.type == type });
             const click = (e, item) => this.renderVersion(item)
             this.sidebar.removeAll();
