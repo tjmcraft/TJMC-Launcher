@@ -61,17 +61,18 @@ class AlertEx {
         }
 
         if (params?.buttons) {
-            const hr = createElement('hr')
-            this.root_container.append(hr)
+            //const hr = createElement('hr')
+            //this.root_container.append(hr)
+            const button_root_container = createElement('div', { class: 'vertical-button-container' });
             for (let bp of params?.buttons) {
-                let button = createElement('button', {class: bp.class ? bp.class : ''})
-                button.innerText = bp.name
-                button.onclick = () => {
+                const button_root = Button({ class: 'grow' + (bp.class ? ' ' + bp.class : '') }, bp.name)
+                button_root.onclick = () => {
                     if (bp.callback && typeof bp.callback === 'function') bp.callback()
                     if (bp.closeOverlay) this.destroy()
                 }
-                this.root_container.appendChild(button)
+                button_root_container.appendChild(button_root)
             }
+            this.root_container.appendChild(button_root_container);
         }
 
         for (const node of nodes) {

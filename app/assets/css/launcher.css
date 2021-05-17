@@ -345,11 +345,14 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     max-width: 75vw;
     max-height: 75vh;
     background: #252626;
-    display: inline;
+    display: flex;
+    /* align-items: center; */
+    /* justify-content: center; */
+    flex-direction: column;
     border-radius: 8px;
     min-width: 380px;
     min-height: 180px;
-    padding: 1em;
+    /* padding: 1em; */
     overflow-y: auto;
     overflow-x: hidden;
     white-space: pre-line;
@@ -358,6 +361,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .overlay > .container-ov1 > div.icon {
+    padding: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -437,13 +441,21 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .overlay > .container-ov1 button {
+    position: relative;
     font-family: 'Segoe UI';
     font-size: 16px;
     font-weight: 700;
-    /* margin: 1em; */
-    border-radius: 4px;
-    width: 8em;
-    margin: 0em 1em 0em 1em;
+    line-height: 16px;
+    padding: 2px 16px;
+    border-radius: 3px;
+    width: 96px;
+    min-width: 96px;
+    min-height: 38px;
+    height: 38px;
+    margin: 0em 0em 0em 1em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .overlay > .container-ov1 > p {
@@ -470,6 +482,18 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 .overlay > .container-ov1:hover::-webkit-scrollbar-thumb {
     background-color: rgb(170, 170, 170, 0.7);
+}
+
+.overlay .vertical-button-container {
+    flex: 0 0 auto;
+    background: #2f3136;
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    padding: 16px;
 }
 
 
@@ -526,6 +550,13 @@ button:hover {
 
 button:active {
     background-color: #3A3A3A;
+}
+
+button > .content {
+    margin: 0 auto;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 svg[data-icon="info-circle"] {
@@ -1499,6 +1530,9 @@ a.anchor:hover {
 
 .VT-footer {
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .carousel {
@@ -1644,4 +1678,8 @@ a.anchor:hover {
 .input-wrapper > .resolution > .resolutionCross {
     position: relative;
     margin: 0 1em;
+}
+
+.grow {
+    width: auto;
 }

@@ -245,3 +245,7 @@ function getPath(path){
     path = path.match(/(^.*[\\\/]|^[^\\\/].*)/i);
     return path != null ? path[0] : false;
 }
+
+function Button(props, ...elements) {
+    return createElement('button', props, createElement('div', {class: 'content'}, ...elements))
+}
