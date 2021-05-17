@@ -474,6 +474,15 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     background: #333;
     margin: 1em 1em;
 }
+
+.overlay > .container-ov1 > .content {
+    line-height: normal;
+    font-size: 1em;
+    overflow: hidden scroll;
+    position: relative;
+    z-index: 0;
+    padding: 0 8px 16px 16px;
+}
 /* ------------------------------------------- */
 
 

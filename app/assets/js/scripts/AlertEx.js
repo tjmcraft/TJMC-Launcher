@@ -42,22 +42,19 @@ class AlertEx {
                     break
             }
             if (data) {
-                const ie = createElement('div', { class: 'icon' })
-                ie.append(data)
+                const ie = createElement('div', { class: 'icon' }, data)
                 this.root_container.appendChild(ie)
             }
         }
 
         if (params?.header) {
-            let h = createElement('h1')
-            h.innerHTML = params.header
-            this.root_container.appendChild(h)
+            const header = createElement('h1', null, params.header)
+            this.root_container.appendChild(header)
         }
 
         if (params?.text) {
-            const p = createElement('p')
-            p.append(params.text)
-            this.root_container.appendChild(p)
+            const text_root = createElement('div', {class: 'content'}, params.text)
+            this.root_container.appendChild(text_root)
         }
 
         if (params?.buttons) {
