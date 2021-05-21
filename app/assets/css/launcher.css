@@ -357,7 +357,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     overflow-x: hidden;
     white-space: pre-line;
     font-size: 16px;
-    font-family: 'Segoe UI';
+    font-family: system-ui;
 }
 
 .overlay > .container-ov1 > div.icon {
@@ -442,7 +442,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .overlay > .container-ov1 button {
     position: relative;
-    font-family: 'Segoe UI';
+    font-family: system-ui;
     font-size: 16px;
     font-weight: 700;
     line-height: 16px;
@@ -495,14 +495,14 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .overlay .vertical-button-container {
     flex: 0 0 auto;
-    background: #2f3136;
+    background: #242424;
     position: relative;
     display: flex;
     justify-content: flex-end;
     align-items: stretch;
     flex-wrap: nowrap;
     flex-direction: row;
-    padding: 16px;
+    padding: 10px;
 }
 
 
@@ -548,9 +548,10 @@ button {
     border: 0;
     outline: 0;
     border-width: 0px 0px 1px 0px;
-    background-color: #444444;
+    background-color: transparent;
     width: 8em;
     height: 32px;
+    font-family: 'Segoe UI', Tahoma, system-ui;
 }
 
 button:hover {
@@ -1308,10 +1309,10 @@ input:checked + .toggleSwitchSlider:before {
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    padding: 0px 25px 10px 25px;
+    /* padding: 0px 25px 10px 25px; */
     font-size: 2em;
     line-height: normal;
-    /*text-align: start;*/
+    /* text-align: start; */
 }
 
 .container-f {
@@ -1510,7 +1511,7 @@ a.anchor:hover {
     min-width: 330px;
     max-width: 450px;
     text-align: initial;
-    padding: 1em;
+    padding: 10px;
 }
 
 .VT-flex-box input {
@@ -1527,7 +1528,7 @@ a.anchor:hover {
 
 .VT-flex-box .children-zx1 {
     position: relative;
-    margin: 1em 0;
+    margin: 1rem 0;
 }
 
 .VT-header {
@@ -1622,6 +1623,8 @@ a.anchor:hover {
     color: grey;
     transition: 200ms color;
     overflow: hidden;
+    line-height: 22px;
+    font-size: 14px;
 }
 
 .input-wrapper .input {
@@ -1665,7 +1668,7 @@ a.anchor:hover {
 }
 
 .input-wrapper .small-button {
-    line-height: initial;
+    line-height: 22px;
     width: 52px;
     height: auto;
     display: block;

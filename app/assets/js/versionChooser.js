@@ -131,8 +131,7 @@ class VersionChooser {
                 refreshVersions();
                 this.alertex.destroy();
             })
-        const footer = createElement('section', { class: 'VT-footer' },
-            createElement('div', { class: 'full separator' }),
+        const footer = createElement('section', { class: 'VT-footer vertical-button-container' },
             cancel_button, accept_button
         )
         const root_content = createElement('div', { class: 'main-content' },
