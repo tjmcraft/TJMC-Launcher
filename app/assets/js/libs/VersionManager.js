@@ -6,7 +6,7 @@ const request = require('request')
 const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
 
 exports.getLocalVersions = async function() {
-    let dir_path = API.ConfigManager.getVersionsDirectory()
+    const dir_path = ConfigManager.getVersionsDirectory()
     let ver_list = []
     try {
         if (!fs.existsSync(dir_path)) {
@@ -14,9 +14,9 @@ exports.getLocalVersions = async function() {
             fs.mkdirSync(dir_path, {recursive: true})
         }
         fs.readdirSync(dir_path)?.forEach(folder => {
-            let ver_path = path.join(dir_path, folder, folder + '.json')
+            const ver_path = path.join(dir_path, folder, folder + '.json')
             if (fs.existsSync(ver_path)){
-                let file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
+                const file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
                 let version = {
                     name: file_c?.name || file_c?.id,
                     id: file_c?.id,
@@ -39,12 +39,6 @@ exports.getLocalVersions = async function() {
     }
 }
 
-exports.getGlobalVersions = async function() {
-    let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, true)),
-        t = JSON.parse(await downloadFile(`https://tlauncher.ru/repo/versions/versions.json`, true))
-    return merge(m.versions, t.versions)
-}
-
 exports.getVersion = async function() {
     return ConfigManager.getVersion()
 }
@@ -65,7 +59,7 @@ exports.getVersionManifest = async function(version, props = {}) {
     if (fs.existsSync(versionJsonPath)) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
-        const parsed = await this.getGlobalVersions()
+        const parsed = await exports.getGlobalVersions();
         for (const cv in parsed) {
             if (parsed[cv].id === version) {
                 c_version = JSON.parse(await downloadFile(parsed[cv].url || `https://tlauncher.ru/repo/versions/${version}.json`, true))
@@ -112,6 +106,43 @@ exports.removeVersion = async function(version) {
     fs.rmdirSync(versionPath, {recursive: true})
     fs.rmdirSync(assetsIndexDir, {recursive: true})
     logger.log(`${version} was removed!`)
+}
+
+exports.getGlobalVersionsManifests = async function () {
+    let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, true)),
+        t = JSON.parse(await downloadFile(`https://tlauncher.ru/repo/versions/versions.json`, true))
+    return merge(m.versions, t.versions)
+}
+
+exports.updateGlobalVersionsConfig = async function() {
+    const dir_path = ConfigManager.getVersionsDirectory();
+    if (!fs.existsSync(dir_path)) {
+        logger.log('Attempting to create versions folder');
+        fs.mkdirSync(dir_path, { recursive: true });
+    }
+    const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
+    const versions = await this.getGlobalVersionsManifests();
+    fs.writeFileSync(manifest_path, JSON.stringify(versions));
+    
+}
+
+exports.getGlobalVersions = async function () {
+    const dir_path = ConfigManager.getVersionsDirectory();
+    if (!fs.existsSync(dir_path)) {
+        logger.log('Attempting to create versions folder');
+        fs.mkdirSync(dir_path, { recursive: true });
+    }
+    const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
+    if (!fs.existsSync(manifest_path)) {
+        await exports.updateGlobalVersionsConfig();
+    }
+    const versions = JSON.parse(fs.readFileSync(manifest_path));
+    return versions;
+}
+
+exports.getGlobalVersion = async function (version) {
+    const versions = await exports.getGlobalVersions();
+    return versions.find(e => e.id === version);
 }
 
 /**
