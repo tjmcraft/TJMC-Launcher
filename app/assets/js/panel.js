@@ -56,7 +56,7 @@ class SidebarMain {
             class: 'item navItem',
             'version-id': item.id
         }, item.name || item.id);
-        console.debug(item);
+        //console.debug(item);
         root_item.addEventListener('click', (e) => {
             this.selectVersion(item)
             if (typeof click === 'function')
