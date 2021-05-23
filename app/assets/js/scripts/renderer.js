@@ -133,7 +133,7 @@ function renderSelectVersion(version) {
         n = m.qsl('h2'),
         d = m.qsl('h5');
     sidebar_el.selectVersion(version);
-    n.innerText = version.id
+    n.innerText = version.name || version.id
     d.innerText = version.type
 }
 
