@@ -189,13 +189,16 @@ function getOffset( el ) {
  */
 function cleanObject(obj) {
     obj = obj || this;
-    var propNames = Object.getOwnPropertyNames(obj);
-    for (let propName of propNames) {
-        if (obj[propName] === null || obj[propName] === undefined || (obj[propName] instanceof Object && Object.keys(obj[propName])?.length == 0) ) {
-            delete obj[propName];
+    const emptyObject = {};
+    Object.keys(obj).forEach(key => {
+        if (obj[key] && typeof obj[key] === 'object') {
+            emptyObject[key] = cleanObject(obj[key]);
+        } else if (obj[key] != null && obj[key] != undefined) {
+            console.log('assert: ' + obj[key])
+            emptyObject[key] = obj[key];
         }
-    }
-    return obj;
+    })
+    return Object.keys(emptyObject)?.length > 0 ? emptyObject : undefined;
 }
 Object.prototype.clean = cleanObject
 
