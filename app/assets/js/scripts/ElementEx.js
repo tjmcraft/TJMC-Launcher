@@ -190,12 +190,12 @@ function getOffset( el ) {
 function cleanObject(obj) {
     obj = obj || this;
     var propNames = Object.getOwnPropertyNames(obj);
-    for (var i = 0; i < propNames.length; i++) {
-        var propName = propNames[i];
-        if (obj[propName] === null || obj[propName] === undefined || Object.keys(obj[propName])?.length == 0) {
+    for (let propName of propNames) {
+        if (obj[propName] === null || obj[propName] === undefined || (obj[propName] instanceof Object && Object.keys(obj[propName])?.length == 0) ) {
             delete obj[propName];
         }
     }
+    return obj;
 }
 Object.prototype.clean = cleanObject
 
