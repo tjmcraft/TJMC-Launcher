@@ -1,8 +1,8 @@
 const ConfigManager = require('./libs/ConfigManager')
-// Load ConfigManager
 ConfigManager.load()
 const { shell, remote, ipcRenderer } = require('electron')
 const VersionManager = require('./libs/VersionManager')
+VersionManager.updateGlobalVersionsConfig()
 const launcher      = require('./launcher')
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const os = require('os')
