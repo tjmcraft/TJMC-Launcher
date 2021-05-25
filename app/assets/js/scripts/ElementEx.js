@@ -194,7 +194,6 @@ function cleanObject(obj) {
         if (obj[key] && typeof obj[key] === 'object') {
             emptyObject[key] = cleanObject(obj[key]);
         } else if (obj[key] != null && obj[key] != undefined) {
-            console.log('assert: ' + obj[key])
             emptyObject[key] = obj[key];
         }
     })
