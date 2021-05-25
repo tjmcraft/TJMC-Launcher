@@ -8,12 +8,6 @@ const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 
 class launcher extends EventEmitter {
 
-    static openMineDir(){
-        let path = API.ConfigManager.getDataDirectory();
-        logg.debug('Using default path: '+path)
-        API.shell.openPath(path);
-    }
-
     /**
      * Minecraft launcher constructor
      * @param {Object} options - Options to construct the launcher 

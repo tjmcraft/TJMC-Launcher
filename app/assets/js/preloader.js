@@ -1,4 +1,6 @@
 const ConfigManager = require('./libs/ConfigManager')
+// Load ConfigManager
+ConfigManager.load()
 const { shell, remote, ipcRenderer } = require('electron')
 const VersionManager = require('./libs/VersionManager')
 const launcher      = require('./launcher')
@@ -6,10 +8,6 @@ const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-we
 const os = require('os')
 
 //logger.debug('Application loading..')
-
-// Load ConfigManager
-ConfigManager.load()
-
 
 //Set Current Window as win
 const win = remote.getCurrentWindow()
@@ -33,9 +31,7 @@ process.once('loaded', () => {
     ipcRenderer.on('open-settings', () => {
         openSettings()
     })
-    ipcRenderer.on('open-minecraft-dir', () => {
-        launcher.openMineDir()
-    })
+    ipcRenderer.on('open-minecraft-dir', openMineDir)
 
     ipcRenderer.on('enter-full-screen', enterFullScreen)
     ipcRenderer.on('leave-full-screen', leaveFullScreen)
@@ -102,4 +98,10 @@ function windowBlur () {
 }
 function windowFocus () {
     document.body.classList.remove('blur')
+}
+
+function openMineDir() {
+    const path = ConfigManager.getDataDirectory();
+    logger.debug('Using default path: '+path)
+    shell.openPath(path);
 }
