@@ -6,13 +6,9 @@ const request = require('request')
 const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
 
 exports.getLocalVersions = async function() {
-    const dir_path = ConfigManager.getVersionsDirectory()
+    const dir_path = getVersionsDirectory();
     let ver_list = []
     try {
-        if (!fs.existsSync(dir_path)) {
-            logger.log('Attempting to create versions folder')
-            fs.mkdirSync(dir_path, {recursive: true})
-        }
         fs.readdirSync(dir_path)?.forEach(folder => {
             const ver_path = path.join(dir_path, folder, folder + '.json')
             if (fs.existsSync(ver_path)){
@@ -53,7 +49,7 @@ exports.setVersion = function(v) {
  */
 exports.getVersionManifest = async function(version, props = {}) {
     logger.debug('Loading Version JSON for: ' + version);
-    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version);
+    const versionPath = path.join(getVersionsDirectory(), version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
     var c_version = null;
     if (fs.existsSync(versionJsonPath)) {
@@ -81,11 +77,11 @@ exports.getVersionManifest = async function(version, props = {}) {
     }
     c_version = Object.assign(c_version, props);
     fs.mkdirSync(versionPath, { recursive: true });
-    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version));
+    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version, null, 4));
     return c_version
 }
 
-exports.createInstallation = async function (version, options) {
+exports._createInstallation = async function (version, options) {
     logger.debug("Creating installation configuration for version " + version);
     await exports.getVersionManifest(version, {
         name: options.name || version || undefined,
@@ -101,12 +97,15 @@ exports.createInstallation = async function (version, options) {
 
 exports.removeVersion = async function(version) {
     const versionFile = await exports.getVersionManifest(version)
-    const versionPath = path.join(ConfigManager.getVersionsDirectory(), version)
+    const versionPath = path.join(getVersionsDirectory(), version)
     const assetsIndexDir = path.join(ConfigManager.getDataDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
     fs.rmdirSync(versionPath, {recursive: true})
     fs.rmdirSync(assetsIndexDir, {recursive: true})
     logger.log(`${version} was removed!`)
 }
+
+
+/* ============= GLOBAL ============= */
 
 exports.getGlobalVersionsManifests = async function () {
     let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, true)),
@@ -115,35 +114,153 @@ exports.getGlobalVersionsManifests = async function () {
 }
 
 exports.updateGlobalVersionsConfig = async function() {
-    const dir_path = ConfigManager.getVersionsDirectory();
-    if (!fs.existsSync(dir_path)) {
-        logger.log('Attempting to create versions folder');
-        fs.mkdirSync(dir_path, { recursive: true });
-    }
+    const dir_path = getVersionsDirectory();
     const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
     const versions = await this.getGlobalVersionsManifests();
-    fs.writeFileSync(manifest_path, JSON.stringify(versions));
+    fs.writeFileSync(manifest_path, JSON.stringify(versions, null, 4));
     
 }
 
 exports.getGlobalVersions = async function () {
-    const dir_path = ConfigManager.getVersionsDirectory();
-    if (!fs.existsSync(dir_path)) {
-        logger.log('Attempting to create versions folder');
-        fs.mkdirSync(dir_path, { recursive: true });
-    }
+    const dir_path = getVersionsDirectory();
     const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
-    if (!fs.existsSync(manifest_path)) {
-        await exports.updateGlobalVersionsConfig();
-    }
+    if (!fs.existsSync(manifest_path)) await exports.updateGlobalVersionsConfig();
     const versions = JSON.parse(fs.readFileSync(manifest_path));
     return versions;
 }
 
 exports.getGlobalVersion = async function (version) {
     const versions = await exports.getGlobalVersions();
-    return versions.find(e => e.id === version);
+    return versions.find(e => e.id === version) || undefined;
 }
+
+/* ================================== */
+
+
+/* ============= INSTALLATIONS ============= */
+
+class Installations {
+    constructor(params = {}) {
+        this.params = params;
+        this.manifest_path = path.join(this.params.dir_path, `launcher_profiles.json`);
+        this.load();
+    }
+    load() {
+        if (!fs.existsSync(this.manifest_path)) this.createEmpty();
+        const file = fs.readFileSync(this.manifest_path);
+        if (file.length < 1) this.createEmpty();
+        this.parsed_manifest = JSON.parse(fs.readFileSync(this.manifest_path));
+        return true;
+    }
+    get get() {
+        return this.parsed_manifest || null;
+    }
+    add(profile, id = null) {
+        let version_id = id || randomString(32);
+        if (profile && !Object(this.parsed_manifest.profiles).hasOwnProperty(version_id)) {
+            this.parsed_manifest.profiles[version_id] = profile.clean();
+        } else { throw new Error("RND Mismatch") }
+        return (this.params.auto_save && this.save()) || true;
+    }
+    remove(profile_id) {
+        if (profile_id && Object(this.parsed_manifest.profiles).hasOwnProperty(profile_id)) {
+            delete this.parsed_manifest.profiles[profile_id];
+        }
+        return (this.params.auto_save && this.save()) || true;
+    }
+    set(profiles) {
+        this.parsed_manifest.profiles = profiles.clean();
+        return (this.params.auto_save && this.save()) || true;
+    }
+    createEmpty() {
+        this.parsed_manifest = {
+            tjmcVersion: '1.0.0',
+            profiles: {},
+        }
+        return (this.params.auto_save && this.save()) || true;
+    }
+    save() {
+        fs.writeFileSync(this.manifest_path, JSON.stringify(this.parsed_manifest, null, 4));
+        this.load();
+        return true;
+    }
+}
+
+const installations = new Installations({ auto_save: true, dir_path: getVersionsDirectory() })
+
+/**
+ * Create new installation
+ * @param {String} version - Version identifier
+ * @param {Object} options - Options for version
+ * @param {Object} options.name - Name of the version
+ * @param {Object} options.type - Type of the version
+ * @param {Object} options.gameDir - Directory of the version
+ * @param {Object} options.javaPath - Path to executable java file
+ * @param {Object} options.javaArgs - Arguments for java machine
+ * @param {Object} options.resolution - Resolution of the game window
+ * @param {Object} options.resolution.width - Width of the game window
+ * @param {Object} options.resolution.height - Height of the game window
+ */
+exports.createInstallation = async function (version, options) {
+    let new_profile = {
+        created: undefined,
+        gameDir: options.gameDir || undefined,
+        icon: undefined,
+        javaArgs: options.javaArgs || undefined,
+        javaPath: options.javaPath || undefined,
+        lastUsed: undefined,
+        lastVersionId: version || undefined,
+        name: options.name || version || undefined,
+        resolution: {
+            width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
+            height: options.resolution?.height <= 0 ? 480 : options.resolution?.height
+        },
+        type: options.type || 'custom' || undefined
+    }.clean()
+    installations.add(new_profile);
+}
+
+exports.getInstallations = async function () {
+    return installations.get.profiles || null;
+}
+
+/**
+ * Returns the installation with the given hash
+ * @param {*} hash - The hash of the installation
+ * @returns {Object} - The installation's object
+ */
+exports.getInstallation = async function (hash) {
+    if (hash && Object(installations.get.profiles).hasOwnProperty(hash))
+        return { hash: hash, ...installations.get.profiles[hash] } || null;
+}
+
+/**
+ * Returns the installation with the given hash (SYNC)
+ * @param {*} hash - The hash of the installation
+ * @returns {Object} - The installation's object
+ */
+exports.getInstallationSync = function (hash) {
+    if (hash && Object(installations.get.profiles).hasOwnProperty(hash))
+        return { hash: hash, ...installations.get.profiles[hash] } || null;
+}
+
+/**
+ * Delete the installation with given hash
+ * @param {String} hash - The hash of the installation
+ * @returns {Boolean} - Whether the deletion is success
+ */
+exports.removeInstallation = async function (hash) {
+    return installations.remove(hash);
+}
+
+exports.getSelectedInstallation = async function () {
+    const v = ConfigManager.getVersion()
+    const i = await exports.getInstallation(v)
+    return i || null;
+}
+
+/* ========================================= */
+
 
 /**
  * Function just download a single file and return its body
@@ -161,4 +278,13 @@ function downloadFile(url, retry = false) {
             } else resolve(body)
         })
     })
+}
+
+function getVersionsDirectory() {
+    const dir_path = ConfigManager.getVersionsDirectory();
+    if (!fs.existsSync(dir_path)) {
+        logger.log('Attempting to create versions folder');
+        fs.mkdirSync(dir_path, { recursive: true });
+    }
+    return dir_path;
 }

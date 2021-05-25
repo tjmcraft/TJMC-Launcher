@@ -54,9 +54,9 @@ class SidebarMain {
     addItem(item, click = ()=>{}) {
         const root_item = createElement('div', {
             class: 'item navItem',
-            'version-id': item.id
-        }, item.name || item.id);
-        //console.debug(item);
+            'version-hash': item.hash
+        }, item.name || item.hash);
+        console.debug(item);
         root_item.addEventListener('click', (e) => {
             this.selectVersion(item)
             if (typeof click === 'function')
@@ -64,8 +64,14 @@ class SidebarMain {
         })
         this.root_content.appendChild(root_item)
     };
+    createFirstPage() {
+        const root_item = createElement('div', {
+            class: 'centred fp'
+        }, createElement('h1', {}, 'Добавьте версию'));
+        this.root_content.appendChild(root_item)
+    }
     removeItem(item) {
-        const selected_item = this.root_content.qsl(`.item[version-id=${item.id}]`)
+        const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`)
         this.root_content.removeChild(selected_item)
     };
     content(def = false) {
@@ -74,11 +80,11 @@ class SidebarMain {
     selectVersion(version) {
         let items = this.root_content.qsla('.item');
         items.forEach(e => {
-            e.classList[e.getAttribute('version-id') === version.id ? 'add' : 'remove']('selected')
+            e.classList[e.getAttribute('version-hash') === version.hash ? 'add' : 'remove']('selected')
         });
     };
     removeAll() {
-        this.root_content.qsla('.item[version-id]').forEach(e => e.remove());
+        this.root_content.qsla('.item[version-hash]').forEach(e => e.remove());
     };
 }
 

@@ -4,7 +4,8 @@ const LoggerUtil                             = require('./loggerutil')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./libs/Minecraft')
-const logg = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
+const logg                                   = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
+const VersionManager                         = require('./libs/VersionManager')
 
 class launcher extends EventEmitter {
 
@@ -17,21 +18,24 @@ class launcher extends EventEmitter {
      * @param {Object} options.overrides.path.gameDirectory - Path to game directory
      * @param {Object} options.java.javaPath - Path to java executable
      * @param {Object} options.version - Version config
-     * @param {Object} options.version.id - ID of current version
+     * @param {Object} options.version.lastVersionId - ID of current version
+     * @param {Object} options.version.type - Type of current version
      */
     constructor (options) {
         super()
         this.options = options
-        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.id)
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.id}.jar`)
+        this.options.version = VersionManager.getInstallationSync(this.options.version)
+        logg.debug(this.options.version)
+        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.lastVersionId)
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.lastVersionId}.jar`)
         this.handler = new Minecraft(this)
         logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
     }
 
     async construct() {
 
-        logg.log(`Attempting to load main json for ${this.options.version.id}`)
-        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.id)
+        logg.log(`Attempting to load main json for ${this.options.version.lastVersionId}`)
+        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.lastVersionId)
         const javaPath = versionFile?.javaPath || this.options?.java?.javaPath || 'java';
 
         const java = await this.handler.checkJava(javaPath)

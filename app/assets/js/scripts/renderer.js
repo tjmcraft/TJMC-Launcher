@@ -123,21 +123,6 @@ API.ConfigManager.getAuth().then((auth) => {
 })
 
 
-function selectVersion(version) {
-    API.ConfigManager.setVersion(version)
-    renderSelectVersion(version);
-}
-
-function renderSelectVersion(version) {
-    let m = qsl('.top-toolbar'),
-        n = m.qsl('h2'),
-        d = m.qsl('h5');
-    sidebar_el.selectVersion(version);
-    n.innerText = version.name || version.id
-    d.innerText = version.type
-}
-
-
 /**
  * The function creates and returns tools container for overlay
  */
@@ -195,17 +180,36 @@ document.addEventListener('mouseover', e => {
 })*/
 
 function refreshVersions() {
-    API.VersionManager.getLocalVersions().then((parsed) => {
+    API.VersionManager.getInstallations().then((parsed) => {
         sidebar_el.removeAll();
-        parsed.forEach(i => {
-            sidebar_el.addItem(i, (item) => {
-                selectVersion(item)
-            });
-        })
+        if (Object.entries(parsed).length > 0) {
+            for (const [hash, params] of Object.entries(parsed)) {
+                sidebar_el.addItem({ hash: hash, ...params }, (item) => {
+                    selectVersion(item)
+                });
+            }
+        } else {
+            sidebar_el.createFirstPage()
+        }
         qsl('.localVersions').append(sidebar_el.content())
     })
-    API.VersionManager.getVersion().then((version) => {
-        renderSelectVersion(version)
+    API.VersionManager.getSelectedInstallation().then((version) => {
+        if (version)
+            renderSelectVersion(version)
     })
 };
 refreshVersions();
+
+function selectVersion(version) {
+    API.ConfigManager.setVersion(version.hash)
+    renderSelectVersion(version);
+}
+
+function renderSelectVersion(version) {
+    let m = qsl('.top-toolbar'),
+        n = m.qsl('h2'),
+        d = m.qsl('h5');
+    sidebar_el.selectVersion(version);
+    n.innerText = version.name || version.hash
+    d.innerText = version.type
+}

@@ -997,9 +997,12 @@ input:checked + .toggleSwitchSlider:before {
 }
 .sidebar-main > .localVersions > .scroller > .content {
     position: relative;
+    height: 100%;
 }
-.sidebar-main > .localVersions .version {
-
+.sidebar-main > .localVersions > .scroller > .content > .fp {
+    height: 90%;
+    line-height: normal;
+    font-size: 1.2em;
 }
 .sidebar-main > .localVersions .versionsHeader {
     display: flex;

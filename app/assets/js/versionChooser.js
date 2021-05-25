@@ -73,9 +73,12 @@ class VersionChooser {
     }
 
     createMainContent(props) {
+        console.log(props)
         const version_opts = {
-            name: props?.version?.id ? `Версия ${props.version.id}` : 'без имени'
+            name: props?.version?.id ? `Версия ${props.version.id}` : 'без имени',
+            type: props?.version?.type
         }
+        console.log(version_opts)
         const header = createElement('section', { class: 'VT-header'},
             createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             createElement('div', { class: 'full separator' })
@@ -155,6 +158,7 @@ class VersionChooser {
      * @param {String} version - Version identifier
      * @param {Object} options - Options for version
      * @param {Object} options.name - Name of the version
+     * @param {Object} options.type - Type of the version
      * @param {Object} options.gameDir - Directory of the version
      * @param {Object} options.javaPath - Path to executable java file
      * @param {Object} options.javaArgs - Arguments for java machine
@@ -163,6 +167,7 @@ class VersionChooser {
      * @param {Object} options.resolution.height - Height of the game window
      */
     async addVersion(version, options = {}) {
+        console.log(options)
         await API.VersionManager.createInstallation(version, options);
     }
 }
