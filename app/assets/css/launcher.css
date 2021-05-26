@@ -999,7 +999,7 @@ input:checked + .toggleSwitchSlider:before {
     position: relative;
     height: 100%;
 }
-.sidebar-main > .localVersions > .scroller > .content > .fp {
+.sidebar-main > .localVersions > .scroller .fp {
     height: 90%;
     line-height: normal;
     font-size: 1.2em;

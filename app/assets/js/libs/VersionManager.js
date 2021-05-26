@@ -202,8 +202,9 @@ const installations = new Installations({ auto_save: true, dir_path: getVersions
  * @param {Object} options.resolution.height - Height of the game window
  */
 exports.createInstallation = async function (version, options) {
+    const current_date = new Date().toISOString();
     let new_profile = {
-        created: undefined,
+        created: current_date,
         gameDir: options.gameDir || undefined,
         icon: undefined,
         javaArgs: options.javaArgs || undefined,
