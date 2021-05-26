@@ -18,25 +18,26 @@ class launcher extends EventEmitter {
      * @param {Object} options.overrides.path.gameDirectory - Path to game directory
      * @param {Object} options.java.javaPath - Path to java executable
      * @param {Object} options.version - Version config
-     * @param {Object} options.version.lastVersionId - ID of current version
-     * @param {Object} options.version.type - Type of current version
+     * @param {Object} options.installation.lastVersionId - ID of current version
+     * @param {Object} options.installation.type - Type of current version
      */
     constructor (options) {
         super()
         this.options = options
-        this.options.version = VersionManager.getInstallationSync(this.options.version)
-        logg.debug(this.options.version)
-        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.version.lastVersionId)
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.version.lastVersionId}.jar`)
+        this.options.installation = VersionManager.getInstallationSync(this.options.version)
+        logg.debug(this.options.installation)
+        this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
+        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
         this.handler = new Minecraft(this)
         logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
     }
 
     async construct() {
 
-        logg.log(`Attempting to load main json for ${this.options.version.lastVersionId}`)
-        const versionFile = await API.VersionManager.getVersionManifest(this.options.version.lastVersionId)
-        const javaPath = versionFile?.javaPath || this.options?.java?.javaPath || 'java';
+        logg.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`)
+        const versionFile = await API.VersionManager.getVersionManifest(this.options.installation.lastVersionId)
+        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'java';
 
         const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
@@ -51,7 +52,7 @@ class launcher extends EventEmitter {
         if (this.options.overrides.path.gameDirectory) {
             this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path.gameDirectory)
             if (!fs.existsSync(this.options.overrides.path.gameDirectory)) {
-              fs.mkdirSync(this.options.overrides.path.gameDirectory, {recursive: true})
+                fs.mkdirSync(this.options.overrides.path.gameDirectory, {recursive: true})
             }
         }
 

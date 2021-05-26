@@ -48,9 +48,9 @@ class Minecraft {
      */
     async getJar (version) {
         const versionPath = path.join(this.options.overrides.path.version)
-        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.version.lastVersionId}.jar`, true, 'version-jar')
+        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.installation.lastVersionId}.jar`, true, 'version-jar')
         logg.debug('Downloaded version jar')
-        return path.join(versionPath, `${this.options.version.lastVersionId}.jar`)
+        return path.join(versionPath, `${this.options.installation.lastVersionId}.jar`)
     }
 
     /**
@@ -410,7 +410,7 @@ class Minecraft {
     constructJVMArguments(versionFile, tempNativePath, cp){
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.lastVersionId}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)}`)
         this.fields = {
             '${auth_access_token}': this.options.auth.access_token,
             '${auth_session}': this.options.auth.access_token,
@@ -418,14 +418,14 @@ class Minecraft {
             '${auth_uuid}': this.options.auth.uuid,
             '${user_properties}': this.options.auth.user_properties,
             '${user_type}': 'mojang',
-            '${version_name}': this.options.version.lastVersionId,
+            '${version_name}': this.options.installation.lastVersionId,
             '${assets_index_name}': versionFile.assetIndex.id,
-            '${game_directory}': this.options.overrides.path.gameDirectory || this.options.overrides.path.root,
+            '${game_directory}': this.options.overrides?.path?.gameDirectory || this.options.overrides?.path?.root,
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
-            '${version_type}': this.options.version.type,
-            '${resolution_width}': this.options.minecraft.launch.width,
-            '${resolution_height}': this.options.minecraft.launch.height,
+            '${version_type}': this.options.installation.type,
+            '${resolution_width}': this.options.installation?.resolution?.width || this.options.minecraft?.launch?.width || 854,
+            '${resolution_height}': this.options.installation?.resolution?.height || this.options.minecraft?.launch?.height || 480,
             '${classpath}': `${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`,
             '${natives_directory}': tempNativePath,
             '${game_libraries_directory}': this.options.overrides.path.directory,
@@ -446,7 +446,7 @@ class Minecraft {
     getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.version.lastVersionId}.jar`)}`)
+        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)}`)
 
         // Java Arguments
         if(process.platform === 'darwin'){
