@@ -77,7 +77,7 @@ class Minecraft {
         }
 
         const parsed = classJson.libraries.map(lib => {
-            if (lib.url || lib.artifact || lib.downloads.artifact && !this.parseRule(lib)) return lib
+            if (lib.url || lib.artifact || lib.downloads?.artifact && !this.parseRule(lib)) return lib
         })
 
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
@@ -254,7 +254,8 @@ class Minecraft {
                         'https://tlauncherrepo.com/repo/libraries/' + jar_name, 
                         'https://files.minecraftforge.net/maven/' + jar_name, 
                         'http://dl.liteloader.com/versions/' + jar_name, 
-                        'https://repo1.maven.org/maven2/' + jar_name, 
+                        'https://repo1.maven.org/maven2/' + jar_name,
+                        'https://maven.minecraftforge.net/' + jar_name,
                         (library.url ? library.url : '') + jar_name
                     ]
                     for (let c of url){
@@ -315,7 +316,7 @@ class Minecraft {
                 })
 
                 _request.on('error', async (error) => {
-                    logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
+                    logg.debug(`Failed to download to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
                     if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
                     resolve()
@@ -346,7 +347,7 @@ class Minecraft {
                 })
 
                 file.on('error', async (e) => {
-                    logg.debug(`Failed to download asset to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
+                    logg.debug(`Failed to download to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
                     if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
                     resolve()
