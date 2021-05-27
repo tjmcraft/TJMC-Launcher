@@ -103,6 +103,7 @@ function showStartUpError(error) {
         type: 'error',
         header: 'Упс...',
         text: `Возможно возникла ошибка при запуске:\n${error}`,
+        logType: true,
         buttons: [{
             class: '',
             name: 'Ладно',

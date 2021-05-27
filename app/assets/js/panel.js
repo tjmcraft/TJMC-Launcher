@@ -66,7 +66,7 @@ class SidebarMain {
     };
     createFirstPage() {
         const root_item = createElement('div', {
-            class: 'centred fp'
+            class: 'item centred fp'
         }, createElement('h1', {}, 'Добавьте версию'));
         this.root_content.appendChild(root_item)
     }
@@ -84,7 +84,7 @@ class SidebarMain {
         });
     };
     removeAll() {
-        this.root_content.qsla('.item[version-hash]').forEach(e => e.remove());
+        this.root_content.qsla('.item').forEach(e => e.remove());
     };
 }
 
