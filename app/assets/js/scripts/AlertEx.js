@@ -19,7 +19,7 @@ class AlertEx {
      */
     constructor(params = {}, ...nodes) {
         if (!params) throw new Error('No parametrs given');
-        this.root_container = createElement('div', { class: 'container-ov1' });
+        this.root_container = createElement('div', { class: 'container-ov1' + (params?.type ? ' ' + 'mini' : '')});
         this.root_container.onclick = (event) => { event.stopPropagation() };
 
         if (params?.type) {
@@ -53,7 +53,7 @@ class AlertEx {
         }
 
         if (params?.text) {
-            const text_root = createElement('div', {class: 'content'}, params.text)
+            const text_root = createElement('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, params.text)
             this.root_container.appendChild(text_root)
         }
 

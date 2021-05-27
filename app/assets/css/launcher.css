@@ -360,6 +360,13 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-family: system-ui;
 }
 
+.overlay > .container-ov1.mini {
+    max-width: 45em;
+    max-height: 80vh;
+    width: 45vw;
+    height: auto;
+}
+
 .overlay > .container-ov1 > div.icon {
     padding: 16px;
     display: flex;
@@ -482,6 +489,14 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     position: relative;
     z-index: 0;
     padding: 0 8px 16px 16px;
+}
+
+.overlay > .container-ov1 > .content.log {
+    text-align: initial;
+    white-space: break-spaces;
+    word-break: break-word;
+    background: var(--background-modifier-selected);
+    padding: 4px 8px 8px 16px;
 }
 /* ------------------------------------------- */
 
