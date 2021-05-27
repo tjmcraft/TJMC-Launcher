@@ -94,7 +94,7 @@ function startMine () {
                 }
             })
         })
-    }).catch(e => showStartUpError(e))
+    }).catch(e => showError(e))
 }
 
 function showStartUpError(error) {
@@ -103,6 +103,23 @@ function showStartUpError(error) {
         type: 'error',
         header: 'Упс...',
         text: `Возможно возникла ошибка при запуске:\n${error}`,
+        logType: true,
+        buttons: [{
+            class: '',
+            name: 'Ладно',
+            callback: () => { },
+            closeOverlay: true
+        }]
+    })
+}
+
+function showError(error) {
+    console.error(error)
+    new AlertEx({
+        closeButton: true,
+        type: 'error',
+        header: 'Упс...',
+        text: `Возможно возникла ошибка в коде:\n${error}`,
         logType: true,
         buttons: [{
             class: '',
@@ -171,6 +188,7 @@ window.onload = function(e) {
             document.documentElement.classList.remove('preload')
         })
     }, 1000)
+    API.window.setProgressBar(0)
 }
 /*
 document.addEventListener('mouseover', e => {
