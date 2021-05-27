@@ -22,6 +22,16 @@ class Minecraft {
             pool: { maxSockets: this.options.overrides.request.maxSockets || 4 },
             timeout: this.options.overrides.request.timeout || 10000
         })
+        this.overrides = {}
+        this.overrides.javaSep = process.platform === 'win32' ? ';' : ':'
+        this.overrides.resolution = {
+            width: this.options.installation?.resolution?.width || this.options.minecraft?.launch?.width || 854,
+            height: this.options.installation?.resolution?.height || this.options.minecraft?.launch?.height || 480
+        }
+        this.overrides.version = {
+            id: this.options.installation.lastVersionId,
+            type: this.options.installation.type
+        }
     }
 
     /**
@@ -48,9 +58,9 @@ class Minecraft {
      */
     async getJar (version) {
         const versionPath = path.join(this.options.overrides.path.version)
-        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.options.installation.lastVersionId}.jar`, true, 'version-jar')
+        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar')
         logg.debug('Downloaded version jar')
-        return path.join(versionPath, `${this.options.installation.lastVersionId}.jar`)
+        return path.join(versionPath, `${this.overrides.version.id}.jar`)
     }
 
     /**
@@ -407,10 +417,11 @@ class Minecraft {
      * Construct the argument array that will be passed to the JVM process.
      * 
      */
-    constructJVMArguments(versionFile, tempNativePath, cp){
+    constructJVMArguments(versionFile, tempNativePath, cp) {
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)}`)
+        
+        const jar = this.overrides.javaSep + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
         this.fields = {
             '${auth_access_token}': this.options.auth.access_token,
             '${auth_session}': this.options.auth.access_token,
@@ -418,15 +429,15 @@ class Minecraft {
             '${auth_uuid}': this.options.auth.uuid,
             '${user_properties}': this.options.auth.user_properties,
             '${user_type}': 'mojang',
-            '${version_name}': this.options.installation.lastVersionId,
+            '${version_name}': this.overrides.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
             '${game_directory}': this.options.overrides?.path?.gameDirectory || this.options.overrides?.path?.root,
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
-            '${version_type}': this.options.installation.type,
-            '${resolution_width}': this.options.installation?.resolution?.width || this.options.minecraft?.launch?.width || 854,
-            '${resolution_height}': this.options.installation?.resolution?.height || this.options.minecraft?.launch?.height || 480,
-            '${classpath}': `${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`,
+            '${version_type}': this.overrides.version.type,
+            '${resolution_width}': this.overrides.resolution.width,
+            '${resolution_height}': this.overrides.resolution.height,
+            '${classpath}': `${cp.join(this.overrides.javaSep) + jar}`,
             '${natives_directory}': tempNativePath,
             '${game_libraries_directory}': this.options.overrides.path.directory,
             '${launcher_name}': 'TJMC',
@@ -446,7 +457,7 @@ class Minecraft {
     getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
-        const jar = (process.platform === 'win32' ? ';' : ':') + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)}`)
+        const jar = (this.overrides.javaSep) + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
 
         // Java Arguments
         if(process.platform === 'darwin'){
@@ -459,7 +470,7 @@ class Minecraft {
 
         // Classpath Argument
         args.push('-cp')
-        args.push(`${cp.join(process.platform === 'win32' ? ';' : ':')}${jar}`)
+        args.push(`${cp.join(this.overrides.javaSep) + jar}`)
 
         // Main Java Class
         args.push(versionFile.mainClass)
@@ -575,11 +586,9 @@ class Minecraft {
         const mcArgs = versionFile.minecraftArguments.split(' ')
 
         // Replace the declared variables with their proper values.
-        for(let i=0; i<mcArgs.length; ++i){
-            for (let i = 0; i < mcArgs.length; i++) {
-                if (Object.keys(this.fields).includes(mcArgs[i])) {
-                    mcArgs[i] = this.fields[mcArgs[i]]
-                }
+        for (let i = 0; i < mcArgs.length; i++) {
+            if (Object.keys(this.fields).includes(mcArgs[i])) {
+                mcArgs[i] = this.fields[mcArgs[i]]
             }
         }
 
@@ -589,9 +598,9 @@ class Minecraft {
             mcArgs.push(true)
         } else {
             mcArgs.push('--width')
-            mcArgs.push(this.options.minecraft.launch.width)
+            mcArgs.push(this.overrides.resolution.width)
             mcArgs.push('--height')
-            mcArgs.push(this.options.minecraft.launch.height)
+            mcArgs.push(this.overrides.resolution.height)
         }
 
         return mcArgs
