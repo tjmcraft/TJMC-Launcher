@@ -36,10 +36,7 @@ const DEFAULT_CONFIG =
             height: 720
         }
     },
-    version: {
-        id: 'OptiFine 1.15.2',
-        type: 'modified'
-    },
+    version: "",
     auth: {
         access_token: 'null',
         username: 'MakAndJo',
