@@ -160,7 +160,8 @@ class Installations {
         if (profile && !Object(this.parsed_manifest.profiles).hasOwnProperty(version_id)) {
             this.parsed_manifest.profiles[version_id] = profile.clean();
         } else { throw new Error("RND Mismatch") }
-        return (this.params.auto_save && this.save()) || true;
+        (this.params.auto_save && this.save()) || true;
+        return version_id;
     }
     remove(profile_id) {
         if (profile_id && Object(this.parsed_manifest.profiles).hasOwnProperty(profile_id)) {
@@ -181,6 +182,7 @@ class Installations {
     }
     save() {
         fs.writeFileSync(this.manifest_path, JSON.stringify(this.parsed_manifest, null, 4));
+        logger.debug('Installation profile saved!');
         this.load();
         return true;
     }
@@ -218,7 +220,7 @@ exports.createInstallation = async function (version, options) {
         },
         type: options.type || 'custom' || undefined
     }.clean()
-    installations.add(new_profile);
+    return installations.add(new_profile);
 }
 
 exports.getInstallations = async function () {
