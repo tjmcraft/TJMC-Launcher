@@ -180,37 +180,41 @@ document.addEventListener('mouseover', e => {
     }
 })*/
 
-function refreshVersions() {
-    API.VersionManager.getInstallations().then((parsed) => {
-        sidebar_el.removeAll();
-        if (Object.entries(parsed).length > 0) {
-            for (const [hash, params] of Object.entries(parsed)) {
-                sidebar_el.addItem({ hash: hash, ...params }, (item) => {
-                    selectVersion(item)
-                });
-            }
-        } else {
-            sidebar_el.createFirstPage()
+async function refreshVersions() {
+    const installations = await API.VersionManager.getInstallations();
+    const installations_entries = Object.entries(installations);
+    sidebar_el.removeAll();
+    if (installations_entries.length > 0) {
+        for (const [hash, params] of installations_entries) {
+            sidebar_el.addItem({ hash: hash, ...params }, (item) => {
+                selectVersion(item.hash);
+            });
         }
-        qsl('.localVersions').append(sidebar_el.content())
-    })
-    API.VersionManager.getSelectedInstallation().then((version) => {
-        if (version)
-            renderSelectVersion(version)
-    })
+    } else {
+        sidebar_el.createFirstPage();
+    }
+    qsl('.localVersions').append(sidebar_el.content());
+
+    const selected_installation = API.ConfigManager.getVersion();
+    selected_installation && renderSelectVersion(selected_installation);
+    
 };
 refreshVersions();
 
-function selectVersion(version) {
-    API.ConfigManager.setVersion(version.hash)
-    renderSelectVersion(version);
+function selectVersion(version_hash) {
+    if (!version_hash) return false;
+    API.ConfigManager.setVersion(version_hash)
+    renderSelectVersion(version_hash);
 }
 
-function renderSelectVersion(version) {
+function renderSelectVersion(version_hash) {
+    if (!version_hash) return false;
+    const version = API.VersionManager.getInstallationSync(version_hash);
+    console.debug(version_hash)
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5');
-    sidebar_el.selectVersion(version);
+    sidebar_el.selectVersion(version_hash);
     n.innerText = version.name || version.hash
     d.innerText = version.type
 }
