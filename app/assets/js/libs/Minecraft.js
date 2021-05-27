@@ -77,7 +77,7 @@ class Minecraft {
         }
 
         const parsed = classJson.libraries.map(lib => {
-            if (lib.url || lib.artifact || lib.downloads?.artifact && !this.parseRule(lib)) return lib
+            if (lib.url || lib.artifact || lib.downloads?.artifact || lib.name && !this.parseRule(lib)) return lib
         })
 
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
@@ -242,9 +242,9 @@ class Minecraft {
             //}
 
             if (!fs.existsSync(path.join(jarPath, name))) {
-                if (library.downloads && library.downloads.artifact && library.downloads.artifact.url.includes('http')) {
+                if (library?.downloads?.artifact?.url?.includes('http')) {
                     await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
-                } else if (library.artifact && library.artifact.url.includes('http')) {
+                } else if (library?.artifact?.url.includes('http')) {
                     await this.downloadAsync(library.artifact.url, jarPath, name, true, eventName)
                 } else {
                     const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
@@ -295,10 +295,12 @@ class Minecraft {
      * @param retry Try again?
      * @param type Type of download
      */
-    downloadAsync (url, directory, name, retry, type) {
-        if (fs.existsSync(path.join(directory, name)) && fs.readFileSync(path.join(directory, name)).length > 0) return new Promise(resolve => {return resolve(false)})
+    downloadAsync(url, directory, name, retry, type) {
+        const _path = path.join(directory, name)
+        if (fs.existsSync(_path) && fs.readFileSync(_path).length > 0) return new Promise(resolve => {return resolve(false)})
         if (url.includes('http')) {
             return new Promise(resolve => {
+                
                 fs.mkdirSync(directory, { recursive: true })
 
                 const _request = this.baseRequest(url)
@@ -308,17 +310,17 @@ class Minecraft {
 
                 _request.on('response', (data) => {
                     if (data.statusCode !== 200) {
-                        logg.debug(`Failed to download ${url} due to: File not found...`)
-                        if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                        logg.debug(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
+                        if (fs.existsSync(_path)) fs.unlinkSync(_path)
                         resolve(false)
                     }
                     totalBytes = parseInt(data.headers['content-length'])
                 })
 
                 _request.on('error', async (error) => {
-                    logg.debug(`Failed to download to ${path.join(directory, name)} due to\n${error}.`+` Retrying... ${retry}`)
+                    logg.debug(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.`+` Retrying... ${retry}`)
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
-                    if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                    if (fs.existsSync(_path)) fs.unlinkSync(_path)
                     resolve()
                 })
 
@@ -332,7 +334,7 @@ class Minecraft {
                     })
                 })
 
-                const file = fs.createWriteStream(path.join(directory, name))
+                const file = fs.createWriteStream(_path, {flags: 'w+'})
                 _request.pipe(file)
 
                 file.once('finish', () => {
@@ -347,8 +349,8 @@ class Minecraft {
                 })
 
                 file.on('error', async (e) => {
-                    logg.debug(`Failed to download to ${path.join(directory, name)} due to\n${e}.`+` Retrying... ${retry}`)
-                    if (fs.existsSync(path.join(directory, name))) fs.unlinkSync(path.join(directory, name))
+                    logg.debug(`[FILE] Failed to download to ${_path} due to\n${e}.`+` Retrying... ${retry}`)
+                    if (fs.existsSync(_path)) fs.unlinkSync(_path)
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
                     resolve()
                 })
@@ -428,7 +430,7 @@ class Minecraft {
             '${auth_session}': this.options.auth.access_token,
             '${auth_player_name}': this.options.auth.username,
             '${auth_uuid}': this.options.auth.uuid,
-            '${user_properties}': this.options.auth.user_properties,
+            '${user_properties}': this.options.auth.user_properties || `{}`,
             '${user_type}': 'mojang',
             '${version_name}': this.overrides.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
