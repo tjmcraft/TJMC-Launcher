@@ -69,26 +69,19 @@ class Minecraft {
      */
     async getClasses (classJson) {
         let libs = []
-
         const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'))
-
         if (classJson.mavenFiles) {
             await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven-custom')
         }
-
         const parsed = classJson.libraries.map(lib => {
-            let de = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
-            let dexp = ( !de && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name )
-            let e = (de || dexp) && !this.parseRule(lib)
-            //console.debug(`[LIB] Name: ${lib.name} -> DEXP: ${de} -> DEXP_@: ${dexp} -> Rule: ${!this.parseRule(lib)} -> Exp: ${e}`)
-            //console.debug(`[LIB-D-E] URL: ${lib.url} -> ART: ${lib.artifact} -> DART: ${lib.downloads?.artifact} -> NAME: ${lib.name} -> RULE: ${!this.parseRule(lib)}`)
-            if (e) return lib
+            const lib_url_ex = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
+            const lib_no_clfs_ex = ( !lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name )
+            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib)
+            if (lib_ex) return lib
         })
-
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
         counter = 0
-
-        logg.debug('Collected class paths')
+        logg.debug('Collected class paths, count: ' + libs.length)
         return libs
     }
 
@@ -104,16 +97,13 @@ class Minecraft {
      */
     async getNatives (version) {
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
-
             const natives = async () => {
                 const natives = []
                 await Promise.all(version.libraries.map(async (lib) => {
                     if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
                     if (this.parseRule(lib)) return
-
                     const native = 
                     lib.classifiers ? (
                         API.getOS() === 'osx' 
@@ -130,13 +120,11 @@ class Minecraft {
                 return natives
             }
             const stat = await natives()
-
             this.client.emit('progress', {
                 type: 'natives',
                 task: 0,
                 total: stat.length
             })
-
             await Promise.all(stat.map(async (native) => {
                 if (!native) return
                 const name = native.path.split('/').pop()
@@ -150,7 +138,7 @@ class Minecraft {
                     // Only doing a console.warn since a stupid error happens. You can basically ignore this.
                     // if it says Invalid file name, just means two files were downloaded and both were deleted.
                     // All is well.
-                    console.warn(e)
+                    logg.warn(e)
                 }
                 fs.unlinkSync(path.join(nativeDirectory, name))
                 counter++
@@ -162,16 +150,13 @@ class Minecraft {
             }))
             logg.debug('Downloaded and extracted natives')
         }
-
         counter = 0
         this.client.emit('progress', {
             type: 'natives',
             task: counter,
             total: 1
         })
-
         logg.debug(`Set native path to ${nativeDirectory}`)
-
         return nativeDirectory
     }
 
@@ -192,7 +177,6 @@ class Minecraft {
             task: 0,
             total: Object.keys(index.objects).length
         })
-    
         await Promise.all(Object.keys(index.objects).map(async asset => {
             const hash = index.objects[asset].hash
             const subhash = hash.substring(0, 2)
@@ -208,16 +192,13 @@ class Minecraft {
                 })
             }
         }))
-
         counter = 0
         this.client.emit('progress', {
             type: 'assets',
             task: counter,
             total: Object.keys(index.objects).length
         })
-    
         logg.debug('Downloaded assets')
-
         return assets_pathes
     }
 
@@ -229,22 +210,11 @@ class Minecraft {
      */
     async downloadToDirectory (directory, libraries, eventName) {
         const libs = []
-
         await Promise.all(libraries.map(async library => {
             if (!library) return
-            
             const lib = library.name.split(':')
-
-            let jarPath
-            let name
-
-            /*if (library.downloads && library.downloads.artifact || library.artifact && library.downloads.artifact.path || library.artifact.path) {
-                name = library.downloads.artifact.path.split('/')[library.downloads.artifact.path.split('/').length - 1]
-                jarPath = path.join(directory, this.popString(library.downloads.artifact.path))
-            } else {*/
-                name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
-                jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
-            //}
+            const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
+            const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
 
             if (!fs.existsSync(path.join(jarPath, name))) {
                 const lib_url = library?.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
@@ -265,29 +235,22 @@ class Minecraft {
                 for (let c of url){
                     if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
                 }
-                
             }
-
             counter++
-
             this.client.emit('progress', {
                 type: eventName,
                 task: counter,
                 total: libraries.length
             })
-
             if (library.mod || library.downloadOnly) return 
-            
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
-
         counter = 0
         this.client.emit('progress', {
             type: eventName,
             task: counter,
             total: libraries.length
         })
-
         return libs
     }
 
@@ -304,14 +267,10 @@ class Minecraft {
         if (fs.existsSync(_path) && fs.readFileSync(_path).length > 0) return new Promise(resolve => {return resolve(false)})
         if (url.includes('http')) {
             return new Promise(resolve => {
-                
                 fs.mkdirSync(directory, { recursive: true })
-
                 const _request = this.baseRequest(url)
-
                 let receivedBytes = 0
                 let totalBytes = 0
-
                 _request.on('response', (data) => {
                     if (data.statusCode !== 200) {
                         logg.warn(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
@@ -319,12 +278,9 @@ class Minecraft {
                         resolve(false)
                     } else {
                         logg.debug(`[REQUEST] Download get code ${data.statusCode} on ${url}`)
-                        
                         totalBytes = parseInt(data.headers['content-length'])
-                        
                         const file = fs.createWriteStream(_path, { flags: 'w+' })
                         _request.pipe(file)
-
                         file.once('finish', () => {
                             this.client.emit('download-status', {
                                 name: name,
@@ -335,7 +291,6 @@ class Minecraft {
                             this.client.emit('download', name)
                             resolve({ failed: false, asset: null })
                         })
-
                         file.on('error', async (e) => {
                             logg.debug(`[FILE] Failed to download ${url} to ${_path} due to\n${e}.` + ` Retrying... ${retry}`)
                             if (fs.existsSync(_path)) fs.unlinkSync(_path)
@@ -344,14 +299,12 @@ class Minecraft {
                         })
                     }
                 })
-
                 _request.on('error', async (error) => {
                     logg.debug(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`)
                     if (fs.existsSync(_path)) fs.unlinkSync(_path)
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
                     resolve()
                 })
-
                 _request.on('data', (data) => {
                     receivedBytes += data.length
                     this.client.emit('download-status', {
@@ -360,9 +313,7 @@ class Minecraft {
                         current: receivedBytes,
                         total: totalBytes
                     })
-                })
-
-                
+                })            
             })
         }
     }
