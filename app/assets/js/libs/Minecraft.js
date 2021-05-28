@@ -77,8 +77,11 @@ class Minecraft {
         }
 
         const parsed = classJson.libraries.map(lib => {
-            let e = (lib.name && !this.parseRule(lib))
-            console.debug(`${lib.name} -> ${!this.parseRule(lib)} -> ${e}`)
+            let de = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
+            let dexp = ( !de && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name )
+            let e = (de || dexp) && !this.parseRule(lib)
+            //console.debug(`[LIB] Name: ${lib.name} -> DEXP: ${de} -> DEXP_@: ${dexp} -> Rule: ${!this.parseRule(lib)} -> Exp: ${e}`)
+            //console.debug(`[LIB-D-E] URL: ${lib.url} -> ART: ${lib.artifact} -> DART: ${lib.downloads?.artifact} -> NAME: ${lib.name} -> RULE: ${!this.parseRule(lib)}`)
             if (e) return lib
         })
 
@@ -244,26 +247,25 @@ class Minecraft {
             //}
 
             if (!fs.existsSync(path.join(jarPath, name))) {
-                if (library?.downloads?.artifact?.url?.includes('http')) {
-                    await this.downloadAsync(library.downloads.artifact.url, jarPath, name, true, eventName)
-                } else if (library?.artifact?.url.includes('http')) {
-                    await this.downloadAsync(library.artifact.url, jarPath, name, true, eventName)
-                } else {
-                    const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
-                    const url = [
-                        library.url ? library.url : '',
-                        'https://libraries.minecraft.net/' + jar_name, 
-                        'https://tlauncherrepo.com/repo/libraries/' + jar_name, 
-                        'https://files.minecraftforge.net/maven/' + jar_name, 
-                        'http://dl.liteloader.com/versions/' + jar_name, 
-                        'https://repo1.maven.org/maven2/' + jar_name,
-                        'https://maven.minecraftforge.net/' + jar_name,
-                        (library.url ? library.url : '') + jar_name
-                    ]
-                    for (let c of url){
-                        if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
-                    }
+                const lib_url = library?.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
+                    library?.artifact?.url.includes('http') ? library.artifact.url :
+                        library.url ? library.url : 
+                            library.exact_url ? library.exact_url : '';
+                const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
+                const url = [
+                    lib_url,
+                    'https://libraries.minecraft.net/' + jar_name, 
+                    'https://tlauncherrepo.com/repo/libraries/' + jar_name, 
+                    'https://files.minecraftforge.net/maven/' + jar_name, 
+                    'http://dl.liteloader.com/versions/' + jar_name, 
+                    'https://repo1.maven.org/maven2/' + jar_name,
+                    'https://maven.minecraftforge.net/' + jar_name,
+                    (library.url ? library.url : '') + jar_name
+                ]
+                for (let c of url){
+                    if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
                 }
+                
             }
 
             counter++
@@ -312,17 +314,41 @@ class Minecraft {
 
                 _request.on('response', (data) => {
                     if (data.statusCode !== 200) {
-                        logg.debug(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
+                        logg.warn(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
                         if (fs.existsSync(_path)) fs.unlinkSync(_path)
                         resolve(false)
+                    } else {
+                        logg.debug(`[REQUEST] Download get code ${data.statusCode} on ${url}`)
+                        
+                        totalBytes = parseInt(data.headers['content-length'])
+                        
+                        const file = fs.createWriteStream(_path, { flags: 'w+' })
+                        _request.pipe(file)
+
+                        file.once('finish', () => {
+                            this.client.emit('download-status', {
+                                name: name,
+                                type: type,
+                                current: 0,
+                                total: totalBytes
+                            })
+                            this.client.emit('download', name)
+                            resolve({ failed: false, asset: null })
+                        })
+
+                        file.on('error', async (e) => {
+                            logg.debug(`[FILE] Failed to download ${url} to ${_path} due to\n${e}.` + ` Retrying... ${retry}`)
+                            if (fs.existsSync(_path)) fs.unlinkSync(_path)
+                            if (retry) await this.downloadAsync(url, directory, name, false, type)
+                            resolve()
+                        })
                     }
-                    totalBytes = parseInt(data.headers['content-length'])
                 })
 
                 _request.on('error', async (error) => {
-                    logg.debug(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.`+` Retrying... ${retry}`)
-                    if (retry) await this.downloadAsync(url, directory, name, false, type)
+                    logg.debug(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`)
                     if (fs.existsSync(_path)) fs.unlinkSync(_path)
+                    if (retry) await this.downloadAsync(url, directory, name, false, type)
                     resolve()
                 })
 
@@ -336,26 +362,7 @@ class Minecraft {
                     })
                 })
 
-                const file = fs.createWriteStream(_path, {flags: 'w+'})
-                _request.pipe(file)
-
-                file.once('finish', () => {
-                    this.client.emit('download-status', {
-                        name: name,
-                        type: type,
-                        current: 0,
-                        total: totalBytes
-                    })
-                    this.client.emit('download', name)
-                    resolve({failed: false,asset: null})
-                })
-
-                file.on('error', async (e) => {
-                    logg.debug(`[FILE] Failed to download to ${_path} due to\n${e}.`+` Retrying... ${retry}`)
-                    if (fs.existsSync(_path)) fs.unlinkSync(_path)
-                    if (retry) await this.downloadAsync(url, directory, name, false, type)
-                    resolve()
-                })
+                
             })
         }
     }
