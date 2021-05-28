@@ -77,7 +77,9 @@ class Minecraft {
         }
 
         const parsed = classJson.libraries.map(lib => {
-            if (lib.url || lib.artifact || lib.downloads?.artifact || lib.name && !this.parseRule(lib)) return lib
+            let e = (lib.name && !this.parseRule(lib))
+            console.debug(`${lib.name} -> ${!this.parseRule(lib)} -> ${e}`)
+            if (e) return lib
         })
 
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
@@ -383,15 +385,15 @@ class Minecraft {
     parseRule (lib) {
         if (lib.rules) {
             if (lib.rules.length > 1) {
-            if (lib.rules[0].action === 'allow' &&
-                        lib.rules[1].action === 'disallow' &&
-                        lib.rules[1].os.name === 'osx') {
-                return API.getOS() === 'osx'
+                if (lib.rules[0].action === 'allow' &&
+                    lib.rules[1].action === 'disallow' &&
+                    lib.rules[1].os.name === 'osx') {
+                    return API.getOS() === 'osx'
+                } else {
+                    return true
+                }
             } else {
-                return true
-            }
-            } else {
-            if (lib.rules[0].action === 'allow' && lib.rules[0].os) return API.getOS() !== 'osx'
+                if (lib.rules[0].action === 'allow' && lib.rules[0].os) return API.getOS() !== 'osx'
             }
         } else {
             return false
