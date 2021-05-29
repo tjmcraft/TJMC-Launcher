@@ -104,17 +104,11 @@ class Minecraft {
                 await Promise.all(version.libraries.map(async (lib) => {
                     if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
                     if (this.parseRule(lib)) return
+                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
                     const native = 
-                    lib.classifiers ? (
                         API.getOS() === 'osx' 
-                        ? (lib.classifiers['natives-osx'] || lib.classifiers['natives-macos']) 
-                        : (lib.classifiers[`natives-${API.getOS()}`]) 
-                    ) : lib.downloads.classifiers ? (
-                        API.getOS() === 'osx' 
-                        ? (lib.downloads.classifiers['natives-osx'] || lib.downloads.classifiers['natives-macos']) 
-                        : (lib.downloads.classifiers[`natives-${API.getOS()}`]) 
-                    ) : null
-                    //natives = merge(natives, native)
+                        ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos']) 
+                        : (lib_clfs[`natives-${API.getOS()}`]) 
                     natives.push(native)
                 }))
                 return natives
