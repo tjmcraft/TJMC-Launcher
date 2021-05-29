@@ -11,7 +11,7 @@ class Settings {
             {id: 'minecraft-settings', name: 'Игровые настройки', content: this.content.minecraft_settings_tab},
             {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
             {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
-            {id: 'about-tab', name: 'О нас', content: this.content.about_tab}
+            {id: 'about-tab', name: 'О программе', content: this.content.about_tab}
         ]
 
         this.layer = new Layer({
@@ -205,11 +205,41 @@ class Settings {
             return this.base('launcher-settings-tab', heading, children);
         },
         get about_tab() {
-            const heading = createElement('h2', null, 'О нас');
+            const heading = createElement('h2', null, 'О программе');
+            const whats_new_nutton = createElement('button', { class: 'r' }, 'Что нового?');
+            whats_new_nutton.onclick = () => {
+                new AlertEx({
+                    closeButton: true,
+                    type: 'info',
+                    header: 'Что нового',
+                    text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.`
+                })
+            }
             const children = this.createChilderContainer(
-                createElement('div', {class: 'container-cc3V'},
-                    createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'), 
-                    createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+                createElement('div', { class: 'container-cc3V' },
+                    //createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
+                    createElement('div', { class: 'bxcF1-box' },
+                        createElement('div', { class: 'ictx-flex' },
+                            createElement('div', { class: 'icon' }, createElement('img', { src: './assets/images/icon.png' })),
+                            createElement('span', {class: 'vbx'},
+                                createElement('div', { class: 'text name' }, 'TJMC-Launcher'),
+                                createElement('div', { class: 'text version' }, 'v1.8.0')
+                            ),
+                            whats_new_nutton
+                        ),
+                        createElement('div', { class: 'separator' }),
+                        createElement('div', { class: 'note flex-group' },
+                            createElement('div', { class: 'description', html: true }, 'TJMC-Company Co. Ltd.'),
+                            createElement('a', { href: 'https://github.com/MakAndJo/TJMC-Launcher', class: 'anchor' }, 'Source (GitHub)'),
+                            createElement('a', { href: 'https://www.tjmcraft.ga/help', class: 'anchor' }, 'Поддержка'),
+                            createElement('a', { href: 'https://www.tjmcraft.ga/launcher', class: 'anchor' }, 'Сайт')
+                        )
+                    ),
+                    createElement('div', { class: 'bxcF1-box' },
+                        createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
+                        createElement('div', { class: 'separator' })
+                    )
+                    //createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
                 )
             );
             return this.base('about-tab', heading, children);

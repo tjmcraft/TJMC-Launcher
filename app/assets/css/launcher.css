@@ -1496,11 +1496,13 @@ a.anchor {
     text-decoration: none;
 }
 a.anchor:hover {
+    color: var(--text-link);
     text-decoration: underline;
 }
 
 .flex-group {
     display: flex;
+    align-items: baseline;
 }
 .flex-group.vertical {
     flex-direction: column;
@@ -1588,6 +1590,7 @@ a.anchor:hover {
     justify-content: center !important;
     align-items: center !important;
     flex-wrap: wrap;
+    line-height: unset;
 }
 
 .input-wrapper {
@@ -1712,4 +1715,75 @@ a.anchor:hover {
 
 .grow {
     width: auto;
+}
+
+.bxcF1-box {
+    background: var(--background-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.bxcF1-box .separator {
+    margin: 16px 0 !important;
+}
+
+.ictx-flex {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+}
+.ictx-flex > .icon {
+    margin: 0 16px 0 0;
+    max-width: 64px;
+    max-height: 64px;
+}
+.ictx-flex > .icon > img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.ictx-flex > .vbx {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.ictx-flex > .vbx > .text {
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: normal;
+}
+.ictx-flex > .vbx > .text.name {
+    font-family: 'Candara';
+    font-size: 2em;
+    font-weight: 600;
+}
+.ictx-flex > .vbx > .text.version {
+    font-family: system-ui;
+    font-size: 1.2em;
+    font-weight: 500;
+    color: var(--header-secondary);
+    margin: 0 0 0 8px;
+}
+.ictx-flex > button.r {
+    border: 1px solid var(--background-modifier-accent);
+    font-size: 14px;
+    line-height: inherit;
+}
+
+.r {
+    margin-left: auto;
+}
+
+a { 
+    color: var(--interactive-normal);
+}
+a:hover {
+    color: var(--interactive-hover);
+}
+
+.note.flex-group > *{
+    margin: 0 8px 0 0;
 }
