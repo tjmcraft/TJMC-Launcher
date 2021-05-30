@@ -49,7 +49,7 @@
  ******************************************************************************/
 
  * {box-sizing: border-box;}
-.preload *, .preload {
+.preload *, .preload, .disable-animation, .disable-animation * {
     -moz-animation: none !important;
     -webkit-animation: none !important;
     -ms-animation: none !important;
@@ -60,6 +60,7 @@
     transition: none !important;
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
+.hidden-v {visibility: hidden; opacity: 0;}
 .platform-darwin .frame-fix {padding-top: 0;}
 .frame-fix {transition: all 0.5s; padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
@@ -344,15 +345,13 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  opacity 0.5s ease;
     max-width: 75vw;
     max-height: 75vh;
-    background: #252626;
+    background: var(--background-primary);
     display: flex;
-    /* align-items: center; */
     /* justify-content: center; */
     flex-direction: column;
     border-radius: 8px;
-    min-width: 380px;
+    min-width: 340px;
     min-height: 180px;
-    /* padding: 1em; */
     overflow-y: auto;
     overflow-x: hidden;
     white-space: pre-line;
@@ -489,6 +488,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     position: relative;
     z-index: 0;
     padding: 0 8px 16px 16px;
+    flex: 1 1 auto;
 }
 
 .overlay > .container-ov1 > .content.log {
@@ -510,7 +510,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .overlay .vertical-button-container {
     flex: 0 0 auto;
-    background: #242424;
+    background: var(--background-secondary);
     position: relative;
     display: flex;
     justify-content: flex-end;
@@ -1502,7 +1502,7 @@ a.anchor:hover {
 
 .flex-group {
     display: flex;
-    align-items: baseline;
+    align-items: center;
 }
 .flex-group.vertical {
     flex-direction: column;
