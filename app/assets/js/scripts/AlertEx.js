@@ -19,7 +19,7 @@ class AlertEx {
      */
     constructor(params = {}, ...nodes) {
         if (!params) throw new Error('No parametrs given');
-        this.root_container = createElement('div', { class: 'container-ov1' + (params?.type ? ' ' + 'mini' : '')});
+        this.root_container = createElement('div', { class: 'container-ov1' + (params?.logType ? ' ' + 'mini' : '')});
         this.root_container.onclick = (event) => { event.stopPropagation() };
 
         if (params?.type) {
@@ -133,4 +133,143 @@ class AlertEx {
     get innerContent() {
         return this.root_container.innerHTML;
     }
+
+    create(callback = () => { }) {
+        let content = null;
+        if (typeof callback === 'function')
+            content = callback.call(this) || null;
+        return content;
+    }
+
+    sc = 'hidden'
+}
+
+
+/**
+ * Creates modal overlay
+ * @param {Object} params - Parameters for creating overlay
+ * @param {Object} params.escButton - Create esc button
+ * @param {Object} container - Container to insert to overlay
+ */
+class ModalEx {
+
+    constructor(params = {}, container = null) {
+        this.overlay = this.createOverlay(params?.escButton, container)
+        this.overlay.onclick = (e) => { this.destroy(e) }
+        
+        this.escBinder = new escBinder()
+        this.escBinder.bind((e) => { this.destroy(e) })
+        //this.show();
+    }
+    
+    /**
+     * Creates overlay root element
+     * @param {Boolean} closeButton - Create cross close button ?
+     * @param  {...any} nodes - Nodes for overlay
+     * @returns 
+     */
+    createOverlay(closeButton = false, ...nodes) {
+        const overlay = createElement('div', { class: 'overlay hidden' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
+        return overlay;
+    }
+
+    create(callback = () => { }) {
+        if (typeof callback === 'function')
+            return callback.call(this) || null;
+    }
+
+    show() {
+        document.body.appendChild(this.overlay)
+        setTimeout(() => {
+            this.overlay.toggle(true);
+        }, 50)
+        //this.overlay.fadeIn(300);
+    }
+
+    destroy() {
+        this.escBinder.uibind()
+        this.overlay.toggle(false);
+        setTimeout(() => {
+            this.overlay.remove();
+        }, 400);
+        /*this.overlay.fadeOut(300, () => {
+            this.overlay.remove()
+        });*/
+    }
+
+    /**
+     * Append dom content to created layer
+     * @param {*} content 
+     */
+    append(content) {
+        this.overlay.append(content)
+    }
+
+}
+
+
+const modal = {
+
+    alert: function (header = '', msg = '', type = null, params = {}) {
+
+        const root_container = createElement('div', { class: 'container-ov1' });
+        root_container.onclick = (e) => { e.stopPropagation() };
+
+        const modal = new ModalEx({
+            escButton: true
+        }, root_container);
+
+        if (type) {
+            let data = null
+            switch (type) {
+                case 'info':
+                    data = SVG('info-circle')
+                    break
+                case 'error':
+                    data = SVG('error-circle')
+                    break
+                case 'warn':
+                    data = SVG('warn-circle')
+                    break
+                case 'success':
+                    data = SVG('success-circle')
+                    break
+                default:
+                    data = ''
+                    break
+            }
+            if (data) {
+                const ie = createElement('div', { class: 'icon' }, data)
+                root_container.appendChild(ie)
+            }
+        }
+        
+        if (header) root_container.appendChild(createElement('h1', null, header))
+        
+        if (msg) root_container.appendChild(createElement('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, msg))
+
+        if (params?.buttons) {
+            root_container.appendChild(this.BFooter(params?.buttons, () => { modal.destroy() }));
+        } else {
+            root_container.appendChild(this.BFooter([{
+                name: "Ок",
+                class: 'primary-button',
+                closeOverlay: true
+            }], () => { modal.destroy() }));
+        }
+        modal.show();
+    },
+
+    BFooter: function(buttons, destroy = () => {}) {
+        let _buttons = buttons.map(button => {
+                const button_root = Button({ class: 'grow' + (button.class ? ' ' + button.class : '') }, button.name)
+                button_root.onclick = () => {
+                    if (button.callback && typeof button.callback === 'function') button.callback.call(this)
+                    if (button.closeOverlay) destroy.call(this)
+                }
+                return button_root;
+        })
+        return createElement('div', { class: 'vertical-button-container' }, ..._buttons);
+    }
+
 }
