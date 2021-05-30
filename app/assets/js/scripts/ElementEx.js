@@ -49,27 +49,19 @@ Element.prototype.qsla = qsla
 function createElement(tag, attrs, ...childrens) {
     var element = document.createElement((typeof tag == 'string') ? tag : 'div');
     var insert_html = false;
-    for (let name in attrs) {
+    for (const name in attrs) {
         if (name && attrs.hasOwnProperty(name)) {
             let value = attrs[name];
-            if (value instanceof Array) {value = value.filter(e => e).join(' ')}
+            if (value instanceof Array) { value = value.filter(e => e).join(' ') }
             if (name == 'html' && value == true) { insert_html = true; continue; }
-            if (value === true) {
-                element.setAttribute(name, name);
-            } else if (value !== false && value != null) {
-                element.setAttribute(name, value.toString());
-            }
-            
+            if (value === true) { element.setAttribute(name, name) }
+            else if (value !== false && value != null) { element.setAttribute(name, value.toString())}
         }
     }
-    for (let child of childrens) {
+    for (const child of childrens) {
         if (child && child != null) {
-            if (insert_html && child.nodeType == null) {
-                element.innerHTML += child;
-            } else {
-                element.append(child);
-            }
-            
+            if (insert_html && child.nodeType == null) { element.innerHTML += child }
+            else { element.append(child) }
         }
     }
     return element;
