@@ -2,6 +2,7 @@
 /**
  * Functions toogle elements using css
  * @param {Boolean} state state to toggle TRUE/FALSE (it can be also null)
+ * @param {String} class class to toggle STRING (it can be also null)
  */
 Element.prototype.toggle = function(s = null, cls = null) {
     let cl = this.classList,
