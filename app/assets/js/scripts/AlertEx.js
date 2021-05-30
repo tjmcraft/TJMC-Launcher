@@ -209,13 +209,22 @@ class ModalEx {
 
 
 const modal = {
-
+    /**
+     * Create standart alert modal dialog with given parameters
+     * @param {String} header - The header of the dialog
+     * @param {String} message - The main text of the dialog
+     * @param {String} type - The type of the dialog (info, warning, error, success)
+     * @param {Object} params - Additional parameters for the dialog
+     * @param {Object} params.logType - Mode of the dialog when text is shown as a log
+     * @param {Object} params.buttons - Buttons list (by default it's OK primary button)
+     * @returns {Element} instance of element
+     */
     alert: function (header = '', msg = '', type = null, params = {}) {
 
         const root_container = createElement('div', { class: 'container-ov1' });
         root_container.onclick = (e) => { e.stopPropagation() };
 
-        const modal = new ModalEx({
+        const modal_ex = new ModalEx({
             escButton: true
         }, root_container);
 
@@ -228,7 +237,7 @@ const modal = {
                 case 'error':
                     data = SVG('error-circle')
                     break
-                case 'warn':
+                case 'warning':
                     data = SVG('warn-circle')
                     break
                 case 'success':
@@ -249,17 +258,24 @@ const modal = {
         if (msg) root_container.appendChild(createElement('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, msg))
 
         if (params?.buttons) {
-            root_container.appendChild(this.BFooter(params?.buttons, () => { modal.destroy() }));
+            root_container.appendChild(this.BFooter(params?.buttons, () => { modal_ex.destroy() }));
         } else {
             root_container.appendChild(this.BFooter([{
                 name: "Ок",
                 class: 'primary-button',
                 closeOverlay: true
-            }], () => { modal.destroy() }));
+            }], () => { modal_ex.destroy() }));
         }
-        modal.show();
+        modal_ex.show();
+        return root_container;
     },
 
+    /**
+     * Creates footer with buttons
+     * @param {Array} buttons - The array of buttons to create with
+     * @param {Function} destroy - The function that will be called to destroy overlay
+     * @returns {Element} instance of element
+     */
     BFooter: function(buttons, destroy = () => {}) {
         let _buttons = buttons.map(button => {
                 const button_root = Button({ class: 'grow' + (button.class ? ' ' + button.class : '') }, button.name)
@@ -270,6 +286,24 @@ const modal = {
                 return button_root;
         })
         return createElement('div', { class: 'vertical-button-container' }, ..._buttons);
+    },
+
+    /**
+     * Creates raw modal with given elements and parameters
+     * @param {Object} props - Properties for the dialog
+     * @param  {...any} elements - Elements to add
+     * @returns {Element} instance of element
+     */
+    createRaw: function (props = {}, ...elements) {
+        const root_container = createElement('div', { class: ['container-ov1', props.class] }, ...elements);
+        root_container.onclick = (e) => { e.stopPropagation() };
+
+        const modal_ex = new ModalEx({
+            escButton: props.escButton || true
+        }, root_container);
+
+        modal_ex.show();
+        return root_container;
     }
 
 }
