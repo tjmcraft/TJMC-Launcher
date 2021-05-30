@@ -3,10 +3,12 @@
  * Functions toogle elements using css
  * @param {Boolean} state state to toggle TRUE/FALSE (it can be also null)
  */
-Element.prototype.toggle = function(s = null) {
+Element.prototype.toggle = function(s = null, cls = null) {
     let cl = this.classList,
-        c = 'hidden'
-    cl[(s != null ? s : cl.contains(c) == 1) ? 'remove' : 'add'](c)
+        c = cls || 'hidden',
+        e = (s != null ? s : cl.contains(c) == 1),
+        ce = (cls != null)
+    cl[(ce ? !e : e) ? 'remove' : 'add'](c)
 }
 
 /**
