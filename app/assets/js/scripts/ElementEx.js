@@ -52,7 +52,7 @@ function createElement(tag, attrs, ...childrens) {
     for (let name in attrs) {
         if (name && attrs.hasOwnProperty(name)) {
             let value = attrs[name];
-            if (value instanceof Array) {value = value.join(' ')}
+            if (value instanceof Array) {value = value.filter(e => e).join(' ')}
             if (name == 'html' && value == true) { insert_html = true; continue; }
             if (value === true) {
                 element.setAttribute(name, name);
