@@ -365,6 +365,12 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     width: 45vw;
     height: auto;
 }
+.overlay > .container-ov1.small {
+    max-width: 45em;
+    max-height: 80vh;
+    width: 45vw;
+    height: auto;
+}
 
 .overlay > .container-ov1 > div.icon {
     padding: 16px;
@@ -396,6 +402,44 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay.hidden > .container-ov1 svg {
     transform: scale(0);
     opacity: 0;
+}
+
+.overlay > .container-ov1 .header-1 {
+    border-radius: 5px 5px 0 0;
+    transition: box-shadow .1s ease-out;
+    word-wrap: break-word;
+    position: relative;
+    flex: 0 0 auto;
+    padding: 16px;
+    z-index: 1;
+    overflow-x: hidden;
+}
+.overlay > .container-ov1 .header-1 .button {
+    flex: unset;
+}
+.overlay > .container-ov1 .header-1 h2 {
+    text-align: start;
+}
+.overlay > .container-ov1 .header-1 svg[data-icon=cross-icon] {
+    width: 24px;
+    height: 24px;
+}
+.overlay > .container-ov1 .content {
+    color: #b9bbbe;
+    font-size: 16px;
+    line-height: 20px;
+    text-align: start;
+}
+
+.overlay > .container-ov1 .footer {
+    flex: 0 0 auto;
+    position: relative;
+    padding: 15px;
+    background: var(--background-secondary);
+    display: flex;
+}
+.overlay > .container-ov1 .footer > * {
+    margin: 0 8px 0 0;
 }
 
 .tools {
