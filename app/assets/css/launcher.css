@@ -346,7 +346,11 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .overlay > .container-ov1 {
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  opacity 0.5s ease;
+    transition: 
+    transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  
+    opacity 0.5s ease,
+    width .5s ease,
+    height .5s ease;
     max-width: 75vw;
     max-height: 75vh;
     background: var(--background-primary);
@@ -371,9 +375,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     height: auto;
 }
 .overlay > .container-ov1.small {
-    max-width: 45em;
     max-height: 80vh;
-    width: 45vw;
+    width: 35em;
     height: auto;
 }
 
@@ -405,8 +408,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     opacity: 0;
 }
 .overlay.hidden > .container-ov1 svg {
-    transform: scale(0);
-    opacity: 0;
+    /*transform: scale(0);*/
+    /*opacity: 0;*/
 }
 
 .overlay > .container-ov1 .header-1 {
