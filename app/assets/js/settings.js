@@ -209,7 +209,7 @@ class Settings {
             const whats_new_nutton = cE('button', { class: 'r' }, 'Что нового?');
             whats_new_nutton.onclick = () => {
                 modal.whatsNew([
-                    cE('img', { src: 'https://picsum.photos/1280/720'}),
+                    cE('img', { src: 'https://picsum.photos/720/480?random=1&grayscale'}),
                     cE('h1', { class: ['margin-top', 'title', 'added'] }, 'Привет, это TJMC'),
                     cE('p', null, 'В общем, мы решили изменить свой внешний вид.'),
                 ])
@@ -235,7 +235,7 @@ class Settings {
                         )
                     ),
                     cE('div', { class: 'bxcF1-box' },
-                        cE('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
+                        cE('h5', null, 'Просмотр информации о предыдущих релизах'),
                         cE('div', { class: 'separator' })
                     )
                     //cE('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
