@@ -78,6 +78,7 @@ body, html, div {
     user-select: none;
     background: transparent;
     line-height: 1;
+    /*text-rendering: optimizeLegibility;*/
 }
 
 body, button {
@@ -360,6 +361,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     white-space: pre-line;
     font-size: 16px;
     font-family: system-ui;
+    text-align: start;
 }
 
 .overlay > .container-ov1.mini {
@@ -420,9 +422,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay > .container-ov1 .header-1 .button {
     flex: unset;
 }
-.overlay > .container-ov1 .header-1 {
-    text-align: start;
-}
 .overlay > .container-ov1 .header-1 svg[data-icon=cross-icon] {
     width: 24px;
     height: 24px;
@@ -434,9 +433,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 .overlay > .container-ov1 .content {
     color: #b9bbbe;
-    font-size: 16px;
-    line-height: 20px;
-    text-align: start;
 }
 .thin-s::-webkit-scrollbar-track {
     border-color: transparent;

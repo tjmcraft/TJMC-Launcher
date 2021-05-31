@@ -322,7 +322,7 @@ const modal = {
             createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
         )
 
-        const root_content = createElement('div', { class: 'content' },
+        const root_content = createElement('div', { class: ['content', 'thin-s'] },
             `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget ultrices ipsum. Suspendisse mauris massa, blandit id hendrerit eget, tempor vitae turpis. Curabitur id eleifend nunc, sed tempus erat. Integer eu erat id nisl tincidunt venenatis. Nulla at mattis felis. Etiam fringilla erat at neque egestas, vel suscipit orci facilisis. In eros tellus, aliquam sit amet metus eu, efficitur rutrum tortor. Nulla sed risus sit amet odio dapibus pulvinar. Nullam mattis finibus elit eget sodales. Nam iaculis pulvinar ante, eget imperdiet elit tempus ut. Aliquam quis volutpat tortor, id dictum arcu.
 
 Aenean iaculis quam sem, quis interdum ligula volutpat vel. Cras congue nunc nec odio rutrum, at ornare urna euismod. Sed ac scelerisque libero. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut sed accumsan massa. Nulla laoreet sem id scelerisque placerat. Praesent et nibh quis ex fermentum maximus eget id risus. Duis sed elit pellentesque, lobortis magna a, tincidunt erat. Maecenas ut nulla ultricies, tincidunt quam eget, ultrices elit. Quisque dignissim diam id ex tempor commodo.
