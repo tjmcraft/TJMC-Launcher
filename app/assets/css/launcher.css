@@ -439,8 +439,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     color: #b9bbbe;
 }
 .overlay > .container-ov1 .content img {
+    max-height: 45vh;
     width: 100%;
     border-radius: 5px;
+    object-fit: cover;
 }
 .overlay > .container-ov1 .content h1 {
     line-height: 20px;
