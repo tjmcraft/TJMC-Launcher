@@ -154,12 +154,16 @@ class AlertEx {
 class ModalEx {
 
     constructor(params = {}, container = null) {
-        this.overlay = this.createOverlay(params?.escButton, container)
-        this.overlay.onclick = (e) => { this.destroy(e) }
+        this.root_container = container
+        this.overlay = this.createOverlay(params?.escButton, this.root_container)
+        //this.overlay.onclick = (e) => { this.destroy(e) }
         
         this.escBinder = new escBinder()
         this.escBinder.bind((e) => { this.destroy(e) })
         //this.show();
+        this.regCP()
+        this.regPC()
+        this.regOC()
     }
     
     /**
@@ -203,6 +207,35 @@ class ModalEx {
      */
     append(content) {
         this.overlay.append(content)
+    }
+
+    get content() { return this.overlay; }
+
+    Xt = 0
+
+    regPC() {
+        this.root_container.onmousedown = ()=>{
+            this.overlay.onmouseup = (e) => {
+                this.overlay.onmouseup = void 0,
+                e.target === this.overlay && (this.Xt = 1)
+            }
+        }
+    }
+
+    regCP() {
+        this.overlay.onmousedown = ()=>{
+            this.root_container.onmouseup = (e) => {
+                this.root_container.onmouseup = void 0,
+                e.target !== this.root_container && !this.root_container.contains(e.target) || (this.Xt = 1)
+            }
+        }
+    }
+
+    regOC() {
+        this.overlay.onclick = e => {
+            (e.target === this.overlay && !this.Xt) && this.destroy();
+            this.Xt = 0;
+        }
     }
 
 }
@@ -306,38 +339,33 @@ const modal = {
         return root_container;
     },
 
-    whatsNew: function () {
+    whatsNew: function (content, date = null) {
         const root_container = createElement('div', { class: ['container-ov1', 'small'] });
-        root_container.onclick = (e) => { e.stopPropagation() };
+        //root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
             escButton: false
         }, root_container);
 
+        const s_date = new Date(date);
+
+        const close_button = createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
+        close_button.onclick = () => { modal_ex.destroy(); }
+
         const root_hoz_header = createElement('div', { class: ['flex-group', 'horizontal', 'header-1'] },
             createElement('div', { class: ['flex-child'] },
-                createElement('h2', null, 'Whats new?'),
-                createElement('div', { class: ['size12', 'colorStandart', 'date']}, '18 May 2012')
+                createElement('h2', null, 'Что нового?'),
+                createElement('div', { class: ['size12', 'colorStandart', 'date']}, s_date.toLocaleDateString() || '18 May 2012')
             ),
-            createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
+            close_button
         )
 
-        const root_content = createElement('div', { class: ['content', 'thin-s'] },
-            `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi eget ultrices ipsum. Suspendisse mauris massa, blandit id hendrerit eget, tempor vitae turpis. Curabitur id eleifend nunc, sed tempus erat. Integer eu erat id nisl tincidunt venenatis. Nulla at mattis felis. Etiam fringilla erat at neque egestas, vel suscipit orci facilisis. In eros tellus, aliquam sit amet metus eu, efficitur rutrum tortor. Nulla sed risus sit amet odio dapibus pulvinar. Nullam mattis finibus elit eget sodales. Nam iaculis pulvinar ante, eget imperdiet elit tempus ut. Aliquam quis volutpat tortor, id dictum arcu.
-
-Aenean iaculis quam sem, quis interdum ligula volutpat vel. Cras congue nunc nec odio rutrum, at ornare urna euismod. Sed ac scelerisque libero. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut sed accumsan massa. Nulla laoreet sem id scelerisque placerat. Praesent et nibh quis ex fermentum maximus eget id risus. Duis sed elit pellentesque, lobortis magna a, tincidunt erat. Maecenas ut nulla ultricies, tincidunt quam eget, ultrices elit. Quisque dignissim diam id ex tempor commodo.
-
-Morbi egestas maximus sem, ac euismod neque sollicitudin in. Mauris auctor pulvinar augue, in lobortis erat ullamcorper sed. Maecenas eget magna risus. Nullam vitae dignissim justo. Aliquam tellus dolor, auctor ac risus hendrerit, posuere faucibus velit. Maecenas dolor risus, accumsan ac magna sit amet, consequat scelerisque nulla. Nunc pellentesque blandit ex eget rhoncus. Duis id egestas ex. Mauris vel eros lacus. Curabitur dolor odio, luctus eget convallis nec, finibus at lorem. Duis mollis purus in porta bibendum. Sed non dapibus metus. Suspendisse nec erat tristique, ornare felis facilisis, sagittis ex. Nullam eu nunc ante. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque quis aliquam augue, at scelerisque velit.
-
-Donec efficitur lorem quis aliquet molestie. Ut auctor porttitor lectus, vitae sodales lectus placerat et. Sed non erat efficitur, dictum enim ut, aliquet erat. Ut lacinia, quam et vulputate auctor, magna odio tristique sapien, ut molestie lorem odio sit amet nibh. Sed vulputate ullamcorper mi, in hendrerit lectus venenatis et. Aliquam blandit vulputate arcu in efficitur. Pellentesque ut tincidunt nisi. Cras facilisis ante eu ante gravida faucibus. Donec rutrum metus metus, eget scelerisque mi semper aliquam. Nullam ut dui nec odio volutpat convallis. Curabitur condimentum laoreet sem non molestie. Phasellus enim elit, aliquam tempor ante eu, interdum auctor libero. Praesent quis orci id felis gravida lacinia ut a felis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae;
-
-Donec orci urna, consectetur sed scelerisque pellentesque, dapibus eget tellus. Nunc rhoncus mauris sit amet magna finibus bibendum. Quisque quis risus fringilla, egestas felis non, pretium felis. Sed tortor dui, imperdiet sed odio ac, maximus ullamcorper odio. Vivamus consequat tincidunt aliquet. Ut et sem et dui euismod venenatis at non enim. Curabitur id nulla velit. Nullam dapibus, eros non imperdiet mollis, nisi dolor elementum neque, rhoncus tincidunt velit turpis et nisl. Donec id facilisis sapien. Maecenas quam massa, suscipit quis dictum ut, tincidunt non risus. Fusce cursus risus non tortor pellentesque, vel elementum felis luctus. Sed risus augue, porta ac commodo sit amet, aliquet ac velit. Duis dignissim erat ullamcorper, lobortis dui non, pellentesque eros.`
-        )
+        const root_content = createElement('div', { class: ['content', 'thin-s'] }, content)
 
         const footer = createElement('div', { class: ['footer'] },
-            createElement('a', { class: 'anchor' }, 'Twitter'),
-            createElement('a', { class: 'anchor' }, 'Facebook'),
-            createElement('a', { class: 'anchor' }, 'Instagram'),
+            createElement('a', { class: 'anchor', href: 'https://twitter.com/', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
+            createElement('a', { class: 'anchor', href: 'https://facebook.com/' }, 'Facebook'),
+            createElement('a', { class: 'anchor', href: 'https://instagram.com/' }, 'Instagram'),
             createElement('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
         )
 
