@@ -4,7 +4,7 @@ class VersionChooser {
         this.sidebar = new versionsSidebar();
         this.alertex = new AlertEx(
             { closeButton: true },
-            createElement('div', { class: 'inner-container'}, this.Base)
+            cE('div', { class: 'inner-container'}, this.Base)
         )
         this.refreshVersions()
     }
@@ -21,12 +21,12 @@ class VersionChooser {
 
     get Base() {
         this.main_content = this.createFisrtPage()
-        const root = createElement('div', { class: 'container', id: 'version-selector' },
-            createElement('div', { class: 'sidebar-main', id: 'version-list' },
+        const root = cE('div', { class: 'container', id: 'version-selector' },
+            cE('div', { class: 'sidebar-main', id: 'version-list' },
                 this.dropdown,
                 this.createSidebar()
             ),
-            createElement('div', { class: 'base', id: 'main' },
+            cE('div', { class: 'base', id: 'main' },
                 this.main_content
             )
         )
@@ -43,7 +43,7 @@ class VersionChooser {
             { type: 'navItem bgL' }
         ];
         const items = sidebar_items.map(i => {
-            const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
+            const root_item = cE('div', { class: 'item' + (i.type ? ' ' + i.type : '') });
             return root_item;
         });
         const sidebar = this.sidebar.createBase(...items);
@@ -68,7 +68,7 @@ class VersionChooser {
     }
 
     createFisrtPage(props) {
-        const root_content = createElement('div', { class: 'main-content centred' }, createElement('h1', null, 'Выберите версию'))
+        const root_content = cE('div', { class: 'main-content centred' }, cE('h1', null, 'Выберите версию'))
         return root_content;
     }
 
@@ -79,9 +79,9 @@ class VersionChooser {
             type: props?.version?.type
         }
         console.log(version_opts)
-        const header = createElement('section', { class: 'VT-header'},
-            createElement('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
-            createElement('div', { class: 'full separator' })
+        const header = cE('section', { class: 'VT-header'},
+            cE('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
+            cE('div', { class: 'full separator' })
         );
         /* ===== */
         const input_text = new Input({ type: 'text' });
@@ -104,31 +104,31 @@ class VersionChooser {
         input_resolution.onchange = (e, value) => version_opts.resolution = value;
         const resolution_input = input_resolution.create({ w_placeholder: '<авто>', h_placeholder: '<авто>'});
         /* ===== */
-        const root_flex = createElement('div', { class: 'VT-flex-box' },
-            createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'name' }, 'Название'),
+        const root_flex = cE('div', { class: 'VT-flex-box' },
+            cE('div', { class: 'children-zx1' },
+                cE('label', { class: '', for: 'name' }, 'Название'),
                 name_input
             ),
-            createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'dir'}, 'Папка игры'),
+            cE('div', { class: 'children-zx1' },
+                cE('label', { class: '', for: 'dir'}, 'Папка игры'),
                 file_input
             ),
-            createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'res' }, 'Разрешение'),
+            cE('div', { class: 'children-zx1' },
+                cE('label', { class: '', for: 'res' }, 'Разрешение'),
                 resolution_input
             ),
-            createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'dir'}, 'Путь к java'),
+            cE('div', { class: 'children-zx1' },
+                cE('label', { class: '', for: 'dir'}, 'Путь к java'),
                 java_file_input
             ),
-            createElement('div', { class: 'children-zx1' },
-                createElement('label', { class: '', for: 'name' }, 'Параметры JVM'),
+            cE('div', { class: 'children-zx1' },
+                cE('label', { class: '', for: 'name' }, 'Параметры JVM'),
                 jvm_options_input
             )
         )
-        const cancel_button = createElement('button', { class: '' }, 'Отмена')
+        const cancel_button = cE('button', { class: '' }, 'Отмена')
         cancel_button.onclick = () => this.alertex.destroy()
-        const accept_button = createElement('button', { class: 'primary-button' }, 'Создать')
+        const accept_button = cE('button', { class: 'primary-button' }, 'Создать')
         accept_button.onclick = () => 
             this.addVersion(props.version.id, version_opts).then((version_hash) => {
                 console.log(version_hash)
@@ -138,10 +138,10 @@ class VersionChooser {
                 })
 
             })
-        const footer = createElement('section', { class: 'VT-footer vertical-button-container' },
+        const footer = cE('section', { class: 'VT-footer vertical-button-container' },
             cancel_button, accept_button
         )
-        const root_content = createElement('div', { class: 'main-content' },
+        const root_content = cE('div', { class: 'main-content' },
             header,
             root_flex,
             footer

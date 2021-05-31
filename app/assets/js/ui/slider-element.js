@@ -17,10 +17,10 @@ function slider(props = {}) {
     props.max = props.max || 100;
     props.step = props.step || 1;
 
-    const bar = createElement('div', { class: 'slider-bar' });
-    const track_grabber = createElement('div', { class: 'grabber' });
-    const track = createElement('div', { class: 'slider-track' }, track_grabber);
-    const slider = createElement('div', { class: 'slider', id: props.id, value: props.value, min: props.min, max: props.max, step: props.step }, bar, track);
+    const bar = cE('div', { class: 'slider-bar' });
+    const track_grabber = cE('div', { class: 'grabber' });
+    const track = cE('div', { class: 'slider-track' }, track_grabber);
+    const slider = cE('div', { class: 'slider', id: props.id, value: props.value, min: props.min, max: props.max, step: props.step }, bar, track);
 
     let updateRangedSlider = (element, value, notch) => {
         value = Math.round(value*100)/100

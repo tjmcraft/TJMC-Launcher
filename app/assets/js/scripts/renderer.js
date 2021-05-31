@@ -145,10 +145,10 @@ API.ConfigManager.getAuth().then((auth) => {
  * The function creates and returns tools container for overlay
  */
 function createToolsContainer(click = () => {}) {
-    let tools = createElement('div', {class: ['tools', 'frame-fix'] })
-    let overlayCloseButton = createElement('div', {class: 'overlayCloseButton'}, SVG('cross'))
+    let tools = cE('div', {class: ['tools', 'frame-fix'] })
+    let overlayCloseButton = cE('div', {class: 'overlayCloseButton'}, SVG('cross'))
     overlayCloseButton.onclick = click
-    let keycode = createElement('div', {class: ['keycode'] }, 'ESC')
+    let keycode = cE('div', {class: ['keycode'] }, 'ESC')
     tools.append(overlayCloseButton, keycode)
     return tools
 }

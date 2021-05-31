@@ -8,20 +8,20 @@
 let user_panel = function (props) {
     props.username = props.username || '';
     props.permission = props.permission || '';
-    const add_version_button = createElement('button', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
+    const add_version_button = cE('button', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
     add_version_button.onclick = (e) => { new VersionChooser() }
     add_version_button.tooltip('Добавить версию')
-    const settings_button = createElement('button', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
+    const settings_button = cE('button', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
     settings_button.tooltip('Настройки')
     settings_button.onclick = (e) => { new Settings() }
-    const root_panel = createElement('section', { class: 'panel' },
-        createElement('div', { class: 'container' },
-            createElement('div', { class: 'avatar round' },
-                createElement('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${props.username}` })
+    const root_panel = cE('section', { class: 'panel' },
+        cE('div', { class: 'container' },
+            cE('div', { class: 'avatar round' },
+                cE('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${props.username}` })
             ),
-            createElement('div', { class: 'nameTag' },
-                createElement('div', { class: 'title' }, props.username),
-                createElement('div', { class: 'subtitle' }, props.permission)
+            cE('div', { class: 'nameTag' },
+                cE('div', { class: 'title' }, props.username),
+                cE('div', { class: 'subtitle' }, props.permission)
             ),
             add_version_button,
             settings_button
@@ -38,22 +38,22 @@ class SidebarMain {
         this.base();
     };
     base() {
-        const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
+        const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => { new VersionChooser() }
         add_button.tooltip('Добавить версию')
-        this.root_content = createElement('div', { class: ['content'] },
-            createElement('h2', { class: ['versionsHeader', 'container-df'] },
-                createElement('span', null, 'Версии'),
+        this.root_content = cE('div', { class: ['content'] },
+            cE('h2', { class: ['versionsHeader', 'container-df'] },
+                cE('span', null, 'Версии'),
                 add_button
             )
         )
-        this.root_scroller = createElement('div', { class: ['scroller', 'thin-s'] },
+        this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] },
             this.root_content
         );
         return this.root_scroller;
     };
     addItem(item, click = ()=>{}) {
-        const root_item = createElement('div', {
+        const root_item = cE('div', {
             class: 'item navItem',
             'version-hash': item.hash
         }, item.name || item.hash);
@@ -66,9 +66,9 @@ class SidebarMain {
         this.root_content.appendChild(root_item)
     };
     createFirstPage() {
-        this.root_fp = createElement('div', {
+        this.root_fp = cE('div', {
             class: 'item centred fp'
-        }, createElement('h1', {}, 'Добавьте версию'));
+        }, cE('h1', {}, 'Добавьте версию'));
         this.root_scroller.appendChild(this.root_fp)
     };
     removeFirstPage() {
@@ -100,14 +100,14 @@ class versionsSidebar {
         this.createBase();
     };
     createBase(...content) {
-        this.root_content = createElement('div', { class: 'sidebar' }, ...content);
-        this.root_sidebar = createElement('div', { class: 'sidebar-region' },
+        this.root_content = cE('div', { class: 'sidebar' }, ...content);
+        this.root_sidebar = cE('div', { class: 'sidebar-region' },
             this.root_content
         );
         return this.root_sidebar;
     };
     addItem(item, click = ()=>{}) {
-        const root_item = createElement('div', {
+        const root_item = cE('div', {
             class: 'item navItem',
             'version-id': item.id
         }, item.id);
@@ -144,7 +144,7 @@ class Carousel {
 
     }
     createCarousel(...elements) {
-        this.root_carousel = createElement('div', { class: 'carousel' });
+        this.root_carousel = cE('div', { class: 'carousel' });
         for (const element of elements) {
             this.append(element);
         }
@@ -166,7 +166,7 @@ class Carousel {
     }
     append(content) {
         if (!this.root_carousel) throw new Error('No carousel created');
-        this.root_carousel.appendChild(createElement('div', { class: 'carousel-elm' }, content));
+        this.root_carousel.appendChild(cE('div', { class: 'carousel-elm' }, content));
         const count = this.root_carousel.qsla('.carousel-elm').length;
         this.maxX = -((this.step * count) - this.step);
     }
@@ -186,10 +186,10 @@ class Input {
         this.type = props.type || 'text';
     }
     createPathInput(props) {
-        const input = createElement('input', { type: 'file', webkitdirectory: true, directory: true });
-        this.input_title = createElement('span', { class: 'title' }, props?.placeholder || 'path/to/dir');
-        const button = createElement('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
-        const root_element = createElement('label', { class: 'input' }, input, this.input_title, button);
+        const input = cE('input', { type: 'file', webkitdirectory: true, directory: true });
+        this.input_title = cE('span', { class: 'title' }, props?.placeholder || 'path/to/dir');
+        const button = cE('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
+        const root_element = cE('label', { class: 'input' }, input, this.input_title, button);
         input.onchange = (e) => {
             let files = e.target.files;
             var path = getPath(files[0].path);
@@ -199,15 +199,15 @@ class Input {
         return root_element;
     }
     createTextInput(props) {
-        const input = createElement('input', { type: 'text', placeholder: props?.placeholder || '' });
+        const input = cE('input', { type: 'text', placeholder: props?.placeholder || '' });
         input.oninput = (e) => this.onchange(e, input.value);
         return input;
     }
     createFileInput(props) {
-        const input = createElement('input', { type: 'file', multiple: props?.multiple || false });
-        this.input_title = createElement('span', { class: 'title' }, props?.placeholder || 'path/to/file');
-        const button = createElement('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
-        const root_element = createElement('label', { class: 'input' }, input, this.input_title, button);
+        const input = cE('input', { type: 'file', multiple: props?.multiple || false });
+        this.input_title = cE('span', { class: 'title' }, props?.placeholder || 'path/to/file');
+        const button = cE('div', { class: 'small-button button' }, props?.button_name || 'Обзор');
+        const root_element = cE('label', { class: 'input' }, input, this.input_title, button);
         input.onchange = (e) => {
             let files = e.target.files;
             var path = files[0].path;
@@ -219,24 +219,24 @@ class Input {
     }
     createResolutionInput(props) {
         const input_data = {}
-        const width_input = createElement('input', { type: 'text', placeholder: props?.w_placeholder || '', 'data-type': 'resolution-width' });
+        const width_input = cE('input', { type: 'text', placeholder: props?.w_placeholder || '', 'data-type': 'resolution-width' });
         width_input.oninput = (e) => {
             input_data.width = width_input.value
             this.onchange(e, input_data)
         }
-        const height_input = createElement('input', { type: 'text', placeholder: props?.h_placeholder || '', 'data-type': 'resolution-height' });
+        const height_input = cE('input', { type: 'text', placeholder: props?.h_placeholder || '', 'data-type': 'resolution-height' });
         height_input.oninput = (e) => {
             input_data.height = height_input.value
             this.onchange(e, input_data)
         }
-        return createElement('div', { class: 'resolution'},
+        return cE('div', { class: 'resolution'},
             width_input,
-            createElement('div', { class: 'resolutionCross' }, '✖'),
+            cE('div', { class: 'resolutionCross' }, '✖'),
             height_input
         )
     }
     create(props) {
-        const root_element = createElement('div', { class: 'input-wrapper', inptype: props?.type },
+        const root_element = cE('div', { class: 'input-wrapper', inptype: props?.type },
             this.type == 'path' ? this.createPathInput(props) :
                 this.type == 'file' ? this.createFileInput(props) :
                     this.type == 'resolution' ? this.createResolutionInput(props) :
@@ -258,5 +258,5 @@ function getPath(path){
 }
 
 function Button(props, ...elements) {
-    return createElement('button', props, createElement('div', {class: 'content'}, ...elements))
+    return cE('button', props, cE('div', {class: 'content'}, ...elements))
 }

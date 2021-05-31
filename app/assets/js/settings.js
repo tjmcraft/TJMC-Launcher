@@ -51,11 +51,11 @@ class Settings {
         this.el.content.appendChild(ctab.content);
     }
     get Base() {
-        const root = createElement('div', {class: 'sidebarView', id: 'user-settings'},
-            createElement('div', {class: 'sidebar-region'}, this.sideBar),
-            createElement('div', {class: 'content-region'},
-                createElement('div', {class: 'transitionWrap'}, 
-                    createElement('div', {class: 'content'})
+        const root = cE('div', {class: 'sidebarView', id: 'user-settings'},
+            cE('div', {class: 'sidebar-region'}, this.sideBar),
+            cE('div', {class: 'content-region'},
+                cE('div', {class: 'transitionWrap'}, 
+                    cE('div', {class: 'content'})
                 )
             )
         );
@@ -75,9 +75,9 @@ class Settings {
             {type: 'separator'},
             {type: 'navItem', rti: 'about-tab'}
         ];
-        const root_sidebar = createElement('div', {class: 'sidebar'});
+        const root_sidebar = cE('div', {class: 'sidebar'});
         sidebar_items.forEach(i => {
-            const root_item = createElement('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
+            const root_item = cE('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
             if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
             root_sidebar.appendChild(root_item);
         });
@@ -85,24 +85,24 @@ class Settings {
     }
     content = {
         base(id, ...e) {
-            return createElement('div', {class: 'tab', id: id}, ...e);
+            return cE('div', {class: 'tab', id: id}, ...e);
         },
         createChilderContainer(...e) {
-            return createElement('div', {class: 'children'}, ...e);
+            return cE('div', {class: 'children'}, ...e);
         },
         get my_account_tab() {
-            const heading = createElement('h2', null, 'Моя учётная запись');
+            const heading = cE('h2', null, 'Моя учётная запись');
             return this.base('my-account-tab', heading);
         },
         get skin_tab() {
-            const heading = createElement('h2', null, 'Конфигурация скина');
+            const heading = cE('h2', null, 'Конфигурация скина');
             return this.base('skin-tab', heading);
         },
         get minecraft_settings_tab() {
-            const heading = createElement('h2', null, 'Настройки Minecraft');
+            const heading = cE('h2', null, 'Настройки Minecraft');
             const children = this.createChilderContainer(
-                createElement('div', {class: 'container-cc3V'},
-                    createElement('h5', null, 'Параметры запуска'),
+                cE('div', {class: 'container-cc3V'},
+                    cE('h5', null, 'Параметры запуска'),
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
@@ -132,12 +132,12 @@ class Settings {
             return this.base('minecraft-settings-tab', heading, children);
         },
         get java_settings_tab() {
-            const heading = createElement('h2', null, 'Настройки Java');
+            const heading = cE('h2', null, 'Настройки Java');
             const children = this.createChilderContainer(
-                createElement('div', { class: 'container-cc3V' },
-                    createElement('div', { class: 'flex-group horizontal' },
-                        createElement('div', { class: 'flex-child'},
-                            createElement('h5', null, 'Максимальное использование памяти'),
+                cE('div', { class: 'container-cc3V' },
+                    cE('div', { class: 'flex-group horizontal' },
+                        cE('div', { class: 'flex-child'},
+                            cE('h5', null, 'Максимальное использование памяти'),
                             slider({
                                 value: API.ConfigManager.getMaxRAM()/1024,
                                 min: 0.5,
@@ -149,8 +149,8 @@ class Settings {
                                 }
                             })
                         ),
-                        createElement('div', { class: 'flex-child'},
-                            createElement('h5', null, 'Минимальное использование памяти'),
+                        cE('div', { class: 'flex-child'},
+                            cE('h5', null, 'Минимальное использование памяти'),
                             slider({
                                 value: API.ConfigManager.getMinRAM()/1024,
                                 min: 0.5,
@@ -163,10 +163,10 @@ class Settings {
                             })
                         )
                     ),
-                    createElement('div', { class: 'divider separator'})
+                    cE('div', { class: 'divider separator'})
                 ),
-                createElement('div', { class: 'container-cc3V' },
-                    createElement('h5', null, 'Дополнительно'),
+                cE('div', { class: 'container-cc3V' },
+                    cE('h5', null, 'Дополнительно'),
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
@@ -180,10 +180,10 @@ class Settings {
             return this.base('java-settings-tab', heading, children);
         },
         get launcher_settings_tab() {
-            const heading = createElement('h2', null, 'Настройки Лаунчера');
+            const heading = cE('h2', null, 'Настройки Лаунчера');
             const children = this.createChilderContainer(
-                createElement('div', {class: 'container-cc3V'},
-                    createElement('h5', null, 'Как мы используем ваши данные'),
+                cE('div', {class: 'container-cc3V'},
+                    cE('h5', null, 'Как мы используем ваши данные'),
                     this.icf3v_ints({
                         header: 'Использование данных для улучшения TJMC',
                         note: 'Эта настройка позволяет нам в аналитических целях использовать и обрабатывать информацию о том, как вы перемещаетесь по TJMC и используете его. Это позволяет, к примеру, давать вам доступ к тестированию новых функций.',
@@ -205,41 +205,40 @@ class Settings {
             return this.base('launcher-settings-tab', heading, children);
         },
         get about_tab() {
-            const heading = createElement('h2', null, 'О программе');
-            const whats_new_nutton = createElement('button', { class: 'r' }, 'Что нового?');
+            const heading = cE('h2', null, 'О программе');
+            const whats_new_nutton = cE('button', { class: 'r' }, 'Что нового?');
             whats_new_nutton.onclick = () => {
-                new AlertEx({
-                    closeButton: true,
-                    type: 'info',
-                    header: 'Что нового',
-                    text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.`
-                })
+                modal.whatsNew([
+                    cE('img', { src: 'https://picsum.photos/1280/720'}),
+                    cE('h1', { class: ['margin-top', 'title', 'added'] }, 'Привет, это TJMC'),
+                    cE('p', null, 'В общем, мы решили изменить свой внешний вид.'),
+                ])
             }
             const children = this.createChilderContainer(
-                createElement('div', { class: 'container-cc3V' },
-                    //createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
-                    createElement('div', { class: 'bxcF1-box' },
-                        createElement('div', { class: 'ictx-flex' },
-                            createElement('div', { class: 'icon' }, createElement('img', { src: './assets/images/icon.png' })),
-                            createElement('span', {class: 'vbx'},
-                                createElement('div', { class: 'text name' }, 'TJMC-Launcher'),
-                                createElement('div', { class: 'text version' }, 'v1.8.0')
+                cE('div', { class: 'container-cc3V' },
+                    //cE('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
+                    cE('div', { class: 'bxcF1-box' },
+                        cE('div', { class: 'ictx-flex' },
+                            cE('div', { class: 'icon' }, cE('img', { src: './assets/images/icon.png' })),
+                            cE('span', {class: 'vbx'},
+                                cE('div', { class: 'text name' }, 'TJMC-Launcher'),
+                                cE('div', { class: 'text version' }, 'v1.8.0')
                             ),
                             whats_new_nutton
                         ),
-                        createElement('div', { class: 'separator' }),
-                        createElement('div', { class: 'note flex-group' },
-                            createElement('div', { class: 'description', html: true }, 'TJMC-Company Co. Ltd.'),
-                            createElement('a', { href: 'https://github.com/MakAndJo/TJMC-Launcher', class: 'anchor' }, 'Source (GitHub)'),
-                            createElement('a', { href: 'https://www.tjmcraft.ga/help', class: 'anchor' }, 'Поддержка'),
-                            createElement('a', { href: 'https://www.tjmcraft.ga/launcher', class: 'anchor' }, 'Сайт')
+                        cE('div', { class: 'separator' }),
+                        cE('div', { class: 'note flex-group' },
+                            cE('div', { class: 'description', html: true }, 'TJMC-Company Co. Ltd.'),
+                            cE('a', { href: 'https://github.com/MakAndJo/TJMC-Launcher', class: 'anchor' }, 'Source (GitHub)'),
+                            cE('a', { href: 'https://www.tjmcraft.ga/help', class: 'anchor' }, 'Поддержка'),
+                            cE('a', { href: 'https://www.tjmcraft.ga/launcher', class: 'anchor' }, 'Сайт')
                         )
                     ),
-                    createElement('div', { class: 'bxcF1-box' },
-                        createElement('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
-                        createElement('div', { class: 'separator' })
+                    cE('div', { class: 'bxcF1-box' },
+                        cE('h5', null, 'Просмотр информации о текущем релизе и заметки к выпуску'),
+                        cE('div', { class: 'separator' })
                     )
-                    //createElement('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
+                    //cE('div', {class: 'note'}, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet diam vel nunc aliquet molestie. Nullam tincidunt sapien lacus, eget mattis lorem volutpat a. Aliquam blandit vehicula ultricies. Proin eget diam vitae elit fermentum laoreet quis sed justo. Donec eget mi bibendum, cursus lectus in, molestie est. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed aliquet mauris ut enim cursus, ut hendrerit turpis semper. Pellentesque tempor est lacus. Donec accumsan est a sem scelerisque, quis mattis ex ornare. Sed vitae erat eget augue dictum molestie a sit amet metus. Donec et ex nibh. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Pellentesque vehicula sit amet tortor non volutpat. Cras euismod tincidunt eros, nec porttitor metus fringilla vitae. In sodales mauris massa, quis faucibus est mollis ut.')
                 )
             );
             return this.base('about-tab', heading, children);
@@ -249,25 +248,25 @@ class Settings {
             props.header = props.header || '';
             props.note = props.note || '';
             props.checked = props.checked || false;
-            const checkbox = createElement('input', {type: 'checkbox', id: props.id, checked: props.checked});
+            const checkbox = cE('input', {type: 'checkbox', id: props.id, checked: props.checked});
             checkbox.addEventListener('change', function (e) {
                 if (typeof props.action === 'function')
                     props.action.call(this, this.checked, props.id)
             });
-            const description = createElement('div', { class: 'description', html: true }, props.note);
+            const description = cE('div', { class: 'description', html: true }, props.note);
             return (
-                createElement('div', {class: 'container-icf3v'},
-                    createElement('div', {class: 'labelRow'},
-                        createElement('label', {for: props.id, class: 'title-3uvn'}, props.header),
-                        createElement('div', {class: 'control'},
-                            createElement('label', {class: 'toggleSwitch'},
+                cE('div', {class: 'container-icf3v'},
+                    cE('div', {class: 'labelRow'},
+                        cE('label', {for: props.id, class: 'title-3uvn'}, props.header),
+                        cE('div', {class: 'control'},
+                            cE('label', {class: 'toggleSwitch'},
                                 checkbox,
-                                createElement('span', {class: 'toggleSwitchSlider'})
+                                cE('span', {class: 'toggleSwitchSlider'})
                             )
                         )
                     ),
-                    createElement('div', {class: 'note'}, description),
-                    createElement('div', {class: 'divider separator'})
+                    cE('div', {class: 'note'}, description),
+                    cE('div', {class: 'divider separator'})
                 )
             )
         }

@@ -11,14 +11,14 @@ class DropdownSelector {
 
     }
     createSelector(elements) {
-        this.headerText = createElement('h1', null, 'Версии');
+        this.headerText = cE('h1', null, 'Версии');
         this.svg_element = SVG('dropdown-key');
-        const header = createElement('div', { class: 'header' },
+        const header = cE('div', { class: 'header' },
             this.headerText,
             this.svg_element
         )
-        this.main_dropdown = createElement('div', { class: 'dropdown hidden' });
-        const root_dropdown = createElement('div', { class: 'container-f' },
+        this.main_dropdown = cE('div', { class: 'dropdown hidden' });
+        const root_dropdown = cE('div', { class: 'container-f' },
             header,
             this.main_dropdown
         );
@@ -38,7 +38,7 @@ class DropdownSelector {
      * @param {Object} item.value - Type of selected item
      */
     addItem(item) {
-        const root_item = createElement('a', null, item.name);
+        const root_item = cE('a', null, item.name);
         root_item.onclick = () => {
             this.selectItem(item);
         }

@@ -3,9 +3,9 @@ class PopupEl {
         this.options = options
         this.popupLayer = qsl('.layerContainer')
         this.options.parent = this.options.parent || document.body
-        this.popup = createElement('div', {class: 'tooltip'})
-        this.pointerEl = createElement('div', {class: 'pointer'})
-        this.contentEl = createElement('div', {class: 'content'})
+        this.popup = cE('div', {class: 'tooltip'})
+        this.pointerEl = cE('div', {class: 'pointer'})
+        this.contentEl = cE('div', {class: 'content'})
         this.popup.id = this.options.id || `popup-${randomString(5)}`
         this.popup.append(this.pointerEl, this.contentEl)
         if (this.popupLayer.qsl(`#${this.popup.id}`)) return

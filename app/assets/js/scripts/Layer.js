@@ -20,7 +20,7 @@ class Layer {
         this.options = options
         this.label = this.options.label || `layer-${randomString(5)}`
         this.appLayers = qsl('.app-layers')
-        this.layer = createElement('div', {class: 'layer'})
+        this.layer = cE('div', {class: 'layer'})
         this.layer.setAttribute('aria-label', `${this.label}`)
         if (qsl(`[aria-label=${this.label}]`)) throw new Error('Layer is already exist!')
     }

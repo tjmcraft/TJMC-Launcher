@@ -19,7 +19,7 @@ class AlertEx {
      */
     constructor(params = {}, ...nodes) {
         if (!params) throw new Error('No parametrs given');
-        this.root_container = createElement('div', { class: 'container-ov1' + (params?.logType ? ' ' + 'mini' : '')});
+        this.root_container = cE('div', { class: 'container-ov1' + (params?.logType ? ' ' + 'mini' : '')});
         this.root_container.onclick = (event) => { event.stopPropagation() };
 
         if (params?.type) {
@@ -42,25 +42,25 @@ class AlertEx {
                     break
             }
             if (data) {
-                const ie = createElement('div', { class: 'icon' }, data)
+                const ie = cE('div', { class: 'icon' }, data)
                 this.root_container.appendChild(ie)
             }
         }
 
         if (params?.header) {
-            const header = createElement('h1', null, params.header)
+            const header = cE('h1', null, params.header)
             this.root_container.appendChild(header)
         }
 
         if (params?.text) {
-            const text_root = createElement('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, params.text)
+            const text_root = cE('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, params.text)
             this.root_container.appendChild(text_root)
         }
 
         if (params?.buttons) {
-            //const hr = createElement('hr')
+            //const hr = cE('hr')
             //this.root_container.append(hr)
-            const button_root_container = createElement('div', { class: 'vertical-button-container' });
+            const button_root_container = cE('div', { class: 'vertical-button-container' });
             for (let bp of params?.buttons) {
                 const button_root = Button({ class: 'grow' + (bp.class ? ' ' + bp.class : '') }, bp.name)
                 button_root.onclick = () => {
@@ -98,7 +98,7 @@ class AlertEx {
      * @returns 
      */
     createOverlay(closeButton = false, ...nodes) {
-        const overlay = createElement('div', { class: 'overlay' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
+        const overlay = cE('div', { class: 'overlay' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
         overlay.toggle(false);
         return overlay;
     }
@@ -173,7 +173,7 @@ class ModalEx {
      * @returns 
      */
     createOverlay(closeButton = false, ...nodes) {
-        const overlay = createElement('div', { class: 'overlay hidden' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
+        const overlay = cE('div', { class: 'overlay hidden' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
         return overlay;
     }
 
@@ -254,7 +254,7 @@ const modal = {
      */
     alert: function (header = '', msg = '', type = null, params = {}) {
 
-        const root_container = createElement('div', { class: 'container-ov1' });
+        const root_container = cE('div', { class: 'container-ov1' });
         root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
@@ -281,14 +281,14 @@ const modal = {
                     break
             }
             if (data) {
-                const ie = createElement('div', { class: 'icon' }, data)
+                const ie = cE('div', { class: 'icon' }, data)
                 root_container.appendChild(ie)
             }
         }
         
-        if (header) root_container.appendChild(createElement('h1', null, header))
+        if (header) root_container.appendChild(cE('h1', null, header))
         
-        if (msg) root_container.appendChild(createElement('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, msg))
+        if (msg) root_container.appendChild(cE('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, msg))
 
         if (params?.buttons) {
             root_container.appendChild(this.BFooter(params?.buttons, () => { modal_ex.destroy() }));
@@ -318,7 +318,7 @@ const modal = {
                 }
                 return button_root;
         })
-        return createElement('div', { class: 'vertical-button-container' }, ..._buttons);
+        return cE('div', { class: 'vertical-button-container' }, ..._buttons);
     },
 
     /**
@@ -328,7 +328,7 @@ const modal = {
      * @returns {Element} instance of element
      */
     createRaw: function (props = {}, ...elements) {
-        const root_container = createElement('div', { class: ['container-ov1', props.class] }, ...elements);
+        const root_container = cE('div', { class: ['container-ov1', props.class] }, ...elements);
         root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
@@ -340,7 +340,7 @@ const modal = {
     },
 
     whatsNew: function (content, date = null) {
-        const root_container = createElement('div', { class: ['container-ov1', 'small'] });
+        const root_container = cE('div', { class: ['container-ov1', 'small'] });
         //root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
@@ -349,24 +349,24 @@ const modal = {
 
         const s_date = date ? new Date(date) : new Date();
 
-        const close_button = createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
+        const close_button = cE('div', { class: ['flex-child', 'button'] }, SVG('cross'))
         close_button.onclick = () => { modal_ex.destroy(); }
 
-        const root_hoz_header = createElement('div', { class: ['flex-group', 'horizontal', 'header-1'] },
-            createElement('div', { class: ['flex-child'] },
-                createElement('h2', null, 'Что нового?'),
-                createElement('div', { class: ['size12', 'colorStandart', 'date']}, s_date.toLocaleDateString() || '18 May 2012')
+        const root_hoz_header = cE('div', { class: ['flex-group', 'horizontal', 'header-1'] },
+            cE('div', { class: ['flex-child'] },
+                cE('h2', null, 'Что нового?'),
+                cE('div', { class: ['size12', 'colorStandart', 'date']}, s_date.toLocaleDateString() || '18 May 2012')
             ),
             close_button
         )
 
-        const root_content = createElement('div', { class: ['content', 'thin-s'], html: true }, ...content)
+        const root_content = cE('div', { class: ['content', 'thin-s'], html: true }, ...content)
 
-        const footer = createElement('div', { class: ['footer'] },
-            createElement('a', { class: 'anchor', href: 'https://twitter.com/MofThunder', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
-            createElement('a', { class: 'anchor', href: 'https://facebook.com/tjmcraft' }, 'Facebook'),
-            createElement('a', { class: 'anchor', href: 'https://instagram.com/tjmcraft.ga' }, 'Instagram'),
-            createElement('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
+        const footer = cE('div', { class: ['footer'] },
+            cE('a', { class: 'anchor', href: 'https://twitter.com/MofThunder', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
+            cE('a', { class: 'anchor', href: 'https://facebook.com/tjmcraft' }, 'Facebook'),
+            cE('a', { class: 'anchor', href: 'https://instagram.com/tjmcraft.ga' }, 'Instagram'),
+            cE('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
         )
 
         root_container.append(root_hoz_header, root_content, footer);

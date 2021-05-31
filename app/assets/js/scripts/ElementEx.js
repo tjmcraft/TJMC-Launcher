@@ -67,6 +67,7 @@ function createElement(tag, attrs, ...childrens) {
     }
     return element;
 }
+const cE = createElement
 
 /**
  * Creates new svg element with given attributes
