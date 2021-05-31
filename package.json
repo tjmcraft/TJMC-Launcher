@@ -16,6 +16,10 @@
   ],
   "author": "MakAndJo",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MakAndJo/TJMC-Launcher.git"
+  },
   "dependencies": {
     "adm-zip": "^0.5.1",
     "checksum": "^0.1.1",
