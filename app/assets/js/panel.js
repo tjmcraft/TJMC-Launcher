@@ -41,13 +41,13 @@ class SidebarMain {
         const add_button = createElement('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => { new VersionChooser() }
         add_button.tooltip('Добавить версию')
-        this.root_content = createElement('div', { class: 'content' },
-            createElement('h2', { class: 'versionsHeader container-df' },
+        this.root_content = createElement('div', { class: ['content'] },
+            createElement('h2', { class: ['versionsHeader', 'container-df'] },
                 createElement('span', null, 'Версии'),
                 add_button
             )
         )
-        this.root_scroller = createElement('div', { class: 'scroller' },
+        this.root_scroller = createElement('div', { class: ['scroller', 'thin-s'] },
             this.root_content
         );
         return this.root_scroller;
