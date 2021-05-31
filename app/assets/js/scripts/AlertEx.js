@@ -347,7 +347,7 @@ const modal = {
             escButton: false
         }, root_container);
 
-        const s_date = new Date(date);
+        const s_date = date ? new Date(date) : new Date();
 
         const close_button = createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
         close_button.onclick = () => { modal_ex.destroy(); }
@@ -360,12 +360,12 @@ const modal = {
             close_button
         )
 
-        const root_content = createElement('div', { class: ['content', 'thin-s'] }, content)
+        const root_content = createElement('div', { class: ['content', 'thin-s'], html: true }, ...content)
 
         const footer = createElement('div', { class: ['footer'] },
-            createElement('a', { class: 'anchor', href: 'https://twitter.com/', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
-            createElement('a', { class: 'anchor', href: 'https://facebook.com/' }, 'Facebook'),
-            createElement('a', { class: 'anchor', href: 'https://instagram.com/' }, 'Instagram'),
+            createElement('a', { class: 'anchor', href: 'https://twitter.com/MofThunder', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
+            createElement('a', { class: 'anchor', href: 'https://facebook.com/tjmcraft' }, 'Facebook'),
+            createElement('a', { class: 'anchor', href: 'https://instagram.com/tjmcraft.ga' }, 'Instagram'),
             createElement('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
         )
 

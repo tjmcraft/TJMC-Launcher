@@ -113,6 +113,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --header-secondary: #b9bbbe;
     --text-link: #00b0f4;
     --text-normal: #dcddde;
+    --text-positive: #4fdc7b;
     --background-accent: #1aaa1a;
     --background-accent-alt: rgba(255, 255, 255, 0.35);
     --scrollbar-thin-thumb: #232323;
@@ -437,6 +438,37 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay > .container-ov1 .content {
     color: #b9bbbe;
 }
+.overlay > .container-ov1 .content img {
+    max-width: 100%;
+    border-radius: 5px;
+}
+.overlay > .container-ov1 .content h1 {
+    line-height: 20px;
+    font-size: 16px;
+    font-weight: 700;
+}
+.overlay > .container-ov1 .content p {
+    color: var(--interactive-normal);
+    font-weight: 400;
+}
+.overlay > .container-ov1 .content .added {
+    display: flex;
+    align-items: center;
+    color: var(--text-positive);
+}
+.overlay > .container-ov1 .content .added::after {
+    content: "";
+    height: 1px;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin-left: 4px;
+    opacity: .6;
+    background-color: var(--text-positive);
+}
+.overlay > .container-ov1 .content .added.margin-top {
+    margin-top: 20px;
+}
 
 .overlay > .container-ov1 .footer {
     flex: 0 0 auto;
@@ -665,6 +697,10 @@ svg[data-icon="error-circle"] {
 }
 svg[data-icon="success-circle"] {
     color: #31e131;
+}
+
+p {
+    margin: 14px 0;
 }
 
 /* =============== APP LAYERS =============== */
