@@ -111,8 +111,11 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
     --text-link: #00b0f4;
+    --text-normal: #dcddde;
     --background-accent: #1aaa1a;
     --background-accent-alt: rgba(255, 255, 255, 0.35);
+    --scrollbar-thin-thumb: #232323;
+    --scrollbar-thin-track: transparent;
 }
 
 /*******************************************************************************
@@ -417,12 +420,17 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay > .container-ov1 .header-1 .button {
     flex: unset;
 }
-.overlay > .container-ov1 .header-1 h2 {
+.overlay > .container-ov1 .header-1 {
     text-align: start;
 }
 .overlay > .container-ov1 .header-1 svg[data-icon=cross-icon] {
     width: 24px;
     height: 24px;
+}
+.overlay > .container-ov1 .header-1 .date {
+    color: #b9bbbe;
+    font-size: 12px;
+    line-height: 16px;
 }
 .overlay > .container-ov1 .content {
     color: #b9bbbe;
@@ -430,6 +438,33 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     line-height: 20px;
     text-align: start;
 }
+.thin-s::-webkit-scrollbar-track {
+    border-color: transparent;
+    background-color: transparent;
+    border: 2px solid transparent;
+}
+
+/* ==== thin scrollbar ==== */
+.thin-s::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.thin-s::-webkit-scrollbar-corner {
+    background: transparent;
+}
+.thin-s::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thin-thumb);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    min-height: 40px;
+}
+.thin-s::-webkit-scrollbar-track {
+    border-color: var(--scrollbar-thin-track);
+    background-color: var(--scrollbar-thin-track);
+    border: 2px solid var(--scrollbar-thin-track);
+}
+/* ========================= */
 
 .overlay > .container-ov1 .footer {
     flex: 0 0 auto;
@@ -1504,7 +1539,7 @@ input:checked + .toggleSwitchSlider:before {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: #dcddde;
+    color: var(--text-normal);
     line-height: 16px;
     padding: 8px 12px;
     overflow: hidden;
@@ -1830,4 +1865,12 @@ a:hover {
 
 .note.flex-group > *{
     margin: 0 8px 0 0;
+}
+
+.size12 {
+    font-size: 12px;
+    line-height: 16px;
+}
+.colorStandart {
+    color: var(--text-normal)
 }

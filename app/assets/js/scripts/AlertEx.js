@@ -316,7 +316,8 @@ const modal = {
 
         const root_hoz_header = createElement('div', { class: ['flex-group', 'horizontal', 'header-1'] },
             createElement('div', { class: ['flex-child'] },
-                createElement('h2', null, 'Whats new?')
+                createElement('h2', null, 'Whats new?'),
+                createElement('div', { class: ['size12', 'colorStandart', 'date']}, '18 May 2012')
             ),
             createElement('div', { class: ['flex-child', 'button'] }, SVG('cross'))
         )
@@ -337,7 +338,7 @@ Donec orci urna, consectetur sed scelerisque pellentesque, dapibus eget tellus. 
             createElement('a', { class: 'anchor' }, 'Twitter'),
             createElement('a', { class: 'anchor' }, 'Facebook'),
             createElement('a', { class: 'anchor' }, 'Instagram'),
-            createElement('div', null, 'Подписывайтесь на наш канал, здесь говорят правду')
+            createElement('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
         )
 
         root_container.append(root_hoz_header, root_content, footer);
