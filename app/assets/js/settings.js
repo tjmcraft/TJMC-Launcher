@@ -108,10 +108,39 @@ class Settings {
                     ),
                     cE('div', {class: 'separator'}),
                     cE('div', {class: 'fieldList'}, 
-                        cE('div', {class: 'field'}, 'sometxt'),
-                        cE('div', {class: 'field'}, 'sometxt'),
-                        cE('div', {class: 'field'}, 'sometxt'),
-                        cE('div', {class: 'field'}, 'sometxt')
+                        cE('div', { class: ['field'] },
+                            cE('div', { class: ['containedRow'] },
+                                cE('div', null,
+                                    cE('h5', { class: '' }, 'Email'),
+                                    cE('div', null,
+                                        cE('span', { class: ['colorHeaderPrimary'] }, 'makandjo@outlook.com')
+                                    )
+                                )
+                            ),
+                            cE('button', {class: ['filled']}, 'Edit')
+                        ),
+                        cE('div', { class: ['field', 'spacer'] },
+                            cE('div', { class: ['containedRow'] },
+                                cE('div', null,
+                                    cE('h5', { class: '' }, 'Balance'),
+                                    cE('div', null,
+                                        cE('span', { class: ['colorHeaderPrimary'] }, '84236')
+                                    )
+                                )
+                            ),
+                            cE('button', {class: ['filled']}, 'Edit')
+                        ),
+                        cE('div', { class: ['field', 'spacer'] },
+                            cE('div', { class: ['containedRow'] },
+                                cE('div', null,
+                                    cE('h5', { class: '' }, 'Permission'),
+                                    cE('div', null,
+                                        cE('span', { class: ['colorHeaderPrimary'] }, 'Default')
+                                    )
+                                )
+                            ),
+                            cE('button', {class: ['filled']}, 'Edit')
+                        )
                     )
                 )
             )

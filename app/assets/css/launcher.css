@@ -106,8 +106,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-secondary-alt: #212121;
     --interactive-normal: #b9bbbe;
     --interactive-hover:#dcddde;
-    --background-modifier-selected: #313131;
-    --background-modifier-accent: hsla(0,0%,100%,0.06);
+    --background-modifier-selected: #393939;
+    --background-modifier-accent: #3d3d3d;
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -666,11 +666,22 @@ input, select {
 button {
     border: 0;
     outline: 0;
-    border-width: 0px 0px 1px 0px;
+    /*border-width: 0px 0px 1px 0px;*/
+    border-radius: 3px;
     background-color: transparent;
     width: 8em;
     height: 32px;
     font-family: 'Segoe UI', Tahoma, system-ui;
+    font-weight: 600;
+}
+
+.filled {
+    transition: background-color .1s ease;
+    color: var(--header-primary);
+    background-color: var(--background-modifier-accent);
+}
+.filled:hover {
+    background-color: var(--background-modifier-selected);
 }
 
 button:hover {
@@ -1912,6 +1923,10 @@ a:hover {
     font-size: 12px;
     line-height: 16px;
 }
+.size16 {
+    font-size: 16px;
+    line-height: 20px;
+}
 .sizeQ {
     font-size: 1em;
     line-height: normal;
@@ -1935,6 +1950,9 @@ a:hover {
 .colorStandart {
     color: var(--text-normal)
 }
+.colorHeaderPrimary {
+    color: var(--header-primary)
+}
 
 .subtitle-p {
     white-space: nowrap;
@@ -1957,4 +1975,14 @@ a:hover {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+}
+.fieldList .spacer {
+    margin-top: 24px;
+}
+
+.containedRow {
+    display: flex;
+    flex: 1 1 auto;
+    overflow: hidden;
+    margin-right: 16px;
 }
