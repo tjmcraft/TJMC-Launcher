@@ -1610,13 +1610,16 @@ a.anchor:hover {
 
 .flex-group {
     display: flex;
-    align-items: center;
+    align-items: baseline;
 }
 .flex-group.vertical {
     flex-direction: column;
 }
 .flex-group.horizontal {
     flex-direction: row;
+}
+.flex-group.a-c {
+    align-items: center;
 }
 .flex-group > .flex-child {
     position: relative;
@@ -1853,27 +1856,36 @@ a.anchor:hover {
     max-height: 100%;
     object-fit: contain;
 }
-.ictx-flex > .vbx {
+.ictx-flex .vbx {
     display: flex;
     flex-direction: row;
     align-items: baseline;
 }
-.ictx-flex > .vbx > .text {
+.ictx-flex .vbx.cu {
+    display: flex;
+}
+.ictx-flex .vbx > .text {
     white-space: nowrap;
     overflow: hidden;
     line-height: normal;
 }
-.ictx-flex > .vbx > .text.name {
+.ictx-flex .vbx > .text.name {
     font-family: 'Candara';
     font-size: 2em;
     font-weight: 600;
+    margin: 0 8px 0 0;
 }
-.ictx-flex > .vbx > .text.version {
+.ictx-flex .vbx > .text.version {
     font-family: system-ui;
     font-size: 1.2em;
     font-weight: 500;
     color: var(--header-secondary);
-    margin: 0 0 0 8px;
+}
+.ictx-flex .vbx.cu > .text.id {
+    font-family: system-ui;
+    font-size: 1.4em;
+    font-weight: 400;
+    color: var(--header-secondary);
 }
 .ictx-flex > button.r {
     border: 1px solid var(--background-modifier-accent);
@@ -1900,6 +1912,49 @@ a:hover {
     font-size: 12px;
     line-height: 16px;
 }
+.sizeQ {
+    font-size: 1em;
+    line-height: normal;
+}
+.sizeW {
+    font-size: 1.2em;
+    line-height: normal;
+}
+.sizeE {
+    font-size: 1.5em;
+    line-height: normal;
+}
+.sizeR {
+    font-size: 1.8em;
+    line-height: normal;
+}
+.sizeT {
+    font-size: 2em;
+    line-height: normal;
+}
 .colorStandart {
     color: var(--text-normal)
+}
+
+.subtitle-p {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: var(--header-secondary);
+    font-weight: 600;
+}
+
+.fieldList {
+    border-radius: 8px;
+    background-color: var(--background-primary);
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.fieldList > .field {
+    min-height: 2em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }

@@ -92,7 +92,30 @@ class Settings {
         },
         get my_account_tab() {
             const heading = cE('h2', null, 'Моя учётная запись');
-            return this.base('my-account-tab', heading);
+            const actions_button = cE('button', {class: ['r']}, 'Edit');
+            const children = cE('div', {class: ['container-cc3V']},
+                cE('div', { class: 'bxcF1-box' },
+                    cE('div', { class: 'ictx-flex' },
+                        cE('div', { class: 'icon' }, cE('img', { src: 'https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=MakAndJo' })),
+                        cE('div', {class: ['flex-group', 'vertical']},
+                            cE('span', {class: ['vbx', 'cu']},
+                                cE('div', { class: 'text name' }, 'MakAndJo'),
+                                cE('div', { class: 'text id' }, '#11')
+                            ),
+                            cE('div', {class: ['sizeW', 'colorStandart', 'subtitle-p']}, 'Default')
+                        ),
+                        actions_button
+                    ),
+                    cE('div', {class: 'separator'}),
+                    cE('div', {class: 'fieldList'}, 
+                        cE('div', {class: 'field'}, 'sometxt'),
+                        cE('div', {class: 'field'}, 'sometxt'),
+                        cE('div', {class: 'field'}, 'sometxt'),
+                        cE('div', {class: 'field'}, 'sometxt')
+                    )
+                )
+            )
+            return this.base('my-account-tab', heading, children);
         },
         get skin_tab() {
             const heading = cE('h2', null, 'Конфигурация скина');
