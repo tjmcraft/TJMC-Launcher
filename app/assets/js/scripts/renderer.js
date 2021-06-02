@@ -1,6 +1,8 @@
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
+const main_container = MainContainer();
+qsl("#main-layer").append(main_container);
 
 /* --------------------------------- */
 const mvl = qsl('#main-version-list')

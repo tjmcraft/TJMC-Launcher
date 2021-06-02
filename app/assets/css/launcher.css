@@ -667,7 +667,7 @@ button {
     border: 0;
     outline: 0;
     /*border-width: 0px 0px 1px 0px;*/
-    border-radius: 3px;
+    border-radius: 0;
     background-color: transparent;
     width: 8em;
     height: 32px;
@@ -676,6 +676,7 @@ button {
 }
 
 .filled {
+    border-radius: 3px;
     transition: background-color .1s ease;
     color: var(--header-primary);
     background-color: var(--background-modifier-accent);
