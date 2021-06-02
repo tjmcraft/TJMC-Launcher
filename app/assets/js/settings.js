@@ -92,7 +92,7 @@ class Settings {
         },
         get my_account_tab() {
             const heading = cE('h2', null, 'Моя учётная запись');
-            const actions_button = cE('button', {class: ['r']}, 'Edit');
+            const actions_button = cE('button', {class: ['r']}, 'Профиль');
             const children = cE('div', {class: ['container-cc3V']},
                 cE('div', { class: 'bxcF1-box' },
                     cE('div', { class: 'ictx-flex' },
@@ -108,7 +108,7 @@ class Settings {
                     ),
                     cE('div', {class: 'separator'}),
                     cE('div', {class: 'fieldList'}, 
-                        cE('div', { class: ['field'] },
+                        cE('div', { class: ['field'], 'data-type': 'email'},
                             cE('div', { class: ['containedRow'] },
                                 cE('div', null,
                                     cE('h5', { class: '' }, 'Email'),
@@ -117,29 +117,7 @@ class Settings {
                                     )
                                 )
                             ),
-                            cE('button', {class: ['filled']}, 'Edit')
-                        ),
-                        cE('div', { class: ['field', 'spacer'] },
-                            cE('div', { class: ['containedRow'] },
-                                cE('div', null,
-                                    cE('h5', { class: '' }, 'Balance'),
-                                    cE('div', null,
-                                        cE('span', { class: ['colorHeaderPrimary'] }, '84236')
-                                    )
-                                )
-                            ),
-                            cE('button', {class: ['filled']}, 'Edit')
-                        ),
-                        cE('div', { class: ['field', 'spacer'] },
-                            cE('div', { class: ['containedRow'] },
-                                cE('div', null,
-                                    cE('h5', { class: '' }, 'Permission'),
-                                    cE('div', null,
-                                        cE('span', { class: ['colorHeaderPrimary'] }, 'Default')
-                                    )
-                                )
-                            ),
-                            cE('button', {class: ['filled']}, 'Edit')
+                            cE('button', {class: ['filled']}, 'Изменить')
                         )
                     )
                 )
