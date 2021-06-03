@@ -1,12 +1,12 @@
 const ConfigManager = require('./libs/ConfigManager')
 ConfigManager.load()
-const { shell, remote, ipcRenderer } = require('electron')
+const { shell, ipcRenderer } = require('electron')
 const VersionManager = require('./libs/VersionManager')
 VersionManager.updateGlobalVersionsConfig()
 const launcher      = require('./launcher')
+const WebSocket = require('ws')
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
-const os = require('os')
-
+const remote = require('@electron/remote')
 //logger.debug('Application loading..')
 
 //Set Current Window as win
@@ -115,4 +115,32 @@ function openMineDir() {
     const path = ConfigManager.getDataDirectory();
     logger.debug('Using default path: '+path)
     shell.openPath(path);
+}
+
+const ws_server = new WebSocket.Server({port: 5248});
+ws_server.on('connection', onConnect);
+function onConnect(wsClient) {
+    wsClient.send('hello world!');
+    wsClient.on('message', function(message) {
+        logger.debug(message)
+        try {
+            const jsonMessage = JSON.parse(message);
+            switch (jsonMessage.action) {
+              case 'echo':
+                wsClient.send(jsonMessage.data);
+                break;
+              case 'ping':
+                wsClient.send('pong');
+                break;
+              default:
+                logger.log('unknown action');
+                break;
+            }
+          } catch (error) {
+            logger.log('Error: ', error);
+          }
+    });
+    wsClient.on('close', function() {
+      logger.log('closed');
+    });
 }
