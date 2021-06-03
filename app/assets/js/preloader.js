@@ -41,6 +41,16 @@ process.once('loaded', () => {
 })
 
 /**
+ * Open web links in the user's default browser.
+ */
+document.addEventListener('click', (event) => {
+    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
+      event.preventDefault()
+      shell.openExternal(event.target.href)
+    }
+})
+
+/**
  * Function returns current platform
  */
 function getOS() {
@@ -71,7 +81,7 @@ document.addEventListener('readystatechange', function () {
             })
         }
 
-        switch (API.getOS()) {
+        switch (getOS()) {
             case 'windows':
                 document.documentElement.classList.add('platform-win')
                 break;
