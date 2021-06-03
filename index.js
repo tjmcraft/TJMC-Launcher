@@ -3,6 +3,8 @@ const ejse = require('ejs-electron')
 const path = require('path')
 const url = require('url')
 const WindowState = require('./app/assets/js/libs/WindowState')
+const WebSocket = require('ws')
+const loggerutil = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold')
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
@@ -196,19 +198,47 @@ function createMenu() {
 }
 
 function getPlatformIcon(filename){
-  let ext
+  let ext;
   switch(process.platform) {
       case 'win32':
-          ext = 'ico'
-          break
+          ext = 'ico';
+          break;
       case 'darwin':
-          ext = 'icns'
-          break
+          ext = 'icns';
+          break;
       case 'linux':
       default:
-          ext = 'png'
-          break
+          ext = 'png';
+          break;
   }
 
-  return path.join(__dirname, 'build', `${filename}.${ext}`)
+  return path.join(__dirname, 'build', `${filename}.${ext}`);
+}
+
+const ws_server = new WebSocket.Server({port: 5248});
+ws_server.on('connection', onConnect);
+function onConnect(wsClient) {
+    wsClient.send('hello world!');
+    wsClient.on('message', function(message) {
+        loggerutil.debug(message)
+        try {
+            const jsonMessage = JSON.parse(message);
+            switch (jsonMessage.action) {
+              case 'echo':
+                wsClient.send(jsonMessage.data);
+                break;
+              case 'ping':
+                wsClient.send('pong');
+                break;
+              default:
+                loggerutil.log('unknown action');
+                break;
+            }
+          } catch (error) {
+            loggerutil.log('Error: ', error);
+          }
+    });
+    wsClient.on('close', function() {
+      loggerutil.log('closed');
+    });
 }
