@@ -291,3 +291,19 @@ function getVersionsDirectory() {
     }
     return dir_path;
 }
+
+/**
+ * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
+ * - Function accept multiple array input (merges them to single array with no duplicates)
+ * - it also can be used to filter duplicates in single array
+ * @param {Object} arguments
+ */
+function merge (...args) {
+    let set = new Set()
+    for (let arr of args) {
+        arr.map((value) => {
+            set.add(value)
+        })
+    }
+    return [...set]
+}
