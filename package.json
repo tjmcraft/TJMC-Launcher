@@ -30,7 +30,7 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "electron": "^11.1.0",
+    "electron": "^13.1.0",
     "electron-builder": "^22.11.3"
   }
 }
