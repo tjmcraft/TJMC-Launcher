@@ -60,16 +60,6 @@ function openSettings() {
     new Settings()
 }
 
-/**
- * Open web links in the user's default browser.
- */
-document.addEventListener('click', (event) => {
-    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-      event.preventDefault()
-      API.shell.openExternal(event.target.href)
-    }
-})
-
 plb.addEventListener('click', (e) => {
     startMine()
 })
