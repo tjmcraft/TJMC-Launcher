@@ -409,6 +409,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     opacity: 0;
 }
 .overlay.hidden > .container-ov1 svg {
+    position: relative;
     /*transform: scale(0);*/
     /*opacity: 0;*/
 }
@@ -1726,7 +1727,7 @@ a.anchor:hover {
     display: flex;
 }
 .input-wrapper > .file-flex > .file-name {
-    
+    position: relative;
 }
 .input-wrapper > .file-flex > .file-button {
     background: #3479ce;
@@ -1772,7 +1773,6 @@ a.anchor:hover {
 }
 
 .input-wrapper .input {
-    -webkit-writing-mode: horizontal-tb !important;
     text-rendering: auto;
     color: -internal-light-dark(black, white);
     letter-spacing: normal;
