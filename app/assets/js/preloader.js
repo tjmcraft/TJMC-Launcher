@@ -22,11 +22,10 @@ process.once('loaded', () => {
         VersionManager: VersionManager,
         launcher: launcher,
         getOS: getOS,
-        shell: shell,
-        ipc: ipcRenderer,
-        window: win,
-        os: os
+        window: win
     }
+
+    global.__STANDALONE__ = true
 
     ipcRenderer.on('open-settings', () => {
         openSettings()
@@ -94,6 +93,8 @@ document.addEventListener('readystatechange', function () {
             default:
                 break;
         }
+
+        win.setProgressBar(0)
     }
 })
 
