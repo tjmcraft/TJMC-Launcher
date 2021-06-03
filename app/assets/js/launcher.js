@@ -36,7 +36,7 @@ class launcher extends EventEmitter {
     async construct() {
 
         logg.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`)
-        const versionFile = await API.VersionManager.getVersionManifest(this.options.installation.lastVersionId)
+        const versionFile = await VersionManager.getVersionManifest(this.options.installation.lastVersionId)
         const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'java';
 
         const java = await this.handler.checkJava(javaPath)
