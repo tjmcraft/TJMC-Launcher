@@ -1,4 +1,4 @@
-const child = require('child_process')
+const child                                  = require('child_process')
 const LoggerUtil                             = require('../loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
@@ -95,7 +95,7 @@ class Minecraft {
      * Function get and download natives
      * @param version Main version JSON
      */
-    async getNatives (version) {
+    async getNatives(version) {
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
@@ -106,9 +106,9 @@ class Minecraft {
                     if (this.parseRule(lib)) return
                     const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
                     const native = 
-                        API.getOS() === 'osx' 
+                        this.getOS() === 'osx' 
                         ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos']) 
-                        : (lib_clfs[`natives-${API.getOS()}`]) 
+                        : (lib_clfs[`natives-${this.getOS()}`]) 
                     natives.push(native)
                 }))
                 return natives
@@ -340,12 +340,12 @@ class Minecraft {
                 if (lib.rules[0].action === 'allow' &&
                     lib.rules[1].action === 'disallow' &&
                     lib.rules[1].os.name === 'osx') {
-                    return API.getOS() === 'osx'
+                    return this.getOS() === 'osx'
                 } else {
                     return true
                 }
             } else {
-                if (lib.rules[0].action === 'allow' && lib.rules[0].os) return API.getOS() !== 'osx'
+                if (lib.rules[0].action === 'allow' && lib.rules[0].os) return this.getOS() !== 'osx'
             }
         } else {
             return false
@@ -468,7 +468,7 @@ class Minecraft {
                 let checksum = 0
                 for(let rule of args[i].rules){
                     if(rule.os != null){
-                        if(rule.os.name === API.getOS()
+                        if(rule.os.name === this.getOS()
                             && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
                             if(rule.action === 'allow'){
                                 checksum++
@@ -561,6 +561,15 @@ class Minecraft {
         }
 
         return mcArgs
+    }
+
+    getOS() {
+        switch (process.platform) {
+            case 'win32': return 'windows'
+            case 'darwin': return 'osx'
+            case 'linux': return 'linux'
+            default: return 'unknown_os'
+        }
     }
 
 }
