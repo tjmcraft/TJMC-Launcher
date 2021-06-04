@@ -5,6 +5,7 @@ const VersionManager = require('./libs/VersionManager')
 VersionManager.updateGlobalVersionsConfig()
 const launcher      = require('./launcher')
 const WebSocket = require('ws')
+const app = require('express')()
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const remote = require('@electron/remote')
 //logger.debug('Application loading..')
@@ -117,7 +118,7 @@ function openMineDir() {
     shell.openPath(path);
 }
 
-const ws_server = new WebSocket.Server({port: 5248});
+/*const ws_server = new WebSocket.Server({port: 5248});
 ws_server.on('connection', onConnect);
 function onConnect(client) {
     const sendJSON = (type = null, data) => {
@@ -151,4 +152,22 @@ function onConnect(client) {
     client.on('close', function() {
         logger.log('closed');
     });
-}
+}*/
+
+const e_server = app.listen(5248);
+app.use(function (req, res, next) {
+    res.header('Content-Type', 'application/json');
+    next();
+});
+app.get('/get/installations', (req, res) => {
+    VersionManager.getInstallations().then(i => res.json(i));
+});
+app.get('/get/globalVersions', (req, res) => {
+    VersionManager.getGlobalVersions().then(i => res.json(i));
+});
+app.get('*', function(req, res){
+    res.send({
+        status: 404,
+        error: `Not found`
+    });
+});
