@@ -119,28 +119,36 @@ function openMineDir() {
 
 const ws_server = new WebSocket.Server({port: 5248});
 ws_server.on('connection', onConnect);
-function onConnect(wsClient) {
-    wsClient.send('hello world!');
-    wsClient.on('message', function(message) {
+function onConnect(client) {
+    const sendJSON = (type = null, data) => {
+        client.send(JSON.stringify({ type: type, data: data }));
+    }
+    client.send(JSON.stringify({
+        status: 'connected'
+    }));
+    client.on('message', function(message) {
         logger.debug(message)
         try {
-            const jsonMessage = JSON.parse(message);
-            switch (jsonMessage.action) {
-              case 'echo':
-                wsClient.send(jsonMessage.data);
-                break;
-              case 'ping':
-                wsClient.send('pong');
-                break;
-              default:
-                logger.log('unknown action');
-                break;
+            const json_message = JSON.parse(message);
+            switch (json_message.action) {
+                case 'get_installations':
+                    VersionManager.getInstallations().then(i => sendJSON('get_installations', i));
+                    break;
+                case 'echo':
+                    sendJSON('data', json_message.data);
+                    break;
+                case 'ping':
+                    sendJSON(null, 'pong');
+                    break;
+                default:
+                    logger.log('unknown action');
+                    break;
             }
-          } catch (error) {
+        } catch (error) {
             logger.log('Error: ', error);
-          }
+        }
     });
-    wsClient.on('close', function() {
-      logger.log('closed');
+    client.on('close', function() {
+        logger.log('closed');
     });
 }
