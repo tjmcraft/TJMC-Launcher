@@ -156,7 +156,7 @@ exports.getAllOptions = function() {
     return config
 }
 
-exports.getVersion = function() {
+exports.getVersion = async function() {
     return config.version || DEFAULT_CONFIG.version
 }
 

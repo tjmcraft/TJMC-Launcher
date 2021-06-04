@@ -1,6 +1,6 @@
 const ConfigManager = require('./libs/ConfigManager')
 ConfigManager.load()
-const { shell, ipcRenderer } = require('electron')
+const { shell, ipcRenderer, contextBridge } = require('electron')
 const VersionManager = require('./libs/VersionManager')
 VersionManager.updateGlobalVersionsConfig()
 const launcher      = require('./launcher')
@@ -13,20 +13,17 @@ const remote = require('@electron/remote')
 //Set Current Window as win
 const win = remote.getCurrentWindow()
 
-// Init global instances
-process.once('loaded', () => {
-    /**
-     * Global API
-     */
-    global.API = {
+    contextBridge.exposeInMainWorld('API', {
         ConfigManager: ConfigManager,
         VersionManager: VersionManager,
         launcher: launcher,
         getOS: getOS,
         window: win
-    }
+    })
 
-    global.__STANDALONE__ = true
+// Init global instances
+process.once('loaded', () => {
+
 
     ipcRenderer.on('open-settings', () => {
         openSettings()
@@ -157,13 +154,27 @@ function onConnect(client) {
 const e_server = app.listen(5248);
 app.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
+    res.header('Access-Control-Allow-Origin', '*')
     next();
+});
+app.get('/ping', (req, res) => {res.send('pong')})
+app.get('/version', (req, res) => {
+    res.json({
+        version: '1.0.0.0'
+    })
 });
 app.get('/get/installations', (req, res) => {
     VersionManager.getInstallations().then(i => res.json(i));
 });
+app.get('/get/installation', (req, res) => {
+    (!req.query.hash) && res.json({ error: 'no hash in params', params: req.query }, 404);
+    VersionManager.getInstallation(req.query.hash).then(i => res.json(i));
+});
 app.get('/get/globalVersions', (req, res) => {
     VersionManager.getGlobalVersions().then(i => res.json(i));
+});
+app.get('/get/config/version', (req, res) => {
+    ConfigManager.getVersion().then(i => res.json(i));
 });
 app.get('*', function(req, res){
     res.send({
