@@ -74,7 +74,11 @@ function createWindow () {
 
     windowState.manage(win)
 
-    win.loadURL("https://www.tjmcraft.ga/newlogin")
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, 'app', 'app.ejs'),
+        protocol: 'file:',
+        slashes: true
+    }))
 
     win.once('ready-to-show', () => {win.show()})
 

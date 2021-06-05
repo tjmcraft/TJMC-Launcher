@@ -175,7 +175,6 @@ window.onload = function(e) {
             document.documentElement.classList.remove('preload')
         })
     }, 1000)
-    API.window.setProgressBar(0)
 }
 /*
 document.addEventListener('mouseover', e => {
@@ -200,7 +199,7 @@ async function refreshVersions() {
     }
     qsl('.localVersions').append(sidebar_el.content());
 
-    const selected_installation = API.ConfigManager.getVersion();
+    const selected_installation = await API.ConfigManager.getVersion();
     selected_installation && renderSelectVersion(selected_installation);
     
 };
@@ -212,9 +211,9 @@ function selectVersion(version_hash) {
     renderSelectVersion(version_hash);
 }
 
-function renderSelectVersion(version_hash) {
+async function renderSelectVersion(version_hash) {
     if (!version_hash) return false;
-    const version = API.VersionManager.getInstallationSync(version_hash);
+    const version = await API.VersionManager.getInstallation(version_hash);
     console.debug(version_hash)
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
