@@ -23,7 +23,7 @@ class launcher extends EventEmitter {
      * @param {Object} options.installation.type - Type of current version
      */
     constructor (options = null) {
-        super()
+        super();
         this.options = options || ConfigManager.getAllOptions();
         this.options.installation = VersionManager.getInstallationSync(this.options.version)
         logg.debug(this.options.installation)

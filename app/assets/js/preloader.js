@@ -60,6 +60,20 @@ function getOS() {
 
 function startMine(props = null) {
     const _launcher = new launcher(props);
+    _launcher.construct().then(([java, minecraftArguments]) => {
+        _launcher.createJVM(java, minecraftArguments).then((minecraft) => {
+            topBar.toggle(false)
+            let error_out;
+            minecraft.stderr.on('data', (data) => {
+                error_out = data.toString('utf-8');
+            })
+            minecraft.on('close', (code) => {
+                if (code != 0) {
+                    showStartUpError(error_out);
+                }
+            })
+        })
+    }).catch(e => showError(e))
     return _launcher;
 }
 

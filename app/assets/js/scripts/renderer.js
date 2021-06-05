@@ -73,20 +73,6 @@ function startMine () {
         if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
     })
     topBar.toggle(true)
-    launcher.construct().then(([java, minecraftArguments]) => {
-        launcher.createJVM(java, minecraftArguments).then((minecraft) => {
-            topBar.toggle(false)
-            let error_out;
-            minecraft.stderr.on('data', (data) => {
-                error_out = data.toString('utf-8');
-            })
-            minecraft.on('close', (code) => {
-                if (code != 0) {
-                    showStartUpError(error_out);
-                }
-            })
-        })
-    }).catch(e => showError(e))
 }
 
 function showStartUpError(error) {
