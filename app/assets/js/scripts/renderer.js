@@ -65,7 +65,7 @@ plb.addEventListener('click', (e) => {
 })
 
 function startMine () {
-    let launcher = new API.launcher(API.ConfigManager.getAllOptions())
+    const launcher = API.startMinecraft();
     launcher.on('progress', (e) => {
         progressBar.setValue((e.task/e.total)*100)
     })

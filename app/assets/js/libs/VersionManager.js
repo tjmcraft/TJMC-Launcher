@@ -3,6 +3,7 @@ const path = require('path')
 const ConfigManager = require('./ConfigManager')
 const LoggerUtil = require('../loggerutil')
 const request = require('request')
+const { randomString, merge, cleanObject } = require('./Tools')
 const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
 
 exports.getLocalVersions = async function() {
@@ -24,8 +25,8 @@ exports.getLocalVersions = async function() {
                     javaArgs: file_c?.javaArgs,
                     resolution: file_c?.resolution
                 }
-                version.clean();
-                ver_list.push(version)
+                cleanObject(version);
+                ver_list.push(version);
             }
         })
         return (ver_list)
@@ -158,7 +159,7 @@ class Installations {
     add(profile, id = null) {
         let version_id = id || randomString(32);
         if (profile && !Object(this.parsed_manifest.profiles).hasOwnProperty(version_id)) {
-            this.parsed_manifest.profiles[version_id] = profile.clean();
+            this.parsed_manifest.profiles[version_id] = cleanObject(profile);
         } else { throw new Error("RND Mismatch") }
         (this.params.auto_save && this.save()) || true;
         return version_id;
@@ -170,7 +171,7 @@ class Installations {
         return (this.params.auto_save && this.save()) || true;
     }
     set(profiles) {
-        this.parsed_manifest.profiles = profiles.clean();
+        this.parsed_manifest.profiles = cleanObject(profiles);
         return (this.params.auto_save && this.save()) || true;
     }
     createEmpty() {
@@ -219,7 +220,8 @@ exports.createInstallation = async function (version, options) {
             height: options.resolution?.height <= 0 ? 480 : options.resolution?.height
         },
         type: options.type || 'custom' || undefined
-    }.clean()
+    };
+    cleanObject(new_profile);
     return installations.add(new_profile);
 }
 
@@ -290,20 +292,4 @@ function getVersionsDirectory() {
         fs.mkdirSync(dir_path, { recursive: true });
     }
     return dir_path;
-}
-
-/**
- * This function merging only arrays unique values. It does not merges arrays in to array with duplicate values at any stage.
- * - Function accept multiple array input (merges them to single array with no duplicates)
- * - it also can be used to filter duplicates in single array
- * @param {Object} arguments
- */
-function merge (...args) {
-    let set = new Set()
-    for (let arr of args) {
-        arr.map((value) => {
-            set.add(value)
-        })
-    }
-    return [...set]
 }

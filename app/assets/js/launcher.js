@@ -5,7 +5,8 @@ const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./libs/Minecraft')
 const logg                                   = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
-const VersionManager                         = require('./libs/VersionManager')
+const VersionManager = require('./libs/VersionManager')
+const ConfigManager = require('./libs/ConfigManager')
 
 class launcher extends EventEmitter {
 
@@ -21,9 +22,9 @@ class launcher extends EventEmitter {
      * @param {Object} options.installation.lastVersionId - ID of current version
      * @param {Object} options.installation.type - Type of current version
      */
-    constructor (options) {
+    constructor (options = null) {
         super()
-        this.options = options
+        this.options = options || ConfigManager.getAllOptions();
         this.options.installation = VersionManager.getInstallationSync(this.options.version)
         logg.debug(this.options.installation)
         this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;

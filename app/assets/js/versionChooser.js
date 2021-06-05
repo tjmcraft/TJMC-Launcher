@@ -129,15 +129,16 @@ class VersionChooser {
         const cancel_button = cE('button', { class: '' }, 'Отмена')
         cancel_button.onclick = () => this.alertex.destroy()
         const accept_button = cE('button', { class: 'primary-button' }, 'Создать')
-        accept_button.onclick = () => 
+        accept_button.onclick = () => {
             this.addVersion(props.version.id, version_opts).then((version_hash) => {
-                console.log(version_hash)
+                //console.log(version_hash)
                 refreshVersions().then(() => {
                     selectVersion(version_hash);
                     this.alertex.destroy();
-                })
+                });
 
-            })
+            });
+        };
         const footer = cE('section', { class: 'VT-footer vertical-button-container' },
             cancel_button, accept_button
         )
@@ -171,7 +172,7 @@ class VersionChooser {
      * @param {Object} options.resolution.height - Height of the game window
      */
     async addVersion(version, options = {}) {
-        //console.log(options)
+        console.log(options)
         return await API.VersionManager.createInstallation(version, options);
     }
 }

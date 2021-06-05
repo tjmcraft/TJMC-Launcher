@@ -13,18 +13,17 @@ const remote = require('@electron/remote')
 //Set Current Window as win
 const win = remote.getCurrentWindow()
 
-    contextBridge.exposeInMainWorld('API', {
-        ConfigManager: ConfigManager,
-        VersionManager: VersionManager,
-        launcher: launcher,
-        getOS: getOS,
-        window: win
-    })
+contextBridge.exposeInMainWorld('API', {
+    ConfigManager: ConfigManager,
+    VersionManager: VersionManager,
+    launcher: launcher,
+    startMinecraft: startMine,
+    getOS: getOS,
+    window: win
+})
 
 // Init global instances
 process.once('loaded', () => {
-
-
     ipcRenderer.on('open-settings', () => {
         openSettings()
     })
@@ -57,6 +56,11 @@ function getOS() {
         case 'linux': return 'linux'
         default: return 'unknown_os'
     }
+}
+
+function startMine(props = null) {
+    const _launcher = new launcher(props);
+    return _launcher;
 }
 
 document.addEventListener('readystatechange', function () {
