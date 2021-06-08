@@ -64,14 +64,17 @@ plb.addEventListener('click', (e) => {
     startMine()
 })
 
-function startMine () {
-    const launcher = API.startMinecraft();
-    launcher.on('progress', (e) => {
+function startMine() {
+    const launch = API.Launch(null, (e) => {
         progressBar.setValue((e.task/e.total)*100)
-    })
-    launcher.on('download-status', (e) => {
-        if (e.type == 'version-jar') {progressBar.setValue((e.current/e.total)*100)}
-    })
+    },(e) => {
+        if (e.type == 'version-jar') progressBar.setValue((e.current/e.total)*100)
+    }, (e) => {
+        showError(e)
+    }, (e) => {
+        showStartUpError(e)
+    }
+    );
     topBar.toggle(true)
 }
 
@@ -107,6 +110,8 @@ function showError(error) {
         }]
     })
 }
+
+
 
 function removeMine() {
     let version = API.ConfigManager.getVersion()
@@ -149,7 +154,7 @@ function createToolsContainer(click = () => {}) {
 
 progressBar.setValue = (v) => {
     progressBar.style.width = v + "%"
-    API.window.setProgressBar(v/100)
+    API.setProgressBar(v)
 }
 
 window.onload = function(e) {

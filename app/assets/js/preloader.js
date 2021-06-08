@@ -13,39 +13,6 @@ const remote = require('@electron/remote')
 //Set Current Window as win
 const win = remote.getCurrentWindow()
 
-contextBridge.exposeInMainWorld('API', {
-    ConfigManager: ConfigManager,
-    VersionManager: VersionManager,
-    launcher: launcher,
-    startMinecraft: startMine,
-    getOS: getOS,
-    window: win
-})
-
-// Init global instances
-process.once('loaded', () => {
-    ipcRenderer.on('open-settings', () => {
-        openSettings()
-    })
-    ipcRenderer.on('open-minecraft-dir', openMineDir)
-
-    ipcRenderer.on('enter-full-screen', enterFullScreen)
-    ipcRenderer.on('leave-full-screen', leaveFullScreen)
-
-    ipcRenderer.on('blur', windowBlur)
-    ipcRenderer.on('focus', windowFocus)
-})
-
-/**
- * Open web links in the user's default browser.
- */
-document.addEventListener('click', (event) => {
-    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-      event.preventDefault()
-      shell.openExternal(event.target.href)
-    }
-})
-
 /**
  * Function returns current platform
  */
@@ -58,24 +25,100 @@ function getOS() {
     }
 }
 
-function startMine(props = null) {
+function startMine(props = null, progress_callback = () => {}, download_callback = () => {}, error_callback = () => {}, startup_error_callback = () => {}) {
     const _launcher = new launcher(props);
+    _launcher.on('progress', (e) => progress_callback(e))
+    _launcher.on('download-status', (e) => download_callback(e))
     _launcher.construct().then(([java, minecraftArguments]) => {
         _launcher.createJVM(java, minecraftArguments).then((minecraft) => {
-            topBar.toggle(false)
+            //topBar.toggle(false)
             let error_out;
             minecraft.stderr.on('data', (data) => {
                 error_out = data.toString('utf-8');
             })
             minecraft.on('close', (code) => {
-                if (code != 0) {
-                    showStartUpError(error_out);
-                }
+                if (code != 0) startup_error_callback(error_out);
             })
         })
-    }).catch(e => showError(e))
+    }).catch(e => error_callback(e))
     return _launcher;
 }
+
+class Launch {
+
+    constructor(params) {
+        this.launcher = new launcher(params);
+        this.launcher.on('progress', this.onProgress);
+        this.launcher.on('dowload-status', this.onDownload);
+    }
+    async start(hash = null) {
+        try {
+            [java, minecraftArguments] = await this.launcher.construct();
+            const minecraft = await this.launcher.createJVM(java, minecraftArguments);
+        } catch (e) { this.onError(e) }
+        
+        let error_out;
+        minecraft.stderr.on('data', (data) => {
+            error_out = data.toString('utf-8');
+        })
+
+        minecraft.on('close', (code) => {
+            if (code != 0) this.onStartError(error_out);
+        })
+
+        this.onStart();
+
+    }
+    onProgress(e) { }
+    onDownload(e) { }
+    onError(e) { }
+    onStart(e) { }
+    onStartError(e) { }
+}
+
+const Mine = {
+    create: (params) => {
+        this.launcher = new launcher(params);
+        this.launcher.on('progress', e => this.onProgress(e));
+        this.launcher.on('dowload-status', e => this.onDownload(e));
+        return this;
+    },
+    start: async (hash = null) => {
+        console.debug(typeof this.onError)
+        try {
+            [java, minecraftArguments] = await this.launcher.construct();
+            this.minecraft = await this.launcher.createJVM(java, minecraftArguments);
+        } catch (e) { this.onError(e) }
+        
+        let error_out;
+        this.minecraft.stderr.on('data', (data) => {
+            error_out = data.toString('utf-8');
+        })
+
+        this.minecraft.on('close', (code) => {
+            if (code != 0) this.onStartError(error_out);
+        })
+
+        this.onStart();
+    },
+    test: function () {
+        this.create();
+    },
+    onProgress: function (e) { },
+    onDownload: function (e) { },
+    onError: function (e) { },
+    onStart: function (e) { },
+    onStartError: function (e) { }
+}
+
+var someObject = {
+    start: function() {
+        this.check();
+    },
+    check: function() {
+        console.log("Check!");
+    }
+};
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
@@ -132,6 +175,40 @@ function openMineDir() {
     logger.debug('Using default path: '+path)
     shell.openPath(path);
 }
+
+contextBridge.exposeInMainWorld('API', {
+    ConfigManager: ConfigManager,
+    VersionManager: VersionManager,
+    launcher: launcher,
+    Launch: startMine,
+    SomeObject: someObject,
+    getOS: getOS,
+    setProgressBar: (v) => win.setProgressBar(v/100)
+})
+
+// Init global instances
+process.once('loaded', () => {
+    ipcRenderer.on('open-settings', () => {
+        openSettings()
+    })
+    ipcRenderer.on('open-minecraft-dir', openMineDir)
+
+    ipcRenderer.on('enter-full-screen', enterFullScreen)
+    ipcRenderer.on('leave-full-screen', leaveFullScreen)
+
+    ipcRenderer.on('blur', windowBlur)
+    ipcRenderer.on('focus', windowFocus)
+})
+
+/**
+ * Open web links in the user's default browser.
+ */
+document.addEventListener('click', (event) => {
+    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
+      event.preventDefault()
+      shell.openExternal(event.target.href)
+    }
+})
 
 /*const ws_server = new WebSocket.Server({port: 5248});
 ws_server.on('connection', onConnect);
