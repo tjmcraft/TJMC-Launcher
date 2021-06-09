@@ -305,7 +305,7 @@ const modal = {
         } else {
             root_container.appendChild(this.BFooter([{
                 name: "Ок",
-                class: 'primary-button',
+                //class: 'primary-button',
                 closeOverlay: true
             }], () => { modal_ex.destroy() }));
         }
@@ -321,7 +321,7 @@ const modal = {
      */
     BFooter: function(buttons, destroy = () => {}) {
         let _buttons = buttons.map(button => {
-                const button_root = Button({ class: ['grow', 'colorBrand', (button.class ? button.class : '')] }, button.name)
+                const button_root = Button({ class: ['grow', 'filled','colorBrand', (button.class ? button.class : '')] }, button.name)
                 button_root.onclick = () => {
                     if (button.callback && typeof button.callback === 'function') button.callback.call(this)
                     if (button.closeOverlay) destroy.call(this)
