@@ -245,7 +245,7 @@ const modal = {
     /**
      * Create standart alert modal dialog with given parameters
      * @param {String} header - The header of the dialog
-     * @param {String} message - The main text of the dialog
+     * @param {String} msg - The main text of the dialog
      * @param {String} type - The type of the dialog (info, warning, error, success)
      * @param {Object} params - Additional parameters for the dialog
      * @param {Object} params.logType - Mode of the dialog when text is shown as a log
@@ -254,14 +254,14 @@ const modal = {
      */
     alert: function (header = '', msg = '', type = null, params = {}) {
 
-        const root_container = cE('div', { class: 'container-ov1' });
+        const root_container = cE('div', { class: ['container-ov1', (params.logType ? 'mini' : '')] });
         root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
             escButton: true
         }, root_container);
 
-        if (type) {
+        /*if (type) {
             let data = null
             switch (type) {
                 case 'info':
@@ -284,11 +284,21 @@ const modal = {
                 const ie = cE('div', { class: 'icon' }, data)
                 root_container.appendChild(ie)
             }
+        }*/
+        
+        if (header) {
+            let root_parent = cE('div', { class: ['flex-group', 'horizontal', 'header-1'] },
+                cE('h1', {class: ['wrapper', 'size20']}, header)
+            );
+            root_container.appendChild(root_parent);
         }
         
-        if (header) root_container.appendChild(cE('h1', null, header))
-        
-        if (msg) root_container.appendChild(cE('div', {class: 'content' + (params.logType ? ' ' + 'log' : '')}, msg))
+        if (msg) {
+            let root_parent = cE('div', { class: ['content', (params.logType ? 'log' : '')] },
+                cE('div', { class: ['colorStandart', 'size14'] }, msg)
+            );
+            root_container.appendChild(root_parent);
+        }
 
         if (params?.buttons) {
             root_container.appendChild(this.BFooter(params?.buttons, () => { modal_ex.destroy() }));
@@ -311,7 +321,7 @@ const modal = {
      */
     BFooter: function(buttons, destroy = () => {}) {
         let _buttons = buttons.map(button => {
-                const button_root = Button({ class: 'grow' + (button.class ? ' ' + button.class : '') }, button.name)
+                const button_root = Button({ class: ['grow', 'colorBrand', (button.class ? button.class : '')] }, button.name)
                 button_root.onclick = () => {
                     if (button.callback && typeof button.callback === 'function') button.callback.call(this)
                     if (button.closeOverlay) destroy.call(this)

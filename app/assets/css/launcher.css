@@ -118,6 +118,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-accent-alt: rgba(255, 255, 255, 0.35);
     --scrollbar-thin-thumb: #232323;
     --scrollbar-thin-track: transparent;
+    --brand-color: #5865f2;
+    --brand-color: #4752c4;
 }
 
 /*******************************************************************************
@@ -436,30 +438,30 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     font-size: 12px;
     line-height: 16px;
 }
-.overlay > .container-ov1 .content {
+.overlay > .container-ov1 > .content {
     color: #b9bbbe;
 }
-.overlay > .container-ov1 .content img {
+.overlay > .container-ov1 > .content img {
     max-height: 45vh;
     width: 100%;
     border-radius: 5px;
     object-fit: cover;
 }
-.overlay > .container-ov1 .content h1 {
+.overlay > .container-ov1 > .content h1 {
     line-height: 20px;
     font-size: 16px;
     font-weight: 700;
 }
-.overlay > .container-ov1 .content p {
+.overlay > .container-ov1 > .content p {
     color: var(--interactive-normal);
     font-weight: 400;
 }
-.overlay > .container-ov1 .content .added {
+.overlay > .container-ov1 > .content .added {
     display: flex;
     align-items: center;
     color: var(--text-positive);
 }
-.overlay > .container-ov1 .content .added::after {
+.overlay > .container-ov1 > .content .added::after {
     content: "";
     height: 1px;
     -webkit-box-flex: 1;
@@ -469,7 +471,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     opacity: .6;
     background-color: var(--text-positive);
 }
-.overlay > .container-ov1 .content .added.margin-top {
+.overlay > .container-ov1 > .content .added.margin-top {
     margin-top: 20px;
 }
 
@@ -676,14 +678,22 @@ button {
     font-weight: 600;
 }
 
-.filled {
+button.filled {
     border-radius: 3px;
     transition: background-color .1s ease;
     color: var(--header-primary);
     background-color: var(--background-modifier-accent);
 }
-.filled:hover {
+button.filled:hover {
     background-color: var(--background-modifier-selected);
+}
+
+button.filled.colorBrand {
+    color: #fff;
+    background-color: var(--brand-color);
+}
+button.filled.colorBrand:hover {
+    background-color: var(--brand-color-1)
 }
 
 button:hover {
@@ -816,6 +826,7 @@ p {
     font-weight: 700 !important;
     line-height: 16px;
     text-transform: uppercase;
+    flex: 0 0 auto;
 }
 
 .separator {
@@ -1924,9 +1935,17 @@ a:hover {
     font-size: 12px;
     line-height: 16px;
 }
+.size14 {
+    font-size: 14px;
+    line-height: 18px;
+}
 .size16 {
     font-size: 16px;
     line-height: 20px;
+}
+.size20 {
+    font-size: 20px;
+    line-height: 24px;
 }
 .sizeQ {
     font-size: 1em;
@@ -1986,4 +2005,8 @@ a:hover {
     flex: 1 1 auto;
     overflow: hidden;
     margin-right: 16px;
+}
+
+.wrapper {
+    margin: 0;
 }
