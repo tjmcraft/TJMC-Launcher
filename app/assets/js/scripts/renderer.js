@@ -79,36 +79,12 @@ function startMine() {
 }
 
 function showStartUpError(error) {
-    new AlertEx({
-        closeButton: true,
-        type: 'error',
-        header: 'Упс...',
-        text: `Возможно возникла ошибка при запуске:\n${error}`,
-        logType: true,
-        buttons: [{
-            class: '',
-            name: 'Ладно',
-            callback: () => { },
-            closeOverlay: true
-        }]
-    })
+    modal.alert('Ошибка', `Возможно возникла ошибка при запуске:\n${error}`, 'error', { logType: true });
 }
 
 function showError(error) {
     console.error(error)
-    new AlertEx({
-        closeButton: true,
-        type: 'error',
-        header: 'Упс...',
-        text: `Возможно возникла ошибка в коде:\n${error}`,
-        logType: true,
-        buttons: [{
-            class: '',
-            name: 'Ладно',
-            callback: () => { },
-            closeOverlay: true
-        }]
-    })
+    modal.alert('Ошибка', `Возможно возникла ошибка в коде:\n${error}`, 'error', { logType: true });
 }
 
 
