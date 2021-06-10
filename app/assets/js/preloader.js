@@ -44,82 +44,6 @@ function startMine(props = null, progress_callback = () => {}, download_callback
     return _launcher;
 }
 
-class Launch {
-
-    constructor(params) {
-        this.launcher = new launcher(params);
-        this.launcher.on('progress', this.onProgress);
-        this.launcher.on('dowload-status', this.onDownload);
-    }
-    async start(hash = null) {
-        try {
-            [java, minecraftArguments] = await this.launcher.construct();
-            const minecraft = await this.launcher.createJVM(java, minecraftArguments);
-        } catch (e) { this.onError(e) }
-        
-        let error_out;
-        minecraft.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
-        })
-
-        minecraft.on('close', (code) => {
-            if (code != 0) this.onStartError(error_out);
-        })
-
-        this.onStart();
-
-    }
-    onProgress(e) { }
-    onDownload(e) { }
-    onError(e) { }
-    onStart(e) { }
-    onStartError(e) { }
-}
-
-const Mine = {
-    create: (params) => {
-        this.launcher = new launcher(params);
-        this.launcher.on('progress', e => this.onProgress(e));
-        this.launcher.on('dowload-status', e => this.onDownload(e));
-        return this;
-    },
-    start: async (hash = null) => {
-        console.debug(typeof this.onError)
-        try {
-            [java, minecraftArguments] = await this.launcher.construct();
-            this.minecraft = await this.launcher.createJVM(java, minecraftArguments);
-        } catch (e) { this.onError(e) }
-        
-        let error_out;
-        this.minecraft.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
-        })
-
-        this.minecraft.on('close', (code) => {
-            if (code != 0) this.onStartError(error_out);
-        })
-
-        this.onStart();
-    },
-    test: function () {
-        this.create();
-    },
-    onProgress: function (e) { },
-    onDownload: function (e) { },
-    onError: function (e) { },
-    onStart: function (e) { },
-    onStartError: function (e) { }
-}
-
-var someObject = {
-    start: function() {
-        this.check();
-    },
-    check: function() {
-        console.log("Check!");
-    }
-};
-
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
 
@@ -181,7 +105,6 @@ contextBridge.exposeInMainWorld('API', {
     VersionManager: VersionManager,
     launcher: launcher,
     Launch: startMine,
-    SomeObject: someObject,
     getOS: getOS,
     setProgressBar: (v) => win.setProgressBar(v/100)
 })
