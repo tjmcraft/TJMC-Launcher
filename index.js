@@ -3,16 +3,12 @@ const ejse = require('ejs-electron')
 const path = require('path')
 const url = require('url')
 const WindowState = require('./app/assets/js/libs/WindowState')
-const WebSocket = require('ws')
 const loggerutil = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold')
-// in the main process:
 require('@electron/remote/main').initialize()
 
 // Disable hardware acceleration.
-// https://electronjs.org/docs/tutorial/offscreen-rendering
 //app.disableHardwareAcceleration()
 
-// https://github.com/electron/electron/issues/18397
 app.allowRendererProcessReuse = true
 
 const gotTheLock = app.requestSingleInstanceLock()
@@ -23,26 +19,21 @@ if (!gotTheLock) {
     app.quit()
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-      // Кто-то пытался запустить второй экземпляр, мы должны сфокусировать наше окно.
-      if (win) {
-        if (win.isMinimized()) win.restore()
-        win.focus()
-      }
+        if (win) {
+            if (win.isMinimized()) win.restore()
+            win.focus()
+        }
     })
     
     app.on('ready', createWindow)
     app.on('ready', createMenu)
 
     app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') {
-            app.quit()
-        }
+        if (process.platform !== 'darwin') app.quit()
     })
 
     app.on('activate', () => {
-        if (win === null) {
-            createWindow()
-        }
+        if (win === null) createWindow()
     })
 }
 
@@ -59,6 +50,7 @@ function createWindow () {
         minWidth: 800,
         minHeight: 580,
         show: false,
+        resizable: true,
         frame: process.platform === 'darwin',
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
@@ -80,25 +72,18 @@ function createWindow () {
         slashes: true
     }))
 
-    win.once('ready-to-show', () => {win.show()})
-
-    win.on('enter-full-screen', () => {win.webContents.send('enter-full-screen')})
-    win.on('leave-full-screen', () => {win.webContents.send('leave-full-screen')})
-    win.on('blur', () => {win.webContents.send('blur')})
-    win.on('focus', () => {win.webContents.send('focus')})
-
-    //win.removeMenu()
-
-    win.resizable = true
-
-    win.on('closed', () => {win = null})
+    win.once('ready-to-show', () => { win.show() })
+    win.on('enter-full-screen', () => { win.webContents.send('enter-full-screen') })
+    win.on('leave-full-screen', () => { win.webContents.send('leave-full-screen') })
+    win.on('blur', () => { win.webContents.send('blur') })
+    win.on('focus', () => { win.webContents.send('focus') })
+    win.on('closed', () => { win = null })
 
     //win.webContents.openDevTools()
 }
 
 function createMenu() {
-    const isMac = process.platform === 'darwin'
-
+    const isMac = (process.platform === 'darwin');
     const template = [
         ...(isMac ? [{
             label: 'Application',
@@ -152,11 +137,11 @@ function createMenu() {
                     { role: 'selectAll' },
                     { type: 'separator' },
                     {
-                    label: 'Speech',
-                    submenu: [
-                        { role: 'startSpeaking' },
-                        { role: 'stopSpeaking' }
-                    ]
+                        label: 'Speech',
+                        submenu: [
+                            { role: 'startSpeaking' },
+                            { role: 'stopSpeaking' }
+                        ]
                     }
                 ] : [
                     { role: 'delete' },
@@ -170,7 +155,7 @@ function createMenu() {
             label: 'View',
             submenu: [
                 { role: 'reload' },
-                { role: 'forceReload'},
+                { role: 'forceReload' },
                 { role: 'toggleDevTools', accelerator: 'F12' },
                 { type: 'separator' },
                 { role: 'resetZoom' },
@@ -196,10 +181,9 @@ function createMenu() {
                 ])
             ]
         }
-    ]
-    
-    const menuObject = Menu.buildFromTemplate(template)
-    Menu.setApplicationMenu(menuObject)
+    ];
+    const menuObject = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menuObject);
 
 }
 
@@ -217,6 +201,5 @@ function getPlatformIcon(filename){
           ext = 'png';
           break;
   }
-
   return path.join(__dirname, 'build', `${filename}.${ext}`);
 }
