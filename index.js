@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const ejse = require('ejs-electron')
 const path = require('path')
 const url = require('url')
@@ -203,3 +203,7 @@ function getPlatformIcon(filename){
   }
   return path.join(__dirname, 'build', `${filename}.${ext}`);
 }
+
+ipcMain.handle('ping', async (event, ...args) => {
+    return (args);
+})
