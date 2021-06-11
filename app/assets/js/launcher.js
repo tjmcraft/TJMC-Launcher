@@ -34,17 +34,23 @@ class launcher extends EventEmitter {
         logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
     }
 
-    async construct() {
-
+    async loadManifest() {
         logg.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`)
         const versionFile = await VersionManager.getVersionManifest(this.options.installation.lastVersionId)
-        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'java';
+        return versionFile
+    }
 
+    async getJava() {
+        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'java'
         const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
             throw new Error(`Wrong java (${javaPath})`)
         }
+        return javaPath
+    }
+
+    async construct(versionFile) {
 
         if (!fs.existsSync(this.options.overrides.path.root)) {
             logg.log(`Attempting to create root folder (${this.options.overrides.path.root})`)
@@ -70,8 +76,10 @@ class launcher extends EventEmitter {
 
         logg.log('Attempting to download assets')
         const assets = await this.handler.getAssets(versionFile)
-
-        return [javaPath, this.handler.constructJVMArguments(versionFile, nativePath, classes)]
+        
+        const args = this.handler.constructJVMArguments(versionFile, nativePath, classes)
+        
+        return args
     }
     async createJVM (java, launchArguments) {
         logg.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`)
