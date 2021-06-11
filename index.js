@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const ejse = require('ejs-electron');
 const path = require('path');
 const url = require('url');
@@ -117,16 +117,12 @@ function createMenu() {
                 {
                     label: 'Root Directory',
                     accelerator: isMac ? 'Alt+Cmd+D' : 'Ctrl+Shift+D',
-                    click: () => {
-                        win.webContents.send('open-minecraft-dir')
-                    }
+                    click: () => openMineDir() 
                 },
                 {
                     label: 'Options',
                     accelerator: isMac ? 'Alt+Cmd+P' : 'Ctrl+Shift+P',
-                    click: () => {
-                        win.webContents.send('open-settings')
-                    }
+                    click: () => win.webContents.send('open-settings')
                 }
             ]
         },
@@ -211,6 +207,12 @@ function getPlatformIcon(filename){
           break;
   }
   return path.join(__dirname, 'build', `${filename}.${ext}`);
+}
+
+function openMineDir() {
+    const path = ConfigManager.getDataDirectory();
+    logger.debug('Using default path: '+path)
+    shell.openPath(path);
 }
 
 ipcMain.handle('ping', async (event, ...args) => {

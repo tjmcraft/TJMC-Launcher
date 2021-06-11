@@ -74,12 +74,6 @@ function windowFocus () {
     document.documentElement.classList.remove('blur')
 }
 
-function openMineDir() {
-    const path = ConfigManager.getDataDirectory();
-    logger.debug('Using default path: '+path)
-    shell.openPath(path);
-}
-
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
     on (eventName, callback) {
@@ -110,11 +104,8 @@ process.once('loaded', () => {
     ipcRenderer.on('open-settings', () => {
         openSettings()
     })
-    ipcRenderer.on('open-minecraft-dir', openMineDir)
-
     ipcRenderer.on('enter-full-screen', enterFullScreen)
     ipcRenderer.on('leave-full-screen', leaveFullScreen)
-
     ipcRenderer.on('blur', windowBlur)
     ipcRenderer.on('focus', windowFocus)
 })
