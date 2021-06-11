@@ -219,9 +219,9 @@ ipcMain.handle('ping', async (event, ...args) => {
     return (args);
 })
 
-ipcMain.handle('launch-mine', async (event, args = null) => {
+ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => {
     try {
-        const _launcher = new launcher(args);
+        const _launcher = new launcher(version_hash, params);
         _launcher.on('progress', progress);
         _launcher.on('download-status', download_progress);
 
