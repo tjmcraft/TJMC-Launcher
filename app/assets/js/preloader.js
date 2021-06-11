@@ -101,9 +101,7 @@ contextBridge.exposeInMainWorld('API', {
 
 // Init global instances
 process.once('loaded', () => {
-    ipcRenderer.on('open-settings', () => {
-        openSettings()
-    })
+    ipcRenderer.on('open-settings', () => openSettings())
     ipcRenderer.on('enter-full-screen', enterFullScreen)
     ipcRenderer.on('leave-full-screen', leaveFullScreen)
     ipcRenderer.on('blur', windowBlur)
@@ -115,8 +113,8 @@ process.once('loaded', () => {
  */
 document.addEventListener('click', (event) => {
     if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-      event.preventDefault()
-      shell.openExternal(event.target.href)
+        event.preventDefault()
+        shell.openExternal(event.target.href)
     }
 })
 
