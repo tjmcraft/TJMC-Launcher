@@ -248,6 +248,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     border-radius: 50%;
     overflow: hidden;
     height: 20%;
+    max-height: 180px;
     padding: 0;
     z-index: 100001;
 }
