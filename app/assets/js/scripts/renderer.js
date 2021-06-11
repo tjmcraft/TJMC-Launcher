@@ -34,23 +34,10 @@ var currentView
  * fades in.
  */
 function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFade = () => {}, onNextFade = () => {}){
-    let current = getCurrentView()
+    let current = currentView
     currentView = next
-    if (current)
-        current.fadeOut(currentFadeTime, () => {
-            onCurrentFade()
-        })
-    if (next)
-        next.fadeIn(nextFadeTime, () => {
-            onNextFade()
-        })
-}
-
-/**
- * Returns current active view
- */
-function getCurrentView(){
-    return currentView
+    if (current) current.fadeOut(currentFadeTime, () => onCurrentFade())
+    if (next) next.fadeIn(nextFadeTime, () => onNextFade())
 }
 
 /**
@@ -60,49 +47,26 @@ function openSettings() {
     new Settings()
 }
 
-plb.addEventListener('click', (e) => {
-    startMine()
-})
+plb.addEventListener('click', (e) => startMine())
 
 async function startMine() {
-
-    /*const launch = API.Launch(null, (e) => {
-        progressBar.setValue((e.task/e.total)*100)
-    },(e) => {
-        if (e.type == 'version-jar') progressBar.setValue((e.current/e.total)*100)
-    }, (e) => {
-        showError(e)
-    }, (e) => {
-        showStartUpError(e)
-    }
-    );*/
     topBar.toggle(true)
-    const launch = await electron.invoke('launch-mine', null);
-    
+    await electron.invoke('launch-mine', null);
 }
 
-electron.on('error', (e, error) => showError(error));
+electron.on('startup-error', (e, error) => showStartUpError(error));
 function showStartUpError(error) {
     modal.alert('Ошибка при запуске', error, 'error', { logType: true });
 }
-electron.on('startup-error', (e, error) => showStartUpError(error));
+electron.on('error', (e, error) => showError(error));
 function showError(error) {
     console.error(error)
     modal.alert('Ошибка', error, 'error', { logType: true });
 }
 
-
-
-function removeMine() {
-    let version = API.ConfigManager.getVersion()
-    API.VersionManager.removeVersion(version.id)
-}
-
-
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
 })
-
 
 /**
  * The function creates and returns tools container for overlay
@@ -116,12 +80,8 @@ function createToolsContainer(click = () => {}) {
     return tools
 }
 
-electron.on('progress', (e, progress) => {
-    progressBar.setValue((progress)*100)
-})
-progressBar.setValue = (v) => {
-    progressBar.style.width = v + "%"
-}
+electron.on('progress', (e, progress) => progressBar.setValue(progress*100))
+progressBar.setValue = (v) => progressBar.style.width = v + "%"
 
 window.onload = function(e) {
     const preloader = qsl('#preloader')
