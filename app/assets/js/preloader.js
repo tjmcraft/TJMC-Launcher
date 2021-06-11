@@ -3,7 +3,6 @@ ConfigManager.load()
 const { shell, ipcRenderer, contextBridge } = require('electron')
 const VersionManager = require('./libs/VersionManager')
 VersionManager.updateGlobalVersionsConfig()
-const launcher      = require('./launcher')
 const WebSocket = require('ws')
 const app = require('express')()
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
@@ -23,25 +22,6 @@ function getOS() {
         case 'linux': return 'linux'
         default: return 'unknown_os'
     }
-}
-
-function startMine(props = null, progress_callback = () => {}, download_callback = () => {}, error_callback = () => {}, startup_error_callback = () => {}) {
-    const _launcher = new launcher(props);
-    _launcher.on('progress', (e) => progress_callback(e))
-    _launcher.on('download-status', (e) => download_callback(e))
-    _launcher.construct().then(([java, minecraftArguments]) => {
-        _launcher.createJVM(java, minecraftArguments).then((minecraft) => {
-            //topBar.toggle(false)
-            let error_out;
-            minecraft.stderr.on('data', (data) => {
-                error_out = data.toString('utf-8');
-            })
-            minecraft.on('close', (code) => {
-                if (code != 0) startup_error_callback(error_out);
-            })
-        })
-    }).catch(e => error_callback(e))
-    return _launcher;
 }
 
 document.addEventListener('readystatechange', function () {
@@ -105,19 +85,15 @@ process.once('loaded', () => {
     on (eventName, callback) {
       ipcRenderer.on(eventName, callback)
     },
-
     async invoke (eventName, ...params) {
       return await ipcRenderer.invoke(eventName, ...params)
     },
-
     async shellOpenExternal (url) {
       await shell.openExternal(url)
     },
-
     async shellOpenPath (file) {
       await shell.openPath(file)
     },
-
     async shellTrashItem (file) {
       await shell.trashItem(file)
     }
@@ -127,10 +103,7 @@ process.once('loaded', () => {
 contextBridge.exposeInMainWorld('API', {
     ConfigManager: ConfigManager,
     VersionManager: VersionManager,
-    launcher: launcher,
-    Launch: startMine,
-    getOS: getOS,
-    setProgressBar: (v) => win.setProgressBar(v/100)
+    getOS: getOS
 })
 
 // Init global instances
@@ -193,7 +166,7 @@ function onConnect(client) {
     });
 }*/
 
-const e_server = app.listen(5248);
+/*const e_server = app.listen(5248);
 app.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', '*')
@@ -223,4 +196,4 @@ app.get('*', function(req, res){
         status: 404,
         error: `Not found`
     });
-});
+});*/
