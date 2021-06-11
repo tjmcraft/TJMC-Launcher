@@ -62,16 +62,16 @@ document.addEventListener('readystatechange', function () {
 })
 
 function enterFullScreen () {
-    document.body.classList.add('fullscreen')
+    document.documentElement.classList.add('fullscreen')
 }
 function leaveFullScreen () {
-    document.body.classList.remove('fullscreen')
+    document.documentElement.classList.remove('fullscreen')
 }
 function windowBlur () {
-    document.body.classList.add('blur')
+    document.documentElement.classList.add('blur')
 }
 function windowFocus () {
-    document.body.classList.remove('blur')
+    document.documentElement.classList.remove('blur')
 }
 
 function openMineDir() {
@@ -102,8 +102,7 @@ process.once('loaded', () => {
 
 contextBridge.exposeInMainWorld('API', {
     ConfigManager: ConfigManager,
-    VersionManager: VersionManager,
-    getOS: getOS
+    VersionManager: VersionManager
 })
 
 // Init global instances
