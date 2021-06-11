@@ -1,10 +1,16 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
-const ejse = require('ejs-electron')
-const path = require('path')
-const url = require('url')
-const WindowState = require('./app/assets/js/libs/WindowState')
-const loggerutil = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold')
-require('@electron/remote/main').initialize()
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const ejse = require('ejs-electron');
+const path = require('path');
+const url = require('url');
+const WindowState = require('./app/assets/js/libs/WindowState');
+const logger = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
+require('@electron/remote/main').initialize();
+
+const ConfigManager = require('./app/assets/js/libs/ConfigManager');
+ConfigManager.load();
+const VersionManager = require('./app/assets/js/libs/VersionManager');
+VersionManager.updateGlobalVersionsConfig();
+const launcher = require('./app/assets/js/launcher');
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
@@ -13,6 +19,9 @@ app.allowRendererProcessReuse = true
 
 const gotTheLock = app.requestSingleInstanceLock()
 
+/**
+ * @type {BrowserWindow} - The main window
+ */
 let win
 
 if (!gotTheLock) {
@@ -207,3 +216,41 @@ function getPlatformIcon(filename){
 ipcMain.handle('ping', async (event, ...args) => {
     return (args);
 })
+
+ipcMain.handle('launch-mine', async (event, args = null) => {
+    try {
+        const _launcher = new launcher(args);
+        _launcher.on('progress', progress);
+        _launcher.on('download-status', download_progress);
+
+        const java_path = await _launcher.getJava();
+        const versionFile = await _launcher.loadManifest();
+        const minecraftArguments = await _launcher.construct(versionFile);
+        const vm = await _launcher.createJVM(java_path, minecraftArguments);
+        
+        let error_out = null;
+        vm.stderr.on('data', (data) => {
+            error_out = data.toString('utf-8');
+        })
+        vm.on('close', (code) => {
+            if (code != 0) win.webContents.send('startup-error', error_out);
+        })
+    } catch (error) {
+        win.webContents.send('error', error);
+    }
+    return true;
+})
+
+function progress(e) {
+    const progress = (e.task / e.total);
+    logger.debug(`Progress ${progress}`)
+    win.setProgressBar(progress);
+    win.webContents.send('progress', progress);
+}
+function download_progress(e) {
+    const progress = (e.current / e.total);
+    if (e.type != 'version-jar') return;
+    logger.debug(`Progress ${progress}`)
+    win.setProgressBar(progress);
+    win.webContents.send('progress', progress);
+}

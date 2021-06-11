@@ -64,8 +64,9 @@ plb.addEventListener('click', (e) => {
     startMine()
 })
 
-function startMine() {
-    const launch = API.Launch(null, (e) => {
+async function startMine() {
+
+    /*const launch = API.Launch(null, (e) => {
         progressBar.setValue((e.task/e.total)*100)
     },(e) => {
         if (e.type == 'version-jar') progressBar.setValue((e.current/e.total)*100)
@@ -74,17 +75,20 @@ function startMine() {
     }, (e) => {
         showStartUpError(e)
     }
-    );
+    );*/
     topBar.toggle(true)
+    const launch = await electron.invoke('launch-mine', null);
+    
 }
 
+electron.on('error', (e, error) => showError(error));
 function showStartUpError(error) {
-    modal.alert('Ошибка', `Возможно возникла ошибка при запуске:\n${error}`, 'error', { logType: true });
+    modal.alert('Ошибка при запуске', error, 'error', { logType: true });
 }
-
+electron.on('startup-error', (e, error) => showStartUpError(error));
 function showError(error) {
     console.error(error)
-    modal.alert('Ошибка', `Возможно возникла ошибка в коде:\n${error}`, 'error', { logType: true });
+    modal.alert('Ошибка', error, 'error', { logType: true });
 }
 
 
@@ -112,25 +116,11 @@ function createToolsContainer(click = () => {}) {
     return tools
 }
 
-/*new AlertEx({
-    closeButton: true,
-    type: 'warn',
-    header: 'Внимание!',
-    text: `Это бета тест и некоторые функции не работают!`,
-    buttons: [{
-        class: '',
-        name: 'Окей',
-        callback: () => {
-        },
-        closeOverlay: true
-    }]
-})*/
-//var x = getOffset( document.querySelector('#dropdown-list') ).left;
-
-
+electron.on('progress', (e, progress) => {
+    progressBar.setValue((progress)*100)
+})
 progressBar.setValue = (v) => {
     progressBar.style.width = v + "%"
-    API.setProgressBar(v)
 }
 
 window.onload = function(e) {
@@ -143,13 +133,6 @@ window.onload = function(e) {
         })
     }, 1000)
 }
-/*
-document.addEventListener('mouseover', e => {
-    const tooltip = e.target?.dataset?.tooltip;
-    if (tooltip) {
-        e.target.tooltip(tooltip)
-    }
-})*/
 
 async function refreshVersions() {
     const installations = await API.VersionManager.getInstallations();
