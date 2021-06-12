@@ -39,7 +39,7 @@ class Layer {
      * @param {Function} callback 
      */
     show(callback = () => {}) {
-        this.pView = getCurrentView()
+        this.pView = currentView
         let fadeTime = this.options.fadeTime || 150
         if (!qsl(`[aria-label=${this.label}]`)) this.join()
         this.layer.style.visibility = 'visible'

@@ -121,10 +121,10 @@ function selectVersion(version_hash) {
     renderSelectVersion(version_hash);
 }
 
-async function renderSelectVersion(version_hash) {
-    if (!version_hash) return false;
-    const version = await API.VersionManager.getInstallation(version_hash);
+async function renderSelectVersion(version_hash = null) {
+    if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
     console.debug(version_hash)
+    const version = await API.VersionManager.getInstallation(version_hash);
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5');
