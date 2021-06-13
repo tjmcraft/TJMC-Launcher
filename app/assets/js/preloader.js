@@ -14,6 +14,7 @@ const win = remote.getCurrentWindow()
 
 /**
  * Function returns current platform
+ * @returns os
  */
 function getOS() {
     switch (process.platform) {
@@ -22,6 +23,21 @@ function getOS() {
         case 'linux': return 'linux'
         default: return 'unknown_os'
     }
+}
+
+/**
+ * Function returns current preferred color sheme
+ * @returns scheme
+ */
+function getPreferredColorScheme() {
+    if (window.matchMedia) {
+        if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+            return 'dark';
+        } else {
+            return 'light';
+        }
+    }
+    return 'light';
 }
 
 document.addEventListener('readystatechange', function () {
@@ -54,6 +70,15 @@ document.addEventListener('readystatechange', function () {
                 document.documentElement.classList.add('platform-linux')
                 break;    
             default:
+                break;
+        }
+        
+        switch (getPreferredColorScheme()) {
+            case 'dark':
+                document.documentElement.classList.add('dark-theme')
+                break;
+            case 'light':
+                document.documentElement.classList.add('light-theme')
                 break;
         }
 
