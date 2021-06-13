@@ -81,10 +81,15 @@ body, html, div {
     /*text-rendering: optimizeLegibility;*/
 }
 
-body, button {
+.dark-theme body, .dark-theme button {
     font-family: 'Candara';
-    color: white;
+    color: var(--header-primary);
     background-color: #30303010;
+}
+.light-theme body, .light-theme button {
+    font-family: 'Candara';
+    color: var(--header-primary);
+    background-color: #f0f0f010;
 }
 a, button, div, input, label, select, span, strong, textarea {
     outline: 0;
@@ -106,6 +111,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-secondary-alt: #212121;
     --interactive-normal: #b9bbbe;
     --interactive-hover:#dcddde;
+    --interactive-active: #fff;
     --background-modifier-selected: #393939;
     --background-modifier-accent: #3d3d3d;
     --background-floating: #18191c;
@@ -114,12 +120,39 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --text-link: #00b0f4;
     --text-normal: #dcddde;
     --text-positive: #4fdc7b;
-    --background-accent: #1aaa1a;
+    --background-accent: #4f545c;
     --background-accent-alt: rgba(255, 255, 255, 0.35);
     --scrollbar-thin-thumb: #232323;
     --scrollbar-thin-track: transparent;
     --brand-color: #5865f2;
     --brand-color-1: #4752c4;
+    --brand-color-2: #3639b3;
+}
+
+/************* LIGHT THEME ***************/
+.light-theme {
+    --background-tertiary:#e3e5e8;
+    --background-primary:#fff;
+    --background-secondary:#f2f3f5;
+    --background-secondary-alt:#ebedef;
+    --interactive-normal:#4f5660;
+    --interactive-hover:#2e3338;
+    --interactive-active: #060607;
+    --background-modifier-selected:rgba(116,127,141,0.24);
+    --background-modifier-accent:rgba(6,6,7,0.08);
+    --background-floating:#fff;
+    --header-primary:#060607;
+    --header-secondary:#4f5660;
+    --text-link: #00b0f4;
+    --text-normal:#2e3338;
+    --text-positive: #4fdc7b;
+    --background-accent:#747f8d;
+    --background-accent-alt: rgba(255, 255, 255, 0.35);
+    --scrollbar-thin-thumb:rgba(79,84,92,0.3);
+    --scrollbar-thin-track:transparent;
+    --brand-color: #5865f2;
+    --brand-color-1: #4752c4;
+    --brand-color-2: #3639b3;
 }
 
 /*******************************************************************************
@@ -236,7 +269,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     right: 0;
     left: 0;
     background-repeat: no-repeat;
-    background: #1a1a1a;
+    background: var(--background-secondary);
     z-index: 99999;
     user-select: none;
     transition: none;
@@ -803,7 +836,7 @@ p {
     font-size: 16px;
     line-height: 20px;
     cursor: pointer;
-    color: #b9bbbe;
+    color: var(--interactive-normal);
     min-height: 28px;
     margin-bottom: 2px;
     margin-left: 8px;
@@ -811,13 +844,13 @@ p {
 
 .navItem:hover {
     transition: all .2s;
-    color: #dcddde;
+    color: var(--interactive-hover);
     background-color: var(--background-primary);
 }
 
 .navItem.selected {
     cursor: default;
-    color: #F1F1F1 !important;
+    color: var(--interactive-active) !important;
     background-color: var(--background-primary) !important;
 }
 
@@ -833,7 +866,7 @@ p {
 .separator {
     margin: 8px 10px;
     height: 1px;
-    background-color: #ffffff0f;
+    background-color: var(--background-modifier-accent);
 }
 
 .sidebarView .content-region {
@@ -1355,6 +1388,7 @@ input:checked + .toggleSwitchSlider:before {
     box-sizing: border-box;
     /*backdrop-filter: saturate(180%) blur(15px);*/
     overflow: hidden;
+    color: #fdfdfd;
 }
 #main > .main-content > .top h2 {
     font-size: 25px;
@@ -1364,17 +1398,18 @@ input:checked + .toggleSwitchSlider:before {
 
 #playButton {
     position: relative;
-    background-color: var(--background-accent) !important;
+    background-color: var(--brand-color) !important;
     box-sizing: border-box;
     font-size: 20px;
     font-weight: 800;
     height: 2em;
+    color: #fdfdfd;
 }
 #playButton:hover {
-    background-color: #10a010 !important;
+    background-color: var(--brand-color-1) !important;
 }
 #playButton:active {
-    background-color: #008000 !important;
+    background-color: var(--brand-color-2) !important;
 }
 
 #main > .main-content > .main {
