@@ -57,7 +57,7 @@ document.addEventListener('readystatechange', function () {
                 break;
         }
 
-        win.setProgressBar()
+        win.setProgressBar(-1)
     }
 })
 
