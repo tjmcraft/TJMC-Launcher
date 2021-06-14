@@ -279,7 +279,7 @@ function MainContainer(props) {
                                 cE('h2', null, 'Федя лох'),
                                 cE('h5', null, 'Просто конченый полупидор')
                             ),
-                            cE('button', { class: '', id: 'playButton', 'data-tooltip': 'Играть'}, 'Играть')
+                            Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
                         )
                     )
                 )
