@@ -346,14 +346,14 @@ const modal = {
         }, root_container);
 
         modal_ex.show();
-        return root_container;
+        return modal_ex;
     },
 
     whatsNew: function (content, date = null) {
         const root_container = cE('div', { class: ['container-ov1', 'small'] });
         //root_container.onclick = (e) => { e.stopPropagation() };
 
-        const modal_ex = new ModalEx({
+        const modal_ex = this.createRaw({
             escButton: false
         }, root_container);
 
@@ -382,7 +382,7 @@ const modal = {
         root_container.append(root_hoz_header, root_content, footer);
 
         modal_ex.show();
-        return root_container;
+        return modal_ex;
     }
 
 }
