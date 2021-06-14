@@ -1404,6 +1404,7 @@ input:checked + .toggleSwitchSlider:before {
     font-weight: 800;
     height: 2em;
     color: #fdfdfd;
+    font-family: Arial, Helvetica, sans-serif, system-ui;
 }
 #playButton:hover {
     background-color: var(--brand-color-1) !important;
@@ -1499,6 +1500,10 @@ input:checked + .toggleSwitchSlider:before {
     font-size: 2em;
     line-height: normal;
     /* text-align: start; */
+}
+
+#version-selector .main-content h1 {
+    text-align: center;
 }
 
 .container-f {
