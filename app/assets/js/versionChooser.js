@@ -2,10 +2,7 @@ class VersionChooser {
     
     constructor() {
         this.sidebar = new versionsSidebar();
-        this.alertex = new AlertEx(
-            { closeButton: true },
-            cE('div', { class: 'inner-container'}, this.Base)
-        )
+        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container'}, this.Base))
         this.refreshVersions()
     }
 
