@@ -128,7 +128,7 @@ async function renderSelectVersion(version_hash = null) {
     if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
     currentVersion = version_hash
     console.debug(currentVersion)
-    const version = await API.VersionManager.getInstallation(version_hash);
+    const version = await electron.invoke('installation.get', version_hash);
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5');
