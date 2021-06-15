@@ -98,7 +98,7 @@ window.onload = function(e) {
 }
 
 async function refreshVersions() {
-    const installations = await API.VersionManager.getInstallations();
+    const installations = await electron.invoke('installations.get');
     const installations_entries = Object.entries(installations);
     sidebar_el.removeAll();
     if (installations_entries.length > 0) {

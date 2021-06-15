@@ -256,3 +256,7 @@ function download_progress(e) {
     win.setProgressBar(progress);
     win.webContents.send('progress', progress);
 }
+
+ipcMain.handle('installations.get', async (event, ...args) => {
+    return await VersionManager.getInstallations();
+})
