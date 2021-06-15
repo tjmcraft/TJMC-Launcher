@@ -41,7 +41,7 @@ class launcher extends EventEmitter {
     }
 
     async getJava() {
-        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'java'
+        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw'
         const java = await this.handler.checkJava(javaPath)
         if (!java.run) {
             logg.error(`Couldn't start Minecraft due to: ${java.message}`)
