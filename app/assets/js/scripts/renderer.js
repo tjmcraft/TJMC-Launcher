@@ -21,6 +21,7 @@ const VIEWS = {
 }
 
 var currentView
+var currentVersion
 
 /**
  * Switch launcher views.
@@ -47,11 +48,12 @@ function openSettings() {
     new Settings()
 }
 
-plb.addEventListener('click', (e) => startMine())
+plb.addEventListener('click', (e) => startMine(currentVersion))
 
-async function startMine() {
+async function startMine(version_hash = null) {
+    console.log(`Starting minecraft with hash: ${version_hash}`);
     topBar.toggle(true);
-    await electron.invoke('launch-mine', null);
+    await electron.invoke('launch-mine', version_hash);
     topBar.toggle(false);
 }
 
@@ -111,7 +113,7 @@ async function refreshVersions() {
     qsl('.localVersions').append(sidebar_el.content());
 
     const selected_installation = await API.ConfigManager.getVersion();
-    selected_installation && renderSelectVersion(selected_installation);
+    if (selected_installation) renderSelectVersion(selected_installation);
     
 };
 refreshVersions();
@@ -124,7 +126,8 @@ function selectVersion(version_hash) {
 
 async function renderSelectVersion(version_hash = null) {
     if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
-    console.debug(version_hash)
+    currentVersion = version_hash
+    console.debug(currentVersion)
     const version = await API.VersionManager.getInstallation(version_hash);
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
