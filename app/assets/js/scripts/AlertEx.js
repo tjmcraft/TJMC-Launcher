@@ -351,7 +351,6 @@ const modal = {
 
     whatsNew: function (content, date = null) {
         const root_container = cE('div', { class: ['container-ov1', 'small'] });
-        //root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
             escButton: false
