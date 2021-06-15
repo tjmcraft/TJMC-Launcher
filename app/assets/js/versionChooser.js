@@ -166,7 +166,6 @@ class VersionChooser {
      * @param {Object} options.resolution.height - Height of the game window
      */
     async addVersion(version, options = {}) {
-        console.log(options)
-        return await API.VersionManager.createInstallation(version, options);
+        return await electron.invoke('installations.create', version, options);
     }
 }
