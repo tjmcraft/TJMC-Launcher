@@ -239,7 +239,7 @@ class Settings {
             const whats_new_nutton = cE('button', { class: 'r' }, 'Что нового?');
             whats_new_nutton.onclick = () => {
                 modal.whatsNew([
-                    cE('img', { src: 'https://picsum.photos/720/380?random=1&grayscale'}),
+                    cE('img', { src: 'https://www.tjmcraft.ga/nav_cr.png'}),
                     cE('h1', { class: ['margin-top', 'title', 'added'] }, 'Привет, это TJMC'),
                     cE('p', null, 'В общем, мы решили изменить свой внешний вид.'),
                 ])
