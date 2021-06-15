@@ -50,8 +50,9 @@ function openSettings() {
 plb.addEventListener('click', (e) => startMine())
 
 async function startMine() {
-    topBar.toggle(true)
+    topBar.toggle(true);
     await electron.invoke('launch-mine', null);
+    topBar.toggle(false);
 }
 
 electron.on('startup-error', (e, error) => showStartUpError(error));
