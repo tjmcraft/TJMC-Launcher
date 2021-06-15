@@ -4,11 +4,11 @@ const os = require('os')
 const logg = require('../loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold')
 
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
-const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/TJMC-Launcher') || require('electron').remote.app.getPath('userData')
+const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share"))+'/.tjmc') || require('electron').remote.app.getPath('userData')
 const DEFAULT_CONFIG = 
 {
     java: {
-        javaPath: 'java',
+        javaPath: 'javaw',
         memory: {
             max: 1024,
             min: 512
