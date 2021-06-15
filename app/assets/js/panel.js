@@ -272,7 +272,7 @@ function MainContainer(props) {
             ),
             cE('div', { class: 'main-content' },
                 cE('div', { class: 'top' },
-                    cE('img', { src: "https://picsum.photos/1280/720", onerror: "this.src='../app/assets/images/default.png'" }),
+                    cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
                     cE('div', { class: 'top-overlay' },
                         cE('div', { class: 'top-toolbar' },
                             cE('div', { style: "width: 100%;" },
