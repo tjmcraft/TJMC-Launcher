@@ -260,3 +260,6 @@ function download_progress(e) {
 ipcMain.handle('installations.get', async (event, ...args) => {
     return await VersionManager.getInstallations();
 })
+ipcMain.handle('versions.get.global', async (event, ...args) => {
+    return await VersionManager.getGlobalVersions();
+})

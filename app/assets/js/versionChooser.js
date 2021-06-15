@@ -7,7 +7,7 @@ class VersionChooser {
     }
 
     refreshVersions(type = 'all') {
-        API.VersionManager.getGlobalVersions().then((parsed) => {
+        electron.invoke('versions.get.global').then((parsed) => {
             parsed = msort(parsed);
             const versions = parsed.filter((i) => { return type == 'all' ? true : i.type == type });
             const click = (e, item) => this.renderVersion(item)
@@ -58,7 +58,6 @@ class VersionChooser {
         const dropdown = new DropdownSelector();
         const dropdowm_selector = dropdown.createSelector(dropdown_items);
         dropdown.onselect = (item) => {
-            console.log(item)
             this.refreshVersions(item.type)
         }
         return dropdowm_selector;
@@ -70,12 +69,10 @@ class VersionChooser {
     }
 
     createMainContent(props) {
-        console.log(props)
         const version_opts = {
             name: props?.version?.id ? `Версия ${props.version.id}` : 'без имени',
             type: props?.version?.type
         }
-        console.log(version_opts)
         const header = cE('section', { class: 'VT-header'},
             cE('h2', null, props?.version?.id ? `Создание установки версии ${props.version.id}` : 'Создание установки'),
             cE('div', { class: 'full separator' })
