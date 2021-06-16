@@ -101,6 +101,7 @@ async function refreshVersions() {
     const installations = await electron.invoke('installations.get');
     const installations_entries = Object.entries(installations);
     sidebar_el.removeAll();
+    console.log(installations);
     if (installations_entries.length > 0) {
         for (const [hash, params] of installations_entries) {
             sidebar_el.addItem({ hash: hash, ...params }, (item) => {
@@ -112,15 +113,15 @@ async function refreshVersions() {
     }
     qsl('.localVersions').append(sidebar_el.content());
 
-    const selected_installation = await API.ConfigManager.getVersion();
-    if (selected_installation) renderSelectVersion(selected_installation);
-    
+    if (localStorage.version_hash && Object(installations).hasOwnProperty(localStorage.version_hash)) { renderSelectVersion(localStorage.version_hash) }
+    else if (installations_entries[0] && installations_entries[0][0]) { selectVersion(installations_entries[0][0]) }
+    else false
 };
 refreshVersions();
 
 function selectVersion(version_hash) {
     if (!version_hash) return false;
-    API.ConfigManager.setVersion(version_hash)
+    localStorage.version_hash = version_hash;
     renderSelectVersion(version_hash);
 }
 

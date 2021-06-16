@@ -36,14 +36,6 @@ exports.getLocalVersions = async function() {
     }
 }
 
-exports.getVersion = async function() {
-    return ConfigManager.getVersion()
-}
-
-exports.setVersion = function(v) {
-    ConfigManager.setVersion(v)
-}
-
 /**
  * Gets Main JSON of given version
  * @param version Version of Minecraft

@@ -36,7 +36,6 @@ const DEFAULT_CONFIG =
             height: 720
         }
     },
-    version: "",
     auth: {
         access_token: 'null',
         username: 'MakAndJo',
