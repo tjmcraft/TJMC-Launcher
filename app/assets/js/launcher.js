@@ -12,17 +12,17 @@ class launcher extends EventEmitter {
 
     /**
      * Minecraft launcher constructor
+     * @param {String} version_hash - The version hash
      * @param {Object} options - Options to construct the launcher 
      * @param {Object} options.overrides.path.version - Path to directory of version (where main jar located)
      * @param {Object} options.overrides.path.root - Path to root directory of minecraft
      * @param {Object} options.overrides.path.mcPath - Path to version main jar
      * @param {Object} options.overrides.path.gameDirectory - Path to game directory
      * @param {Object} options.java.javaPath - Path to java executable
-     * @param {Object} options.version - Version config
      * @param {Object} options.installation.lastVersionId - ID of current version
      * @param {Object} options.installation.type - Type of current version
      */
-    constructor (version_hash = null, options = null) {
+    constructor (version_hash, options = null) {
         super();
         this.options = options || ConfigManager.getAllOptions();
         this.options.installation = VersionManager.getInstallationSync(version_hash)
