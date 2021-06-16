@@ -72,7 +72,7 @@ class Minecraft {
         let libs = []
         const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'))
         if (classJson.mavenFiles) {
-            await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven-custom')
+            await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven')
         }
         const parsed = classJson.libraries.map(lib => {
             const lib_url_ex = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
@@ -123,19 +123,14 @@ class Minecraft {
             await Promise.all(stat.map(async (native) => {
                 if (!native) return
                 const name = native.path.split('/').pop()
-                await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
-                if (!await this.checkSum(native.sha1, path.join(nativeDirectory, name))) {
+                const native_path = path.join(nativeDirectory, name);
+                if (!fs.existsSync(native_path) || !await this.checkSum(native.sha1, native_path)) {
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
                 }
                 try {
-                    new Zip(path.join(nativeDirectory, name)).extractAllTo(nativeDirectory, true)
-                } catch (e) {
-                    // Only doing a console.warn since a stupid error happens. You can basically ignore this.
-                    // if it says Invalid file name, just means two files were downloaded and both were deleted.
-                    // All is well.
-                    logg.warn(e)
-                }
-                fs.unlinkSync(path.join(nativeDirectory, name))
+                    new Zip(native_path).extractAllTo(nativeDirectory, true)
+                } catch (e) { logg.warn(e) }
+                fs.unlinkSync(native_path)
                 counter++
                 this.client.emit('progress', {
                     type: 'natives',
@@ -283,7 +278,6 @@ class Minecraft {
                                 current: 0,
                                 total: totalBytes
                             })
-                            this.client.emit('download', name)
                             resolve({ failed: false, asset: null })
                         })
                         file.on('error', async (e) => {
@@ -321,12 +315,10 @@ class Minecraft {
     checkSum (hash, file) {
         return new Promise((resolve, reject) => {
             checksum.file(file, (err, sum) => {
-            if (err) {
-                logg.debug(`Failed to check file hash due to ${err}`)
-                resolve(false)
-            } else {
-                resolve(hash === sum)
-            }
+                if (err) {
+                    logg.debug(`Failed to check file hash due to ${err}`)
+                    resolve(false)
+                } else { resolve(hash === sum) }
             })
         })
     }
@@ -348,9 +340,7 @@ class Minecraft {
             } else {
                 if (lib.rules[0].action === 'allow' && lib.rules[0].os) return this.getOS() !== 'osx'
             }
-        } else {
-            return false
-        }
+        } else { return false }
     }
 
     getMemory () {
@@ -378,7 +368,6 @@ class Minecraft {
     constructJVMArguments(versionFile, tempNativePath, cp) {
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        
         const jar = this.overrides.javaSep + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
         this.fields = {
             '${auth_access_token}': this.options.auth.access_token,

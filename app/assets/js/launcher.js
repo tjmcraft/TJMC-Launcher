@@ -27,7 +27,6 @@ class launcher extends EventEmitter {
         super();
         this.options = options || ConfigManager.getAllOptions();
         this.options.installation = InstallationsManager.getInstallationSync(version_hash)
-        logg.debug(this.options.installation)
         this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
         this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
