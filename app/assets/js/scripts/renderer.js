@@ -22,6 +22,7 @@ const VIEWS = {
 
 var currentView
 var currentVersion
+var Installations
 
 /**
  * Switch launcher views.
@@ -57,15 +58,14 @@ async function startMine(version_hash = null) {
     topBar.toggle(false);
 }
 
-electron.on('startup-error', (e, error) => showStartUpError(error));
-function showStartUpError(error) {
+electron.on('startup-error', (e, error) => {
     modal.alert('Ошибка при запуске', error, 'error', { logType: true });
-}
-electron.on('error', (e, error) => showError(error));
-function showError(error) {
-    console.error(error)
+});
+
+electron.on('error', (e, error) => {
+    console.error(error);
     modal.alert('Ошибка', error, 'error', { logType: true });
-}
+});
 
 API.ConfigManager.getAuth().then((auth) => {
     qsl('.sidebar-main').appendChild(user_panel(auth))
@@ -98,10 +98,9 @@ window.onload = function(e) {
 }
 
 async function refreshVersions() {
-    const installations = await electron.invoke('installations.get');
-    const installations_entries = Object.entries(installations);
+    Installations = await electron.invoke('installations.get');
+    const installations_entries = Object.entries(Installations);
     sidebar_el.removeAll();
-    console.log(installations);
     if (installations_entries.length > 0) {
         for (const [hash, params] of installations_entries) {
             sidebar_el.addItem({ hash: hash, ...params }, (item) => {
@@ -113,7 +112,7 @@ async function refreshVersions() {
     }
     qsl('.localVersions').append(sidebar_el.content());
 
-    if (localStorage.version_hash && Object(installations).hasOwnProperty(localStorage.version_hash)) { renderSelectVersion(localStorage.version_hash) }
+    if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) { renderSelectVersion(localStorage.version_hash) }
     else if (installations_entries[0] && installations_entries[0][0]) { selectVersion(installations_entries[0][0]) }
     else false
 };
@@ -129,11 +128,17 @@ async function renderSelectVersion(version_hash = null) {
     if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
     currentVersion = version_hash
     console.debug(currentVersion)
-    const version = await electron.invoke('installation.get', version_hash);
+    const version = await getInstallation(version_hash);
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5');
     sidebar_el.selectVersion(version_hash);
     n.innerText = version.name || version.hash
     d.innerText = version.type
+}
+
+async function getInstallation(version_hash) {
+    if (Installations && Object(Installations).hasOwnProperty(version_hash)) {
+        return { hash: version_hash, ...Installations[version_hash] } || null;
+    }
 }

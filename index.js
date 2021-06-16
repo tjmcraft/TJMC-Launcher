@@ -267,6 +267,3 @@ ipcMain.handle('versions.get.global', async (event, ...args) => {
 ipcMain.handle('installations.create', async (event, version, options) => {
     return await InstallationsManager.createInstallation(version, options);
 })
-ipcMain.handle('installation.get', async (event, version_hash) => {
-    return await InstallationsManager.getInstallation(version_hash);
-})
