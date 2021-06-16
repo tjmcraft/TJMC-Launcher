@@ -1,8 +1,6 @@
 const ConfigManager = require('./libs/ConfigManager')
 ConfigManager.load()
 const { shell, ipcRenderer, contextBridge } = require('electron')
-const VersionManager = require('./libs/VersionManager')
-VersionManager.updateGlobalVersionsConfig()
 const WebSocket = require('ws')
 const app = require('express')()
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
@@ -120,8 +118,7 @@ process.once('loaded', () => {
 })
 
 contextBridge.exposeInMainWorld('API', {
-    ConfigManager: ConfigManager,
-    VersionManager: VersionManager
+    ConfigManager: ConfigManager
 })
 
 // Init global instances
@@ -158,7 +155,7 @@ function onConnect(client) {
             const json_message = JSON.parse(message);
             switch (json_message.action) {
                 case 'get_installations':
-                    VersionManager.getInstallations().then(i => sendJSON('get_installations', i));
+                    InstallationsManager.getInstallations().then(i => sendJSON('get_installations', i));
                     break;
                 case 'echo':
                     sendJSON('data', json_message.data);
@@ -192,11 +189,11 @@ app.get('/version', (req, res) => {
     })
 });
 app.get('/get/installations', (req, res) => {
-    VersionManager.getInstallations().then(i => res.json(i));
+    InstallationsManager.getInstallations().then(i => res.json(i));
 });
 app.get('/get/installation', (req, res) => {
     (!req.query.hash) && res.json({ error: 'no hash in params', params: req.query }, 404);
-    VersionManager.getInstallation(req.query.hash).then(i => res.json(i));
+    InstallationsManager.getInstallation(req.query.hash).then(i => res.json(i));
 });
 app.get('/get/globalVersions', (req, res) => {
     VersionManager.getGlobalVersions().then(i => res.json(i));

@@ -11,6 +11,7 @@ ConfigManager.load();
 const VersionManager = require('./app/assets/js/libs/VersionManager');
 VersionManager.updateGlobalVersionsConfig();
 const launcher = require('./app/assets/js/launcher');
+const InstallationsManager = require('./app/assets/js/libs/InstallationsManager');
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
@@ -258,14 +259,14 @@ function download_progress(e) {
 }
 
 ipcMain.handle('installations.get', async (event, ...args) => {
-    return await VersionManager.getInstallations();
+    return await InstallationsManager.getInstallations();
 })
 ipcMain.handle('versions.get.global', async (event, ...args) => {
     return await VersionManager.getGlobalVersions();
 })
 ipcMain.handle('installations.create', async (event, version, options) => {
-    return await VersionManager.createInstallation(version, options);
+    return await InstallationsManager.createInstallation(version, options);
 })
 ipcMain.handle('installation.get', async (event, version_hash) => {
-    return await VersionManager.getInstallation(version_hash);
+    return await InstallationsManager.getInstallation(version_hash);
 })
