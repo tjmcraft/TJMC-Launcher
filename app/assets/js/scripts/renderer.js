@@ -42,6 +42,7 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFa
     if (next) next.fadeIn(nextFadeTime, () => onNextFade())
 }
 
+electron.on('open-settings', (e) => openSettings())
 /**
  * Creates new settings layer
  */

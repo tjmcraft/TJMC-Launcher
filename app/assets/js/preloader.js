@@ -123,7 +123,6 @@ contextBridge.exposeInMainWorld('API', {
 
 // Init global instances
 process.once('loaded', () => {
-    ipcRenderer.on('open-settings', () => openSettings())
     ipcRenderer.on('enter-full-screen', enterFullScreen)
     ipcRenderer.on('leave-full-screen', leaveFullScreen)
     ipcRenderer.on('blur', windowBlur)
