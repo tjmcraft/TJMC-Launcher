@@ -1,3 +1,6 @@
+qsl(".app-mount").prepend(FrameBar());
+qsl('.app-container').toggle(true, 'frame-fix');
+
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
