@@ -155,21 +155,21 @@ exports.getAllOptions = function() {
     return config
 }
 
-exports.getVersion = async function() {
-    return config.version || DEFAULT_CONFIG.version
-}
-
-exports.setVersion = function(v) {
-    config.version = (typeof v !== 'undefined' && v != null) ? v : DEFAULT_CONFIG.version
-    exports.save()
-}
-
 exports.getAuth = async function() {
     return config.auth || DEFAULT_CONFIG.auth
 }
 
 exports.setAuth = function(a) {
     config.auth = (typeof a !== 'undefined' && a != null) ? a : DEFAULT_CONFIG.auth
+}
+
+exports.setLaunchFullscreen = function (v = false) {
+    config.minecraft.launch.fullscreen = (typeof v === 'boolean') ? v : false;
+    exports.save();
+}
+
+exports.getLaunchFullscreen = function () {
+    return config.minecraft.launch.fullscreen;
 }
 /* =====================   Window Properties   ===================== */
 
