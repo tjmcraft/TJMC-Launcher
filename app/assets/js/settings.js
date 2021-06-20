@@ -200,9 +200,9 @@ class Settings {
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
-                        checked: false,
+                        checked: API.ConfigManager.getLaunchFullscreen() || false,
                         action: function (s, n) {
-                            console.log(n + ' ' + s);
+                            API.ConfigManager.setLaunchFullscreen(s)
                         }
                     })
                 )
