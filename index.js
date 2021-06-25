@@ -70,6 +70,8 @@ function createWindow () {
             worldSafeExecuteJavaScript: true,
             spellcheck: true
         },
+        titleBarStyle: 'default',
+        roundedCorners: true,
         icon: getPlatformIcon('icon'),
         backgroundColor: '#171614'
     })
@@ -117,12 +119,12 @@ function createMenu() {
             submenu: [
                 {
                     label: 'Root Directory',
-                    accelerator: isMac ? 'Alt+Cmd+D' : 'Ctrl+Shift+D',
+                    accelerator: isMac ? 'Cmd+Shift+D' : 'Ctrl+Shift+D',
                     click: () => openMineDir() 
                 },
                 {
                     label: 'Options',
-                    accelerator: isMac ? 'Alt+Cmd+P' : 'Ctrl+Shift+P',
+                    accelerator: isMac ? 'Cmd+Shift+I' : 'Ctrl+Shift+I',
                     click: () => win.webContents.send('open-settings')
                 }
             ]
