@@ -77,16 +77,16 @@ body, html, div {
     user-select: none;
     background: transparent;
     line-height: 1;
-    /*text-rendering: optimizeLegibility;*/
+    text-rendering: optimizeLegibility;
 }
 
 .dark-theme body, .dark-theme button {
-    font-family: 'Candara';
+    font-family: var(--font-primary);
     color: var(--interactive-normal);
     background-color: #30303010;
 }
 .light-theme body, .light-theme button {
-    font-family: 'Candara';
+    font-family: var(--font-primary);
     color: var(--interactive-normal);
     background-color: #f0f0f010;
 }
@@ -160,6 +160,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --brand-color: #5865f2;
     --brand-color-1: #4752c4;
     --brand-color-2: #3639b3;
+}
+
+.dark-theme, .light-theme {
+    --font-primary: 'Segoe UI',"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 /*******************************************************************************
@@ -410,7 +414,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     overflow-x: hidden;
     white-space: pre-line;
     font-size: 16px;
-    font-family: system-ui;
+    font-family: var(--font-primary);
     text-align: start;
 }
 
@@ -540,7 +544,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     justify-content: center;
     align-items: center;
     font-size: 16px;
-    font-family: 'Candara';
+    font-family: var(--font-primary);
 }
 
 .tools .keycode {
@@ -579,7 +583,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .overlay > .container-ov1 button {
     position: relative;
-    font-family: system-ui;
+    font-family: var(--font-primary);
     font-size: 16px;
     font-weight: 700;
     line-height: 16px;
@@ -703,7 +707,7 @@ input, select {
     width: 184px;
     color: #eee;
     font-size: 14px;
-    font-family: 'system-ui';
+    font-family: var(--font-primary);
     opacity: 0.8;
     padding: 4px 8px;
     position: relative;
@@ -718,8 +722,8 @@ button {
     width: auto;
     min-width: 8rem;
     height: 32px;
-    font-family: 'Segoe UI', Tahoma, system-ui;
-    font-weight: 600;
+    font-family: var(--font-primary);
+    font-weight: 500;
 }
 
 button.filled {
@@ -836,7 +840,7 @@ p {
     flex-shrink: 0;
     font-weight: 500;
     text-align: start;
-    font-family: system-ui;
+    font-family: var(--font-primary);
 }
 
 .navItem {
@@ -1417,7 +1421,7 @@ input:checked + .toggleSwitchSlider:before {
     font-weight: 800;
     height: 2em;
     color: #fdfdfd;
-    font-family: Arial, system-ui;
+    font-family: var(--font-primary);
 }
 #playButton:hover {
     background-color: var(--brand-color-1) !important;
@@ -1866,7 +1870,7 @@ a.anchor:hover {
     width: 184px;
     color: #eee;
     font-size: 14px;
-    font-family: 'system-ui';
+    font-family: var(--font-primary);
     opacity: 0.8;
     padding: 4px 4px 4px 8px;
     position: relative;
@@ -1953,13 +1957,13 @@ a.anchor:hover {
     margin: 0 8px 0 0;
 }
 .ictx-flex .vbx > .text.version {
-    font-family: system-ui;
+    font-family: var(--font-primary);
     font-size: 1.2em;
     font-weight: 500;
     color: var(--header-secondary);
 }
 .ictx-flex .vbx.cu > .text.id {
-    font-family: system-ui;
+    font-family: var(--font-primary);
     font-size: 1.4em;
     font-weight: 400;
     color: var(--header-secondary);

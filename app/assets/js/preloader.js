@@ -85,7 +85,7 @@ contextBridge.exposeInMainWorld('API', {
 contextBridge.exposeInMainWorld('__STANDALONE__', true)
 contextBridge.exposeInMainWorld('system', {
     os: getOS(),
-    colorScheme: 'light' || null
+    colorScheme: null
 })
 
 // Init global instances
