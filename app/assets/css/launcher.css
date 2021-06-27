@@ -61,7 +61,6 @@
 }
 .hidden {visibility: hidden; opacity: 0;display: none;}
 .hidden-v {visibility: hidden; opacity: 0;}
-.platform-darwin .frame-fix {padding-top: 0;}
 .frame-fix {transition: all 0.5s; padding-top: 22px;}
 .fullscreen .frame-fix {padding-top: 0;}
 
@@ -406,9 +405,9 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .overlay > .container-ov1.mini {
-    max-width: 45em;
+    max-width: 40em;
     max-height: 80vh;
-    width: 45vw;
+    width: 35vw;
     height: auto;
 }
 .overlay > .container-ov1.small {
