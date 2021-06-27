@@ -18,7 +18,7 @@ switch (window.system?.os) {
         break;
 }
 
-switch (window.os?.colorScheme || getPreferredColorScheme()) {
+switch (window.system?.colorScheme || getPreferredColorScheme()) {
     case 'light':
         document.documentElement.classList.add('light-theme')
         break;
