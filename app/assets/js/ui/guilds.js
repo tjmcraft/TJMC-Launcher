@@ -3,25 +3,46 @@ class Guilds {
         this.guilds = cE('nav', { class: 'guilds' },
             cE('ul', { class: 'tree' },
                 cE('div', { class: ['scroller', 'no-scrollbar'] },
-                    cE('div', { class: 'listItem', 'data-name': 'play' },
-                        cE('div', { class: 'wrapper' },
-                            cE('img', { src: `https://picsum.photos/48/48?h=1` })
-                        )
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=11`
+                        })
                     ),
-                    cE('div', { class: 'listItem', 'data-name': 'play' },
-                        cE('div', { class: 'wrapper' },
-                            cE('img', { src: `https://picsum.photos/48/48?h=1` })
-                        )
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=22`
+                        })
                     ),
-                    cE('div', { class: 'listItem', 'data-name': 'play' },
-                        cE('div', { class: 'wrapper' },
-                            cE('img', { src: `https://picsum.photos/48/48?h=1` })
-                        )
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=33`
+                        })
                     ),
-                    cE('div', { class: 'listItem', 'data-name': 'play' },
-                        cE('div', { class: 'wrapper' },
-                            cE('img', { src: `https://picsum.photos/48/48?h=1` })
-                        )
+                    this.createSeparator(),
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=2`
+                        })
+                    ),
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=3`
+                        })
+                    ),
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=4`
+                        })
+                    ),
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=5`
+                        })
+                    ),
+                    this.createListElement(
+                        cE('img', {
+                            src: `https://picsum.photos/48/48?h=6`
+                        })
                     ),
                 )
             )
@@ -85,10 +106,14 @@ class Guilds {
     }
 
     createListItem(...c) {
-        return createElement('div', {class: 'listItem'}, ...c);
+        return cE('div', {class: 'listItem'}, ...c);
     }
 
     createListElement(...c) {
-        return this.createListItem(createElement('div', {class: 'wrapper'}, ...c));
+        return this.createListItem(cE('div', {class: 'wrapper'}, ...c));
+    }
+
+    createSeparator() {
+        return this.createListItem(cE('div', { class: ['guildSeparator'] }));
     }
 }
