@@ -263,6 +263,7 @@ function Button(props, ...elements) {
 
 function MainContainer(props) {
     const root_container = cE('div', { class: 'container' },
+        new Guilds().content,
         cE('div', { id: 'main', class: 'base' },
             cE('div', { class: 'hidden', id: 'topBar' },
                 cE('div', { id: 'progress-bar' })
