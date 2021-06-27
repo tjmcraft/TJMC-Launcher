@@ -1262,10 +1262,12 @@ input:checked + .toggleSwitchSlider:before {
     position: relative;
     background-color: var(--background-tertiary);
 }
-
 .guilds > .tree {
     height: 100%;
     display: flex;
+}
+.guilds > .tree * {
+    transition: all .3s ease;
 }
 
 .scroller {
