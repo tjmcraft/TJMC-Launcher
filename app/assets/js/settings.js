@@ -92,7 +92,7 @@ class Settings {
         },
         get my_account_tab() {
             const heading = cE('h2', null, 'Моя учётная запись');
-            const actions_button = cE('button', {class: ['r']}, 'Профиль');
+            const actions_button = cE('button', {class: ['r', 'filled', 'colorBrand']}, 'Профиль');
             const children = cE('div', {class: ['container-cc3V']},
                 cE('div', { class: 'bxcF1-box' },
                     cE('div', { class: 'ictx-flex' },

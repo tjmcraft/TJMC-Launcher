@@ -82,12 +82,12 @@ body, html, div {
 
 .dark-theme body, .dark-theme button {
     font-family: 'Candara';
-    color: var(--header-primary);
+    color: var(--interactive-normal);
     background-color: #30303010;
 }
 .light-theme body, .light-theme button {
     font-family: 'Candara';
-    color: var(--header-primary);
+    color: var(--interactive-normal);
     background-color: #f0f0f010;
 }
 a, button, div, input, label, select, span, strong, textarea {
@@ -111,8 +111,12 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --interactive-normal: #b9bbbe;
     --interactive-hover:#dcddde;
     --interactive-active: #fff;
-    --background-modifier-selected: #393939;
-    --background-modifier-accent: #3d3d3d;
+    /*--background-modifier-selected: #393939;*/
+    /*--background-modifier-accent: #3d3d3d;*/
+    --background-modifier-hover:rgba(79,84,92,0.16);
+    --background-modifier-active:rgba(79,84,92,0.24);
+    --background-modifier-selected:rgba(79,84,92,0.32);
+    --background-modifier-accent:hsla(0,0%,100%,0.06);
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -137,6 +141,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --interactive-normal:#4f5660;
     --interactive-hover:#2e3338;
     --interactive-active: #060607;
+    /*--background-modifier-selected:rgba(116,127,141,0.24);*/
+    /*--background-modifier-accent:rgba(6,6,7,0.08);*/
+    --background-modifier-hover:rgba(116,127,141,0.08);
+    --background-modifier-active:rgba(116,127,141,0.16);
     --background-modifier-selected:rgba(116,127,141,0.24);
     --background-modifier-accent:rgba(6,6,7,0.08);
     --background-floating:#fff;
@@ -704,10 +712,11 @@ input, select {
 button {
     border: 0;
     outline: 0;
-    /*border-width: 0px 0px 1px 0px;*/
+    /* border-width: 0px 0px 1px 0px; */
     border-radius: 0;
     background-color: transparent;
-    width: 8em;
+    width: auto;
+    min-width: 8rem;
     height: 32px;
     font-family: 'Segoe UI', Tahoma, system-ui;
     font-weight: 600;
@@ -827,6 +836,7 @@ p {
     flex-shrink: 0;
     font-weight: 500;
     text-align: start;
+    font-family: system-ui;
 }
 
 .navItem {
@@ -846,13 +856,13 @@ p {
 .navItem:hover {
     transition: all .2s;
     color: var(--interactive-hover);
-    background-color: var(--background-primary);
+    background-color: var(--background-modifier-hover);
 }
 
 .navItem.selected {
     cursor: default;
     color: var(--interactive-active) !important;
-    background-color: var(--background-primary) !important;
+    background-color: var(--background-modifier-selected) !important;
 }
 
 .header {
@@ -1955,7 +1965,7 @@ a.anchor:hover {
     color: var(--header-secondary);
 }
 .ictx-flex > button.r {
-    border: 1px solid var(--background-modifier-accent);
+    /* border: 1px solid var(--background-modifier-accent); */
     font-size: 14px;
     line-height: inherit;
 }
