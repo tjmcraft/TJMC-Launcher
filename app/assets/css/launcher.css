@@ -1124,28 +1124,10 @@ input:checked + .toggleSwitchSlider:before {
 .app-layers > .layer.base-layer {
     background: transparent;
 }
-.platform-win .bg {
-    top: -22px;
-}
 .platform-win #preloader {
     top: -22px;
 }
-.bg {
-    background-color: var(--background-tertiary);
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-}
-.bg {
-    /*background: url('https://picsum.photos/1280/720');*/
-    background: var(--background-primary);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-}
+
 /* === Main === */
 .sidebar-main {
     overflow: hidden;
@@ -1157,6 +1139,7 @@ input:checked + .toggleSwitchSlider:before {
     flex-direction: column;
     flex-shrink: 0;
     background-color: var(--background-secondary);
+    border-radius: 8px 0 0;
 }
 .sidebar-main > .sidebar-region {
     position: relative;
