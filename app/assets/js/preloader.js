@@ -19,23 +19,8 @@ function getOS() {
         case 'win32': return 'windows'
         case 'darwin': return 'osx'
         case 'linux': return 'linux'
-        default: return 'unknown_os'
+        default: return 'web'
     }
-}
-
-/**
- * Function returns current preferred color sheme
- * @returns scheme
- */
-function getPreferredColorScheme() {
-    if (window.matchMedia) {
-        if(window.matchMedia('(prefers-color-scheme: dark)').matches){
-            return 'dark';
-        } else {
-            return 'light';
-        }
-    }
-    return 'light';
 }
 
 document.addEventListener('readystatechange', function () {
@@ -46,38 +31,15 @@ document.addEventListener('readystatechange', function () {
         if (win.isFullScreen()) enterFullScreen()
 
         if (process.platform !== 'darwin') {
-            document.querySelector('.fCb').addEventListener('click', (e) => {
+            document.querySelector('.fCb')?.addEventListener('click', (e) => {
                 win.close()
             })
-            document.querySelector('.fRb').addEventListener('click', (e) => {
+            document.querySelector('.fRb')?.addEventListener('click', (e) => {
                 win.isMaximized() ? win.unmaximize() : win.maximize()
             })
-            document.querySelector('.fMb').addEventListener('click', (e) => {
+            document.querySelector('.fMb')?.addEventListener('click', (e) => {
                 win.minimize()
             })
-        }
-
-        switch (getOS()) {
-            case 'windows':
-                document.documentElement.classList.add('platform-win')
-                break;
-            case 'osx':
-                document.documentElement.classList.add('platform-darwin')
-                break;
-            case 'linux':
-                document.documentElement.classList.add('platform-linux')
-                break;    
-            default:
-                break;
-        }
-        
-        switch (getPreferredColorScheme()) {
-            case 'dark':
-                document.documentElement.classList.add('dark-theme')
-                break;
-            case 'light':
-                document.documentElement.classList.add('light-theme')
-                break;
         }
 
         win.setProgressBar(-1)
@@ -119,6 +81,11 @@ process.once('loaded', () => {
 
 contextBridge.exposeInMainWorld('API', {
     ConfigManager: ConfigManager
+})
+contextBridge.exposeInMainWorld('__STANDALONE__', true)
+contextBridge.exposeInMainWorld('system', {
+    os: getOS(),
+    colorScheme: null
 })
 
 // Init global instances

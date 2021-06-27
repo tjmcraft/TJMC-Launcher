@@ -1,5 +1,31 @@
-qsl(".app-mount").prepend(FrameBar());
-qsl('.app-container').toggle(true, 'frame-fix');
+if (window.__STANDALONE__ && window.system?.os) {
+    qsl(".app-mount").prepend(FrameBar());
+    qsl('.app-container').toggle(true, 'frame-fix');
+}
+
+switch (window.system?.os) {
+    case 'windows':
+        document.documentElement.classList.add('platform-win')
+        break;
+    case 'osx':
+        document.documentElement.classList.add('platform-darwin')
+        break;
+    case 'linux':
+        document.documentElement.classList.add('platform-linux')
+        break;
+    default:
+        document.documentElement.classList.add('platform-web')
+        break;
+}
+
+switch (window.os?.colorScheme || getPreferredColorScheme()) {
+    case 'light':
+        document.documentElement.classList.add('light-theme')
+        break;
+    default:
+        document.documentElement.classList.add('dark-theme')
+        break;
+}
 
 /* ================================= */
 
@@ -145,4 +171,19 @@ async function getInstallation(version_hash) {
     if (Installations && Object(Installations).hasOwnProperty(version_hash)) {
         return { hash: version_hash, ...Installations[version_hash] } || null;
     }
+}
+
+/**
+ * Function returns current preferred color sheme
+ * @returns scheme
+ */
+function getPreferredColorScheme() {
+    if (window.matchMedia) {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return 'dark';
+        } else {
+            return 'light';
+        }
+    }
+    return 'light';
 }
