@@ -1957,6 +1957,7 @@ a.anchor:hover {
     /* border: 1px solid var(--background-modifier-accent); */
     font-size: 14px;
     line-height: inherit;
+    margin-left: auto;
 }
 
 .r {

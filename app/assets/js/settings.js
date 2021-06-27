@@ -14,31 +14,12 @@ class Settings {
             {id: 'about-tab', name: 'О программе', content: this.content.about_tab}
         ]
 
-        this.layer = new Layer({
-            label: 'USER_SETTINGS'
-        })
+        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container'}, this.Base))
 
-        this.layer.append(this.Base)
-
-        this.el.sidebarItems = this.layer.content.qsla('.sidebar-region > .sidebar > .navItem')
-        this.el.content = this.layer.content.qsl('.content')
-
-        this.tools = createToolsContainer(() => {
-            this.destroy()
-        })
-        this.layer.append(this.tools)
-
-        this.escBinder = new escBinder()
-        this.escBinder.bind(() => {
-            this.destroy()
-        })
+        this.el.sidebarItems = this.alertex.content.qsla('.sidebar-region > .sidebar > .navItem')
+        this.el.content = this.alertex.content.qsl('.content')
 
         this.setTab('my-account-tab')
-        this.layer.show()
-    }
-    destroy() {
-        this.escBinder.uibind()
-        this.layer.destroy()
     }
     setTab (tab) {
         this.el.sidebarItems.forEach((i) => {
