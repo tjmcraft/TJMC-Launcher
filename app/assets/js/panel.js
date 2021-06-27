@@ -263,12 +263,12 @@ function Button(props, ...elements) {
 
 function MainContainer(props) {
     const root_container = cE('div', { class: 'container' },
-        cE('div', { class: 'sidebar-main', id: 'main-version-list' },
-            cE('nav', { class: 'localVersions'}, null)
-        ),
         cE('div', { id: 'main', class: 'base' },
             cE('div', { class: 'hidden', id: 'topBar' },
                 cE('div', { id: 'progress-bar' })
+            ),
+            cE('div', { class: 'sidebar-main', id: 'main-version-list' },
+                cE('nav', { class: 'localVersions' }, null)
             ),
             cE('div', { class: 'main-content' },
                 cE('div', { class: 'top' },

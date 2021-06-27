@@ -1249,7 +1249,7 @@ input:checked + .toggleSwitchSlider:before {
     -webkit-box-flex: 1;
     flex: 1 1 80%;
     position: relative;
-    background-color: var(--background-primary);
+    /*background-color: var(--background-primary);*/
     overflow: hidden;
 }
 
