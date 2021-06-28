@@ -1005,6 +1005,7 @@ h5 {
     display:none;
 }
 .toggleSwitchSlider {
+    transition: all .3s ease;
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -1012,11 +1013,11 @@ h5 {
     right: 0;
     bottom: 0;
     background-color: var(--background-accent);
-    transition: .4s;
     border-radius: 50px;
     border: 1px solid rgba(126, 126, 126, 0.2);
 }
 .toggleSwitchSlider:before {
+    transition: all .3s cubic-bezier(0.16, 1, 0.3, 1);
     position: absolute;
     content: "";
     height: 20px;
@@ -1028,7 +1029,6 @@ h5 {
     background-color: white;
     box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.75);
     border-radius: 50px;
-    transition: .3s;
 }
 input:checked + .toggleSwitchSlider {
     background-color: var(--brand-color);
