@@ -401,8 +401,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     opacity 0.5s ease,
     width .5s ease,
     height .5s ease;
-    max-width: 75vw;
-    max-height: 75vh;
+    max-width: 85vw;
+    max-height: 85vh;
     background: var(--background-primary);
     display: flex;
     /* justify-content: center; */
@@ -532,6 +532,18 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 .overlay > .container-ov1 .footer > * {
     margin: 0 8px 0 0;
+}
+
+@media (max-width: 1100px) {
+    .overlay > .container-ov1 > .inner-container {
+        width: 80vw;
+        height: 70vh;
+    }
+}
+@media (max-height: 580px) {
+    .overlay > .container-ov1 > .inner-container {
+        height: 80vh;
+    }
 }
 
 .tools {
