@@ -36,7 +36,7 @@ class Settings {
             cE('div', {class: 'sidebar-region'}, this.sideBar),
             cE('div', {class: 'content-region'},
                 cE('div', {class: 'transitionWrap'}, 
-                    cE('div', {class: 'content'})
+                    cE('div', {class: ['content', 'thin-s']})
                 )
             )
         );

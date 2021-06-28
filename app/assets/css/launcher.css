@@ -901,6 +901,13 @@ p {
     overflow: hidden scroll;
 }
 
+.content-region .content::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+.content-region .content:hover::-webkit-scrollbar-thumb {
+    background-color: rgb(170, 170, 170, 0.7);
+}
+
 h2 {
     /* text-transform: uppercase; */
     font-size: 20px;
