@@ -100,9 +100,9 @@ exports.setMaxRAM = function(maxRAM){
 
 const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.json')
 
-exports.save = function(){
+exports.save = function(reason = ""){
     fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8')
-    logg.debug('Config saved!')
+    logg.debug('Config saved!' + (reason ? ` (${reason})` : ""))
 }
 
 exports.load = function(){
@@ -111,7 +111,7 @@ exports.load = function(){
         fs.ensureDirSync(path.join(configPath, '..'))
         loaded = true
         config = DEFAULT_CONFIG
-        exports.save()
+        exports.save('NEW')
     }
     if(!loaded){
         let Validate = false
@@ -124,14 +124,14 @@ exports.load = function(){
             logg.log('Generating a new configuration file.')
             fs.ensureDirSync(path.join(configPath, '..'))
             config = DEFAULT_CONFIG
-            exports.save()
+            exports.save('ERROR_NEW')
         }
         if(Validate){
             config = validateKeySet(DEFAULT_CONFIG, config)
-            exports.save()
+            exports.save('VALIDATE')
         }
     }
-    logg.log('Successfully Loaded Launcher Config')
+    logg.log('Load launcher config - success!')
 }
 
 function validateKeySet(srcObj, destObj){

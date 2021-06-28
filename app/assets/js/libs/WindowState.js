@@ -181,10 +181,8 @@ const loadWindowState = function () {
         saveWindowState()
     }
     if (!loaded) {
-        let Validate = false
         try {
-            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8'))
-            Validate = true
+            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8')) 
         } catch (err) {
             logg.error(err)
             logg.log('Configuration file contains malformed JSON or is corrupt.')
@@ -193,11 +191,8 @@ const loadWindowState = function () {
             windowConfig = DEFAULT_WINDOW_CONFIG
             saveWindowState()
         }
-        if (Validate) {
-            saveWindowState()
-        }
     }
-    logg.log('Successfully Loaded Window Config')
+    logg.log('Load window config - success')
 }
 
 const getWindowState = function () {
