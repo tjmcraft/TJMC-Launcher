@@ -250,6 +250,11 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     align-items: center;
     justify-content: center;
 }
+#frameBar .frameButton svg {
+    margin: auto;
+    width: 12px;
+    height: 12px;
+}
 #frameBar .frameButton:hover{
     background: rgba(189, 189, 189, 0.43);
 }
@@ -602,7 +607,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 .overlay > .container-ov1 button {
     position: relative;
     font-family: var(--font-primary);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
     line-height: 16px;
     padding: 2px 16px;
@@ -615,6 +620,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--header-primary);
 }
 
 .overlay > .container-ov1 > p {
@@ -929,8 +935,9 @@ p {
 h2 {
     /* text-transform: uppercase; */
     font-size: 20px;
-    /* font-weight: 600; */
+    font-weight: 700;
     line-height: normal;
+    color: var(--header-primary);
 }
 
 h5 {
@@ -1532,6 +1539,7 @@ input:checked + .toggleSwitchSlider:before {
 
 #version-selector .main-content h1 {
     text-align: center;
+    color: var(--header-primary);
 }
 
 .container-f {
@@ -1565,6 +1573,7 @@ input:checked + .toggleSwitchSlider:before {
     flex: 1;
     user-select: none;
     text-align: start;
+    color: var(--header-primary);
 }
 .container-f .header:hover {
     background-color: #4f545c29;
@@ -1966,6 +1975,7 @@ a.anchor:hover {
     font-size: 2em;
     font-weight: 600;
     margin: 0 8px 0 0;
+    color: var(--header-primary);
 }
 .ictx-flex .vbx > .text.version {
     font-family: var(--font-primary);
