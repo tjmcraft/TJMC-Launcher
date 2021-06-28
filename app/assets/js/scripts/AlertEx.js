@@ -173,7 +173,7 @@ class ModalEx {
      * @returns 
      */
     createOverlay(closeButton = false, ...nodes) {
-        const overlay = cE('div', { class: 'overlay hidden' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy) : null);
+        const overlay = cE('div', { class: 'overlay hidden' }, ...nodes, closeButton ? createToolsContainer((e) => this.destroy(e)) : null);
         return overlay;
     }
 
