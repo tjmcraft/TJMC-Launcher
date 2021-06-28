@@ -161,9 +161,12 @@ class ModalEx {
         this.escBinder = new escBinder()
         this.escBinder.bind((e) => { this.destroy(e) })
         //this.show();
-        this.regCP()
+        /*this.regCP()
         this.regPC()
-        this.regOC()
+        this.regOC()*/
+        this.handleModalMousedown();
+        this.handleContainerMousedown();
+        this.handleModalClick();
     }
     
     /**
@@ -211,30 +214,39 @@ class ModalEx {
 
     get content() { return this.overlay; }
 
-    Xt = 0
+    ignoreOutsideClick = false
 
-    regPC() {
-        this.root_container.onmousedown = ()=>{
+    handleModalMousedown = () => {
+        this.root_container.onmousedown = () => {
             this.overlay.onmouseup = (e) => {
-                this.overlay.onmouseup = void 0,
-                e.target === this.overlay && (this.Xt = 1)
+                this.overlay.onmouseup = undefined
+                if (e.target === this.overlay) {
+                    this.ignoreOutsideClick = true
+                }
             }
         }
     }
 
-    regCP() {
-        this.overlay.onmousedown = ()=>{
+    handleContainerMousedown = () => {
+        this.overlay.onmousedown = () => {
             this.root_container.onmouseup = (e) => {
-                this.root_container.onmouseup = void 0,
-                e.target !== this.root_container && !this.root_container.contains(e.target) || (this.Xt = 1)
+                this.root_container.onmouseup = undefined
+                if (e.target === this.root_container || this.root_container.contains(e.target)) {
+                    this.ignoreOutsideClick = true
+                }
             }
         }
     }
 
-    regOC() {
+    handleModalClick = () => {
         this.overlay.onclick = e => {
-            (e.target === this.overlay && !this.Xt) && this.destroy();
-            this.Xt = 0;
+            if (this.ignoreOutsideClick) {
+                this.ignoreOutsideClick = false
+                return
+            }
+            if (e.target === this.overlay && true) {
+                this.destroy();
+            }
         }
     }
 
@@ -339,7 +351,7 @@ const modal = {
      */
     createRaw: function (props = {}, ...elements) {
         const root_container = cE('div', { class: ['container-ov1', props.class] }, ...elements);
-        root_container.onclick = (e) => { e.stopPropagation() };
+        //root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
             escButton: props.escButton || true
