@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const ejse = require('ejs-electron');
 const path = require('path');
 const url = require('url');
+const os = require('os');
 const WindowState = require('./app/assets/js/libs/WindowState');
 const logger = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
 require('@electron/remote/main').initialize();
@@ -274,4 +275,7 @@ ipcMain.handle('configuration.get', async (event, ...args) => {
 })
 ipcMain.handle('configuration.set', async (event, args) => {
     return await ConfigManager.setOptions(args);
+})
+ipcMain.handle('system.mem', async (event, ...args) => {
+    return os.totalmem() / 1024 / 1024;
 })
