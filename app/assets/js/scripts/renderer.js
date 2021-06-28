@@ -97,9 +97,18 @@ electron.on('error', (e, error) => {
     modal.alert('Ошибка', error, 'error', { logType: true });
 });
 
-API.ConfigManager.getAuth().then((auth) => {
-    qsl('.sidebar-main').appendChild(user_panel(auth))
+async function getConfig() {
+    return await electron.invoke('configuration.get');
+}
+async function setConfig(config) {
+    return await electron.invoke('configuration.set', config);
+}
+
+getConfig().then(config => {
+    qsl('.sidebar-main').appendChild(user_panel(config.auth))
 })
+
+
 
 /**
  * The function creates and returns tools container for overlay

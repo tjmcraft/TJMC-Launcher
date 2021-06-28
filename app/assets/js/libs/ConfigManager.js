@@ -155,8 +155,13 @@ exports.getAllOptionsSync = function () {
     return config
 }
 
-exports.getAllOptions = async function() {
-    return config
+exports.getAllOptions = async function () {
+    return config;
+}
+
+exports.setOptions = async (arg) => {
+    Object.assign(config, arg);
+    exports.save();return !0;
 }
 
 exports.getAuth = async function() {

@@ -248,14 +248,14 @@ ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) 
 
 function progress(e) {
     const progress = (e.task / e.total);
-    logger.debug(`Progress ${progress}`)
+    //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
     win.webContents.send('progress', progress);
 }
 function download_progress(e) {
     const progress = (e.current / e.total);
     if (e.type != 'version-jar') return;
-    logger.debug(`Progress ${progress}`)
+    //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
     win.webContents.send('progress', progress);
 }
@@ -271,4 +271,7 @@ ipcMain.handle('installations.create', async (event, version, options) => {
 })
 ipcMain.handle('configuration.get', async (event, ...args) => {
     return await ConfigManager.getAllOptions();
+})
+ipcMain.handle('configuration.set', async (event, args) => {
+    return await ConfigManager.setOptions(args);
 })
