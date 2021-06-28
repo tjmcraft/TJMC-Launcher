@@ -1962,13 +1962,9 @@ a.anchor:hover {
     color: var(--header-secondary);
 }
 .ictx-flex > button.r {
-    /* border: 1px solid var(--background-modifier-accent); */
+    border: 1px solid var(--background-modifier-accent);
     font-size: 14px;
     line-height: inherit;
-    margin-left: auto;
-}
-
-.r {
     margin-left: auto;
 }
 
