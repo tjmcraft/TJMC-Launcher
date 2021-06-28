@@ -103,6 +103,9 @@ async function getConfig() {
 async function setConfig(config) {
     return await electron.invoke('configuration.set', config);
 }
+async function getMem() {
+    return await electron.invoke('system.mem');
+}
 
 getConfig().then(config => {
     qsl('.sidebar-main').appendChild(user_panel(config.auth))
