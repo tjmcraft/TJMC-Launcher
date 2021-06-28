@@ -899,7 +899,7 @@ p {
 
 .content-region .content {
     height: 100%;
-    overflow: hidden scroll;
+    overflow: hidden overlay;
 }
 
 .content-region .content::-webkit-scrollbar-thumb {
