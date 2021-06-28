@@ -1,12 +1,14 @@
-'use strict'
-const ConfigManager = require('./ConfigManager')
-const electron = require('electron')
-const logg = require('../loggerutil')('%c[WindowState]', 'color: #1052a5; font-weight: bold')
+'use strict';
+const ConfigManager = require('./ConfigManager');
+const path = require('path');
+const fs = require('fs');
+const electron = require('electron');
+const logg = require('../loggerutil')('%c[WindowState]', 'color: #d59215; font-weight: bold');
 
 module.exports = function (config) {
-    ConfigManager.loadWindowState()
-    const screen = electron.screen || electron.remote.screen
-    let state, winRef
+    loadWindowState();
+    const screen = electron.screen || electron.remote.screen;
+    let state, winRef;
 
     function isNormal(win) {
         return !win.isMinimized() && !win.isMaximized() && !win.isFullScreen()
@@ -87,8 +89,8 @@ module.exports = function (config) {
     function saveState(win) {
         logg.info(state)
         if (win) updateState(win)
-        ConfigManager.setWindowState(state)
-        ConfigManager.saveWindowState()
+        setWindowState(state)
+        saveWindowState()
     }
 
     function stateHandler() {
@@ -127,7 +129,7 @@ module.exports = function (config) {
         }
     }
 
-    state = ConfigManager.getWindowState()
+    state = getWindowState()
 
     validateState()
 
@@ -150,4 +152,58 @@ module.exports = function (config) {
         manage,
         resetStateToDefault
     }
+}
+
+/* =====================   Window Properties   ===================== */
+
+const DEFAULT_WINDOW_CONFIG = {
+    x: 0,
+    y: 0,
+    width: 1280,
+    height: 720,
+    isMaximized: false,
+    isFullScreen: false
+}
+
+let windowStateConfigPath = path.join(ConfigManager.getLauncherDirectory(), 'window-config.json')
+let windowConfig = null
+
+const saveWindowState = function () {
+    fs.writeFileSync(windowStateConfigPath, JSON.stringify(windowConfig, null, 4), 'UTF-8')
+}
+
+const loadWindowState = function () {
+    let loaded = false
+    if (!fs.existsSync(windowStateConfigPath)) {
+        fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+        loaded = true
+        windowConfig = DEFAULT_WINDOW_CONFIG
+        saveWindowState()
+    }
+    if (!loaded) {
+        let Validate = false
+        try {
+            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8'))
+            Validate = true
+        } catch (err) {
+            logg.error(err)
+            logg.log('Configuration file contains malformed JSON or is corrupt.')
+            logg.log('Generating a new configuration file.')
+            fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+            windowConfig = DEFAULT_WINDOW_CONFIG
+            saveWindowState()
+        }
+        if (Validate) {
+            saveWindowState()
+        }
+    }
+    logg.log('Successfully Loaded Window Config')
+}
+
+const getWindowState = function () {
+    return windowConfig
+}
+
+const setWindowState = function (state) {
+    windowConfig = state
 }
