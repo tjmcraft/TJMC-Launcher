@@ -25,7 +25,7 @@ class launcher extends EventEmitter {
      */
     constructor (version_hash, options = null) {
         super();
-        this.options = options || ConfigManager.getAllOptions();
+        this.options = options || ConfigManager.getAllOptionsSync();
         this.options.installation = InstallationsManager.getInstallationSync(version_hash)
         this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)

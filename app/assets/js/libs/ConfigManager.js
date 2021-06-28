@@ -151,7 +151,11 @@ exports.isLoaded = function(){
     return config != null
 }
 
-exports.getAllOptions = function() {
+exports.getAllOptionsSync = function () {
+    return config
+}
+
+exports.getAllOptions = async function() {
     return config
 }
 
