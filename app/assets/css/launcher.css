@@ -540,9 +540,14 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
         height: 70vh;
     }
 }
-@media (max-height: 580px) {
+@media (max-height: 680px) {
     .overlay > .container-ov1 > .inner-container {
         height: 80vh;
+    }
+}
+@media (max-height: 720px) {
+    .overlay > .container-ov1 > .inner-container {
+        height: 75vh;
     }
 }
 
@@ -978,6 +983,7 @@ h5 {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
+    color: var(--header-primary);
 }
 .container-cc3V .labelRow .control {
     flex: 0 0 auto;
@@ -1017,7 +1023,7 @@ h5 {
     display:none;
 }
 .toggleSwitchSlider {
-    transition: all .3s ease;
+    transition: all .2s ease;
     position: absolute;
     cursor: pointer;
     top: 0;
