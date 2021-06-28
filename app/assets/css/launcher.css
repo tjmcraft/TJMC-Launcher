@@ -684,13 +684,13 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     width: 8px;
     background: transparent;
 }
-.auto-s *::-webkit-scrollbar-thumb {
-    background-color: rgb(170, 170, 170, 0.7);
-}
 .auto-s *::-webkit-scrollbar-thumb, .auto-s *::-webkit-scrollbar-track-piece {
     background-clip: padding-box;
     border: 1px solid transparent;
     border-radius: 8px;
+}
+.auto-s *::-webkit-scrollbar-thumb {
+    background-color: #202225;
 }
 .auto-s *::-webkit-scrollbar-track-piece {
     background-color: transparent;
@@ -896,10 +896,11 @@ p {
 .header {
     padding: 6px 10px;
     font-size: 12px !important;
-    font-weight: 700 !important;
+    /*font-weight: 700 !important;*/
     line-height: 16px;
     text-transform: uppercase;
     flex: 0 0 auto;
+    color: #8e9297;
 }
 
 .separator {
