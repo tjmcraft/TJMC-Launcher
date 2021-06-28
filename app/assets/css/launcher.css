@@ -472,6 +472,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     padding: 16px;
     z-index: 1;
     overflow-x: hidden;
+    align-items: center;
 }
 .overlay > .container-ov1 .header-1 .button {
     flex: unset;
