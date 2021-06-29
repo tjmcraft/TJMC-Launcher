@@ -1,6 +1,8 @@
 import { versionsSidebar, Input, Button } from './panel.js';
 import { DropdownSelector } from './ui/dropdown-selector.js';
 import { modal } from "./scripts/AlertEx.js";
+import { createInstallation, getGlobalVersions } from './scripts/Tools.js';
+import { refreshVersions, selectVersion } from './ui/sidebar-main.js';
 export class VersionChooser {
     
     constructor() {
@@ -10,7 +12,7 @@ export class VersionChooser {
     }
 
     refreshVersions(type = 'all') {
-        electron.invoke('versions.get.global').then((parsed) => {
+        getGlobalVersions().then((parsed) => {
             parsed = msort(parsed);
             const versions = parsed.filter((i) => { return type == 'all' ? true : i.type == type });
             const click = (e, item) => this.renderVersion(item)
@@ -169,6 +171,6 @@ export class VersionChooser {
      * @param {Object} options.resolution.height - Height of the game window
      */
     async addVersion(version, options = {}) {
-        return await electron.invoke('installations.create', version, options);
+        return await createInstallation(version, options);
     }
 }
