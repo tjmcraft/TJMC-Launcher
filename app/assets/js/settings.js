@@ -185,7 +185,7 @@ export class Settings {
                                 step: 0.1,
                                 unit: 'Gb',
                                 action: (e) => {
-                                    config.java.memory.max = e * 1024;
+                                    config.java.memory.max = Math.floor(e * 1024);
                                     setConfig(config);
                                 }
                             })
@@ -199,7 +199,7 @@ export class Settings {
                                 step: 0.1,
                                 unit: 'Gb',
                                 action: (e) => {
-                                    config.java.memory.min = e * 1024;
+                                    config.java.memory.min = Math.floor(e * 1024);
                                     setConfig(config);
                                 }
                             })
