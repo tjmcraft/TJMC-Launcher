@@ -111,20 +111,6 @@ getConfig().then(config => {
     qsl('.sidebar-main').appendChild(user_panel(config.auth))
 })
 
-
-
-/**
- * The function creates and returns tools container for overlay
- */
-function createToolsContainer(click = () => {}) {
-    let tools = cE('div', {class: ['tools', 'frame-fix'] })
-    let overlayCloseButton = cE('div', {class: 'overlayCloseButton'}, SVG('cross'))
-    overlayCloseButton.onclick = click
-    let keycode = cE('div', {class: ['keycode'] }, 'ESC')
-    tools.append(overlayCloseButton, keycode)
-    return tools
-}
-
 electron.on('progress', (e, progress) => progressBar.setValue(progress*100))
 progressBar.setValue = (v) => progressBar.style.width = v + "%"
 
