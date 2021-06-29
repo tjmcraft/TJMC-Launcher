@@ -1,11 +1,11 @@
-import { SidebarMain, MainContainer, user_panel } from '../panel.js'
+import { MainContainer, user_panel } from '../panel.js';
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
 import { getConfig, getInstallations } from './Tools.js';
+import { currentVersion, refreshVersions } from '../ui/sidebar-main.js';
 /* ================================= */
 
-const sidebar_el = new SidebarMain();
 const main_container = MainContainer();
 const main_layer = new Layer({ label: 'main-layer' });
 main_layer.append(main_container);
@@ -20,9 +20,6 @@ const progressBar = qsl('#progress-bar')
 console.debug('Renderer init')
 
 VIEWS.landing = main_layer.content
-
-var currentVersion
-var Installations
 
 /**
  * Creates new settings layer
@@ -55,50 +52,8 @@ window.onload = function(e) {
     }, 1000)
 }
 
-async function refreshVersions() {
-    Installations = await getInstallations();
-    const installations_entries = Object.entries(Installations);
-    sidebar_el.removeAll();
-    if (installations_entries.length > 0) {
-        for (const [hash, params] of installations_entries) {
-            sidebar_el.addItem({ hash: hash, ...params }, (item) => {
-                selectVersion(item.hash);
-            });
-        }
-    } else {
-        sidebar_el.createFirstPage();
-    }
-    qsl('.localVersions').append(sidebar_el.content());
 
-    if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) { renderSelectVersion(localStorage.version_hash) }
-    else if (installations_entries[0] && installations_entries[0][0]) { selectVersion(installations_entries[0][0]) }
-    else false
-};
 refreshVersions();
-
-function selectVersion(version_hash) {
-    if (!version_hash) return false;
-    localStorage.version_hash = version_hash;
-    renderSelectVersion(version_hash);
-}
-
-async function renderSelectVersion(version_hash = null) {
-    if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
-    currentVersion = version_hash;
-    const version = await getInstallation(version_hash);
-    let m = qsl('.top-toolbar'),
-        n = m.qsl('h2'),
-        d = m.qsl('h5');
-    sidebar_el.selectVersion(version_hash);
-    n.innerText = version.name || version.hash;
-    d.innerText = version.type;
-}
-
-async function getInstallation(version_hash) {
-    if (Installations && Object(Installations).hasOwnProperty(version_hash)) {
-        return { hash: version_hash, ...Installations[version_hash] } || null;
-    }
-}
 
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => openSettings());
