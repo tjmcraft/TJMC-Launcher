@@ -1,5 +1,5 @@
 import { PopupEl } from '../ui/popup-element.js';
-Element.prototype.tooltip = function (text = null) {
+export function tooltip(text = null) {
     text = text || this.dataset.tooltip || this.title
     if (!text) return
     let parent = this,
@@ -25,4 +25,5 @@ Element.prototype.tooltip = function (text = null) {
         parent.removeEventListener('mouseenter', show)
         parent.removeEventListener('mouseleave', destroy)
     }
-}
+};
+Element.prototype.tooltip = tooltip;
