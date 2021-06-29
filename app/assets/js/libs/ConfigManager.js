@@ -60,44 +60,6 @@ exports.getVersionsDirectory = function(def = false){
     return def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory
 }
 
-exports.getAbsoluteMinRAM = function(){
-    const mem = os.totalmem()/1024/1024
-    return mem >= 5722 ? 2048 : 1024
-}
-
-exports.getAbsoluteMaxRAM = function(){
-    const mem = os.totalmem()
-    const gT16 = mem-16000000000
-    return Math.floor((mem-1000000000-(gT16 > 0 ? (Number.parseInt(gT16/8) + 16000000000/4) : mem/4))/1000000000)*1024
-}
-
-function resolveMaxRAM(){
-    const mem = os.totalmem()
-    return Math.floor(mem/1024/1024)
-}
-
-function resolveMinRAM(){
-    return resolveMaxRAM()
-}
-
-exports.getMinRAM = function(def = false){
-    return !def ? config.java.memory.min : DEFAULT_CONFIG.java.memory.min
-}
-
-exports.setMinRAM = function(minRAM){
-    config.java.memory.min = Math.floor(minRAM)
-    exports.save()
-}
-
-exports.getMaxRAM = function(def = false){
-    return !def ? config.java.memory.max : resolveMaxRAM()
-}
-
-exports.setMaxRAM = function(maxRAM){
-    config.java.memory.max = Math.floor(maxRAM)
-    exports.save()
-}
-
 const configPath = path.join(exports.getLauncherDirectory(), 'launcher-config.json')
 
 exports.save = function(reason = ""){
