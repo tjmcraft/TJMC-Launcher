@@ -1,5 +1,3 @@
-const ConfigManager = require('./libs/ConfigManager')
-ConfigManager.load()
 const { shell, ipcRenderer, contextBridge } = require('electron')
 //const WebSocket = require('ws')
 //const app = require('express')()
@@ -160,9 +158,6 @@ app.get('/get/installation', (req, res) => {
 });
 app.get('/get/globalVersions', (req, res) => {
     VersionManager.getGlobalVersions().then(i => res.json(i));
-});
-app.get('/get/config/version', (req, res) => {
-    ConfigManager.getVersion().then(i => res.json(i));
 });
 app.get('*', function(req, res){
     res.send({
