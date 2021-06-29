@@ -12,3 +12,13 @@ export function getPreferredColorScheme() {
     }
     return 'light';
 }
+
+export async function getConfig() {
+    return await electron.invoke('configuration.get');
+}
+export async function setConfig(config) {
+    return await electron.invoke('configuration.set', config);
+}
+export async function getMem() {
+    return await electron.invoke('system.mem');
+}
