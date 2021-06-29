@@ -2,7 +2,7 @@ import { MainContainer, user_panel } from '../panel.js';
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
-import { getConfig, getInstallations } from './Tools.js';
+import { getConfig, getInstallations, startMinecraft } from './Tools.js';
 import { currentVersion, refreshVersions } from '../ui/sidebar-main.js';
 /* ================================= */
 
@@ -32,8 +32,8 @@ plb.addEventListener('click', (e) => startMine(currentVersion))
 
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
-    topBar.toggle(true);
-    await electron.invoke('launch-mine', version_hash);
+    
+    await startMinecraft(version_hash);
     topBar.toggle(false);
 }
 
@@ -68,7 +68,10 @@ async function registerElectronEvents() {
             logType: true
         });
     });
-    electron.on('progress', (e, progress) => progressBar.setValue(progress * 100))
+    electron.on('progress', (e, progress) => {
+        topBar.toggle(true);
+        progressBar.setValue(progress * 100);
+    })
     progressBar.setValue = (v) => progressBar.style.width = v + "%"
 }
 window.__STANDALONE__ && registerElectronEvents();
