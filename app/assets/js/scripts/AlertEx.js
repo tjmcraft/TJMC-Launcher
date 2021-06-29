@@ -11,14 +11,10 @@ class ModalEx {
     constructor(params = {}, container = null) {
         this.root_container = container
         this.overlay = this.createOverlay(params?.escButton, this.root_container)
-        //this.overlay.onclick = (e) => { this.destroy(e) }
-        
+
         this.escBinder = new escBinder()
         this.escBinder.bind((e) => { this.destroy(e) })
-        //this.show();
-        /*this.regCP()
-        this.regPC()
-        this.regOC()*/
+
         this.handleModalMousedown();
         this.handleContainerMousedown();
         this.handleModalClick();
@@ -173,7 +169,7 @@ export const modal = {
         
         if (header) {
             let root_parent = cE('div', { class: ['flex-group', 'horizontal', 'header-1'] },
-                cE('h1', {class: ['wrapper', 'size20']}, header)
+                cE('h1', { class: ['wrapper', 'size20'] }, header)
             );
             root_container.appendChild(root_parent);
         }
@@ -186,9 +182,9 @@ export const modal = {
         }
 
         if (params?.buttons) {
-            root_container.appendChild(this.BFooter(params?.buttons, () => { modal_ex.destroy() }));
+            root_container.appendChild(ButtonsFooter(params?.buttons, () => { modal_ex.destroy() }));
         } else {
-            root_container.appendChild(this.BFooter([{
+            root_container.appendChild(ButtonsFooter([{
                 name: "Ок",
                 //class: 'primary-button',
                 closeOverlay: true
@@ -196,24 +192,6 @@ export const modal = {
         }
         modal_ex.show();
         return root_container;
-    },
-
-    /**
-     * Creates footer with buttons
-     * @param {Array} buttons - The array of buttons to create with
-     * @param {Function} destroy - The function that will be called to destroy overlay
-     * @returns {Element} instance of element
-     */
-    BFooter: function(buttons, destroy = () => {}) {
-        let _buttons = buttons.map(button => {
-                const button_root = Button({ class: ['grow', 'filled','colorBrand', (button.class ? button.class : '')] }, button.name)
-                button_root.onclick = () => {
-                    if (button.callback && typeof button.callback === 'function') button.callback.call(this)
-                    if (button.closeOverlay) destroy.call(this)
-                }
-                return button_root;
-        })
-        return cE('div', { class: 'vertical-button-container' }, ..._buttons);
     },
 
     /**
@@ -249,7 +227,7 @@ export const modal = {
         const root_hoz_header = cE('div', { class: ['flex-group', 'horizontal', 'header-1'] },
             cE('div', { class: ['flex-child'] },
                 cE('h2', null, 'Что нового?'),
-                cE('div', { class: ['size12', 'colorStandart', 'date']}, s_date.toLocaleDateString() || '18 May 2012')
+                cE('div', { class: ['size12', 'colorStandart', 'date'] }, s_date.toLocaleDateString() || '18 May 2012')
             ),
             close_button
         )
@@ -257,7 +235,7 @@ export const modal = {
         const root_content = cE('div', { class: ['content', 'thin-s'], html: true }, ...content)
 
         const footer = cE('div', { class: ['footer'] },
-            cE('a', { class: 'anchor', href: 'https://twitter.com/MofThunder', rel: ['noreferrer', 'noopener'], target: '_blank'}, 'Twitter'),
+            cE('a', { class: 'anchor', href: 'https://twitter.com/MofThunder', rel: ['noreferrer', 'noopener'], target: '_blank' }, 'Twitter'),
             cE('a', { class: 'anchor', href: 'https://facebook.com/tjmcraft' }, 'Facebook'),
             cE('a', { class: 'anchor', href: 'https://instagram.com/tjmcraft.ga' }, 'Instagram'),
             cE('div', { class: ['size12', 'colorStandart'] }, 'Подписывайтесь на наш канал, здесь говорят правду')
@@ -269,4 +247,26 @@ export const modal = {
         return modal_ex;
     }
 
+};
+
+/**
+ * Creates footer with buttons
+ * @param {Array} buttons - The array of buttons to create with
+ * @param {Function} destroy - The function that will be called to destroy overlay
+ * @returns {Element} instance of element
+ */
+const ButtonsFooter = function (buttons, destroy = () => {}) {
+    let _buttons = buttons.map(button => {
+        const button_root = Button({
+            class: ['grow', 'filled', 'colorBrand', (button.class ? button.class : '')]
+        }, button.name)
+        button_root.onclick = () => {
+            if (button.callback && typeof button.callback === 'function') button.callback.call(this)
+            if (button.closeOverlay) destroy.call(this)
+        }
+        return button_root;
+    })
+    return cE('div', {
+        class: 'vertical-button-container'
+    }, ..._buttons);
 }
