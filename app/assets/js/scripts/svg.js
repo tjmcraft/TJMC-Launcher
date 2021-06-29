@@ -1,5 +1,5 @@
-function SVG(name) {
-    SVGS = {
+export function SVG(name) {
+    const SVGS = {
         get dropdown_key() {
             let root = createSVGElement({ width: 18, height: 18, class: 'button-1w5pas' });
             root.innerHTML = '<g fill="none" fill-rule="evenodd"><path d="M0 0h18v18H0"></path><path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round"></path><path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round"></path></g>';
@@ -16,13 +16,13 @@ function SVG(name) {
     }
     switch (name) {
         case 'dropdown-key':
-            return this.SVGS.dropdown_key;
+            return SVGS.dropdown_key;
             break;
         case 'add-plus':
-            return this.SVGS.add_plus;
+            return SVGS.add_plus;
             break;
         case 'settings-gear':
-            return this.SVGS.settings_gear;
+            return SVGS.settings_gear;
             break;
         case 'info-circle':
             return createSVGElement({width: 96, height: 96, viewBox: '0 0 512 512', 'data-icon': 'info-circle'}, '<path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm0-338c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z" class=""></path>');

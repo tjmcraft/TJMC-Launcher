@@ -1,4 +1,6 @@
 import { versionsSidebar, Input, Button } from './panel.js';
+import { DropdownSelector } from './ui/dropdown-selector.js';
+import { modal } from "./scripts/AlertEx.js";
 export class VersionChooser {
     
     constructor() {

@@ -1,5 +1,4 @@
 import {SidebarMain, MainContainer, user_panel} from '../panel.js'
-
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
@@ -47,9 +46,9 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFa
 /**
  * Creates new settings layer
  */
-function openSettings() {
+/*function openSettings() {
     new Settings()
-}
+}*/
 
 plb.addEventListener('click', (e) => startMine(currentVersion))
 
@@ -147,7 +146,7 @@ function getPreferredColorScheme() {
 }
 
 async function registerElectronEvents() {
-    electron.on('open-settings', (e) => openSettings());
+    //electron.on('open-settings', (e) => openSettings());
     electron.on('startup-error', (e, error) => {
         modal.alert('Ошибка при запуске', error, 'error', {
             logType: true

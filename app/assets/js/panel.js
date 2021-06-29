@@ -1,4 +1,7 @@
-import {VersionChooser} from './versionChooser.js';
+import { VersionChooser } from './versionChooser.js';
+import { Settings } from './settings.js';
+import { Guilds } from './ui/guilds.js';
+import { SVG } from './scripts/svg.js';
 /**
  * This function creates a user panel, with the given props
  * @param {Object} props - Properties to create user panel

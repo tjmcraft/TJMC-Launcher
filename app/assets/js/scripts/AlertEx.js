@@ -1,3 +1,4 @@
+import {SVG} from './svg.js';
 /**
  * Creates modal overlay
  * @param {Object} params - Parameters for creating overlay
@@ -124,7 +125,7 @@ class ModalEx {
 }
 
 
-const modal = {
+export const modal = {
     /**
      * Create standart alert modal dialog with given parameters
      * @param {String} header - The header of the dialog

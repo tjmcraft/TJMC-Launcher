@@ -1,4 +1,8 @@
-class DropdownSelector {
+import {SVG} from '../scripts/svg.js';
+/**
+ * Dropdown selector element
+ */
+export class DropdownSelector {
     /**
      * Current selected item
      */

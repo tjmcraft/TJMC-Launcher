@@ -10,7 +10,7 @@
  * @param {Object} props.unit - Unit for value
  * @returns 
  */
-const slider = (props = {}) => {
+export const slider = (props = {}) => {
     props.id = props.id || randomString(5);
     props.value = props.value || 0;
     props.min = props.min || 0;

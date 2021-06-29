@@ -1,4 +1,4 @@
-class Guilds {
+export class Guilds {
     constructor() {
         this.guilds = cE('nav', { class: 'guilds' },
             cE('ul', { class: 'tree' },
