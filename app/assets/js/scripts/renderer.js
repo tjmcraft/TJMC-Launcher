@@ -1,27 +1,27 @@
-import {SidebarMain, MainContainer, user_panel} from '../panel.js'
+import { SidebarMain, MainContainer, user_panel } from '../panel.js'
+import { Layer } from './Layer.js';
+import { Settings } from '../settings.js';
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
 const main_container = MainContainer();
-qsl("#main-layer").append(main_container);
+const main_layer = new Layer({ label: 'main-layer' });
+main_layer.append(main_container);
+main_layer.join();
 
 /* --------------------------------- */
-const mvl = qsl('#main-version-list')
 const plb = qsl('#playButton')
 const topBar = qsl('#topBar')
 const progressBar = qsl('#progress-bar')
-const nickField = qsl('#nick')
-const playButton = qsl('#playButton')
 /* ================================= */
 
 console.debug('Renderer init')
 
 const VIEWS = {
-    landing: qsl('#main-layer'),
-    settings: qsl('#settings-layer')
+    landing: main_layer.content
 }
 
-var currentView
+export var currentView
 var currentVersion
 var Installations
 
@@ -36,7 +36,7 @@ var Installations
  * @param {Function} onNextFade Callback function to execute when the next view
  * fades in.
  */
-function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFade = () => {}, onNextFade = () => {}){
+export function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFade = () => {}, onNextFade = () => {}){
     let current = currentView
     currentView = next
     if (current) current.fadeOut(currentFadeTime, () => onCurrentFade())
@@ -46,9 +46,9 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFa
 /**
  * Creates new settings layer
  */
-/*function openSettings() {
+function openSettings() {
     new Settings()
-}*/
+}
 
 plb.addEventListener('click', (e) => startMine(currentVersion))
 
@@ -130,23 +130,8 @@ async function getInstallation(version_hash) {
     }
 }
 
-/**
- * Function returns current preferred color sheme
- * @returns scheme
- */
-function getPreferredColorScheme() {
-    if (window.matchMedia) {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        } else {
-            return 'light';
-        }
-    }
-    return 'light';
-}
-
 async function registerElectronEvents() {
-    //electron.on('open-settings', (e) => openSettings());
+    electron.on('open-settings', (e) => openSettings());
     electron.on('startup-error', (e, error) => {
         modal.alert('Ошибка при запуске', error, 'error', {
             logType: true
