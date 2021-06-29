@@ -22,3 +22,6 @@ export async function setConfig(config) {
 export async function getMem() {
     return await electron.invoke('system.mem');
 }
+export async function getInstallations() {
+    return await electron.invoke('installations.get');
+}

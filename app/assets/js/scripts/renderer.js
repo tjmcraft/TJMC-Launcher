@@ -2,7 +2,7 @@ import { SidebarMain, MainContainer, user_panel } from '../panel.js'
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
-import { getConfig } from './Tools.js';
+import { getConfig, getInstallations } from './Tools.js';
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
@@ -56,7 +56,7 @@ window.onload = function(e) {
 }
 
 async function refreshVersions() {
-    Installations = await electron.invoke('installations.get');
+    Installations = await getInstallations();
     const installations_entries = Object.entries(Installations);
     sidebar_el.removeAll();
     if (installations_entries.length > 0) {
@@ -116,4 +116,4 @@ async function registerElectronEvents() {
     electron.on('progress', (e, progress) => progressBar.setValue(progress * 100))
     progressBar.setValue = (v) => progressBar.style.width = v + "%"
 }
-registerElectronEvents();
+window.__STANDALONE__ && registerElectronEvents();
