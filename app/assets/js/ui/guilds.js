@@ -6,7 +6,8 @@ export class Guilds {
                     this.createListElement(
                         cE('img', {
                             src: `https://picsum.photos/48/48?h=11`
-                        })
+                        }),
+                        { onclick: (e) => { console.log(22) } }
                     ),
                     this.createListElement(
                         cE('img', {
@@ -109,8 +110,10 @@ export class Guilds {
         return cE('div', {class: 'listItem'}, ...c);
     }
 
-    createListElement(...c) {
-        return this.createListItem(cE('div', {class: 'wrapper'}, ...c));
+    createListElement(c, props) {
+        const root = cE('div', { class: 'wrapper' }, c);
+        props?.onclick && (root.onclick = props.onclick);
+        return this.createListItem(root);
     }
 
     createSeparator() {
