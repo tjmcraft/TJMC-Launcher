@@ -226,27 +226,31 @@ ipcMain.handle('ping', async (event, ...args) => {
 
 ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => {
     try {
-        const _launcher = new launcher(version_hash, params);
-        _launcher.on('progress', progress);
-        _launcher.on('download-status', download_progress);
-
-        const java_path = await _launcher.getJava();
-        const versionFile = await _launcher.loadManifest();
-        const minecraftArguments = await _launcher.construct(versionFile);
-        const vm = await _launcher.createJVM(java_path, minecraftArguments);
-        
-        let error_out = null;
-        vm.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
-        })
-        vm.on('close', (code) => {
-            if (code != 0) win.webContents.send('startup-error', error_out);
-        })
-    } catch (error) {
-        win.webContents.send('error', error);
+        await launchMinecraft(version_hash, params);
+    } catch (err) {
+        win.webContents.send('error', err);
     }
-    return true;
 })
+
+async function launchMinecraft(version_hash = null, params = null) {
+    const _launcher = new launcher(version_hash, params);
+    _launcher.on('progress', progress);
+    _launcher.on('download-status', download_progress);
+
+    const java_path = await _launcher.getJava();
+    const versionFile = await _launcher.loadManifest();
+    const minecraftArguments = await _launcher.construct(versionFile);
+    const vm = await _launcher.createJVM(java_path, minecraftArguments);
+
+    let error_out = null;
+    vm.stderr.on('data', (data) => {
+        error_out = data.toString('utf-8');
+    })
+    vm.on('close', (code) => {
+        if (code != 0) win.webContents.send('startup-error', error_out);
+    })
+    return true;
+}
 
 function progress(e) {
     const progress = (e.task / e.total);
@@ -295,6 +299,13 @@ express_app.get('/version', (req, res) => {
     res.json({
         version: '1.8.0'
     })
+});
+express_app.post('/launch-mine', async (req, res) => {
+    const data = req.body;
+    if (!data || !data.version_hash) res.json({
+        success: false
+    });
+    res.json(await launchMinecraft(data.version_hash, data.params));
 });
 express_app.get('/installations.get', async (req, res) => {
     res.json(await InstallationsManager.getInstallations());

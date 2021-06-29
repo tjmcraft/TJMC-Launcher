@@ -13,6 +13,34 @@ export function getPreferredColorScheme() {
     return 'light';
 }
 
+/* ============== Fetches ============== */
+
+/**
+ * Fetch JSON data from given URL
+ */
+async function fetchData(url = '') {
+    const response = await fetch(url);
+    return await response.json();
+}
+
+/**
+ * Post data to given URL
+ */
+async function postData(url = '', data = {}) {
+    const response = await fetch(url, {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    return await response.json();
+}
+
+/* ============== ------- ============== */
+
+
 export async function getConfig() {
     if (window.__STANDALONE__ && electron) {
         return await electron.invoke('configuration.get');
@@ -55,20 +83,11 @@ export async function createInstallation(version, options) {
         return await postData('http://localhost:5248/installations.create', { version, options });
     }
 }
-
-async function fetchData(url = '') {
-    const response = await fetch(url);
-    return await response.json();
-}
-
-async function postData(url = '', data = {}) {
-    const response = await fetch(url, {
-        method: 'POST', 
-        cache: 'no-cache',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data) 
-    });
-    return await response.json();
+export async function startMinecraft(version_hash, params = null) {
+    console.log(`Starting minecraft with hash: ${version_hash}`);
+    if (window.__STANDALONE__ && electron) {
+        await electron.invoke('launch-mine', version_hash);
+    } else {
+        return await postData('http://localhost:5248/launch-mine', { version_hash, params });
+    }
 }
