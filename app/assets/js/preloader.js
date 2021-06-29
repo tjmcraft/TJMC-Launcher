@@ -5,6 +5,7 @@ const { shell, ipcRenderer, contextBridge } = require('electron')
 //const app = require('express')()
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const remote = require('@electron/remote')
+const os = require('os')
 //logger.debug('Application loading..')
 
 //Set Current Window as win
@@ -85,6 +86,7 @@ contextBridge.exposeInMainWorld('API', {
 contextBridge.exposeInMainWorld('__STANDALONE__', true)
 contextBridge.exposeInMainWorld('system', {
     os: getOS(),
+    memory: os.totalmem()/1024/1024,
     colorScheme: null
 })
 
