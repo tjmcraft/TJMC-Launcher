@@ -1,6 +1,8 @@
 import { SidebarMain, MainContainer, user_panel } from '../panel.js'
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
+import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
+import { getConfig } from './Tools.js';
 /* ================================= */
 
 const sidebar_el = new SidebarMain();
@@ -17,29 +19,10 @@ const progressBar = qsl('#progress-bar')
 
 console.debug('Renderer init')
 
-const VIEWS = {
-    landing: main_layer.content
-}
+VIEWS.landing = main_layer.content
 
-export var currentView
 var currentVersion
 var Installations
-
-/**
- * Switch launcher views.
- * 
- * @param {String} next (requied) The ID of the next view container
- * @param {Number} currentFadeTime The fade out time for the current view
- * @param {Number} nextFadeTime The fade in time for the next view
- * @param {Function} onCurrentFade Callback function to execute when the current view fades out.
- * @param {Function} onNextFade Callback function to execute when the next view fades in.
- */
-export function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFade = () => {}, onNextFade = () => {}){
-    let current = currentView
-    currentView = next
-    if (current) current.fadeOut(currentFadeTime, () => onCurrentFade())
-    if (next) next.fadeIn(nextFadeTime, () => onNextFade())
-}
 
 /**
  * Creates new settings layer
@@ -55,16 +38,6 @@ async function startMine(version_hash = null) {
     topBar.toggle(true);
     await electron.invoke('launch-mine', version_hash);
     topBar.toggle(false);
-}
-
-async function getConfig() {
-    return await electron.invoke('configuration.get');
-}
-async function setConfig(config) {
-    return await electron.invoke('configuration.set', config);
-}
-async function getMem() {
-    return await electron.invoke('system.mem');
 }
 
 getConfig().then(config => {
