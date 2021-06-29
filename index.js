@@ -1,5 +1,4 @@
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
-const ejse = require('ejs-electron');
 const path = require('path');
 const url = require('url');
 const os = require('os');
@@ -80,7 +79,7 @@ function createWindow () {
     windowState.manage(win)
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'app', 'app.ejs'),
+        pathname: path.join(__dirname, 'app', 'app.html'),
         protocol: 'file:',
         slashes: true
     }))
