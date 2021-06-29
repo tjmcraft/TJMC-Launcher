@@ -1,31 +1,4 @@
-if (window.__STANDALONE__ && window.system?.os) {
-    qsl(".app-mount").prepend(FrameBar());
-    qsl('.app-container').toggle(true, 'frame-fix');
-}
-
-switch (window.system?.os) {
-    case 'windows':
-        document.documentElement.classList.add('platform-win')
-        break;
-    case 'osx':
-        document.documentElement.classList.add('platform-darwin')
-        break;
-    case 'linux':
-        document.documentElement.classList.add('platform-linux')
-        break;
-    default:
-        document.documentElement.classList.add('platform-web')
-        break;
-}
-
-switch (window.system?.colorScheme || getPreferredColorScheme()) {
-    case 'light':
-        document.documentElement.classList.add('light-theme')
-        break;
-    default:
-        document.documentElement.classList.add('dark-theme')
-        break;
-}
+import {SidebarMain, MainContainer, user_panel} from '../panel.js'
 
 /* ================================= */
 
@@ -71,7 +44,6 @@ function switchView(next, currentFadeTime = 100, nextFadeTime = 100, onCurrentFa
     if (next) next.fadeIn(nextFadeTime, () => onNextFade())
 }
 
-electron.on('open-settings', (e) => openSettings())
 /**
  * Creates new settings layer
  */
@@ -88,15 +60,6 @@ async function startMine(version_hash = null) {
     topBar.toggle(false);
 }
 
-electron.on('startup-error', (e, error) => {
-    modal.alert('Ошибка при запуске', error, 'error', { logType: true });
-});
-
-electron.on('error', (e, error) => {
-    console.error(error);
-    modal.alert('Ошибка', error, 'error', { logType: true });
-});
-
 async function getConfig() {
     return await electron.invoke('configuration.get');
 }
@@ -110,9 +73,6 @@ async function getMem() {
 getConfig().then(config => {
     qsl('.sidebar-main').appendChild(user_panel(config.auth))
 })
-
-electron.on('progress', (e, progress) => progressBar.setValue(progress*100))
-progressBar.setValue = (v) => progressBar.style.width = v + "%"
 
 window.onload = function(e) {
     const preloader = qsl('#preloader')
@@ -185,3 +145,21 @@ function getPreferredColorScheme() {
     }
     return 'light';
 }
+
+async function registerElectronEvents() {
+    electron.on('open-settings', (e) => openSettings());
+    electron.on('startup-error', (e, error) => {
+        modal.alert('Ошибка при запуске', error, 'error', {
+            logType: true
+        });
+    });
+    electron.on('error', (e, error) => {
+        console.error(error);
+        modal.alert('Ошибка', error, 'error', {
+            logType: true
+        });
+    });
+    electron.on('progress', (e, progress) => progressBar.setValue(progress * 100))
+    progressBar.setValue = (v) => progressBar.style.width = v + "%"
+}
+registerElectronEvents();

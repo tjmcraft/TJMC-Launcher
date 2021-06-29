@@ -28,6 +28,8 @@ document.addEventListener('readystatechange', function () {
 
         if (win.isFullScreen()) enterFullScreen()
 
+        win.setProgressBar(-1)
+    } else if (document.readyState === 'complete') {
         if (process.platform !== 'darwin') {
             document.querySelector('.fCb')?.addEventListener('click', (e) => {
                 win.close()
@@ -39,8 +41,6 @@ document.addEventListener('readystatechange', function () {
                 win.minimize()
             })
         }
-
-        win.setProgressBar(-1)
     }
 })
 

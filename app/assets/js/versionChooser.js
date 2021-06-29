@@ -1,4 +1,5 @@
-class VersionChooser {
+import { versionsSidebar, Input, Button } from './panel.js';
+export class VersionChooser {
     
     constructor() {
         this.sidebar = new versionsSidebar();

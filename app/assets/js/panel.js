@@ -1,3 +1,4 @@
+import {VersionChooser} from './versionChooser.js';
 /**
  * This function creates a user panel, with the given props
  * @param {Object} props - Properties to create user panel
@@ -5,7 +6,7 @@
  * @param {String} props.permission - Permission of the user
  * @returns 
  */
-let user_panel = function (props) {
+export const user_panel = function (props) {
     props.username = props.username || '';
     props.permission = props.permission || '';
     const add_version_button = cE('div', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
@@ -14,7 +15,7 @@ let user_panel = function (props) {
     const settings_button = cE('div', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
     settings_button.tooltip('Настройки')
     settings_button.onclick = (e) => { new Settings() }
-    const root_panel = cE('section', { class: 'panel' },
+    const root_panel = cE('div', { class: 'panel' },
         cE('div', { class: 'container' },
             cE('div', { class: 'avatar round' },
                 cE('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${props.username}` })
@@ -30,7 +31,7 @@ let user_panel = function (props) {
     return root_panel;
 }
 
-class SidebarMain {
+export class SidebarMain {
     root_scroller;
     root_content;
     root_fp;
@@ -93,7 +94,7 @@ class SidebarMain {
     };
 }
 
-class versionsSidebar {
+export class versionsSidebar {
     root_sidebar;
     root_content;
     constructor(props) {
@@ -135,7 +136,7 @@ class versionsSidebar {
     };
 }
 
-class Carousel {
+export class Carousel {
     root_carousel;
     offset = 0;
     step = 100;
@@ -180,7 +181,7 @@ class Carousel {
     }
 }
 
-class Input {
+export class Input {
     input_title;
     constructor(props) {
         this.type = props.type || 'text';
@@ -252,16 +253,16 @@ class Input {
     }
 }
 
-function getPath(path){
+export function getPath(path){
     path = path.match(/(^.*[\\\/]|^[^\\\/].*)/i);
     return path != null ? path[0] : false;
 }
 
-function Button(props, ...elements) {
+export function Button(props, ...elements) {
     return cE('button', props, cE('div', {class: 'content'}, ...elements))
 }
 
-function MainContainer(props) {
+export function MainContainer(props) {
     const root_container = cE('div', { class: 'container' },
         new Guilds().content,
         cE('div', { id: 'main', class: 'base' },
@@ -290,7 +291,7 @@ function MainContainer(props) {
     return root_container;
 }
 
-function FrameBar(props) {
+export function FrameBar(props) {
     const root_container = cE('div', { id: 'frameBar' },
         cE('div', { class: 'content' },
             cE('div', { id: 'frameContentWin' },
