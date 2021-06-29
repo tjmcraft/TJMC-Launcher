@@ -84,15 +84,14 @@ function selectVersion(version_hash) {
 
 async function renderSelectVersion(version_hash = null) {
     if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
-    currentVersion = version_hash
-    console.debug(currentVersion)
+    currentVersion = version_hash;
     const version = await getInstallation(version_hash);
     let m = qsl('.top-toolbar'),
         n = m.qsl('h2'),
         d = m.qsl('h5');
     sidebar_el.selectVersion(version_hash);
-    n.innerText = version.name || version.hash
-    d.innerText = version.type
+    n.innerText = version.name || version.hash;
+    d.innerText = version.type;
 }
 
 async function getInstallation(version_hash) {

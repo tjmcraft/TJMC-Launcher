@@ -43,14 +43,13 @@ export class SidebarMain {
     };
     base() {
         const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
-        add_button.onclick = (e) => { new VersionChooser() }
-        add_button.tooltip('Добавить версию')
+        add_button.onclick = (e) => new VersionChooser();
+        add_button.tooltip('Добавить версию');
         this.root_content = cE('div', { class: ['content'] },
             cE('h2', { class: ['versionsHeader', 'container-df'] },
-                cE('span', null, 'Версии'),
-                add_button
+                cE('span', null, 'Версии'), add_button
             )
-        )
+        );
         this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] },
             this.root_content
         );
@@ -256,7 +255,7 @@ export class Input {
     }
 }
 
-export function getPath(path){
+function getPath(path){
     path = path.match(/(^.*[\\\/]|^[^\\\/].*)/i);
     return path != null ? path[0] : false;
 }
