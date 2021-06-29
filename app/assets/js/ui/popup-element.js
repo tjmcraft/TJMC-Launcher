@@ -1,4 +1,4 @@
-class PopupEl {
+export class PopupEl {
     constructor(options = {}) {
         this.options = options
         this.popupLayer = qsl('.layerContainer')
@@ -95,31 +95,5 @@ class PopupEl {
     update(content) {
         this.contentEl.innerHTML = (content)
         this.show();
-    }
-}
-
-Element.prototype.tooltip = function(text = null) {
-    text = text || this.dataset.tooltip || this.title
-    if (!text) return
-    let parent = this,
-    popup = new PopupEl({
-        parent: parent,
-        margin: 8,
-        fadeTime: 50
-    })
-    popup.appendHTML(text)
-    parent.addEventListener('mouseenter', show)
-    parent.addEventListener('mouseleave', hide)
-
-    function show(e) {
-        popup.show()
-    }
-    function hide(e) {
-        popup.destroy()
-    }
-    function destroy() {
-        hide()
-        parent.removeEventListener('mouseenter', show)
-        parent.removeEventListener('mouseleave', destroy)
     }
 }
