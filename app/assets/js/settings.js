@@ -1,5 +1,6 @@
 import { slider } from './ui/slider-element.js';
 import { modal } from "./scripts/AlertEx.js";
+import { getConfig, getMem } from "./scripts/Tools.js";
 export class Settings {
 
     /**
@@ -322,14 +323,4 @@ export class Settings {
             )
         }
     }
-}
-
-async function getConfig() {
-    return await electron.invoke('configuration.get');
-}
-async function setConfig(config) {
-    return await electron.invoke('configuration.set', config);
-}
-async function getMem() {
-    return await electron.invoke('system.mem');
 }
