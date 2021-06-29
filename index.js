@@ -1,4 +1,6 @@
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+const express = require('express')
+const express_app = express()
 const path = require('path');
 const url = require('url');
 const os = require('os');
@@ -278,3 +280,49 @@ ipcMain.handle('configuration.set', async (event, args) => {
 ipcMain.handle('system.mem', async (event, ...args) => {
     return os.totalmem() / 1024 / 1024;
 })
+
+
+const e_server = express_app.listen(5248);
+express_app.use(express.json()) // for parsing application/json
+express_app.use(function (req, res, next) {
+    res.header('Content-Type', 'application/json');
+    res.header('Access-Control-Allow-Origin', '*')
+    next();
+});
+express_app.get('/ping', (req, res) => {res.send('pong')})
+express_app.get('/version', (req, res) => {
+    res.json({
+        version: '1.8.0'
+    })
+});
+express_app.get('/installations.get', async (req, res) => {
+    res.json(await InstallationsManager.getInstallations());
+});
+express_app.get('/versions.get.global', async (req, res) => {
+    res.json(await VersionManager.getGlobalVersions());
+});
+express_app.get('/installations.create', async (req, res) => {
+    logger.debug(req.body)
+    //res.json(await InstallationsManager.createInstallation(req.body));
+    res.json(1);
+});
+express_app.get('/configuration.get', async (req, res) => {
+    res.json(await ConfigManager.getAllOptions());
+});
+express_app.get('/system.mem', async (req, res) => {
+    res.json(os.totalmem() / 1024 / 1024);
+})
+
+/*express_app.get('/get/installation', (req, res) => {
+    (!req.query.hash) && res.json({ error: 'no hash in params', params: req.query }, 404);
+    InstallationsManager.getInstallation(req.query.hash).then(i => res.json(i));
+});*/
+/*express_app.get('/get/globalVersions', (req, res) => {
+    VersionManager.getGlobalVersions().then(i => res.json(i));
+});*/
+express_app.get('*', function(req, res){
+    res.send({
+        status: 404,
+        error: `Not found`
+    });
+});
