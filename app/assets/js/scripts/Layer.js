@@ -1,4 +1,4 @@
-import { currentView, switchView } from './renderer.js';
+import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
 /**
  * Class Layer creates new layer container
  * with all functions to control it
