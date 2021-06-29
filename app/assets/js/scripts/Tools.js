@@ -24,7 +24,7 @@ export async function setConfig(config) {
     if (window.__STANDALONE__ && electron) {
         return await electron.invoke('configuration.set', config);
     } else {
-
+        return await postData('http://localhost:5248/configuration.set', config);
     }
 }
 export async function getMem() {

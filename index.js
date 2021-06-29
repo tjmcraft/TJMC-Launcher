@@ -310,6 +310,13 @@ express_app.post('/installations.create', async (req, res) => {
 express_app.get('/configuration.get', async (req, res) => {
     res.json(await ConfigManager.getAllOptions());
 });
+express_app.post('/configuration.set', async (req, res) => {
+    const data = req.body;
+    if (!data) res.json({
+        success: false
+    });
+    res.json(await ConfigManager.setOptions(data));
+});
 express_app.get('/system.mem', async (req, res) => {
     res.json(os.totalmem() / 1024 / 1024);
 })
