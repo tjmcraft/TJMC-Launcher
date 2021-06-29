@@ -1,3 +1,4 @@
+import { PopupEl } from "./popup-element.js";
 /**
  * 
  * @param {Object} props - Properties for the element
