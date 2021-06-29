@@ -1,4 +1,4 @@
-class escBinder {
+export class escBinder {
     constructor (f = null) {
         this.Lonkeyup = f ?? document.onkeyup
     }
