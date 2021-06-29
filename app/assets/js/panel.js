@@ -34,68 +34,6 @@ export const user_panel = function (props) {
     return root_panel;
 }
 
-export class SidebarMain {
-    root_scroller;
-    root_content;
-    root_fp;
-    constructor(props) {
-        this.base();
-    };
-    base() {
-        const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
-        add_button.onclick = (e) => new VersionChooser();
-        add_button.tooltip('Добавить версию');
-        this.root_content = cE('div', { class: ['content'] },
-            cE('h2', { class: ['versionsHeader', 'container-df'] },
-                cE('span', null, 'Версии'), add_button
-            )
-        );
-        this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] },
-            this.root_content
-        );
-        return this.root_scroller;
-    };
-    addItem(item, click = ()=>{}) {
-        const root_item = cE('div', {
-            class: 'item navItem',
-            'version-hash': item.hash
-        }, item.name || item.hash);
-        //console.debug(item);
-        root_item.addEventListener('click', (e) => {
-            this.selectVersion(item)
-            if (typeof click === 'function')
-                click.call(this, item, e)
-        })
-        this.root_content.appendChild(root_item)
-    };
-    createFirstPage() {
-        this.root_fp = cE('div', {
-            class: 'item centred fp'
-        }, cE('h1', {}, 'Добавьте версию'));
-        this.root_scroller.appendChild(this.root_fp)
-    };
-    removeFirstPage() {
-        this.root_fp && this.root_fp.remove();
-    };
-    removeItem(item) {
-        const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`)
-        this.root_content.removeChild(selected_item)
-    };
-    content(def = false) {
-        return !def && this.root_scroller ? this.root_scroller : this.base();
-    };
-    selectVersion(version_hash) {
-        let items = this.root_content.qsla('.item');
-        items.forEach(e => {
-            e.classList[e.getAttribute('version-hash') === version_hash ? 'add' : 'remove']('selected')
-        });
-    };
-    removeAll() {
-        this.removeFirstPage();
-        this.root_content.qsla('.item').forEach(e => e.remove());
-    };
-}
-
 export class versionsSidebar {
     root_sidebar;
     root_content;
