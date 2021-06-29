@@ -286,7 +286,8 @@ const e_server = express_app.listen(5248);
 express_app.use(express.json()) // for parsing application/json
 express_app.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
-    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', '*');
     next();
 });
 express_app.get('/ping', (req, res) => {res.send('pong')})
@@ -301,10 +302,10 @@ express_app.get('/installations.get', async (req, res) => {
 express_app.get('/versions.get.global', async (req, res) => {
     res.json(await VersionManager.getGlobalVersions());
 });
-express_app.get('/installations.create', async (req, res) => {
-    logger.debug(req.body)
-    //res.json(await InstallationsManager.createInstallation(req.body));
-    res.json(1);
+express_app.post('/installations.create', async (req, res) => {
+    const data = req.body;
+    if (!data || !data.version || !data.options) res.json({success: false});
+    res.json(await InstallationsManager.createInstallation(data.version, data.options));
 });
 express_app.get('/configuration.get', async (req, res) => {
     res.json(await ConfigManager.getAllOptions());
