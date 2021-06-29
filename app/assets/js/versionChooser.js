@@ -135,7 +135,6 @@ export class VersionChooser {
                     selectVersion(version_hash);
                     this.alertex.destroy();
                 });
-
             });
         };
         const footer = cE('section', { class: 'VT-footer vertical-button-container' },
