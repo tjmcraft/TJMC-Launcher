@@ -1,42 +1,69 @@
-class Settings {
-    el = []
+import { slider } from './ui/slider-element.js';
+import { modal } from "./scripts/AlertEx.js";
+export class Settings {
+
+    /**
+     * Virtual DOM
+     */
+    vdom = {}
+
+    /**
+     * Tab List
+     */
     tablist = [
         {id: '', name: '', content: null}
     ]
+
     constructor() {
-
         this.tablist = [
-            {id: 'my-account-tab', name: 'Моя учётная запись', content: this.content.my_account_tab},
-            {id: 'skin-tab', name: 'Сменить скин', content: this.content.skin_tab},
-            {id: 'minecraft-settings', name: 'Игровые настройки', content: this.content.minecraft_settings_tab},
-            {id: 'java-settings', name: 'Настройки Java', content: this.content.java_settings_tab},
-            {id: 'launcher-settings', name: 'Настройки лаунчера', content: this.content.launcher_settings_tab},
-            {id: 'about-tab', name: 'О программе', content: this.content.about_tab}
-        ]
-
-        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container'}, this.Base))
-
-        this.el.sidebarItems = this.alertex.content.qsla('.sidebar-region > .sidebar > .navItem')
-        this.el.content = this.alertex.content.qsl('.content')
-
+            {
+                id: 'my-account-tab',
+                name: 'Моя учётная запись',
+                content: this.content.my_account_tab
+            },
+            {
+                id: 'skin-tab',
+                name: 'Сменить скин',
+                content: this.content.skin_tab
+            },
+            {
+                id: 'minecraft-settings',
+                name: 'Игровые настройки',
+                content: this.content.minecraft_settings_tab
+            },
+            {
+                id: 'java-settings',
+                name: 'Настройки Java',
+                content: this.content.java_settings_tab
+            },
+            {
+                id: 'launcher-settings',
+                name: 'Настройки лаунчера',
+                content: this.content.launcher_settings_tab
+            },
+            {
+                id: 'about-tab',
+                name: 'О программе',
+                content: this.content.about_tab
+            }
+        ];
+        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container' }, this.Base))
         this.setTab('my-account-tab')
     }
-    setTab (tab) {
-        this.el.sidebarItems.forEach((i) => {
-            i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected')
-        })
-        const ctab = this.tablist.find((i) => {
-            return i.id === tab;
-        }) || tablist[0];
-        this.el.content.removeAllChildNodes();
-        this.el.content.appendChild(ctab.content);
+    async setTab(tab) {
+        const current_tab = this.tablist.find(i => i.id === tab) || tablist[0];
+        const tab_content = await current_tab.content.call(this.content);
+        this.vdom.sidebarItems.forEach(i => i.classList[i.getAttribute('rTi') === tab ? 'add' : 'remove']('selected'))
+        this.vdom.content.removeAllChildNodes();
+        this.vdom.content.appendChild(tab_content);
     }
     get Base() {
+        this.vdom.content = cE('div', { class: ['content', 'thin-s'] });
         const root = cE('div', {class: 'sidebarView', id: 'user-settings'},
             cE('div', {class: 'sidebar-region'}, this.sideBar),
             cE('div', {class: 'content-region'},
                 cE('div', {class: 'transitionWrap'}, 
-                    cE('div', {class: ['content', 'thin-s']})
+                    this.vdom.content
                 )
             )
         );
@@ -57,11 +84,12 @@ class Settings {
             {type: 'navItem', rti: 'about-tab'}
         ];
         const root_sidebar = cE('div', {class: 'sidebar'});
-        sidebar_items.forEach(i => {
+        this.vdom.sidebarItems = sidebar_items.map(i => {
             const root_item = cE('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
-            if (i.rti) {root_item.onclick = () => {this.setTab(i.rti)};}
-            root_sidebar.appendChild(root_item);
+            if (i.rti) { root_item.onclick = () => { this.setTab(i.rti) }; }
+            return root_item;
         });
+        root_sidebar.append(...this.vdom.sidebarItems);
         return root_sidebar;
     }
     content = {
@@ -71,7 +99,7 @@ class Settings {
         createChilderContainer(...e) {
             return cE('div', {class: 'children'}, ...e);
         },
-        get my_account_tab() {
+        async my_account_tab() {
             const heading = cE('h2', null, 'Моя учётная запись');
             const actions_button = cE('button', {class: ['r', 'filled', 'colorBrand']}, 'Профиль');
             const children = cE('div', {class: ['container-cc3V']},
@@ -105,36 +133,30 @@ class Settings {
             )
             return this.base('my-account-tab', heading, children);
         },
-        get skin_tab() {
+        async skin_tab() {
             const heading = cE('h2', null, 'Конфигурация скина');
             return this.base('skin-tab', heading);
         },
-        get minecraft_settings_tab() {
+        async minecraft_settings_tab() {
+            const config = await getConfig();
             const heading = cE('h2', null, 'Настройки Minecraft');
             const children = this.createChilderContainer(
-                cE('div', {class: 'container-cc3V'},
+                cE('div', { class: 'container-cc3V' },
                     cE('h5', null, 'Параметры запуска'),
                     this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
-                        checked: false,
-                        action: function(s, n) {
-                            console.log(n + ' ' + s);
+                        checked: config.minecraft.launch.fullscreen || false,
+                        action: function (s, n) {
+                            config.minecraft.launch.fullscreen = s;
+                            setConfig(config);
                         }
                     }),
                     this.icf3v_ints({
                         header: 'Автоматически подключаться к серверу',
                         note: 'Подключаться к серверу автоматически, при запуске игры',
                         checked: false,
-                        action: function(s, n) {
-                            console.log(n + ' ' + s);
-                        }
-                    }),
-                    this.icf3v_ints({
-                        header: 'Независимый процесс',
-                        note: 'Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры',
-                        checked: true,
-                        action: function(s, n) {
+                        action: function (s, n) {
                             console.log(n + ' ' + s);
                         }
                     })
@@ -142,7 +164,13 @@ class Settings {
             );
             return this.base('minecraft-settings-tab', heading, children);
         },
-        get java_settings_tab() {
+        async java_settings_tab() {
+            const config = await getConfig();
+            const mem = await getMem();
+            const gT16 = (mem * 1024 * 1024) - 16000000000;
+            const AbsoluteMaxRAM = Math.floor((mem * 1024 * 1024 - 1000000000 - (gT16 > 0 ? (Number.parseInt(gT16 / 8) + 16000000000 / 4) : mem * 1024 * 1024 / 4)) / 1000000000) * 1024;
+            const AbsoluteMinRAM = mem >= 5722 ? 2048 : 1024;
+
             const heading = cE('h2', null, 'Настройки Java');
             const children = this.createChilderContainer(
                 cE('div', { class: 'container-cc3V' },
@@ -150,26 +178,28 @@ class Settings {
                         cE('div', { class: 'flex-child'},
                             cE('h5', null, 'Максимальное использование памяти'),
                             slider({
-                                value: API.ConfigManager.getMaxRAM()/1024,
+                                value: config.java.memory.max / 1024,
                                 min: 0.5,
-                                max: (API.ConfigManager.getAbsoluteMaxRAM()/1024) || 8,
+                                max: (AbsoluteMaxRAM / 1024) || 8,
                                 step: 0.1,
                                 unit: 'Gb',
                                 action: (e) => {
-                                    API.ConfigManager.setMaxRAM(e * 1024);
+                                    config.java.memory.max = e * 1024;
+                                    setConfig(config);
                                 }
                             })
                         ),
                         cE('div', { class: 'flex-child'},
                             cE('h5', null, 'Минимальное использование памяти'),
                             slider({
-                                value: API.ConfigManager.getMinRAM()/1024,
+                                value: config.java.memory.min / 1024,
                                 min: 0.5,
-                                max: (API.ConfigManager.getAbsoluteMinRAM()/1024) || 5,
+                                max: (AbsoluteMinRAM / 1024) || 5,
                                 step: 0.1,
                                 unit: 'Gb',
                                 action: (e) => {
-                                    API.ConfigManager.setMinRAM(e * 1024);
+                                    config.java.memory.min = e * 1024;
+                                    setConfig(config);
                                 }
                             })
                         )
@@ -179,18 +209,28 @@ class Settings {
                 cE('div', { class: 'container-cc3V' },
                     cE('h5', null, 'Дополнительно'),
                     this.icf3v_ints({
+                        header: 'Независимый процесс',
+                        note: 'Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры',
+                        checked: config.java.detached,
+                        action: function (s, n) {
+                            config.java.detached = s;
+                            setConfig(config);
+                        }
+                    }),
+                    this.icf3v_ints({
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
-                        checked: API.ConfigManager.getLaunchFullscreen() || false,
+                        checked: config.minecraft.launch.fullscreen || false,
                         action: function (s, n) {
-                            API.ConfigManager.setLaunchFullscreen(s)
+                            config.minecraft.launch.fullscreen = s;
+                            setConfig(config);
                         }
                     })
                 )
             );
             return this.base('java-settings-tab', heading, children);
         },
-        get launcher_settings_tab() {
+        async launcher_settings_tab() {
             const heading = cE('h2', null, 'Настройки Лаунчера');
             const children = this.createChilderContainer(
                 cE('div', {class: 'container-cc3V'},
@@ -215,7 +255,7 @@ class Settings {
             )
             return this.base('launcher-settings-tab', heading, children);
         },
-        get about_tab() {
+        async about_tab() {
             const heading = cE('h2', null, 'О программе');
             const whats_new_nutton = cE('button', { class: 'r' }, 'Что нового?');
             whats_new_nutton.onclick = () => {
@@ -282,4 +322,14 @@ class Settings {
             )
         }
     }
+}
+
+async function getConfig() {
+    return await electron.invoke('configuration.get');
+}
+async function setConfig(config) {
+    return await electron.invoke('configuration.set', config);
+}
+async function getMem() {
+    return await electron.invoke('system.mem');
 }
