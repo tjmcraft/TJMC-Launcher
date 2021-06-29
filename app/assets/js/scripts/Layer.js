@@ -1,3 +1,4 @@
+import { currentView, switchView } from './renderer.js';
 /**
  * Class Layer creates new layer container
  * with all functions to control it
@@ -9,7 +10,7 @@
  * - removeChild
  * - get content
  */
-class Layer {
+export class Layer {
     /**
      * 
      * @param {Object} options - The options object
