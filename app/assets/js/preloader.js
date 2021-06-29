@@ -136,32 +136,3 @@ function onConnect(client) {
         logger.log('closed');
     });
 }*/
-
-/*const e_server = app.listen(5248);
-app.use(function (req, res, next) {
-    res.header('Content-Type', 'application/json');
-    res.header('Access-Control-Allow-Origin', '*')
-    next();
-});
-app.get('/ping', (req, res) => {res.send('pong')})
-app.get('/version', (req, res) => {
-    res.json({
-        version: '1.0.0.0'
-    })
-});
-app.get('/get/installations', (req, res) => {
-    InstallationsManager.getInstallations().then(i => res.json(i));
-});
-app.get('/get/installation', (req, res) => {
-    (!req.query.hash) && res.json({ error: 'no hash in params', params: req.query }, 404);
-    InstallationsManager.getInstallation(req.query.hash).then(i => res.json(i));
-});
-app.get('/get/globalVersions', (req, res) => {
-    VersionManager.getGlobalVersions().then(i => res.json(i));
-});
-app.get('*', function(req, res){
-    res.send({
-        status: 404,
-        error: `Not found`
-    });
-});*/
