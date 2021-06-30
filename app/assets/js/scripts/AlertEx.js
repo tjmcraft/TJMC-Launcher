@@ -120,7 +120,7 @@ class ModalEx {
                 this.ignoreOutsideClick = false
                 return
             }
-            if (e.target === this.overlay && this.params?.allowOutsideClick) {
+            if (e.target === this.overlay && this.params?.allowOutsideClick ? this.params?.allowOutsideClick : true) {
                 this.destroy();
             }
         }
@@ -153,8 +153,8 @@ export const modal = {
         root_container.onclick = (e) => e.stopPropagation();
 
         const modal_ex = new ModalEx({
-            escButton: params?.escButton ?? true,
-            allowOutsideClick: params?.allowOutsideClick ?? true
+            escButton: params?.escButton ? params?.escButton : true,
+            allowOutsideClick: params?.allowOutsideClick ? params?.allowOutsideClick : true
         }, root_container);
 
         /*if (type) {
