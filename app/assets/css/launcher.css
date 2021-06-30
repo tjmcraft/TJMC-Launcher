@@ -148,7 +148,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --background-modifier-selected:rgba(116,127,141,0.24);
     --background-modifier-accent:rgba(6,6,7,0.08);
     --background-floating:#fff;
-    --header-primary:#060607;
+    --header-primary:#0d0d0e;
     --header-secondary:#4f5660;
     --text-link: #00b0f4;
     --text-normal:#2e3338;
@@ -571,7 +571,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 }
 
 .tools .keycode {
-    color: #616161;
+    color: #dcdddedd;
     margin-top: 8px;
     font-weight: 600;
     font-size: 13px;
@@ -580,13 +580,14 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 
 .tools .overlayCloseButton {
     transition: none;
-    border: 2px solid #777;
+    border: 2px solid #dcdddedd;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 36px;
     height: 36px;
+    color: #dcdddeaa;
 }
 
 .tools .overlayCloseButton:hover {
@@ -945,7 +946,7 @@ h2 {
 h5 {
     text-transform: uppercase;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 16px;
 }
 
@@ -1070,9 +1071,14 @@ input:checked + .toggleSwitchSlider:before {
     width: 100%;
     height: 8px;
     margin: 18px 0px;
-    background: var(--background-accent);
     border-radius: 3px;
     position: relative;
+}
+.light-theme .slider {
+    background: #dcddde;
+}
+.dark-theme .slider {
+    background: #4f545c;
 }
 .slider > .slider-bar {
     transition: inherit;
@@ -1100,6 +1106,7 @@ input:checked + .toggleSwitchSlider:before {
     margin-top: -13px;
     border-radius: 3px;
     background-color: #fff;
+    border: 1px solid #dcddde;
     box-shadow: 0 3px 1px 0 rgba(0,0,0,.05), 0 2px 2px 0 rgba(0,0,0,.1), 0 3px 3px 0 rgba(0,0,0,.05);
     cursor: ew-resize;
 }
@@ -1403,6 +1410,7 @@ input:checked + .toggleSwitchSlider:before {
     height: 100%;
     position: relative;
     overflow: hidden;
+    color: #f1f1f1;
 }
 #main > .main-content > .top > img{
     position: absolute;
@@ -1437,6 +1445,7 @@ input:checked + .toggleSwitchSlider:before {
     font-size: 25px;
     font-weight: 900;
     line-height: 25px;
+    color: inherit;
 }
 
 #playButton {
