@@ -4,11 +4,58 @@ import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
 import { getConfig, getInstallations } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
-import { Button, user_panel } from '../panel.js';
+import { Button, userPanel } from '../panel.js';
 import { progressBar } from './round-progress-bar.js';
 
 export var Installations
 export var currentVersion
+
+
+class TopToolbar {
+    constructor(title = '', subtitle = '') {
+        this.title = cE('h2');
+        this.subtitle = cE('h5');
+        this.update(title, subtitle);
+        this.create();
+    }
+    create() {
+        this.root = cE('div', { class: 'top-toolbar' },
+            cE('div', { style: "width: 100%" },
+                this.title, this.subtitle
+            ),
+            Button({ id: 'playButton', 'data-tooltip': 'Играть' }, "Играть")
+        );
+    }
+    update(title = '', subtitle = '') {
+        this.title.innerText = title || 'Федя лох';
+        this.subtitle.innerText = subtitle || 'Просто конченый полупидор';
+    }
+    get content() {
+        return this.root;
+    }
+}
+
+class TopContainer {
+    constructor() {
+        this.toolbar = new TopToolbar();
+        this.create();
+    }
+    create() {
+        this.root = cE('div', { class: 'top' },
+            cE('img', {
+                src: "./assets/images/background.jpg",
+                onerror: "this.src='../app/assets/images/default.png'"
+            }),
+            cE('div', { class: 'top-overlay' },
+                this.toolbar.content
+            )
+        );
+    }
+    get content() {
+        return this.root;
+    }
+}
+var topContainer = new TopContainer();
 
 class SidebarMain {
     root_scroller;
@@ -107,12 +154,8 @@ async function renderSelectVersion(version_hash = null) {
     if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
     currentVersion = version_hash;
     const version = await getInstallation(version_hash);
-    let m = qsl('.top-toolbar'),
-        n = m.qsl('h2'),
-        d = m.qsl('h5');
     sidebar_el.selectVersion(version_hash);
-    n.innerText = version.name || version.hash;
-    d.innerText = version.type;
+    topContainer.toolbar.update(version.name || version.hash, version.type);
 }
 
 async function getInstallation(version_hash) {
@@ -127,57 +170,21 @@ async function getInstallation(version_hash) {
 export var sidebar_el = new SidebarMain();
 
 export async function MainContainer(props) {
+    const config = await getConfig();
+    const user_panel = new userPanel(config.auth);
     const root = new MainBase(
         [
             cE('nav', { class: 'localVersions' }, sidebar_el.content()),
-            user_panel((await getConfig()).auth)
+            user_panel
         ],
         [
             cE('div', { class: 'hidden', id: 'topBar' },
                 cE('div', { id: 'progress-bar' })
             ),
-            cE('div', { class: 'top' },
-                cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
-                cE('div', { class: 'top-overlay' },
-                    cE('div', { class: 'top-toolbar' },
-                        cE('div', { style: "width: 100%;" },
-                            cE('h2', null, 'Федя лох'),
-                            cE('h5', null, 'Просто конченый полупидор')
-                        ),
-                        Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
-                    )
-                )
-            )
+            topContainer.root
         ]
     )
-    return root.content;
-}
-
-export async function SecondContainer(props) {
-        const root = new MainBase(
-        [
-            cE('nav', { class: 'localVersions' }, sidebar_el.content()),
-            user_panel((await getConfig()).auth)
-        ],
-        [
-            cE('div', { class: 'hidden', id: 'topBar' },
-                cE('div', { id: 'progress-bar' })
-            ),
-            cE('div', { class: 'top' },
-                cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
-                cE('div', { class: 'top-overlay' },
-                    cE('div', { class: 'top-toolbar' },
-                        cE('div', { style: "width: 100%;" },
-                            cE('h2', null, 'Федя лох'),
-                            cE('h5', null, 'Просто конченый полупидор')
-                        ),
-                        Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
-                    )
-                )
-            )
-        ]
-    )
-    return root.content;
+    return root;
 }
 
 class MainBase {
@@ -195,10 +202,8 @@ class MainBase {
             )
         );
     }
-    destroy() {
-        this.root = undefined;
-    }
     get content() {
         return this.root;
     }
 }
+
