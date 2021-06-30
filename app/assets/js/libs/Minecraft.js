@@ -127,7 +127,7 @@ class Minecraft {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (!fs.existsSync(native_path) || !await this.checkSum(native.sha1, native_path)) {
+                if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
                 }
                 try {
