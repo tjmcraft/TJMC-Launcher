@@ -1,20 +1,26 @@
+
 import { SVG } from './svg.js';
 import { escBinder } from './uibind.js';
 import { Button } from '../panel.js';
+
 /**
  * Creates modal overlay
  * @param {Object} params - Parameters for creating overlay
  * @param {Object} params.escButton - Create esc button
+ * @param {Object} params.allowOutsideClick - Allow outside click on the overlay
  * @param {Object} container - Container to insert to overlay
  */
 class ModalEx {
 
     constructor(params = {}, container = null) {
+        this.params = params;
         this.root_container = container
-        this.overlay = this.createOverlay(params?.escButton, this.root_container)
+        this.overlay = this.createOverlay(this.params?.escButton, this.root_container)
 
-        this.escBinder = new escBinder()
-        this.escBinder.bind((e) => { this.destroy(e) })
+        if (this.params?.escButton ?? true) {
+            this.escBinder = new escBinder()
+            this.escBinder.bind((e) => { this.destroy(e) })
+        }
 
         this.handleModalMousedown();
         this.handleContainerMousedown();
@@ -114,7 +120,7 @@ class ModalEx {
                 this.ignoreOutsideClick = false
                 return
             }
-            if (e.target === this.overlay && true) {
+            if (e.target === this.overlay && this.params?.allowOutsideClick) {
                 this.destroy();
             }
         }
@@ -132,15 +138,23 @@ export const modal = {
      * @param {Object} params - Additional parameters for the dialog
      * @param {Object} params.logType - Mode of the dialog when text is shown as a log
      * @param {Object} params.buttons - Buttons list (by default it's OK primary button)
+     * @param {Object} params.buttons.name - Name of the button
+     * @param {Object} params.buttons.class - Additional class for button
+     * @param {Object} params.buttons.closeOverlay - Should we close the overlay after click (auto event)
+     * @param {Object} params.buttons.callback - Callback when click the button
+     * @param {Object} params.allowOutsideClick - Allow outside click on the overlay
+     * @param {Object} params.escButton - Show esc button on the overlay
+     * 
      * @returns {Element} instance of element
      */
     alert: function (header = '', msg = '', type = null, params = {}) {
 
         const root_container = cE('div', { class: ['container-ov1', (params.logType ? 'mini' : '')] });
-        root_container.onclick = (e) => { e.stopPropagation() };
+        root_container.onclick = (e) => e.stopPropagation();
 
         const modal_ex = new ModalEx({
-            escButton: true
+            escButton: params?.escButton ?? true,
+            allowOutsideClick: params?.allowOutsideClick ?? true
         }, root_container);
 
         /*if (type) {

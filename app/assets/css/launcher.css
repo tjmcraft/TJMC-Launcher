@@ -288,7 +288,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     left: 0;
     background-repeat: no-repeat;
     background: var(--background-secondary);
-    z-index: 99999;
+    z-index: 9999;
     user-select: none;
     transition: none;
     -webkit-app-region: drag;
@@ -381,17 +381,17 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
 /* ================= Overlay ================= */
 .overlay {
     user-select: none;
-    transition: all 0.5s ease;
+    transition: all 0.5s ease !important;
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #010101D9;
+    background: #010101C9;
     text-align: center;
     /*backdrop-filter: blur(3px);*/
     width: 100%;
-    z-index: 99;
+    z-index: 10000;
     display: flex;
     align-content: center;
     align-items: center;
@@ -405,7 +405,7 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6),  
     opacity 0.5s ease,
     width .5s ease,
-    height .5s ease;
+    height .5s ease !important;
     max-width: 85vw;
     max-height: 85vh;
     background: var(--background-primary);
@@ -781,6 +781,7 @@ button > .content {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 1rem;
 }
 
 svg[data-icon="info-circle"] {
