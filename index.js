@@ -235,16 +235,19 @@ ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) 
 })
 
 async function launchMinecraft(version_hash = null, params = null) {
-    const _launcher = new launcher(version_hash, params);
+    const _launcher = await new launcher(version_hash, params);
     _launcher.on('progress', progress);
     _launcher.on('download-status', download_progress);
+
+    //const hb = await _launcher.heartbeat(60);
 
     const java_path = await _launcher.getJava();
     const versionFile = await _launcher.loadManifest();
     const minecraftArguments = await _launcher.construct(versionFile);
-    const vm = await _launcher.createJVM(java_path, minecraftArguments);
+    logger.log('Starting minecraft! vh: ' + version_hash)
+    //const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
-    let error_out = null;
+    /*let error_out = null;
     vm.stderr.on('data', (data) => {
         error_out = data.toString('utf-8');
     })
@@ -253,24 +256,26 @@ async function launchMinecraft(version_hash = null, params = null) {
             win.webContents.send('startup-error', error_out);
             if (socket_connector) socket_connector.send('startup-error', error_out);
         }
-    })
+    })*/
     return true;
 }
 
 function progress(e) {
     const progress = (e.task / e.total);
+    //logger.debug(`Version hash: ${e.version_hash}`)
     //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
-    win.webContents.send('progress', progress);
-    if (socket_connector) socket_connector.send('progress', progress);
+    win.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
+    if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 function download_progress(e) {
     const progress = (e.current / e.total);
+    //logger.debug(`Version hash: ${e.version_hash}`)
     if (e.type != 'version-jar') return;
     //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
-    win.webContents.send('progress', progress);
-    if (socket_connector) socket_connector.send('progress', progress);
+    win.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
+    if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 
 ipcMain.handle('installations.get', async (event, ...args) => {

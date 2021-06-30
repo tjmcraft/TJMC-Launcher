@@ -3,7 +3,7 @@ import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
 import { getConfig, getInstallations, startMinecraft } from './Tools.js';
-import { currentVersion, refreshVersions, MainContainer } from '../ui/sidebar-main.js';
+import { currentVersion, refreshVersions, MainContainer, sidebar_el } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 /* ================================= */
 
@@ -64,9 +64,12 @@ async function registerElectronEvents() {
         console.error(error);
         modal.alert('Ошибочка...', error, 'error', { logType: true });
     });
-    electron.on('progress', (e, progress) => {
-        if (progress > 0) topBar.toggle(true);
-        progressBar.setValue(progress * 100);
+    electron.on('progress', (e, data) => {
+        console.debug(data);
+        const progressBars = sidebar_el.progressBars();
+        if (data.progress > 0) progressBars[data.version_hash].show()
+        if (data.progress <= 0) progressBars[data.version_hash].hide()
+        progressBars[data.version_hash].setPrecentage(data.progress * 100);
     });
     return true;
 }
@@ -117,8 +120,11 @@ function registerWSEvents(attempt = 0) {
                     });
                     break;
                 case 'progress':
-                    if (event.data > 0) topBar.toggle(true);
-                    progressBar.setValue(event.data * 100);
+                    console.debug(data);
+                    const progressBars = sidebar_el.progressBars();
+                    if (data.progress > 0) progressBars[data.version_hash].show()
+                    if (data.progress <= 0) progressBars[data.version_hash].hide()
+                    progressBars[data.version_hash].setPrecentage(data.progress * 100);
                     break;
                 default:
                     break;
