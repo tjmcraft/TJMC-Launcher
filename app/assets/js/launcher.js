@@ -23,7 +23,6 @@ class launcher extends EventEmitter {
      * @param {Object} options.installation.lastVersionId - ID of current version
      * @param {Object} options.installation.type - Type of current version
      */
-    options;
     constructor(version_hash, options = {}) {
         super();
         return (async () => {
