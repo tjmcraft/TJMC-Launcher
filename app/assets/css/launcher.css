@@ -797,26 +797,25 @@ svg[data-icon="error-circle"] {
 svg[data-icon="success-circle"] {
     color: #31e131;
 }
+svg[data-icon="progress-circle"] {
+    transform: rotate(-90deg);
+}
 svg[data-icon="progress-circle"] #bar {
-    stroke: #ff9f1e;
+    stroke: var(--brand-color);
 }
 svg[data-icon="progress-circle"] circle {
     stroke-dashoffset: 0;
-    transition: stroke-dashoffset 1s linear;
-    stroke: #666;
+    transition: stroke-dashoffset .2s linear;
+    stroke: var(--background-modifier-accent);
     stroke-width: 8px;
 }
 
 .progress-container {
-    transform: rotate(-90deg);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    right: 0;
+    position: relative;
+    margin-left: auto;
     display: flex;
     align-items: center;
-    padding: 5px;
+    padding: 0 0 0 5px;
 }
 
 p {
@@ -890,6 +889,12 @@ p {
     font-weight: 500;
     text-align: start;
     font-family: var(--font-primary);
+}
+.sidebar .item span, .content .item span {
+    white-space: inherit;
+    text-overflow: inherit;
+    overflow: inherit;
+    font-weight: inherit;
 }
 
 .navItem {
