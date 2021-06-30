@@ -27,7 +27,8 @@ const DEFAULT_CONFIG =
         path: {
             root: path.join(launcherDir, 'minecraft'),
             directory: path.join(launcherDir, 'minecraft', 'versions')
-        }
+        },
+        checkHash: true
     },
     minecraft: {
         launch: {
