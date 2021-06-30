@@ -3,20 +3,20 @@ const LoggerUtil                             = require('../loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const checksum                               = require('checksum')
-const os = require('os')
-const Zip = require('adm-zip')
-const { merge } = require('./Tools')
-const logg = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
-
-let counter = 0
+const crypto                                 = require('crypto')
+const os                                     = require('os')
+const Zip                                    = require('adm-zip')
+const { merge }                              = require('./Tools')
+const logg                                   = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft {
+
     /**
-     * This is just constructor
-     * @param client U may set here this
+     * This is just constructor of class
+     * @param client U may set here "this"
      */
-    constructor (client) {
+    constructor(client) {
+        this.count = 0
         this.client = client
         this.options = client.options
         this.baseRequest = request.defaults({
@@ -33,6 +33,7 @@ class Minecraft {
             id: this.options.installation.lastVersionId,
             type: this.options.installation.type
         }
+        this.overrides.checkHash = this.options.overrides?.checkHash ? this.options.overrides.checkHash : true;
     }
 
     /**
@@ -81,8 +82,8 @@ class Minecraft {
             if (lib_ex) return lib
         })
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
-        counter = 0
-        logg.debug('Collected class paths, count: ' + libs.length)
+        this.count = 0
+        logg.debug(`Collected Class Patches! (count: ${libs.length})`)
         return libs
     }
 
@@ -98,6 +99,7 @@ class Minecraft {
      */
     async getNatives(version) {
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
+        logg.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
             const natives = async () => {
@@ -118,7 +120,8 @@ class Minecraft {
             this.client.emit('progress', {
                 type: 'natives',
                 task: 0,
-                total: stat.length
+                total: stat.length,
+                version_hash: this.options.installation.hash
             })
             await Promise.all(stat.map(async (native) => {
                 if (!native) return
@@ -131,22 +134,24 @@ class Minecraft {
                     new Zip(native_path).extractAllTo(nativeDirectory, true)
                 } catch (e) { logg.warn(e) }
                 fs.unlinkSync(native_path)
-                counter++
+                this.count++
                 this.client.emit('progress', {
                     type: 'natives',
-                    task: counter,
-                    total: stat.length
+                    task: this.count,
+                    total: stat.length,
+                    version_hash: this.options.installation.hash
                 })
             }))
             logg.debug('Downloaded and extracted natives')
         }
-        counter = 0
+        this.count = 0
         this.client.emit('progress', {
             type: 'natives',
-            task: counter,
-            total: 1
+            task: this.count,
+            total: 1,
+            version_hash: this.options.installation.hash
         })
-        logg.debug(`Set native path to ${nativeDirectory}`)
+        logg.debug(`Natives Collected!`)
         return nativeDirectory
     }
 
@@ -154,7 +159,7 @@ class Minecraft {
      * Function getting and download assets
      * @param version Main version JSON
      */
-    async getAssets (version) {
+    async getAssets(version) {
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
@@ -165,30 +170,34 @@ class Minecraft {
         this.client.emit('progress', {
             type: 'assets',
             task: 0,
-            total: Object.keys(index.objects).length
+            total: Object.keys(index.objects).length,
+            version_hash: this.options.installation.hash
         })
         await Promise.all(Object.keys(index.objects).map(async asset => {
             const hash = index.objects[asset].hash
             const subhash = hash.substring(0, 2)
             const subAsset = path.join(assetDirectory, 'objects', subhash)
             assets_pathes.push(path.join(subAsset, hash))
-            if (!fs.existsSync(path.join(subAsset, hash)) || !await this.checkSum(hash, path.join(subAsset, hash))) {
+            if (!fs.existsSync(path.join(subAsset, hash)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash)))) {
+                (this.count <= 1) && logg.debug('Downloading assets...');
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
-                counter++
+                this.count++
                 this.client.emit('progress', {
                     type: 'assets',
-                    task: counter,
-                    total: Object.keys(index.objects).length
+                    task: this.count,
+                    total: Object.keys(index.objects).length,
+                    version_hash: this.options.installation.hash
                 })
             }
         }))
-        counter = 0
+        this.count = 0
         this.client.emit('progress', {
             type: 'assets',
-            task: counter,
-            total: Object.keys(index.objects).length
+            task: this.count,
+            total: Object.keys(index.objects).length,
+            version_hash: this.options.installation.hash
         })
-        logg.debug('Downloaded assets')
+        logg.debug('Collected assets')
         return assets_pathes
     }
 
@@ -226,20 +235,22 @@ class Minecraft {
                     if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
                 }
             }
-            counter++
+            this.count++
             this.client.emit('progress', {
                 type: eventName,
-                task: counter,
-                total: libraries.length
+                task: this.count,
+                total: libraries.length,
+                version_hash: this.options.installation.hash
             })
             if (library.mod || library.downloadOnly) return 
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
-        counter = 0
+        this.count = 0
         this.client.emit('progress', {
             type: eventName,
-            task: counter,
-            total: libraries.length
+            task: this.count,
+            total: libraries.length,
+            version_hash: this.options.installation.hash
         })
         return libs
     }
@@ -263,11 +274,11 @@ class Minecraft {
                 let totalBytes = 0
                 _request.on('response', (data) => {
                     if (data.statusCode !== 200) {
-                        logg.warn(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
+                        //logg.warn(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
                         if (fs.existsSync(_path)) fs.unlinkSync(_path)
                         resolve(false)
                     } else {
-                        logg.debug(`[REQUEST] Download get code ${data.statusCode} on ${url}`)
+                        //logg.debug(`[REQUEST] Download get code ${data.statusCode} on ${url}`)
                         totalBytes = parseInt(data.headers['content-length'])
                         const file = fs.createWriteStream(_path, { flags: 'w+' })
                         _request.pipe(file)
@@ -276,7 +287,8 @@ class Minecraft {
                                 name: name,
                                 type: type,
                                 current: 0,
-                                total: totalBytes
+                                total: totalBytes,
+                                version_hash: this.options.installation.hash
                             })
                             resolve({ failed: false, asset: null })
                         })
@@ -289,7 +301,7 @@ class Minecraft {
                     }
                 })
                 _request.on('error', async (error) => {
-                    logg.debug(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`)
+                    logg.warn(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`)
                     if (fs.existsSync(_path)) fs.unlinkSync(_path)
                     if (retry) await this.downloadAsync(url, directory, name, false, type)
                     resolve()
@@ -300,7 +312,8 @@ class Minecraft {
                         name: name,
                         type: type,
                         current: receivedBytes,
-                        total: totalBytes
+                        total: totalBytes,
+                        version_hash: this.options.installation.hash
                     })
                 })            
             })
@@ -309,19 +322,14 @@ class Minecraft {
 
     /**
      * Function checks file hash
-     * @param hash given hash
+     * @param ghash given hash
      * @param file file
      */
-    checkSum (hash, file) {
-        return new Promise((resolve, reject) => {
-            checksum.file(file, (err, sum) => {
-                if (err) {
-                    logg.debug(`Failed to check file hash due to ${err}`)
-                    resolve(false)
-                } else { resolve(hash === sum) }
-            })
-        })
-    }
+    checkSum = (ghash, file) => new Promise((resolve, reject) => {
+        const hash = crypto.createHash('sha1');
+        fs.createReadStream(file).on('data', data => hash.update(data)).on('end', () => resolve(ghash === hash.digest('hex')));
+    })
+
 
     /**
      * Function checks rules of lib
