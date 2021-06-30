@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const express = require('express')
 const express_app = express()
+const WebSocket = require('ws')
 const path = require('path');
 const url = require('url');
 const os = require('os');
@@ -19,7 +20,7 @@ const InstallationsManager = require('./app/assets/js/libs/InstallationsManager'
 //app.disableHardwareAcceleration()
 
 app.allowRendererProcessReuse = true
-
+var socket_connector;
 const gotTheLock = app.requestSingleInstanceLock()
 
 /**
@@ -227,8 +228,9 @@ ipcMain.handle('ping', async (event, ...args) => {
 ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => {
     try {
         await launchMinecraft(version_hash, params);
-    } catch (err) {
-        win.webContents.send('error', err);
+    } catch (error) {
+        win.webContents.send('error', error);
+        if (socket_connector) socket_connector.send('error', error);
     }
 })
 
@@ -247,7 +249,10 @@ async function launchMinecraft(version_hash = null, params = null) {
         error_out = data.toString('utf-8');
     })
     vm.on('close', (code) => {
-        if (code != 0) win.webContents.send('startup-error', error_out);
+        if (code != 0) {
+            win.webContents.send('startup-error', error_out);
+            if (socket_connector) socket_connector.send('startup-error', error_out);
+        }
     })
     return true;
 }
@@ -257,6 +262,7 @@ function progress(e) {
     //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
     win.webContents.send('progress', progress);
+    if (socket_connector) socket_connector.send('progress', progress);
 }
 function download_progress(e) {
     const progress = (e.current / e.total);
@@ -264,6 +270,7 @@ function download_progress(e) {
     //logger.debug(`Progress ${progress}`)
     win.setProgressBar(progress);
     win.webContents.send('progress', progress);
+    if (socket_connector) socket_connector.send('progress', progress);
 }
 
 ipcMain.handle('installations.get', async (event, ...args) => {
@@ -290,7 +297,7 @@ const e_server = express_app.listen(5248);
 express_app.use(express.json()) // for parsing application/json
 express_app.use(function (req, res, next) {
     res.header('Content-Type', 'application/json');
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', 'https://www.tjmcraft.ga');
     res.header('Access-Control-Allow-Headers', '*');
     next();
 });
@@ -331,17 +338,61 @@ express_app.post('/configuration.set', async (req, res) => {
 express_app.get('/system.mem', async (req, res) => {
     res.json(os.totalmem() / 1024 / 1024);
 })
-
-/*express_app.get('/get/installation', (req, res) => {
-    (!req.query.hash) && res.json({ error: 'no hash in params', params: req.query }, 404);
-    InstallationsManager.getInstallation(req.query.hash).then(i => res.json(i));
-});*/
-/*express_app.get('/get/globalVersions', (req, res) => {
-    VersionManager.getGlobalVersions().then(i => res.json(i));
-});*/
 express_app.get('*', function(req, res){
     res.send({
         status: 404,
-        error: `Not found`
+        error: `Not found`,
+        success: false
     });
 });
+
+function SocketConnect(socket) {
+    const sendJSON = (type = null, data) => {
+        socket.send(JSON.stringify({
+            type: type,
+            data: data
+        }));
+    }
+    sendJSON('status', 'connected');
+    this.send = function (type = null, data) {
+        if (socket) sendJSON(type, data);
+    }
+}
+
+const ws_server = new WebSocket.Server({
+    port: 4836
+});
+
+ws_server.on('connection', function (socket) {
+    socket_connector = new SocketConnect(socket);
+});
+
+function onConnect(client) {
+
+    sendJSON('status', 'connected');
+    client.on('message', function (message) {
+        logger.debug(message)
+        try {
+            const json_message = JSON.parse(message);
+            switch (json_message.action) {
+                case 'get_installations':
+                    InstallationsManager.getInstallations().then(i => sendJSON('get_installations', i));
+                    break;
+                case 'echo':
+                    sendJSON('data', json_message.data);
+                    break;
+                case 'ping':
+                    sendJSON(null, 'pong');
+                    break;
+                default:
+                    logger.log('unknown action');
+                    break;
+            }
+        } catch (error) {
+            logger.log('Error: ', error);
+        }
+    });
+    client.on('close', function () {
+        logger.log('closed');
+    });
+}
