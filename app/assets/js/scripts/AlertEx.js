@@ -17,7 +17,7 @@ class ModalEx {
         this.root_container = container
         this.overlay = this.createOverlay(this.params?.escButton, this.root_container)
 
-        if (this.params?.escButton ? this.params?.escButton : true) {
+        if (typeof this.params?.escButton !== 'undefined' ? this.params?.escButton : true) {
             this.escBinder = new escBinder()
             this.escBinder.bind((e) => { this.destroy(e) })
         }
@@ -120,7 +120,7 @@ class ModalEx {
                 this.ignoreOutsideClick = false
                 return
             }
-            if (e.target === this.overlay && this.params?.allowOutsideClick ? this.params?.allowOutsideClick : true) {
+            if (e.target === this.overlay && (typeof this.params?.allowOutsideClick !== 'undefined' ? this.params?.allowOutsideClick : true)) {
                 this.destroy();
             }
         }
@@ -153,8 +153,8 @@ export const modal = {
         root_container.onclick = (e) => e.stopPropagation();
 
         const modal_ex = new ModalEx({
-            escButton: params?.escButton ? params?.escButton : true,
-            allowOutsideClick: params?.allowOutsideClick ? params?.allowOutsideClick : true
+            escButton: typeof params?.escButton !== 'undefined' ? params?.escButton : true,
+            allowOutsideClick: typeof params?.allowOutsideClick !== 'undefined' ? params?.allowOutsideClick : true
         }, root_container);
 
         /*if (type) {
