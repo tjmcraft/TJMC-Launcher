@@ -1,6 +1,5 @@
 import { VersionChooser } from './versionChooser.js';
 import { Settings } from './settings.js';
-import { Guilds } from './ui/guilds.js';
 import { SVG } from './scripts/svg.js';
 /**
  * This function creates a user panel, with the given props
@@ -200,35 +199,6 @@ function getPath(path){
 
 export function Button(props, ...elements) {
     return cE('button', props, cE('div', {class: 'content'}, ...elements))
-}
-
-export function MainContainer(props) {
-    const root_container = cE('div', { class: 'container' },
-        new Guilds().content,
-        cE('div', { id: 'main', class: 'base' },
-            cE('div', { class: 'sidebar-main', id: 'main-version-list' },
-                cE('nav', { class: 'localVersions' }, null)
-            ),
-            cE('div', { class: 'main-content' },
-                cE('div', { class: 'hidden', id: 'topBar' },
-                    cE('div', { id: 'progress-bar' })
-                ),
-                cE('div', { class: 'top' },
-                    cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
-                    cE('div', { class: 'top-overlay' },
-                        cE('div', { class: 'top-toolbar' },
-                            cE('div', { style: "width: 100%;" },
-                                cE('h2', null, 'Федя лох'),
-                                cE('h5', null, 'Просто конченый полупидор')
-                            ),
-                            Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
-                        )
-                    )
-                )
-            )
-        )
-    )
-    return root_container;
 }
 
 export function FrameBar(props) {

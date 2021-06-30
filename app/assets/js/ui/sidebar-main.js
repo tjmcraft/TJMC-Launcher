@@ -2,7 +2,9 @@
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
-import { getInstallations } from '../scripts/Tools.js';
+import { getConfig, getInstallations } from '../scripts/Tools.js';
+import { Guilds } from '../ui/guilds.js';
+import { Button, user_panel } from '../panel.js';
 
 export var Installations
 export var currentVersion
@@ -15,33 +17,19 @@ class SidebarMain {
         this.base();
     };
     base() {
-        const add_button = cE('div', {
-            class: 'simple-button'
-        }, SVG('add-plus'));
+        const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => new VersionChooser();
         tooltip.call(add_button, 'Добавить версию');
-        //add_button.tooltip('Добавить версию');
-        this.root_content = cE('div', {
-                class: ['content']
-            },
-            cE('h2', {
-                    class: ['versionsHeader', 'container-df']
-                },
+        this.root_content = cE('div', { class: ['content'] },
+            cE('h2', { class: ['versionsHeader', 'container-df'] },
                 cE('span', null, 'Версии'), add_button
             )
         );
-        this.root_scroller = cE('div', {
-                class: ['scroller', 'thin-s']
-            },
-            this.root_content
-        );
+        this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] }, this.root_content);
         return this.root_scroller;
     };
     addItem(item, click = () => {}) {
-        const root_item = cE('div', {
-            class: 'item navItem',
-            'version-hash': item.hash
-        }, item.name || item.hash);
+        const root_item = cE('div', { class: 'item navItem', 'version-hash': item.hash }, item.name || item.hash);
         //console.debug(item);
         root_item.addEventListener('click', (e) => {
             this.selectVersion(item)
@@ -51,9 +39,7 @@ class SidebarMain {
         this.root_content.appendChild(root_item)
     };
     createFirstPage() {
-        this.root_fp = cE('div', {
-            class: 'item centred fp'
-        }, cE('h1', {}, 'Добавьте версию'));
+        this.root_fp = cE('div', { class: ['item', 'centred', 'fp'] }, cE('h1', {}, 'Добавьте версию'));
         this.root_scroller.appendChild(this.root_fp)
     };
     removeFirstPage() {
@@ -94,7 +80,7 @@ export async function refreshVersions() {
     } else {
         sidebar_el.createFirstPage();
     }
-    qsl('.localVersions').append(sidebar_el.content());
+    //qsl('.localVersions').append(sidebar_el.content());
 
     if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) {
         renderSelectVersion(localStorage.version_hash)
@@ -131,3 +117,80 @@ async function getInstallation(version_hash) {
 }
 
 var sidebar_el = new SidebarMain();
+
+export async function MainContainer(props) {
+    const root = new MainBase(
+        [
+            cE('nav', { class: 'localVersions' }, sidebar_el.content()),
+            user_panel((await getConfig()).auth)
+        ],
+        [
+            cE('div', { class: 'hidden', id: 'topBar' },
+                cE('div', { id: 'progress-bar' })
+            ),
+            cE('div', { class: 'top' },
+                cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
+                cE('div', { class: 'top-overlay' },
+                    cE('div', { class: 'top-toolbar' },
+                        cE('div', { style: "width: 100%;" },
+                            cE('h2', null, 'Федя лох'),
+                            cE('h5', null, 'Просто конченый полупидор')
+                        ),
+                        Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
+                    )
+                )
+            )
+        ]
+    )
+    return root.content;
+}
+
+export async function SecondContainer(props) {
+        const root = new MainBase(
+        [
+            cE('nav', { class: 'localVersions' }, sidebar_el.content()),
+            user_panel((await getConfig()).auth)
+        ],
+        [
+            cE('div', { class: 'hidden', id: 'topBar' },
+                cE('div', { id: 'progress-bar' })
+            ),
+            cE('div', { class: 'top' },
+                cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
+                cE('div', { class: 'top-overlay' },
+                    cE('div', { class: 'top-toolbar' },
+                        cE('div', { style: "width: 100%;" },
+                            cE('h2', null, 'Федя лох'),
+                            cE('h5', null, 'Просто конченый полупидор')
+                        ),
+                        Button({id: 'playButton', 'data-tooltip': 'Играть'}, "Играть")
+                    )
+                )
+            )
+        ]
+    )
+    return root.content;
+}
+
+class MainBase {
+    constructor(sidebar, main_content) {
+        this.sidebar = sidebar;
+        this.main_content = main_content;
+        this.create();
+    }
+    create() {
+        this.root = cE('div', { class: 'container' },
+            new Guilds().content,
+            cE('div', { id: 'main', class: 'base' },
+                cE('div', { class: 'sidebar-main' }, ...this.sidebar),
+                cE('div', { class: 'main-content' }, ...this.main_content)
+            )
+        );
+    }
+    destroy() {
+        this.root = undefined;
+    }
+    get content() {
+        return this.root;
+    }
+}
