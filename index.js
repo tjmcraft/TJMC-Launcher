@@ -122,12 +122,12 @@ function createMenu() {
             submenu: [
                 {
                     label: 'Root Directory',
-                    accelerator: isMac ? 'Cmd+Shift+D' : 'Ctrl+Shift+D',
+                    accelerator: isMac ? 'Cmd+Alt+D' : 'Ctrl+Shift+D',
                     click: () => openMineDir() 
                 },
                 {
                     label: 'Options',
-                    accelerator: isMac ? 'Cmd+Shift+I' : 'Ctrl+Shift+I',
+                    accelerator: isMac ? 'Cmd+Alt+I' : 'Ctrl+Shift+I',
                     click: () => win.webContents.send('open-settings')
                 }
             ]
