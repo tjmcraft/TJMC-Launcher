@@ -7,6 +7,7 @@ import { Button } from '../panel.js';
  * Creates modal overlay
  * @param {Object} params - Parameters for creating overlay
  * @param {Object} params.escButton - Create esc button
+ * @param {Object} params.escBind - Allow to destroy the overlay when ESC click
  * @param {Object} params.allowOutsideClick - Allow outside click on the overlay
  * @param {Object} container - Container to insert to overlay
  */
@@ -17,7 +18,7 @@ class ModalEx {
         this.root_container = container
         this.overlay = this.createOverlay(this.params?.escButton, this.root_container)
 
-        if (typeof this.params?.escButton !== 'undefined' ? this.params?.escButton : true) {
+        if (typeof this.params?.escBind !== 'undefined' ? this.params?.escBind : true) {
             this.escBinder = new escBinder()
             this.escBinder.bind((e) => { this.destroy(e) })
         }
@@ -52,7 +53,7 @@ class ModalEx {
     }
 
     destroy() {
-        this.escBinder.uibind()
+        if (this.escBinder) this.escBinder.uibind()
         this.overlay.toggle(false);
         setTimeout(() => {
             this.overlay.remove();
@@ -222,7 +223,7 @@ export const modal = {
         //root_container.onclick = (e) => { e.stopPropagation() };
 
         const modal_ex = new ModalEx({
-            escButton: props.escButton || true
+            escButton: typeof props?.escButton !== 'undefined' ? props?.escButton : true,
         }, root_container);
 
         modal_ex.show();
