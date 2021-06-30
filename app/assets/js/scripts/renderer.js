@@ -65,7 +65,7 @@ async function registerElectronEvents() {
         modal.alert('Ошибочка...', error, 'error', { logType: true });
     });
     electron.on('progress', (e, data) => {
-        console.debug(data);
+        //console.debug(data);
         const progressBars = sidebar_el.progressBars();
         if (data.progress > 0) progressBars[data.version_hash].show()
         if (data.progress <= 0) progressBars[data.version_hash].hide()
@@ -120,11 +120,11 @@ function registerWSEvents(attempt = 0) {
                     });
                     break;
                 case 'progress':
-                    console.debug(data);
+                    //console.debug(event.data);
                     const progressBars = sidebar_el.progressBars();
-                    if (data.progress > 0) progressBars[data.version_hash].show()
-                    if (data.progress <= 0) progressBars[data.version_hash].hide()
-                    progressBars[data.version_hash].setPrecentage(data.progress * 100);
+                    if (event.data.progress > 0) progressBars[event.data.version_hash].show()
+                    if (event.data.progress <= 0) progressBars[event.data.version_hash].hide()
+                    progressBars[event.data.version_hash].setPrecentage(event.data.progress * 100);
                     break;
                 default:
                     break;
