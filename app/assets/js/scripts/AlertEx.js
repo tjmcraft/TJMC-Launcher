@@ -185,11 +185,13 @@ export const modal = {
         if (params?.buttons) {
             root_container.appendChild(ButtonsFooter(params?.buttons, () => { modal_ex.destroy() }));
         } else {
-            root_container.appendChild(ButtonsFooter([{
-                name: "Ок",
-                //class: 'primary-button',
-                closeOverlay: true
-            }], () => { modal_ex.destroy() }));
+            root_container.appendChild(ButtonsFooter([
+                {
+                    name: "Ок",
+                    class: ['filled', 'colorBrand'],
+                    closeOverlay: true
+                }
+            ], () => { modal_ex.destroy() }));
         }
         modal_ex.show();
         return root_container;
@@ -259,7 +261,7 @@ export const modal = {
 const ButtonsFooter = function (buttons, destroy = () => {}) {
     let _buttons = buttons.map(button => {
         const button_root = Button({
-            class: ['grow', 'filled', 'colorBrand', (button.class ? button.class : '')]
+            class: ['grow', ...(button.class ? button.class : '')]
         }, button.name)
         button_root.onclick = () => {
             if (button.callback && typeof button.callback === 'function') button.callback.call(this)
