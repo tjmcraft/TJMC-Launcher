@@ -1165,7 +1165,6 @@ input:checked + .toggleSwitchSlider:before {
 
 /* === Main === */
 .sidebar-main {
-    overflow: hidden;
     display: flex;
     height: 100%;
     min-width: 240px;
@@ -1174,6 +1173,9 @@ input:checked + .toggleSwitchSlider:before {
     flex-direction: column;
     flex-shrink: 0;
     background-color: var(--background-secondary);
+}
+.platform-win .sidebar-main {
+    overflow: hidden;
     border-radius: 8px 0 0;
 }
 .sidebar-main > .sidebar-region {
@@ -1314,8 +1316,12 @@ input:checked + .toggleSwitchSlider:before {
     user-select: none;
     background-color: var(--background-tertiary);
     contain: layout size;
-    padding-top: 4px;
+    padding-top: 12px;
     padding-right: 0px;
+}
+
+.platform-win .scroller {
+    padding-top: 4px;
 }
 
 .listItem {
