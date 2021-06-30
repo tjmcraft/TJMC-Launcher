@@ -1948,6 +1948,9 @@ a.anchor:hover {
     align-items: center;
     justify-content: flex-start;
 }
+.ictx-flex > * {
+    transform: translateZ(0);
+}
 .ictx-flex > .icon {
     margin: 0 16px 0 0;
     max-width: 64px;
