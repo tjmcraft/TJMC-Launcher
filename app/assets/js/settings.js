@@ -232,9 +232,20 @@ export class Settings {
             return this.base('java-settings-tab', heading, children);
         },
         async launcher_settings_tab() {
+            const config = await getConfig();
             const heading = cE('h2', null, 'Настройки Лаунчера');
             const children = this.createChilderContainer(
-                cE('div', {class: 'container-cc3V'},
+                cE('div', { class: 'container-cc3V' },
+                    cE('h5', null, 'Параметры загрузки'),
+                    this.icf3v_ints({
+                        header: 'Проверять Hash файлов',
+                        note: 'Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!',
+                        checked: config.overrides.checkHash || true,
+                        action: function (s, n) {
+                            config.overrides.checkHash = s;
+                            setConfig(config);
+                        }
+                    }),
                     cE('h5', null, 'Как мы используем ваши данные'),
                     this.icf3v_ints({
                         header: 'Использование данных для улучшения TJMC',
