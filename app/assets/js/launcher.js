@@ -23,15 +23,37 @@ class launcher extends EventEmitter {
      * @param {Object} options.installation.lastVersionId - ID of current version
      * @param {Object} options.installation.type - Type of current version
      */
-    constructor (version_hash, options = null) {
+    options;
+    constructor(version_hash, options = {}) {
         super();
-        this.options = options || ConfigManager.getAllOptionsSync();
-        this.options.installation = InstallationsManager.getInstallationSync(version_hash);
-        this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
-        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
-        this.handler = new Minecraft(this)
-        logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
+        return (async () => {
+
+            this.options = Object.assign({}, await ConfigManager.getAllOptions(), { installation: await InstallationsManager.getInstallation(version_hash) }, options);
+            this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
+            this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
+            this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
+            this.handler = new Minecraft(this)
+            logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
+
+            return this; // when done
+        })();
+    }
+
+    async heartbeat(hrs_time) {
+        let count = 0;
+        const interval = 500;
+        const total = Math.floor((hrs_time * 1e3) / interval);
+        setInterval(() => {
+            if (count >= total) return;
+            count++;
+            this.emit('progress', {
+                type: 'natives',
+                task: count,
+                total: total,
+                version_hash: this.options.installation.hash
+            });
+            console.debug(`Version hash: ${this.options.installation.hash}`)
+        }, interval);
     }
 
     async loadManifest() {
@@ -64,17 +86,17 @@ class launcher extends EventEmitter {
         }
 
         if (!fs.existsSync(this.options.mcPath)) {
-            logg.log('Attempting to download Minecraft version jar')
+            logg.log('Attempting to load Minecraft version jar')
             const mcpath = await this.handler.getJar(versionFile)
         }
         
-        logg.log('Attempting to download natives')
+        logg.log('Attempting to load natives')
         const nativePath = await this.handler.getNatives(versionFile)
 
-        logg.log('Attempting to download libraries')
+        logg.log('Attempting to load classes')
         const classes = await this.handler.getClasses(versionFile)
 
-        logg.log('Attempting to download assets')
+        logg.log('Attempting to load assets')
         const assets = await this.handler.getAssets(versionFile)
         
         const args = this.handler.constructJVMArguments(versionFile, nativePath, classes)
