@@ -5,6 +5,7 @@ export class progressBar {
     constructor(precentage = 0) {
         this.progress_circle = SVG('progress-circle');
         this.root = cE('div', { class: 'progress-container' }, this.progress_circle);
+        this.hide();
         this.setPrecentage(precentage);
     }
     setPrecentage(value) {
@@ -14,13 +15,18 @@ export class progressBar {
             val = 100;
         } else {
             var r = circle.getAttribute('r');
-            console.debug(r)
             var c = Math.PI * (r * 2);
             if (val < 0) val = 0;
             if (val > 100) val = 100;
             var pct = ((100 - val) / 100) * c;
             circle.style.strokeDashoffset = pct;
         }
+    }
+    hide() {
+        this.root.toggle(false);
+    }
+    show() {
+        this.root.toggle(true);
     }
     get content() {
         return this.root;
