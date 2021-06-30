@@ -245,9 +245,9 @@ async function launchMinecraft(version_hash = null, params = null) {
     const versionFile = await _launcher.loadManifest();
     const minecraftArguments = await _launcher.construct(versionFile);
     logger.log('Starting minecraft! vh: ' + version_hash)
-    //const vm = await _launcher.createJVM(java_path, minecraftArguments);
+    const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
-    /*let error_out = null;
+    let error_out = null;
     vm.stderr.on('data', (data) => {
         error_out = data.toString('utf-8');
     })
@@ -256,7 +256,7 @@ async function launchMinecraft(version_hash = null, params = null) {
             win.webContents.send('startup-error', error_out);
             if (socket_connector) socket_connector.send('startup-error', error_out);
         }
-    })*/
+    })
     return true;
 }
 
