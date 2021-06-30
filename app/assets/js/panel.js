@@ -8,9 +8,9 @@ import { SVG } from './scripts/svg.js';
  * @param {String} props.permission - Permission of the user
  * @returns 
  */
-export const user_panel = function (props) {
-    props.username = props.username || '';
-    props.permission = props.permission || '';
+export function userPanel(props = null) {
+    this.username = props?.username || '';
+    this.permission = props?.permission || '';
     const add_version_button = cE('div', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
     add_version_button.onclick = (e) => { new VersionChooser() }
     add_version_button.tooltip('Добавить версию')
@@ -20,11 +20,11 @@ export const user_panel = function (props) {
     const root_panel = cE('div', { class: 'panel' },
         cE('div', { class: 'container' },
             cE('div', { class: 'avatar round' },
-                cE('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${props.username}` })
+                cE('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${this.username}` })
             ),
             cE('div', { class: 'nameTag' },
-                cE('div', { class: 'title' }, props.username),
-                cE('div', { class: 'subtitle' }, props.permission)
+                cE('div', { class: 'title' }, this.username),
+                cE('div', { class: 'subtitle' }, this.permission)
             ),
             add_version_button,
             settings_button
