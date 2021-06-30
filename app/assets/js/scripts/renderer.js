@@ -1,4 +1,4 @@
-import { user_panel } from '../panel.js';
+
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
@@ -8,18 +8,18 @@ import { modal } from './AlertEx.js';
 /* ================================= */
 
 const main_layer = new Layer({ label: 'main-layer' });
-MainContainer().then(content => {
-    main_layer.append(content);
+MainContainer().then(elem => {
+    main_layer.append(elem.content);
     main_layer.join();
 
     /* --------------------------------- */
         const plb = qsl('#playButton')
-        const topBar = qsl('#topBar')
-        const progressBar = qsl('#progress-bar')
+        /*const topBar = qsl('#topBar')*/
+        /*const progressBar = qsl('#progress-bar')*/
     /* ================================= */
 
     plb.addEventListener('click', (e) => startMine(currentVersion));
-    progressBar.setValue = (v) => progressBar.style.width = v + "%";
+    /*progressBar.setValue = (v) => progressBar.style.width = v + "%";*/
 })
 
 console.debug('Renderer init')
