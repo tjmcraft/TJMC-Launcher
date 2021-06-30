@@ -9,7 +9,7 @@
     <script type="module">
         import {FrameBar} from "./assets/js/panel.js";
         import {getPreferredColorScheme} from "./assets/js/scripts/Tools.js";
-        if (window.__STANDALONE__ && window.system?.os) {
+        if (window.__STANDALONE__ && window.system?.os != 'osx') {
             qsl(".app-mount").prepend(FrameBar());
             qsl('.app-container').toggle(true, 'frame-fix');
         }
