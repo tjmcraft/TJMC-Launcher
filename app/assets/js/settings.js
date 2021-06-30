@@ -15,7 +15,7 @@ export class Settings {
         {id: '', name: '', content: null}
     ]
 
-    constructor() {
+    constructor(tab = '') {
         this.tablist = [
             {
                 id: 'my-account-tab',
@@ -49,7 +49,7 @@ export class Settings {
             }
         ];
         this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container' }, this.Base))
-        this.setTab('my-account-tab')
+        this.setTab(tab || 'my-account-tab')
     }
     async setTab(tab) {
         const current_tab = this.tablist.find(i => i.id === tab) || tablist[0];
