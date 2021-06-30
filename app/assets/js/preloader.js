@@ -1,6 +1,4 @@
 const { shell, ipcRenderer, contextBridge } = require('electron')
-//const WebSocket = require('ws')
-//const app = require('express')()
 const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const remote = require('@electron/remote')
 //logger.debug('Application loading..')
@@ -100,39 +98,3 @@ document.addEventListener('click', (event) => {
         shell.openExternal(event.target.href)
     }
 })
-
-/*const ws_server = new WebSocket.Server({port: 5248});
-ws_server.on('connection', onConnect);
-function onConnect(client) {
-    const sendJSON = (type = null, data) => {
-        client.send(JSON.stringify({ type: type, data: data }));
-    }
-    client.send(JSON.stringify({
-        status: 'connected'
-    }));
-    client.on('message', function(message) {
-        logger.debug(message)
-        try {
-            const json_message = JSON.parse(message);
-            switch (json_message.action) {
-                case 'get_installations':
-                    InstallationsManager.getInstallations().then(i => sendJSON('get_installations', i));
-                    break;
-                case 'echo':
-                    sendJSON('data', json_message.data);
-                    break;
-                case 'ping':
-                    sendJSON(null, 'pong');
-                    break;
-                default:
-                    logger.log('unknown action');
-                    break;
-            }
-        } catch (error) {
-            logger.log('Error: ', error);
-        }
-    });
-    client.on('close', function() {
-        logger.log('closed');
-    });
-}*/
