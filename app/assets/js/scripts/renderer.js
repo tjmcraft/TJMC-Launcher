@@ -1,22 +1,26 @@
-import { MainContainer, user_panel } from '../panel.js';
+import { user_panel } from '../panel.js';
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
 import { getConfig, getInstallations, startMinecraft } from './Tools.js';
-import { currentVersion, refreshVersions } from '../ui/sidebar-main.js';
+import { currentVersion, refreshVersions, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 /* ================================= */
 
-const main_container = MainContainer();
 const main_layer = new Layer({ label: 'main-layer' });
-main_layer.append(main_container);
-main_layer.join();
+MainContainer().then(content => {
+    main_layer.append(content);
+    main_layer.join();
 
-/* --------------------------------- */
-const plb = qsl('#playButton')
-const topBar = qsl('#topBar')
-const progressBar = qsl('#progress-bar')
-/* ================================= */
+    /* --------------------------------- */
+        const plb = qsl('#playButton')
+        const topBar = qsl('#topBar')
+        const progressBar = qsl('#progress-bar')
+    /* ================================= */
+
+    plb.addEventListener('click', (e) => startMine(currentVersion));
+    progressBar.setValue = (v) => progressBar.style.width = v + "%";
+})
 
 console.debug('Renderer init')
 
@@ -29,18 +33,12 @@ function openSettings() {
     new Settings()
 }
 
-plb.addEventListener('click', (e) => startMine(currentVersion))
-
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
     
     await startMinecraft(version_hash);
     topBar.toggle(false);
 }
-
-getConfig().then(config => {
-    qsl('.sidebar-main').appendChild(user_panel(config.auth))
-})
 
 window.onload = async function(e) {
     switchView(VIEWS.landing, 100, 100);
@@ -54,8 +52,6 @@ window.onload = async function(e) {
             })
         }, 1000)
 }
-
-progressBar.setValue = (v) => progressBar.style.width = v + "%";
 
 refreshVersions();
 
