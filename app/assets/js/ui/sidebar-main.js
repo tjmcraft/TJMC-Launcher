@@ -5,6 +5,7 @@ import { tooltip } from '../scripts/tooltip.js';
 import { getConfig, getInstallations } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
 import { Button, user_panel } from '../panel.js';
+import { progressBar } from './round-progress-bar.js';
 
 export var Installations
 export var currentVersion
@@ -13,6 +14,7 @@ class SidebarMain {
     root_scroller;
     root_content;
     root_fp;
+    vdom_progress_bars = [];
     constructor(props) {
         this.base();
     };
@@ -28,15 +30,18 @@ class SidebarMain {
         this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] }, this.root_content);
         return this.root_scroller;
     };
-    addItem(item, click = () => {}) {
-        const root_item = cE('div', { class: 'item navItem', 'version-hash': item.hash }, item.name || item.hash);
+    addItem(item, click = () => { }) {
+        const progress_bar = new progressBar(0);
+        const root_item = cE('div', { class: 'item navItem', 'version-hash': item.hash }, cE('span', null, item.name || item.hash), progress_bar.content);
+        //let p = 0;
+        //setInterval(() => { p++; progress_bar.setPrecentage(p); }, 500);
         //console.debug(item);
-        root_item.addEventListener('click', (e) => {
-            this.selectVersion(item)
-            if (typeof click === 'function')
-                click.call(this, item, e)
-        })
-        this.root_content.appendChild(root_item)
+        root_item.onclick = (e) => {
+            this.selectVersion(item);
+            if (typeof click === 'function') click.call(this, item, e);
+        }
+        this.vdom_progress_bars[item.hash] = progress_bar;
+        this.root_content.appendChild(root_item);
     };
     createFirstPage() {
         this.root_fp = cE('div', { class: ['item', 'centred', 'fp'] }, cE('h1', {}, 'Добавьте версию'));
@@ -46,11 +51,15 @@ class SidebarMain {
         this.root_fp && this.root_fp.remove();
     };
     removeItem(item) {
-        const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`)
-        this.root_content.removeChild(selected_item)
+        const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`);
+        this.root_content.removeChild(selected_item);
+        delete this.vdom_progress_bars[version_hash];
     };
     content(def = false) {
         return !def && this.root_scroller ? this.root_scroller : this.base();
+    };
+    progressBars() {
+        return this.vdom_progress_bars;
     };
     selectVersion(version_hash) {
         let items = this.root_content.qsla('.item');
@@ -80,7 +89,6 @@ export async function refreshVersions() {
     } else {
         sidebar_el.createFirstPage();
     }
-    //qsl('.localVersions').append(sidebar_el.content());
 
     if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) {
         renderSelectVersion(localStorage.version_hash)
@@ -116,7 +124,7 @@ async function getInstallation(version_hash) {
     }
 }
 
-var sidebar_el = new SidebarMain();
+export var sidebar_el = new SidebarMain();
 
 export async function MainContainer(props) {
     const root = new MainBase(
