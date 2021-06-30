@@ -1,5 +1,6 @@
 import { SVG } from './svg.js';
 import { escBinder } from './uibind.js';
+import { Button } from '../panel.js';
 /**
  * Creates modal overlay
  * @param {Object} params - Parameters for creating overlay
