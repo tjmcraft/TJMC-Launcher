@@ -17,7 +17,7 @@ class ModalEx {
         this.root_container = container
         this.overlay = this.createOverlay(this.params?.escButton, this.root_container)
 
-        if (this.params?.escButton ?? true) {
+        if (this.params?.escButton ? this.params?.escButton : true) {
             this.escBinder = new escBinder()
             this.escBinder.bind((e) => { this.destroy(e) })
         }
