@@ -104,10 +104,10 @@ export const slider = (props = {}) => {
     const sliderMeta = calculateRangeSliderMeta(slider);
     
     let popup = new PopupEl({
-            parent: track_grabber,
-            margin: 8,
-            fadeTime: 50
-        });
+        parent: track_grabber,
+        margin: 8,
+        fadeTime: 50
+    });
     track_grabber.addEventListener('mouseenter', show);
     track_grabber.addEventListener('mouseout', hide);
 

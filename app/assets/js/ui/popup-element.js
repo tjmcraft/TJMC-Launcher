@@ -19,8 +19,8 @@ export class PopupEl {
         callback()
     }
 
-    show(callback = () => {}) {
-        let fadeTime = this.options.fadeTime || 150
+    show(callback = () => { }) {
+        //let fadeTime = this.options.fadeTime || 150
         if (!this.popupLayer.qsl(`#${this.popup.id}`)) this.join()
         this.setPopupPos(this.popup, this.options.margin || 10)
         this.popup.style.visibility = 'visible'
@@ -30,7 +30,7 @@ export class PopupEl {
     }
 
     hide(callback = () => {}) {
-        let fadeTime = this.options.fadeTime || 150
+        //let fadeTime = this.options.fadeTime || 150
         this.popup.style.opacity = 0
         this.popup.style.visibility = 'hidden'
         callback()
