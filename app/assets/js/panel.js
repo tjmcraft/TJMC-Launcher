@@ -206,13 +206,13 @@ export function MainContainer(props) {
     const root_container = cE('div', { class: 'container' },
         new Guilds().content,
         cE('div', { id: 'main', class: 'base' },
-            cE('div', { class: 'hidden', id: 'topBar' },
-                cE('div', { id: 'progress-bar' })
-            ),
             cE('div', { class: 'sidebar-main', id: 'main-version-list' },
                 cE('nav', { class: 'localVersions' }, null)
             ),
             cE('div', { class: 'main-content' },
+                cE('div', { class: 'hidden', id: 'topBar' },
+                    cE('div', { id: 'progress-bar' })
+                ),
                 cE('div', { class: 'top' },
                     cE('img', { src: "./assets/images/background.jpg", onerror: "this.src='../app/assets/images/default.png'" }),
                     cE('div', { class: 'top-overlay' },
