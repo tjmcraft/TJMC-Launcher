@@ -3,12 +3,12 @@ import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
 import { getConfig, getInstallations } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
-import { Button, userPanel } from '../panel.js';
+import { Button } from '../panel.js';
 import { processDots, progressBar } from './round-progress-bar.js';
+import { Settings } from '../settings.js';
 
 export var Installations
 export var currentVersion
-
 
 class TopToolbar {
     constructor(title = '', subtitle = '') {
@@ -35,8 +35,8 @@ class TopToolbar {
 }
 
 class TopContainer {
-    constructor() {
-        this.toolbar = new TopToolbar();
+    constructor(toolbar) {
+        this.toolbar = toolbar || new TopToolbar();
         this.create();
     }
     create() {
@@ -54,7 +54,6 @@ class TopContainer {
         return this.root;
     }
 }
-var topContainer = new TopContainer();
 
 class MainBase {
     constructor(sidebar, main_content) {
@@ -70,6 +69,45 @@ class MainBase {
                 cE('div', { class: 'main-content' }, ...this.main_content)
             )
         );
+    }
+    get content() {
+        return this.root;
+    }
+}
+
+class userPanel {
+    constructor(username = '', permission = '') {
+        this.avatar = cE('img');
+        this.username = cE('div', { class: 'title' });
+        this.permission = cE('div', { class: 'subtitle'});
+        this.addVersionButton = cE('div', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
+        this.addVersionButton.tooltip("Добавить версию");
+        this.addVersionButton.onclick = (e) => new VersionChooser();
+        this.settingsButton = cE('div', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
+        this.settingsButton.tooltip("Настройки");
+        this.settingsButton.onclick = (e) => new Settings();
+        this.root;
+        this.create();
+        this.update(username, permission);
+    }
+    create() {
+        this.root = cE('div', { class: 'panel' },
+            cE('div', { class: 'container' },
+                cE('div', { class: 'avatar round' },
+                    this.avatar
+                ),
+                cE('div', { class: 'nameTag' },
+                    this.username, 
+                    this.permission
+                ), 
+                this.addVersionButton, this.settingsButton
+            )
+        );
+    }
+    update(username, permission) {
+        this.username.innerText = username || '';
+        this.permission.innerText = permission || '';
+        this.avatar.src = `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${username}`;
     }
     get content() {
         return this.root;
@@ -110,8 +148,8 @@ class SidebarMain {
             )
         );
         root_item.onclick = (e) => {
-            this.selectVersion(item);
-            if (typeof click === 'function') click.call(this, item, e);
+            this.selectItem(item.hash);
+            if (typeof click === 'function') click.call(this, item.hash, e);
         }
         this.vdom.progress_bars[item.hash] = progress_bar;
         this.vdom.process_dots[item.hash] = process_dots;
@@ -123,6 +161,12 @@ class SidebarMain {
     };
     removeFirstPage() {
         this.root_fp && this.root_fp.remove();
+    };
+    selectItem(version_hash) {
+        let items = this.root_content.qsla('.item');
+        items.forEach(e => {
+            e.classList[e.getAttribute('version-hash') === version_hash ? 'add' : 'remove']('selected')
+        });
     };
     removeItem(item) {
         const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`);
@@ -139,78 +183,70 @@ class SidebarMain {
     processDots() {
         return this.vdom.process_dots;
     }
-    selectVersion(version_hash) {
-        let items = this.root_content.qsla('.item');
-        items.forEach(e => {
-            e.classList[e.getAttribute('version-hash') === version_hash ? 'add' : 'remove']('selected')
-        });
-    };
     removeAll() {
         this.removeFirstPage();
         this.root_content.qsla('.item').forEach(e => e.remove());
     };
 }
 
-export var sidebar_el = new SidebarMain();
-
-export async function refreshVersions() {
-    Installations = await getInstallations();
-    const installations_entries = Object.entries(Installations);
-    sidebar_el.removeAll();
-    if (installations_entries.length > 0) {
-        for (const [hash, params] of installations_entries) {
-            sidebar_el.addItem({
-                hash: hash,
-                ...params
-            }, (item) => {
-                selectVersion(item.hash);
-            });
-        }
-    } else {
-        sidebar_el.createFirstPage();
+export class MainContainer {
+    constructor(props) {
+        const config = props?.config;
+        this.sideBar = new SidebarMain();
+        this.userPanel = new userPanel(config?.auth?.username, config?.auth?.permission);
+        this.topContainer = new TopContainer();
+        this.create();
+        this.refreshVersions();
+    }
+    create() {
+        this.root = new MainBase(
+            [
+                cE('nav', { class: 'localVersions' }, this.sideBar.content()),
+                this.userPanel.content
+            ],
+            [
+                this.topContainer.content
+            ]
+        ).content;
     }
 
-    if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) {
-        renderSelectVersion(localStorage.version_hash)
-    } else if (installations_entries[0] && installations_entries[0][0]) {
-        selectVersion(installations_entries[0][0])
-    } else false
+    async refreshVersions() {
+        Installations = await getInstallations();
+        const installations_entries = Object.entries(Installations);
+        this.sideBar.removeAll();
+        if (installations_entries.length > 0) {
+            for (const [hash, params] of installations_entries) {
+                this.sideBar.addItem({hash: hash, ...params}, item => this.selectVersion(item));
+            }
+        } else { this.sideBar.createFirstPage(); }
+        if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) {
+            this.renderSelectVersion(localStorage.version_hash)
+        } else if (installations_entries[0] && installations_entries[0][0]) {
+            this.selectVersion(installations_entries[0][0])
+        } else false
+    }
+
+    async selectVersion(version_hash) {
+        if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
+        currentVersion = version_hash; localStorage.version_hash = version_hash; this.renderSelectVersion(version_hash);
+    } 
+
+    async renderSelectVersion(version_hash) {
+        if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
+        const version = await getInstallation(version_hash);
+        this.sideBar.selectItem(version_hash); this.topContainer.toolbar.update(version.name || version.hash, version.type);
+    }
+
+    get content() {
+        return this.root;
+    }
 }
 
-export function selectVersion(version_hash) {
-    if (!version_hash) return false;
-    localStorage.version_hash = version_hash;
-    renderSelectVersion(version_hash);
-}
 
-async function renderSelectVersion(version_hash = null) {
-    if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
-    currentVersion = version_hash;
-    const version = await getInstallation(version_hash);
-    sidebar_el.selectVersion(version_hash);
-    topContainer.toolbar.update(version.name || version.hash, version.type);
-}
+
+/* ================================================================= */
 
 async function getInstallation(version_hash) {
-    if (Installations && Object(Installations).hasOwnProperty(version_hash)) {
-        return {
-            hash: version_hash,
-            ...Installations[version_hash]
-        } || null;
-    }
-}
-
-export async function MainContainer(props) {
-    const config = await getConfig();
-    const user_panel = new userPanel(config.auth);
-    const root = new MainBase(
-        [
-            cE('nav', { class: 'localVersions' }, sidebar_el.content()),
-            user_panel
-        ], 
-        [
-            topContainer.root
-        ]
-    )
-    return root;
+    if (Installations && Object(Installations).hasOwnProperty(version_hash)) 
+        return { hash: version_hash, ...Installations[version_hash] } || null;
 }
