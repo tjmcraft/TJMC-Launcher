@@ -1,37 +1,7 @@
 import { VersionChooser } from './versionChooser.js';
 import { Settings } from './settings.js';
 import { SVG } from './scripts/svg.js';
-/**
- * This function creates a user panel, with the given props
- * @param {Object} props - Properties to create user panel
- * @param {String} props.username - Name of the user
- * @param {String} props.permission - Permission of the user
- * @returns 
- */
-export function userPanel(props = null) {
-    this.username = props?.username || '';
-    this.permission = props?.permission || '';
-    const add_version_button = cE('div', { class: 'button', id: 'add-version-button' }, SVG('add-plus'));
-    add_version_button.onclick = (e) => { new VersionChooser() }
-    add_version_button.tooltip('Добавить версию')
-    const settings_button = cE('div', { class: 'button', id: 'settings-button' }, SVG('settings-gear'));
-    settings_button.tooltip('Настройки')
-    settings_button.onclick = (e) => { new Settings() }
-    const root_panel = cE('div', { class: 'panel' },
-        cE('div', { class: 'container' },
-            cE('div', { class: 'avatar round' },
-                cE('img', { src: `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${this.username}` })
-            ),
-            cE('div', { class: 'nameTag' },
-                cE('div', { class: 'title' }, this.username),
-                cE('div', { class: 'subtitle' }, this.permission)
-            ),
-            add_version_button,
-            settings_button
-        )
-    )
-    return root_panel;
-}
+
 
 export class versionsSidebar {
     root_sidebar;
