@@ -1,11 +1,10 @@
-
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
 import { getConfig, getInstallations } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
 import { Button, userPanel } from '../panel.js';
-import { progressBar } from './round-progress-bar.js';
+import { processDots, progressBar } from './round-progress-bar.js';
 
 export var Installations
 export var currentVersion
@@ -61,7 +60,10 @@ class SidebarMain {
     root_scroller;
     root_content;
     root_fp;
-    vdom_progress_bars = [];
+    vdom = {
+        progress_bars: [],
+        process_dots: [],
+    };
     constructor(props) {
         this.base();
     };
@@ -77,9 +79,16 @@ class SidebarMain {
         this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] }, this.root_content);
         return this.root_scroller;
     };
-    addItem(item, click = () => { }) {
-        const progress_bar = new progressBar(0);
-        const root_item = cE('div', { class: 'item navItem', 'version-hash': item.hash }, cE('span', null, item.name || item.hash), progress_bar.content);
+    addItem(item, click = () => {}) {
+        const progress_bar = new progressBar();
+        const process_dots = new processDots();
+        const root_item = cE('div', { class: 'item navItem', 'version-hash': item.hash },
+            cE('span', null, item.name || item.hash),
+            cE('div', { class: 'status-container' },
+                process_dots.content,
+                progress_bar.content
+            )
+        );
         //let p = 0;
         //setInterval(() => { p++; progress_bar.setPrecentage(p); }, 500);
         //console.debug(item);
@@ -87,7 +96,8 @@ class SidebarMain {
             this.selectVersion(item);
             if (typeof click === 'function') click.call(this, item, e);
         }
-        this.vdom_progress_bars[item.hash] = progress_bar;
+        this.vdom.progress_bars[item.hash] = progress_bar;
+        this.vdom.process_dots[item.hash] = process_dots;
         this.root_content.appendChild(root_item);
     };
     createFirstPage() {
@@ -100,14 +110,18 @@ class SidebarMain {
     removeItem(item) {
         const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`);
         this.root_content.removeChild(selected_item);
-        delete this.vdom_progress_bars[version_hash];
+        delete this.vdom.progress_bars[version_hash];
+        delete this.vdom.process_dots[version_hash];
     };
     content(def = false) {
         return !def && this.root_scroller ? this.root_scroller : this.base();
     };
     progressBars() {
-        return this.vdom_progress_bars;
+        return this.vdom.progress_bars;
     };
+    processDots() {
+        return this.vdom.process_dots;
+    }
     selectVersion(version_hash) {
         let items = this.root_content.qsla('.item');
         items.forEach(e => {
@@ -176,8 +190,7 @@ export async function MainContainer(props) {
         [
             cE('nav', { class: 'localVersions' }, sidebar_el.content()),
             user_panel
-        ],
-        [
+        ], [
             cE('div', { class: 'hidden', id: 'topBar' },
                 cE('div', { id: 'progress-bar' })
             ),
@@ -206,4 +219,3 @@ class MainBase {
         return this.root;
     }
 }
-
