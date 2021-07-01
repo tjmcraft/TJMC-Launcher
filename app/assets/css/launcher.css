@@ -125,6 +125,8 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --text-positive: #4fdc7b;
     --background-accent: #4f545c;
     --background-accent-alt: rgba(255, 255, 255, 0.35);
+    --scrollbar-auto-thumb: #202225;
+    --scrollbar-auto-track: transparent;
     --scrollbar-thin-thumb: #232323;
     --scrollbar-thin-track: transparent;
     --brand-color: #5865f2;
@@ -155,8 +157,10 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     --text-positive: #4fdc7b;
     --background-accent:#747f8d;
     --background-accent-alt: rgba(255, 255, 255, 0.35);
-    --scrollbar-thin-thumb:rgba(79,84,92,0.3);
-    --scrollbar-thin-track:transparent;
+    --scrollbar-auto-thumb:#ccc;
+    --scrollbar-auto-track:#f2f2f2;
+    --scrollbar-thin-thumb: rgba(79,84,92,0.3);
+    --scrollbar-thin-track: transparent;
     --brand-color: #5865f2;
     --brand-color-1: #4752c4;
     --brand-color-2: #3639b3;
@@ -680,49 +684,6 @@ a, abbr, acronym, address, applet, big, blockquote, body, caption, cite, code, d
     padding: 10px;
 }
 
-/* ==== thin scrollbar ==== */
-.auto-s *::-webkit-scrollbar {
-    width: 8px;
-    background: transparent;
-}
-.auto-s *::-webkit-scrollbar-thumb, .auto-s *::-webkit-scrollbar-track-piece {
-    background-clip: padding-box;
-    border: 1px solid transparent;
-    border-radius: 8px;
-}
-.auto-s *::-webkit-scrollbar-thumb {
-    background-color: #202225;
-}
-.auto-s *::-webkit-scrollbar-track-piece {
-    background-color: transparent;
-}
-.auto-s *::-webkit-scrollbar-corner { 
-    background: transparent;
-}
-/* ======================== */
-
-/* ==== thin scrollbar ==== */
-.thin-s::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-.thin-s::-webkit-scrollbar-corner {
-    background: transparent;
-}
-.thin-s::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thin-thumb);
-    background-clip: padding-box;
-    border: 2px solid transparent;
-    border-radius: 4px;
-    min-height: 40px;
-}
-.thin-s::-webkit-scrollbar-track {
-    border-color: var(--scrollbar-thin-track);
-    background-color: var(--scrollbar-thin-track);
-    border: 2px solid var(--scrollbar-thin-track);
-}
-/* ======================== */
-
 input, select {
     border: 1px solid gray;
     border-width: 0px 0px 1px 0px;
@@ -956,12 +917,12 @@ p {
     overflow: hidden overlay;
 }
 
-.content-region .content::-webkit-scrollbar-thumb {
+/*.content-region .content::-webkit-scrollbar-thumb {
     background-color: transparent;
-}
-.content-region .content:hover::-webkit-scrollbar-thumb {
+}*/
+/*.content-region .content:hover::-webkit-scrollbar-thumb {
     background-color: rgb(170, 170, 170, 0.7);
-}
+}*/
 
 h2 {
     /* text-transform: uppercase; */
@@ -1244,7 +1205,8 @@ input:checked + .toggleSwitchSlider:before {
     flex: 1;
 }
 .sidebar-main > .localVersions > .scroller {
-    padding-right: 0px;
+    padding-right: 0;
+    padding-top: 4px;
     overflow: hidden scroll;
     background: var(--background-secondary);
 }
@@ -2134,3 +2096,48 @@ a:hover {
 .wrapper {
     margin: 0;
 }
+
+/* ==== auto scrollbar ==== */
+.auto-s::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+    /*background: transparent;*/
+}
+.auto-s::-webkit-scrollbar-corner {
+    background: transparent;
+}
+.auto-s::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-auto-thumb);
+    min-height: 40px;
+}
+.auto-s::-webkit-scrollbar-thumb, .auto-s::-webkit-scrollbar-track {
+    border: 4px solid transparent;
+    background-clip: padding-box;
+    border-radius: 8px;
+}
+.auto-s::-webkit-scrollbar-track {
+    background-color: var(--scrollbar-auto-track);
+}
+/* ======================== */
+
+/* ==== thin scrollbar ==== */
+.thin-s::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+.thin-s::-webkit-scrollbar-corner {
+    background: transparent;
+}
+.thin-s::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thin-thumb);
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    min-height: 40px;
+}
+.thin-s::-webkit-scrollbar-track {
+    border-color: var(--scrollbar-thin-track);
+    background-color: var(--scrollbar-thin-track);
+    border: 2px solid var(--scrollbar-thin-track);
+}
+/* ======================== */
