@@ -1,8 +1,3 @@
-import { VersionChooser } from './versionChooser.js';
-import { Settings } from './settings.js';
-import { SVG } from './scripts/svg.js';
-
-
 export class versionsSidebar {
     root_sidebar;
     root_content;
