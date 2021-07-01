@@ -1,19 +1,31 @@
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
-import { getConfig, getInstallations } from '../scripts/Tools.js';
+import { getConfig, getInstallations, startMinecraft } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
 import { Button } from '../panel.js';
 import { processDots, progressBar } from './round-progress-bar.js';
 import { Settings } from '../settings.js';
 
 export var Installations
-export var currentVersion
+
+export async function getInstallation(version_hash) {
+    if (Installations && Object(Installations).hasOwnProperty(version_hash)) 
+        return { hash: version_hash, ...Installations[version_hash] } || null;
+}
+
+export async function getCurrentVersionHash() {
+    return localStorage.version_hash || null;
+}
+export async function setCurrentVersionHash(version_hash) {
+    return localStorage.version_hash = version_hash || null;
+}
 
 class TopToolbar {
     constructor(title = '', subtitle = '') {
         this.title = cE('h2');
         this.subtitle = cE('h5');
+        this.playButton = Button({ id: 'playButton', 'data-tooltip': 'Играть' }, "Играть");
         this.update(title, subtitle);
         this.create();
     };
@@ -21,8 +33,7 @@ class TopToolbar {
         this.root = cE('div', { class: 'top-toolbar' },
             cE('div', { style: "width: 100%" },
                 this.title, this.subtitle
-            ),
-            Button({ id: 'playButton', 'data-tooltip': 'Играть' }, "Играть")
+            ), this.playButton
         );
     };
     update(title = '', subtitle = '') {
@@ -218,6 +229,7 @@ export class MainContainer {
     };
     async refreshVersions() {
         Installations = await getInstallations();
+        const CurrentVersionHash = await getCurrentVersionHash();
         const installations_entries = Object.entries(Installations);
         this.sideBar.removeAll();
         if (installations_entries.length > 0) {
@@ -225,28 +237,19 @@ export class MainContainer {
                 this.sideBar.addItem({hash: hash, ...params}, item => this.selectVersion(item));
             }
         } else { this.sideBar.createFirstPage(); }
-        if (localStorage.version_hash && Object(Installations).hasOwnProperty(localStorage.version_hash)) {
-            this.renderSelectVersion(localStorage.version_hash)
+        if (CurrentVersionHash && Object(Installations).hasOwnProperty(CurrentVersionHash)) {
+            this.renderSelectVersion(CurrentVersionHash)
         } else if (installations_entries[0] && installations_entries[0][0]) {
             this.selectVersion(installations_entries[0][0])
         } else false
     };
     async selectVersion(version_hash) {
         if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
-        currentVersion = version_hash; localStorage.version_hash = version_hash; this.renderSelectVersion(version_hash);
+        setCurrentVersionHash(version_hash); this.renderSelectVersion(version_hash);
     };
     async renderSelectVersion(version_hash) {
         if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
         const version = await getInstallation(version_hash);
         this.sideBar.selectItem(version_hash); this.topContainer.toolbar.update(version.name || version.hash, version.type);
     };
-}
-
-
-
-/* ================================================================= */
-
-async function getInstallation(version_hash) {
-    if (Installations && Object(Installations).hasOwnProperty(version_hash)) 
-        return { hash: version_hash, ...Installations[version_hash] } || null;
 }
