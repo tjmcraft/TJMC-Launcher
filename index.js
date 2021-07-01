@@ -250,16 +250,16 @@ async function launchMinecraft(version_hash = null, params = null) {
         })
         vm.on('close', (code) => {
             if (code != 0) {
-                win?.webContents.send('startup-error', logg_out);
-                if (socket_connector) socket_connector.send('startup-error', logg_out);
+                win?.webContents.send('startup-error', {error: logg_out, version_hash: version_hash});
+                if (socket_connector) socket_connector.send('startup-error', {error: logg_out, version_hash: version_hash});
             }
         })
-        win?.webContents.send('startup-success', version_hash);
-        if (socket_connector) socket_connector.send('startup-success', version_hash);
+        win?.webContents.send('startup-success', {version_hash: version_hash});
+        if (socket_connector) socket_connector.send('startup-success', {version_hash: version_hash});
         return true;
     } catch (error) {
-        win?.webContents.send('error', error.message);
-        if (socket_connector) socket_connector.send('error', error.message);
+        win?.webContents.send('error', {error: error.message, version_hash: version_hash});
+        if (socket_connector) socket_connector.send('error', {error: error.message, version_hash: version_hash});
     }
     return false;
 }
