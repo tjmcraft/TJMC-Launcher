@@ -127,7 +127,7 @@ class Minecraft {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path)) {
+                if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
                     (promise_counter <= 0) && logg.debug(`Downloading natives...`); promise_counter++;
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
                 }
@@ -181,7 +181,7 @@ class Minecraft {
             const subhash = hash.substring(0, 2)
             const subAsset = path.join(assetDirectory, 'objects', subhash)
             assets_pathes.push(path.join(subAsset, hash))
-            if (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash))) {
+            if (!fs.existsSync(path.join(subAsset, hash)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash)))) {
                 (promise_counter <= 0) && logg.debug(`Downloading assets...`); promise_counter++;
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
