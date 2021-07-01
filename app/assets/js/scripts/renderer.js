@@ -12,21 +12,12 @@ main_layer.join();
 const plb = qsl('#playButton');
 plb.addEventListener('click', (e) => startMine(currentVersion));
 
-
-
-//const progressBars = sidebar_el.progressBars();
-//const processDots = sidebar_el.processDots();
+const progressBars = mainContainer.sideBar.progressBars();
+const processDots = mainContainer.sideBar.processDots();
 
 console.debug('Renderer init')
 
 VIEWS.landing = main_layer.content
-
-/**
- * Creates new settings layer
- */
-function openSettings() {
-    new Settings()
-}
 
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
@@ -34,11 +25,10 @@ async function startMine(version_hash = null) {
     startMinecraft(version_hash);
 }
 
-window.onload = async function(e) {
-    switchView(VIEWS.landing, 100, 100);
-    const reg_ev = await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents());
+window.onload = async (e) => {
     const preloader = qsl('#preloader');
-    if (reg_ev)
+    switchView(VIEWS.landing, 100, 100);
+    if (await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents()))
         setTimeout(() => {
             preloader.fadeOut(500, () => {
                 preloader.remove();
@@ -50,7 +40,7 @@ window.onload = async function(e) {
 //refreshVersions();
 
 async function registerElectronEvents() {
-    electron.on('open-settings', (e) => openSettings());
+    electron.on('open-settings', (e) => new Settings());
     electron.on('startup-success', (e, version_hash) => {
         progressBars[version_hash].hide();
         setTimeout(() => processDots[version_hash].hide(), 1000);
