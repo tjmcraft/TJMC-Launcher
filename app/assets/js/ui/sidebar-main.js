@@ -56,6 +56,26 @@ class TopContainer {
 }
 var topContainer = new TopContainer();
 
+class MainBase {
+    constructor(sidebar, main_content) {
+        this.sidebar = sidebar;
+        this.main_content = main_content;
+        this.create();
+    }
+    create() {
+        this.root = cE('div', { class: 'container' },
+            new Guilds().content,
+            cE('div', { id: 'main', class: 'base' },
+                cE('div', { class: 'sidebar-main' }, ...this.sidebar),
+                cE('div', { class: 'main-content' }, ...this.main_content)
+            )
+        );
+    }
+    get content() {
+        return this.root;
+    }
+}
+
 class SidebarMain {
     root_scroller;
     root_content;
@@ -89,9 +109,6 @@ class SidebarMain {
                 progress_bar.content
             )
         );
-        //let p = 0;
-        //setInterval(() => { p++; progress_bar.setPrecentage(p); }, 500);
-        //console.debug(item);
         root_item.onclick = (e) => {
             this.selectVersion(item);
             if (typeof click === 'function') click.call(this, item, e);
@@ -133,6 +150,8 @@ class SidebarMain {
         this.root_content.qsla('.item').forEach(e => e.remove());
     };
 }
+
+export var sidebar_el = new SidebarMain();
 
 export async function refreshVersions() {
     Installations = await getInstallations();
@@ -181,8 +200,6 @@ async function getInstallation(version_hash) {
     }
 }
 
-export var sidebar_el = new SidebarMain();
-
 export async function MainContainer(props) {
     const config = await getConfig();
     const user_panel = new userPanel(config.auth);
@@ -191,31 +208,11 @@ export async function MainContainer(props) {
             cE('nav', { class: 'localVersions' }, sidebar_el.content()),
             user_panel
         ], [
-            cE('div', { class: 'hidden', id: 'topBar' },
+            /*cE('div', { class: 'hidden', id: 'topBar' },
                 cE('div', { id: 'progress-bar' })
-            ),
+            ),*/
             topContainer.root
         ]
     )
     return root;
-}
-
-class MainBase {
-    constructor(sidebar, main_content) {
-        this.sidebar = sidebar;
-        this.main_content = main_content;
-        this.create();
-    }
-    create() {
-        this.root = cE('div', { class: 'container' },
-            new Guilds().content,
-            cE('div', { id: 'main', class: 'base' },
-                cE('div', { class: 'sidebar-main' }, ...this.sidebar),
-                cE('div', { class: 'main-content' }, ...this.main_content)
-            )
-        );
-    }
-    get content() {
-        return this.root;
-    }
 }
