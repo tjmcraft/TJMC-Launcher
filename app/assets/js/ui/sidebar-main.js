@@ -207,10 +207,8 @@ export async function MainContainer(props) {
         [
             cE('nav', { class: 'localVersions' }, sidebar_el.content()),
             user_panel
-        ], [
-            /*cE('div', { class: 'hidden', id: 'topBar' },
-                cE('div', { id: 'progress-bar' })
-            ),*/
+        ], 
+        [
             topContainer.root
         ]
     )
