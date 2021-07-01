@@ -191,11 +191,11 @@ class SidebarMain {
 
 export class MainContainer {
     constructor(props) {
-        const config = props?.config;
         this.sideBar = new SidebarMain();
-        this.userPanel = new userPanel(config?.auth?.username, config?.auth?.permission);
+        this.userPanel = new userPanel();
         this.topContainer = new TopContainer();
         this.create();
+        this.refreshUserPanel();
         this.refreshVersions();
     };
     create() {
@@ -211,6 +211,10 @@ export class MainContainer {
     };
     get content() {
         return this.root;
+    };
+    async refreshUserPanel() {
+        const config = await getConfig();
+        this.userPanel.update(config?.auth?.username, config?.auth?.permission);
     };
     async refreshVersions() {
         Installations = await getInstallations();
