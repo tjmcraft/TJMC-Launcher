@@ -17,11 +17,11 @@ export class Layer {
      * @param {String} options.label - Label of layer
      * @param {Number} options.fadeTime - Time to switch between layers
      */
-    constructor(options = {}) {
+    constructor(options = {}, content) {
         this.options = options
         this.label = this.options.label || `layer-${randomString(5)}`
         this.appLayers = qsl('.app-layers')
-        this.layer = cE('div', {class: 'layer'})
+        this.layer = cE('div', {class: 'layer'}, content)
         this.layer.setAttribute('aria-label', `${this.label}`)
         if (qsl(`[aria-label=${this.label}]`)) throw new Error('Layer is already exist!')
     }
