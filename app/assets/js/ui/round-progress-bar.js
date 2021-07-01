@@ -1,4 +1,3 @@
-
 import { SVG } from '../scripts/svg.js';
 
 export class progressBar {
@@ -21,6 +20,23 @@ export class progressBar {
             var pct = ((100 - val) / 100) * c;
             circle.style.strokeDashoffset = pct;
         }
+    }
+    hide() {
+        this.root.toggle(false);
+    }
+    show() {
+        this.root.toggle(true);
+    }
+    get content() {
+        return this.root;
+    }
+}
+
+export class processDots {
+    constructor() {
+        this.process_dots = cE('div', { class: 'dot-bricks' })
+        this.root = cE('div', { class: 'process-container' }, this.process_dots);
+        this.hide();
     }
     hide() {
         this.root.toggle(false);
