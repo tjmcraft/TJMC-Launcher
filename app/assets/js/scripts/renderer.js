@@ -97,7 +97,7 @@ function registerWSEvents(attempt = 0) {
         ws.onopen = function (event) {
             ws.onmessage = function (event) {
                 let msg = JSON.parse(event.data);
-                console.debug(msg);
+                //console.debug(msg);
                 parseEvent(msg);
             }
             return resolve(true);
@@ -114,7 +114,7 @@ function registerWSEvents(attempt = 0) {
                     });
                     break;
                 case 'error':
-                    console.error(error);
+                    console.error(event.data);
                     modal.alert('Ошибка', event.data, 'error', {
                         logType: true
                     });
