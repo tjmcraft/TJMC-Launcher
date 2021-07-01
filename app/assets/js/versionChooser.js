@@ -131,7 +131,7 @@ export class VersionChooser {
         accept_button.onclick = () => {
             this.addVersion(props.version.id, version_opts).then(version_hash => {
                 //console.log(version_hash)
-                mainContainer.refreshVersions().then(version_hash => {
+                mainContainer.refreshVersions().then(() => {
                     mainContainer.selectVersion(version_hash);
                     this.alertex.destroy();
                 })
