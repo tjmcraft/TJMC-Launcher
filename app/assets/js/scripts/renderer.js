@@ -37,7 +37,10 @@ function openSettings() {
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
     processDots[version_hash].show();
-    await startMinecraft(version_hash) && processDots[version_hash].hide() && progressBars[version_hash].hide();
+    if (await startMinecraft(version_hash)) {
+        progressBars[version_hash].hide();
+        setTimeout(() => processDots[version_hash].hide(), 1000);
+    }
 }
 
 window.onload = async function(e) {
