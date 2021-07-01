@@ -10,15 +10,8 @@ const main_layer = new Layer({ label: 'main-layer' });
 MainContainer().then(elem => {
     main_layer.append(elem.content);
     main_layer.join();
-
-    /* --------------------------------- */
-    const plb = qsl('#playButton')
-        /*const topBar = qsl('#topBar')*/
-        /*const progressBar = qsl('#progress-bar')*/
-        /* ================================= */
-
+    const plb = qsl('#playButton');
     plb.addEventListener('click', (e) => startMine(currentVersion));
-    /*progressBar.setValue = (v) => progressBar.style.width = v + "%";*/
 })
 const progressBars = sidebar_el.progressBars();
 const processDots = sidebar_el.processDots();
