@@ -1,26 +1,28 @@
+
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
-import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
-import { getConfig, getInstallations, startMinecraft } from './Tools.js';
-import { currentVersion, MainContainer } from '../ui/sidebar-main.js';
+import { VIEWS, switchView } from './LayerSwitcher.js';
+import { startMinecraft } from './Tools.js';
+import { getCurrentVersionHash, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
+
 /* ================================= */
+
 const main_layer = new Layer({ label: 'main-layer' });
 export const mainContainer = new MainContainer();
 main_layer.append(mainContainer.content);
 main_layer.join();
-const plb = qsl('#playButton');
-plb.addEventListener('click', (e) => startMine(currentVersion));
 
 const progressBars = mainContainer.sideBar.progressBars();
 const processDots = mainContainer.sideBar.processDots();
+const playButton = mainContainer.topContainer.toolbar.playButton;
 
 console.debug('Renderer init')
 
 VIEWS.landing = main_layer.content
 
-async function startMine(version_hash = null) {
-    console.log(`Starting minecraft with hash: ${version_hash}`);
+playButton.onclick = async (e) => {
+    const version_hash = await getCurrentVersionHash();
     processDots[version_hash].show();
     startMinecraft(version_hash);
 }
