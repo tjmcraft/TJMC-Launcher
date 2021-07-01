@@ -6,13 +6,12 @@ import { currentVersion, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 /* ================================= */
 const main_layer = new Layer({ label: 'main-layer' });
-getConfig().then(config => {
-    const main_ = new MainContainer({config});
-    main_layer.append(main_.content);
-    main_layer.join();
-    const plb = qsl('#playButton');
-    plb.addEventListener('click', (e) => startMine(currentVersion));
-})
+const mainContainer = new MainContainer();
+main_layer.append(mainContainer.content);
+main_layer.join();
+const plb = qsl('#playButton');
+plb.addEventListener('click', (e) => startMine(currentVersion));
+
 
 
 //const progressBars = sidebar_el.progressBars();
