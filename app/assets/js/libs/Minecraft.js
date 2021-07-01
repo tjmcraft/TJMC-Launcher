@@ -99,7 +99,6 @@ class Minecraft {
         let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         logg.debug(`Set natives directory to ${nativeDirectory}`)
-        let stat;
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
             const natives = async () => {
@@ -116,7 +115,7 @@ class Minecraft {
                 }))
                 return natives
             }
-            stat = await natives()
+            const stat = await natives()
             this.client.emit('progress', {
                 type: 'natives',
                 task: 0,
@@ -128,7 +127,7 @@ class Minecraft {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
+                if (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path)) {
                     (promise_counter <= 0) && logg.debug(`Downloading natives...`); promise_counter++;
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
                 }
@@ -145,14 +144,14 @@ class Minecraft {
                 })
             }))
             logg.debug(`Downloaded and extracted natives! ${stat.length}`)
+            count = 0
+            this.client.emit('progress', {
+                type: 'natives',
+                task: count,
+                total: stat.length,
+                version_hash: this.options.installation.hash
+            })
         }
-        count = 0
-        this.client.emit('progress', {
-            type: 'natives',
-            task: count,
-            total: stat.length,
-            version_hash: this.options.installation.hash
-        })
         logg.debug(`Natives Collected!`)
         return nativeDirectory
     }
@@ -182,7 +181,7 @@ class Minecraft {
             const subhash = hash.substring(0, 2)
             const subAsset = path.join(assetDirectory, 'objects', subhash)
             assets_pathes.push(path.join(subAsset, hash))
-            if (!fs.existsSync(path.join(subAsset, hash)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash)))) {
+            if (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash))) {
                 (promise_counter <= 0) && logg.debug(`Downloading assets...`); promise_counter++;
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
