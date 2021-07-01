@@ -86,7 +86,7 @@ export async function createInstallation(version, options) {
 export async function startMinecraft(version_hash, params = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
     if (window.__STANDALONE__ && electron) {
-        await electron.invoke('launch-mine', version_hash);
+        return await electron.invoke('launch-mine', version_hash);
     } else {
         return await postData('http://localhost:5248/launch-mine', { version_hash, params });
     }
