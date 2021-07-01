@@ -16,7 +16,7 @@ class TopToolbar {
         this.subtitle = cE('h5');
         this.update(title, subtitle);
         this.create();
-    }
+    };
     create() {
         this.root = cE('div', { class: 'top-toolbar' },
             cE('div', { style: "width: 100%" },
@@ -24,21 +24,21 @@ class TopToolbar {
             ),
             Button({ id: 'playButton', 'data-tooltip': 'Играть' }, "Играть")
         );
-    }
+    };
     update(title = '', subtitle = '') {
         this.title.innerText = title || 'Федя лох';
         this.subtitle.innerText = subtitle || 'Просто конченый полупидор';
-    }
+    };
     get content() {
         return this.root;
-    }
+    };
 }
 
 class TopContainer {
-    constructor(toolbar) {
-        this.toolbar = toolbar || new TopToolbar();
+    constructor(props) {
+        this.toolbar = new TopToolbar();
         this.create();
-    }
+    };
     create() {
         this.root = cE('div', { class: 'top' },
             cE('img', {
@@ -49,10 +49,10 @@ class TopContainer {
                 this.toolbar.content
             )
         );
-    }
+    };
     get content() {
         return this.root;
-    }
+    };
 }
 
 class MainBase {
@@ -60,7 +60,7 @@ class MainBase {
         this.sidebar = sidebar;
         this.main_content = main_content;
         this.create();
-    }
+    };
     create() {
         this.root = cE('div', { class: 'container' },
             new Guilds().content,
@@ -69,10 +69,10 @@ class MainBase {
                 cE('div', { class: 'main-content' }, ...this.main_content)
             )
         );
-    }
+    };
     get content() {
         return this.root;
-    }
+    };
 }
 
 class userPanel {
@@ -89,7 +89,7 @@ class userPanel {
         this.root;
         this.create();
         this.update(username, permission);
-    }
+    };
     create() {
         this.root = cE('div', { class: 'panel' },
             cE('div', { class: 'container' },
@@ -103,15 +103,15 @@ class userPanel {
                 this.addVersionButton, this.settingsButton
             )
         );
-    }
+    };
     update(username, permission) {
         this.username.innerText = username || '';
         this.permission.innerText = permission || '';
         this.avatar.src = `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${username}`;
-    }
+    };
     get content() {
         return this.root;
-    }
+    };
 }
 
 class SidebarMain {
@@ -197,7 +197,7 @@ export class MainContainer {
         this.topContainer = new TopContainer();
         this.create();
         this.refreshVersions();
-    }
+    };
     create() {
         this.root = new MainBase(
             [
@@ -208,8 +208,10 @@ export class MainContainer {
                 this.topContainer.content
             ]
         ).content;
-    }
-
+    };
+    get content() {
+        return this.root;
+    };
     async refreshVersions() {
         Installations = await getInstallations();
         const installations_entries = Object.entries(Installations);
@@ -224,22 +226,16 @@ export class MainContainer {
         } else if (installations_entries[0] && installations_entries[0][0]) {
             this.selectVersion(installations_entries[0][0])
         } else false
-    }
-
+    };
     async selectVersion(version_hash) {
         if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
         currentVersion = version_hash; localStorage.version_hash = version_hash; this.renderSelectVersion(version_hash);
-    } 
-
+    };
     async renderSelectVersion(version_hash) {
         if (!version_hash || version_hash == null || typeof version_hash !== 'string') return false;
         const version = await getInstallation(version_hash);
         this.sideBar.selectItem(version_hash); this.topContainer.toolbar.update(version.name || version.hash, version.type);
-    }
-
-    get content() {
-        return this.root;
-    }
+    };
 }
 
 
