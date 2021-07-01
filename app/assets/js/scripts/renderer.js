@@ -41,17 +41,19 @@ window.onload = async (e) => {
 
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => new Settings());
-    electron.on('startup-success', (e, version_hash) => {
-        progressBars[version_hash].hide();
-        setTimeout(() => processDots[version_hash].hide(), 1000);
+    electron.on('startup-success', (e, data) => {
+        progressBars[data.version_hash].hide();
+        setTimeout(() => processDots[data.version_hash].hide(), 1000);
     });
-    electron.on('startup-error', (e, error) => {
-        console.warn(error)
-        modal.alert('Что-то пошло не так...', error, 'error', { logType: true });
+    electron.on('startup-error', (e, data) => {
+        console.warn(data.error);
+        processDots[data.version_hash].hide();
+        modal.alert('Что-то пошло не так...', data.error, 'error', { logType: true });
     });
-    electron.on('error', (e, error) => {
-        console.error(error);
-        modal.alert('Ошибочка...', error, 'error', { logType: true });
+    electron.on('error', (e, data) => {
+        console.error(data.error);
+        processDots[data.version_hash].hide();
+        modal.alert('Ошибочка...', data.error, 'error', { logType: true });
     });
     electron.on('progress', (e, data) => {
         //console.debug(data);
@@ -100,16 +102,18 @@ async function registerWSEvents(attempt = 0) {
     const parseEvent = (event) => {
         switch (event.type) {
             case 'startup-success':
-                progressBars[event.data].hide();
-                setTimeout(() => processDots[event.data].hide(), 1000);
+                progressBars[event.data.version_hash].hide();
+                setTimeout(() => processDots[event.data.version_hash].hide(), 1000);
                 break;
             case 'startup-error':
-                console.warn(event.data)
-                modal.alert('Что-то пошло не так...', event.data, 'error', { logType: true });
+                console.warn(event.data.error);
+                processDots[data.version_hash].hide();
+                modal.alert('Что-то пошло не так...', event.data.error, 'error', { logType: true });
                 break;
             case 'error':
-                console.error(event.data);
-                modal.alert('Ошибочка...', event.data, 'error', { logType: true });
+                console.error(event.data.error);
+                processDots[data.version_hash].hide();
+                modal.alert('Ошибочка...', event.data.error, 'error', { logType: true });
                 break;
             case 'progress':
                 const version_hash = event.data.version_hash;
