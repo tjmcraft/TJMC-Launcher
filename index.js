@@ -264,11 +264,13 @@ async function launchMinecraft(version_hash = null, params = null) {
     return false;
 }
 
+ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args))
+
 function progress(e) {
     const progress = (e.task / e.total);
     //logger.debug(`Version hash: ${e.version_hash}`)
     //logger.debug(`Progress ${progress}`)
-    win?.setProgressBar(progress);
+    //win?.setProgressBar(progress);
     win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
@@ -278,7 +280,7 @@ function download_progress(e) {
     //logger.debug(`Version hash: ${e.version_hash}`)
     if (e.type != 'version-jar') return;
     //logger.debug(`Progress ${progress}`)
-    win?.setProgressBar(progress);
+    //win?.setProgressBar(progress);
     win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }

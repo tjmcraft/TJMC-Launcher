@@ -2,7 +2,7 @@
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { VIEWS, switchView } from './LayerSwitcher.js';
-import { startMinecraft } from './Tools.js';
+import { setProgressBar, startMinecraft } from './Tools.js';
 import { getCurrentVersionHash, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 
@@ -28,6 +28,7 @@ playButton.onclick = async (e) => {
 }
 
 window.onload = async (e) => {
+    setProgressBar(-1);
     const preloader = qsl('#preloader');
     switchView(VIEWS.landing, 100, 100);
     if (await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents()))
@@ -42,16 +43,19 @@ window.onload = async (e) => {
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => new Settings());
     electron.on('startup-success', (e, data) => {
+        setProgressBar(-1);
         progressBars[data.version_hash].hide();
         setTimeout(() => processDots[data.version_hash].hide(), 1000);
     });
     electron.on('startup-error', (e, data) => {
         console.warn(data.error);
+        setProgressBar(-1);
         processDots[data.version_hash].hide();
         modal.alert('Что-то пошло не так...', data.error, 'error', { logType: true });
     });
     electron.on('error', (e, data) => {
         console.error(data.error);
+        setProgressBar(-1);
         processDots[data.version_hash].hide();
         modal.alert('Ошибочка...', data.error, 'error', { logType: true });
     });
@@ -67,6 +71,7 @@ async function registerElectronEvents() {
             processDots[version_hash].show();
         }
         progressBars[data.version_hash].setPrecentage(data.progress * 100);
+        setProgressBar(data.progress);
     });
     return true;
 }

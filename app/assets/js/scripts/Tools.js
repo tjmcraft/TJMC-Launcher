@@ -91,3 +91,10 @@ export async function startMinecraft(version_hash, params = null) {
         return await postData('http://localhost:5248/launch-mine', { version_hash, params });
     }
 }
+export async function setProgressBar(progress) {
+    if (window.__STANDALONE__ && electron) {
+        return await electron.invoke('set.progress.bar', progress);
+    } else {
+        return ;
+    }
+}
