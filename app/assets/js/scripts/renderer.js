@@ -6,7 +6,7 @@ import { currentVersion, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 /* ================================= */
 const main_layer = new Layer({ label: 'main-layer' });
-const mainContainer = new MainContainer();
+export const mainContainer = new MainContainer();
 main_layer.append(mainContainer.content);
 main_layer.join();
 const plb = qsl('#playButton');
@@ -36,8 +36,6 @@ window.onload = async (e) => {
             })
         }, 1000)
 }
-
-//refreshVersions();
 
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => new Settings());

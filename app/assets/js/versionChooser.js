@@ -2,7 +2,7 @@ import { versionsSidebar, Input, Button } from './panel.js';
 import { DropdownSelector } from './ui/dropdown-selector.js';
 import { modal } from "./scripts/AlertEx.js";
 import { createInstallation, getGlobalVersions } from './scripts/Tools.js';
-import { refreshVersions, selectVersion } from './ui/sidebar-main.js';
+import { mainContainer } from './scripts/renderer.js';
 export class VersionChooser {
     
     constructor() {
@@ -129,12 +129,12 @@ export class VersionChooser {
         cancel_button.onclick = () => this.alertex.destroy()
         const accept_button = cE('button', { class: 'primary-button' }, 'Создать')
         accept_button.onclick = () => {
-            this.addVersion(props.version.id, version_opts).then((version_hash) => {
+            this.addVersion(props.version.id, version_opts).then(version_hash => {
                 //console.log(version_hash)
-                refreshVersions().then(() => {
-                    selectVersion(version_hash);
+                mainContainer.refreshVersions().then(version_hash => {
+                    mainContainer.selectVersion(version_hash);
                     this.alertex.destroy();
-                });
+                })
             });
         };
         const footer = cE('section', { class: 'VT-footer vertical-button-container' },
