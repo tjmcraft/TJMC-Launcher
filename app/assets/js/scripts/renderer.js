@@ -1,4 +1,3 @@
-
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
@@ -13,14 +12,16 @@ MainContainer().then(elem => {
     main_layer.join();
 
     /* --------------------------------- */
-        const plb = qsl('#playButton')
+    const plb = qsl('#playButton')
         /*const topBar = qsl('#topBar')*/
         /*const progressBar = qsl('#progress-bar')*/
-    /* ================================= */
+        /* ================================= */
 
     plb.addEventListener('click', (e) => startMine(currentVersion));
     /*progressBar.setValue = (v) => progressBar.style.width = v + "%";*/
 })
+const progressBars = sidebar_el.progressBars();
+const processDots = sidebar_el.processDots();
 
 console.debug('Renderer init')
 
@@ -35,7 +36,7 @@ function openSettings() {
 
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
-    
+
     await startMinecraft(version_hash);
     topBar.toggle(false);
 }
@@ -66,9 +67,15 @@ async function registerElectronEvents() {
     });
     electron.on('progress', (e, data) => {
         //console.debug(data);
-        const progressBars = sidebar_el.progressBars();
-        if (data.progress > 0) progressBars[data.version_hash].show()
-        if (data.progress <= 0) progressBars[data.version_hash].hide()
+        const version_hash = data.version_hash;
+        if (data.progress > 0) {
+            processDots[version_hash].hide();
+            progressBars[version_hash].show();
+        }
+        if (data.progress <= 0) {
+            progressBars[version_hash].hide();
+            processDots[version_hash].show();
+        }
         progressBars[data.version_hash].setPrecentage(data.progress * 100);
     });
     return true;
@@ -79,14 +86,12 @@ function registerWSEvents(attempt = 0) {
         attempt++;
         if (attempt >= 3) {
             modal.alert("Ошибочка получается...", "Не возможно присоединиться к сокет-серверу вашего лаунчера!\n Возможно он не установлен или банально не запущен.\n Устраните неполадки и попробуйте снова!", null, {
-                buttons: [
-                    {
-                        name: "Окей",
-                        class: ['filled', 'colorBrand'],
-                        closeOverlay: false,
-                        callback: () => location.reload()
-                    }
-                ],
+                buttons: [{
+                    name: "Окей",
+                    class: ['filled', 'colorBrand'],
+                    closeOverlay: false,
+                    callback: () => location.reload()
+                }],
                 escButton: false,
                 allowOutsideClick: false
             });
@@ -94,15 +99,15 @@ function registerWSEvents(attempt = 0) {
         }
         const reconnect_timeout = 1;
         let ws = new WebSocket("ws://localhost:4836");
-        ws.onopen = function (event) {
-            ws.onmessage = function (event) {
+        ws.onopen = function(event) {
+            ws.onmessage = function(event) {
                 let msg = JSON.parse(event.data);
                 //console.debug(msg);
                 parseEvent(msg);
             }
             return resolve(true);
         };
-        ws.onclose = function (e) {
+        ws.onclose = function(e) {
             console.warn(`Socket is closed. Reconnect will be attempted in ${reconnect_timeout} second.`, e.reason);
             setTimeout(registerWSEvents(attempt), reconnect_timeout * 1000);
         };
@@ -120,10 +125,16 @@ function registerWSEvents(attempt = 0) {
                     });
                     break;
                 case 'progress':
-                    const progressBars = sidebar_el.progressBars();
-                    if (event.data.progress > 0) progressBars[event.data.version_hash].show()
-                    if (event.data.progress <= 0) progressBars[event.data.version_hash].hide()
-                    progressBars[event.data.version_hash].setPrecentage(event.data.progress * 100);
+                    const version_hash = event.data.version_hash;
+                    if (event.data.progress > 0) {
+                        processDots[version_hash].hide();
+                        progressBars[version_hash].show();
+                    }
+                    if (event.data.progress <= 0) {
+                        progressBars[version_hash].hide();
+                        processDots[version_hash].show();
+                    }
+                    progressBars[version_hash].setPrecentage(event.data.progress * 100);
                     break;
                 default:
                     break;
