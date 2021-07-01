@@ -2,19 +2,21 @@ import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { currentView, VIEWS, switchView } from './LayerSwitcher.js';
 import { getConfig, getInstallations, startMinecraft } from './Tools.js';
-import { currentVersion, refreshVersions, MainContainer, sidebar_el } from '../ui/sidebar-main.js';
+import { currentVersion, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 /* ================================= */
-
 const main_layer = new Layer({ label: 'main-layer' });
-MainContainer().then(elem => {
-    main_layer.append(elem.content);
+getConfig().then(config => {
+    const main_ = new MainContainer({config});
+    main_layer.append(main_.content);
     main_layer.join();
     const plb = qsl('#playButton');
     plb.addEventListener('click', (e) => startMine(currentVersion));
 })
-const progressBars = sidebar_el.progressBars();
-const processDots = sidebar_el.processDots();
+
+
+//const progressBars = sidebar_el.progressBars();
+//const processDots = sidebar_el.processDots();
 
 console.debug('Renderer init')
 
@@ -46,7 +48,7 @@ window.onload = async function(e) {
         }, 1000)
 }
 
-refreshVersions();
+//refreshVersions();
 
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => openSettings());
