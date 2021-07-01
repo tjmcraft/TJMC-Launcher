@@ -37,7 +37,7 @@ if (!gotTheLock) {
             win.focus()
         }
     })
-    
+
     app.on('ready', createWindow)
     app.on('ready', createMenu)
 
@@ -50,7 +50,7 @@ if (!gotTheLock) {
     })
 }
 
-function createWindow () {
+function createWindow() {
     let windowState = WindowState({
         width: 1280,
         height: 720
@@ -103,27 +103,27 @@ function createMenu() {
         ...(isMac ? [{
             label: 'Application',
             submenu: [{
-                label: 'About Application',
-                selector: 'orderFrontStandardAboutPanel:'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Quit',
-                accelerator: 'Command+Q',
-                click: () => {
-                    app.quit()
+                    label: 'About Application',
+                    selector: 'orderFrontStandardAboutPanel:'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Quit',
+                    accelerator: 'Command+Q',
+                    click: () => {
+                        app.quit()
+                    }
                 }
-            }]
+            ]
         }] : []),
         {
             label: 'Minecraft',
-            submenu: [
-                {
+            submenu: [{
                     label: 'Root Directory',
                     accelerator: isMac ? 'Cmd+Alt+D' : 'Ctrl+Shift+D',
-                    click: () => openMineDir() 
+                    click: () => openMineDir()
                 },
                 {
                     label: 'Options',
@@ -198,32 +198,32 @@ function createMenu() {
 
 }
 
-function getPlatformIcon(filename){
-  let ext;
-  switch(process.platform) {
-      case 'win32':
-          ext = 'ico';
-          break;
-      case 'darwin':
-          ext = 'icns';
-          break;
-      case 'linux':
-      default:
-          ext = 'png';
-          break;
-  }
-  return path.join(__dirname, 'build', `${filename}.${ext}`);
+function getPlatformIcon(filename) {
+    let ext;
+    switch (process.platform) {
+        case 'win32':
+            ext = 'ico';
+            break;
+        case 'darwin':
+            ext = 'icns';
+            break;
+        case 'linux':
+        default:
+            ext = 'png';
+            break;
+    }
+    return path.join(__dirname, 'build', `${filename}.${ext}`);
 }
 
 function openMineDir() {
     const path = ConfigManager.getDataDirectory();
-    logger.debug('Using default path: '+path)
+    logger.debug('Using default path: ' + path)
     shell.openPath(path);
 }
 
-ipcMain.handle('ping', async (event, ...args) => args);
+ipcMain.handle('ping', async(event, ...args) => args);
 
-ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params))
+ipcMain.handle('launch-mine', async(event, version_hash = null, params = null) => launchMinecraft(version_hash, params))
 
 async function launchMinecraft(version_hash = null, params = null) {
     try {
@@ -237,18 +237,18 @@ async function launchMinecraft(version_hash = null, params = null) {
         const versionFile = await _launcher.loadManifest();
         const minecraftArguments = await _launcher.construct(versionFile);
         logger.log('Starting minecraft! vh: ' + version_hash)
-        const vm = await _launcher.createJVM(java_path, minecraftArguments);
+            /*const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
-        let error_out = null;
-        vm.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
-        })
-        vm.on('close', (code) => {
-            if (code != 0) {
-                win.webContents.send('startup-error', error_out);
-                if (socket_connector) socket_connector.send('startup-error', error_out);
-            }
-        })
+            let error_out = null;
+            vm.stderr.on('data', (data) => {
+                error_out = data.toString('utf-8');
+            })
+            vm.on('close', (code) => {
+                if (code != 0) {
+                    win.webContents.send('startup-error', error_out);
+                    if (socket_connector) socket_connector.send('startup-error', error_out);
+                }
+            })*/
         return true;
     } catch (error) {
         win.webContents.send('error', error.message);
@@ -265,6 +265,7 @@ function progress(e) {
     win.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
+
 function download_progress(e) {
     const progress = (e.current / e.total);
     //logger.debug(`Version hash: ${e.version_hash}`)
@@ -275,72 +276,72 @@ function download_progress(e) {
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 
-ipcMain.handle('installations.get', async (event, ...args) => {
+ipcMain.handle('installations.get', async(event, ...args) => {
     return await InstallationsManager.getInstallations();
 })
-ipcMain.handle('versions.get.global', async (event, ...args) => {
+ipcMain.handle('versions.get.global', async(event, ...args) => {
     return await VersionManager.getGlobalVersions();
 })
-ipcMain.handle('installations.create', async (event, version, options) => {
+ipcMain.handle('installations.create', async(event, version, options) => {
     return await InstallationsManager.createInstallation(version, options);
 })
-ipcMain.handle('configuration.get', async (event, ...args) => {
+ipcMain.handle('configuration.get', async(event, ...args) => {
     return await ConfigManager.getAllOptions();
 })
-ipcMain.handle('configuration.set', async (event, args) => {
+ipcMain.handle('configuration.set', async(event, args) => {
     return await ConfigManager.setOptions(args);
 })
-ipcMain.handle('system.mem', async (event, ...args) => {
+ipcMain.handle('system.mem', async(event, ...args) => {
     return os.totalmem() / 1024 / 1024;
 })
 
 
 const e_server = express_app.listen(5248);
 express_app.use(express.json()) // for parsing application/json
-express_app.use(function (req, res, next) {
+express_app.use(function(req, res, next) {
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', 'https://www.tjmcraft.ga');
     res.header('Access-Control-Allow-Headers', '*');
     next();
 });
-express_app.get('/ping', (req, res) => {res.send('pong')})
+express_app.get('/ping', (req, res) => { res.send('pong') })
 express_app.get('/version', (req, res) => {
     res.json({
         version: '1.8.0'
     })
 });
-express_app.post('/launch-mine', async (req, res) => {
+express_app.post('/launch-mine', async(req, res) => {
     const data = req.body;
     if (!data || !data.version_hash) res.json({
         success: false
     });
     res.json(await launchMinecraft(data.version_hash, data.params));
 });
-express_app.get('/installations.get', async (req, res) => {
+express_app.get('/installations.get', async(req, res) => {
     res.json(await InstallationsManager.getInstallations());
 });
-express_app.get('/versions.get.global', async (req, res) => {
+express_app.get('/versions.get.global', async(req, res) => {
     res.json(await VersionManager.getGlobalVersions());
 });
-express_app.post('/installations.create', async (req, res) => {
+express_app.post('/installations.create', async(req, res) => {
     const data = req.body;
-    if (!data || !data.version || !data.options) res.json({success: false});
+    if (!data || !data.version || !data.options) res.json({ success: false });
     res.json(await InstallationsManager.createInstallation(data.version, data.options));
 });
-express_app.get('/configuration.get', async (req, res) => {
+express_app.get('/configuration.get', async(req, res) => {
     res.json(await ConfigManager.getAllOptions());
 });
-express_app.post('/configuration.set', async (req, res) => {
+express_app.post('/configuration.set', async(req, res) => {
     const data = req.body;
     if (!data) res.json({
         success: false
     });
     res.json(await ConfigManager.setOptions(data));
 });
-express_app.get('/system.mem', async (req, res) => {
+express_app.get('/system.mem', async(req, res) => {
     res.json(os.totalmem() / 1024 / 1024);
 })
-express_app.get('*', function(req, res){
+express_app.get('*', function(req, res) {
     res.send({
         status: 404,
         error: `Not found`,
@@ -357,7 +358,7 @@ function SocketConnect(socket) {
         }));
     }
     sendJSON('status', 'connected');
-    this.send = function (type = null, data) {
+    this.send = function(type = null, data) {
         if (socket) sendJSON(type, data);
     }
 }
@@ -366,14 +367,14 @@ const ws_server = new WebSocket.Server({
     port: 4836
 });
 
-ws_server.on('connection', function (socket) {
+ws_server.on('connection', function(socket) {
     socket_connector = new SocketConnect(socket);
 });
 
 function onConnect(client) {
 
     sendJSON('status', 'connected');
-    client.on('message', function (message) {
+    client.on('message', function(message) {
         logger.debug(message)
         try {
             const json_message = JSON.parse(message);
@@ -395,7 +396,7 @@ function onConnect(client) {
             logger.log('Error: ', error);
         }
     });
-    client.on('close', function () {
+    client.on('close', function() {
         logger.log('closed');
     });
 }
