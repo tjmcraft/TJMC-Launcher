@@ -12,12 +12,11 @@ export class Settings {
      * Tab List
      */
     tablist = [
-        {id: '', name: '', content: null}
+        { id: '', name: '', content: null }
     ]
 
     constructor(tab = '') {
-        this.tablist = [
-            {
+        this.tablist = [{
                 id: 'my-account-tab',
                 name: 'Моя учётная запись',
                 content: this.content.my_account_tab
@@ -60,10 +59,10 @@ export class Settings {
     }
     get Base() {
         this.vdom.content = cE('div', { class: ['content', 'auto-s'] });
-        const root = cE('div', {class: 'sidebarView', id: 'user-settings'},
-            cE('div', {class: 'sidebar-region'}, this.sideBar),
-            cE('div', {class: 'content-region'},
-                cE('div', {class: 'transitionWrap'}, 
+        const root = cE('div', { class: 'sidebarView', id: 'user-settings' },
+            cE('div', { class: 'sidebar-region' }, this.sideBar),
+            cE('div', { class: 'content-region' },
+                cE('div', { class: 'transitionWrap' },
                     this.vdom.content
                 )
             )
@@ -72,21 +71,21 @@ export class Settings {
     }
     get sideBar() {
         const sidebar_items = [
-            {type: 'header', content: 'Настройки пользователя'},
-            {type: 'navItem', rti: 'my-account-tab'},
-            {type: 'navItem', rti: 'skin-tab'},
-            {type: 'separator'},
-            {type: 'header', content: 'Настроки Игры'},
-            {type: 'navItem', rti: 'minecraft-settings'},
-            {type: 'navItem', rti: 'java-settings'},
-            {type: 'separator'},
-            {type: 'navItem', rti: 'launcher-settings'},
-            {type: 'separator'},
-            {type: 'navItem', rti: 'about-tab'}
+            { type: 'header', content: 'Настройки пользователя' },
+            { type: 'navItem', rti: 'my-account-tab' },
+            { type: 'navItem', rti: 'skin-tab' },
+            { type: 'separator' },
+            { type: 'header', content: 'Настроки Игры' },
+            { type: 'navItem', rti: 'minecraft-settings' },
+            { type: 'navItem', rti: 'java-settings' },
+            { type: 'separator' },
+            { type: 'navItem', rti: 'launcher-settings' },
+            { type: 'separator' },
+            { type: 'navItem', rti: 'about-tab' }
         ];
-        const root_sidebar = cE('div', {class: 'sidebar'});
+        const root_sidebar = cE('div', { class: 'sidebar' });
         this.vdom.sidebarItems = sidebar_items.map(i => {
-            const root_item = cE('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '' );
+            const root_item = cE('div', { class: 'item' + (i.type ? ' ' + i.type : ''), rti: i.rti }, i.content || this.tablist.find((e) => { return e.id == i.rti; })?.name || '');
             if (i.rti) { root_item.onclick = () => { this.setTab(i.rti) }; }
             return root_item;
         });
@@ -95,30 +94,30 @@ export class Settings {
     }
     content = {
         base(id, ...e) {
-            return cE('div', {class: 'tab', id: id}, ...e);
+            return cE('div', { class: 'tab', id: id }, ...e);
         },
         createChilderContainer(...e) {
-            return cE('div', {class: 'children'}, ...e);
+            return cE('div', { class: 'children' }, ...e);
         },
         async my_account_tab() {
             const heading = cE('h2', null, 'Моя учётная запись');
-            const actions_button = cE('button', {class: ['r', 'filled', 'colorBrand']}, 'Профиль');
-            const children = cE('div', {class: ['container-cc3V']},
+            const actions_button = cE('button', { class: ['r', 'filled', 'colorBrand'] }, 'Профиль');
+            const children = cE('div', { class: ['container-cc3V'] },
                 cE('div', { class: 'bxcF1-box' },
                     cE('div', { class: 'ictx-flex' },
                         cE('div', { class: 'icon' }, cE('img', { src: 'https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=MakAndJo' })),
-                        cE('div', {class: ['flex-group', 'vertical']},
-                            cE('span', {class: ['vbx', 'cu']},
+                        cE('div', { class: ['flex-group', 'vertical'] },
+                            cE('span', { class: ['vbx', 'cu'] },
                                 cE('div', { class: 'text name' }, 'MakAndJo'),
                                 cE('div', { class: 'text id' }, '#11')
                             ),
-                            cE('div', {class: ['sizeW', 'colorStandart', 'subtitle-p']}, 'Default')
+                            cE('div', { class: ['sizeW', 'colorStandart', 'subtitle-p'] }, 'Default')
                         ),
                         actions_button
                     ),
-                    cE('div', {class: 'separator'}),
-                    cE('div', {class: 'fieldList'}, 
-                        cE('div', { class: ['field'], 'data-type': 'email'},
+                    cE('div', { class: 'separator' }),
+                    cE('div', { class: 'fieldList' },
+                        cE('div', { class: ['field'], 'data-type': 'email' },
                             cE('div', { class: ['containedRow'] },
                                 cE('div', null,
                                     cE('h5', { class: '' }, 'Email'),
@@ -127,7 +126,7 @@ export class Settings {
                                     )
                                 )
                             ),
-                            cE('button', {class: ['filled']}, 'Изменить')
+                            cE('button', { class: ['filled'] }, 'Изменить')
                         )
                     )
                 )
@@ -148,7 +147,7 @@ export class Settings {
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
                         checked: config.minecraft.launch.fullscreen || false,
-                        action: function (s, n) {
+                        action: function(s, n) {
                             config.minecraft.launch.fullscreen = s;
                             setConfig(config);
                         }
@@ -157,7 +156,7 @@ export class Settings {
                         header: 'Автоматически подключаться к серверу',
                         note: 'Подключаться к серверу автоматически, при запуске игры',
                         checked: false,
-                        action: function (s, n) {
+                        action: function(s, n) {
                             console.log(n + ' ' + s);
                         }
                     })
@@ -176,7 +175,7 @@ export class Settings {
             const children = this.createChilderContainer(
                 cE('div', { class: 'container-cc3V' },
                     cE('div', { class: 'flex-group horizontal' },
-                        cE('div', { class: 'flex-child'},
+                        cE('div', { class: 'flex-child' },
                             cE('h5', null, 'Максимальное использование памяти'),
                             slider({
                                 value: config.java.memory.max / 1024,
@@ -190,7 +189,7 @@ export class Settings {
                                 }
                             })
                         ),
-                        cE('div', { class: 'flex-child'},
+                        cE('div', { class: 'flex-child' },
                             cE('h5', null, 'Минимальное использование памяти'),
                             slider({
                                 value: config.java.memory.min / 1024,
@@ -205,7 +204,7 @@ export class Settings {
                             })
                         )
                     ),
-                    cE('div', { class: 'divider separator'})
+                    cE('div', { class: 'divider separator' })
                 ),
                 cE('div', { class: 'container-cc3V' },
                     cE('h5', null, 'Дополнительно'),
@@ -213,7 +212,7 @@ export class Settings {
                         header: 'Независимый процесс',
                         note: 'Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры',
                         checked: config.java.detached,
-                        action: function (s, n) {
+                        action: function(s, n) {
                             config.java.detached = s;
                             setConfig(config);
                         }
@@ -222,7 +221,7 @@ export class Settings {
                         header: 'Запускать в режиме Fullscreen',
                         note: 'Запускать игру, принудительно в полноэкранном режиме',
                         checked: config.minecraft.launch.fullscreen || false,
-                        action: function (s, n) {
+                        action: function(s, n) {
                             config.minecraft.launch.fullscreen = s;
                             setConfig(config);
                         }
@@ -240,8 +239,8 @@ export class Settings {
                     this.icf3v_ints({
                         header: 'Проверять Hash файлов',
                         note: 'Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!',
-                        checked: config.overrides.checkHash || true,
-                        action: function (s, n) {
+                        checked: typeof config.overrides.checkHash !== 'undefined' ? config.overrides.checkHash : true,
+                        action: function(s, n) {
                             config.overrides.checkHash = s;
                             setConfig(config);
                         }
@@ -272,7 +271,7 @@ export class Settings {
             const whats_new_nutton = cE('button', { class: 'r' }, 'Что нового?');
             whats_new_nutton.onclick = () => {
                 modal.whatsNew([
-                    cE('img', { src: 'https://www.tjmcraft.ga/nav_cr.png'}),
+                    cE('img', { src: 'https://www.tjmcraft.ga/nav_cr.png' }),
                     cE('h1', { class: ['margin-top', 'title', 'added'] }, 'Привет, это TJMC'),
                     cE('p', null, 'В общем, мы решили изменить свой внешний вид.'),
                 ])
@@ -283,7 +282,7 @@ export class Settings {
                     cE('div', { class: 'bxcF1-box' },
                         cE('div', { class: 'ictx-flex' },
                             cE('div', { class: 'icon' }, cE('img', { src: './assets/images/icon.png' })),
-                            cE('span', {class: 'vbx'},
+                            cE('span', { class: 'vbx' },
                                 cE('div', { class: 'text name' }, 'TJMC-Launcher'),
                                 cE('div', { class: 'text version' }, 'v1.8.0')
                             ),
@@ -311,25 +310,25 @@ export class Settings {
             props.header = props.header || '';
             props.note = props.note || '';
             props.checked = props.checked || false;
-            const checkbox = cE('input', {type: 'checkbox', id: props.id, checked: props.checked});
-            checkbox.addEventListener('change', function (e) {
+            const checkbox = cE('input', { type: 'checkbox', id: props.id, checked: props.checked });
+            checkbox.addEventListener('change', function(e) {
                 if (typeof props.action === 'function')
                     props.action.call(this, this.checked, props.id)
             });
             const description = cE('div', { class: 'description', html: true }, props.note);
             return (
-                cE('div', {class: 'container-icf3v'},
-                    cE('div', {class: 'labelRow'},
-                        cE('label', {for: props.id, class: 'title-3uvn'}, props.header),
-                        cE('div', {class: 'control'},
-                            cE('label', {class: 'toggleSwitch'},
+                cE('div', { class: 'container-icf3v' },
+                    cE('div', { class: 'labelRow' },
+                        cE('label', { for: props.id, class: 'title-3uvn' }, props.header),
+                        cE('div', { class: 'control' },
+                            cE('label', { class: 'toggleSwitch' },
                                 checkbox,
-                                cE('span', {class: 'toggleSwitchSlider'})
+                                cE('span', { class: 'toggleSwitchSlider' })
                             )
                         )
                     ),
-                    cE('div', {class: 'note'}, description),
-                    cE('div', {class: 'divider separator'})
+                    cE('div', { class: 'note' }, description),
+                    cE('div', { class: 'divider separator' })
                 )
             )
         }
