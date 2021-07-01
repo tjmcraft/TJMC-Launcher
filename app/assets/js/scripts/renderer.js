@@ -120,7 +120,6 @@ function registerWSEvents(attempt = 0) {
                     });
                     break;
                 case 'progress':
-                    //console.debug(event.data);
                     const progressBars = sidebar_el.progressBars();
                     if (event.data.progress > 0) progressBars[event.data.version_hash].show()
                     if (event.data.progress <= 0) progressBars[event.data.version_hash].hide()
