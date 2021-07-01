@@ -936,14 +936,18 @@ svg[data-icon="progress-circle"] circle {
     align-items: center;
     padding: 0 0 0 5px;
     max-height: 20px;
+    position: relative;
 }
 
 .status-container>* {
     width: 24px;
     height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    display: block;
 }
 
 
@@ -960,8 +964,8 @@ svg[data-icon="progress-circle"] circle {
     --pos-4: 9999px -8px;
     --color: var(--brand-color);
     position: relative;
-    left: -9995px;
-    top: 3px;
+    left: -9985px;
+    top: 13px;
     width: 5px;
     height: 5px;
     border-radius: 1px;
