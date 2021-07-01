@@ -21,25 +21,16 @@ function getOS() {
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
-
         logger.debug('Initializing..')
-
         if (win.isFullScreen()) enterFullScreen()
-
-        win.setProgressBar(-1)
     } else if (document.readyState === 'complete') {
         if (process.platform !== 'darwin') {
-            document.querySelector('.fCb')?.addEventListener('click', (e) => {
-                win.close()
-            })
-            document.querySelector('.fRb')?.addEventListener('click', (e) => {
-                win.isMaximized() ? win.unmaximize() : win.maximize()
-            })
-            document.querySelector('.fMb')?.addEventListener('click', (e) => {
-                win.minimize()
-            })
+            document.querySelector('.fCb')?.addEventListener('click', (e) => win.close())
+            document.querySelector('.fRb')?.addEventListener('click', (e) => win.isMaximized() ? win.unmaximize() : win.maximize())
+            document.querySelector('.fMb')?.addEventListener('click', (e) => win.minimize())
         }
     }
+    win.setProgressBar(-1)
 })
 
 function enterFullScreen () {
