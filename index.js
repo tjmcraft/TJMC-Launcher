@@ -239,19 +239,26 @@ async function launchMinecraft(version_hash = null, params = null) {
         logger.log('Starting minecraft! vh: ' + version_hash)
         const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
-        let error_out = null;
+        let error_out = null,
+            std_out = null,
+            logg_out = null;
         vm.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
+            logg_out = error_out = data.toString('utf-8');
+        })
+        vm.stdout.on('data', (data) => {
+            logg_out = std_out = data.toString('utf-8');
         })
         vm.on('close', (code) => {
             if (code != 0) {
-                win.webContents.send('startup-error', error_out);
-                if (socket_connector) socket_connector.send('startup-error', error_out);
+                win?.webContents.send('startup-error', logg_out);
+                if (socket_connector) socket_connector.send('startup-error', logg_out);
             }
         })
+        win?.webContents.send('startup-success', version_hash);
+        if (socket_connector) socket_connector.send('startup-success', version_hash);
         return true;
     } catch (error) {
-        win.webContents.send('error', error.message);
+        win?.webContents.send('error', error.message);
         if (socket_connector) socket_connector.send('error', error.message);
     }
     return false;
@@ -261,8 +268,8 @@ function progress(e) {
     const progress = (e.task / e.total);
     //logger.debug(`Version hash: ${e.version_hash}`)
     //logger.debug(`Progress ${progress}`)
-    win.setProgressBar(progress);
-    win.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
+    win?.setProgressBar(progress);
+    win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 
@@ -271,8 +278,8 @@ function download_progress(e) {
     //logger.debug(`Version hash: ${e.version_hash}`)
     if (e.type != 'version-jar') return;
     //logger.debug(`Progress ${progress}`)
-    win.setProgressBar(progress);
-    win.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
+    win?.setProgressBar(progress);
+    win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 

@@ -37,10 +37,7 @@ function openSettings() {
 async function startMine(version_hash = null) {
     console.log(`Starting minecraft with hash: ${version_hash}`);
     processDots[version_hash].show();
-    if (await startMinecraft(version_hash)) {
-        progressBars[version_hash].hide();
-        setTimeout(() => processDots[version_hash].hide(), 1000);
-    }
+    startMinecraft(version_hash);
 }
 
 window.onload = async function(e) {
@@ -60,7 +57,12 @@ refreshVersions();
 
 async function registerElectronEvents() {
     electron.on('open-settings', (e) => openSettings());
+    electron.on('startup-success', (e, version_hash) => {
+        progressBars[version_hash].hide();
+        setTimeout(() => processDots[version_hash].hide(), 1000);
+    });
     electron.on('startup-error', (e, error) => {
+        console.warn(error)
         modal.alert('Что-то пошло не так...', error, 'error', { logType: true });
     });
     electron.on('error', (e, error) => {
@@ -109,22 +111,23 @@ function registerWSEvents(attempt = 0) {
             }
             return resolve(true);
         };
-        ws.onclose = function(e) {
+        ws.onclose = async (e) => {
             console.warn(`Socket is closed. Reconnect will be attempted in ${reconnect_timeout} second.`, e.reason);
-            setTimeout(registerWSEvents(attempt), reconnect_timeout * 1000);
+            setTimeout(await registerWSEvents(attempt), reconnect_timeout * 1000);
         };
         const parseEvent = (event) => {
             switch (event.type) {
+                case 'startup-success':
+                    progressBars[event.data].hide();
+                    setTimeout(() => processDots[event.data].hide(), 1000);
+                    break;
                 case 'startup-error':
-                    modal.alert('Ошибка при запуске', event.data, 'error', {
-                        logType: true
-                    });
+                    console.warn(event.data)
+                    modal.alert('Что-то пошло не так...', event.data, 'error', { logType: true });
                     break;
                 case 'error':
                     console.error(event.data);
-                    modal.alert('Ошибка', event.data, 'error', {
-                        logType: true
-                    });
+                    modal.alert('Ошибочка...', event.data, 'error', { logType: true });
                     break;
                 case 'progress':
                     const version_hash = event.data.version_hash;
