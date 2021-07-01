@@ -221,43 +221,40 @@ function openMineDir() {
     shell.openPath(path);
 }
 
-ipcMain.handle('ping', async (event, ...args) => {
-    return (args);
-})
+ipcMain.handle('ping', async (event, ...args) => args);
 
-ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => {
-    try {
-        await launchMinecraft(version_hash, params);
-    } catch (error) {
-        win.webContents.send('error', error);
-        if (socket_connector) socket_connector.send('error', error);
-    }
-})
+ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params))
 
 async function launchMinecraft(version_hash = null, params = null) {
-    const _launcher = await new launcher(version_hash, params);
-    _launcher.on('progress', progress);
-    _launcher.on('download-status', download_progress);
+    try {
+        const _launcher = await new launcher(version_hash, params);
+        _launcher.on('progress', progress);
+        _launcher.on('download-status', download_progress);
 
-    //const hb = await _launcher.heartbeat(60);
+        //const hb = await _launcher.heartbeat(60);
 
-    const java_path = await _launcher.getJava();
-    const versionFile = await _launcher.loadManifest();
-    const minecraftArguments = await _launcher.construct(versionFile);
-    logger.log('Starting minecraft! vh: ' + version_hash)
-    const vm = await _launcher.createJVM(java_path, minecraftArguments);
+        const java_path = await _launcher.getJava();
+        const versionFile = await _launcher.loadManifest();
+        const minecraftArguments = await _launcher.construct(versionFile);
+        logger.log('Starting minecraft! vh: ' + version_hash)
+        const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
-    let error_out = null;
-    vm.stderr.on('data', (data) => {
-        error_out = data.toString('utf-8');
-    })
-    vm.on('close', (code) => {
-        if (code != 0) {
-            win.webContents.send('startup-error', error_out);
-            if (socket_connector) socket_connector.send('startup-error', error_out);
-        }
-    })
-    return true;
+        let error_out = null;
+        vm.stderr.on('data', (data) => {
+            error_out = data.toString('utf-8');
+        })
+        vm.on('close', (code) => {
+            if (code != 0) {
+                win.webContents.send('startup-error', error_out);
+                if (socket_connector) socket_connector.send('startup-error', error_out);
+            }
+        })
+        return true;
+    } catch (error) {
+        win.webContents.send('error', error.message);
+        if (socket_connector) socket_connector.send('error', error.message);
+    }
+    return false;
 }
 
 function progress(e) {
@@ -353,6 +350,7 @@ express_app.get('*', function(req, res){
 
 function SocketConnect(socket) {
     const sendJSON = (type = null, data) => {
+        //logger.debug(data)
         socket.send(JSON.stringify({
             type: type,
             data: data
