@@ -59,7 +59,7 @@ export class Settings {
         this.vdom.content.appendChild(tab_content);
     }
     get Base() {
-        this.vdom.content = cE('div', { class: ['content', 'thin-s'] });
+        this.vdom.content = cE('div', { class: ['content', 'auto-s'] });
         const root = cE('div', {class: 'sidebarView', id: 'user-settings'},
             cE('div', {class: 'sidebar-region'}, this.sideBar),
             cE('div', {class: 'content-region'},

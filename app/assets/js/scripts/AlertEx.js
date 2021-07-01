@@ -191,7 +191,7 @@ export const modal = {
         }
         
         if (msg) {
-            let root_parent = cE('div', { class: ['content', (params.logType ? 'log' : '')] },
+            let root_parent = cE('div', { class: ['content', 'thin-s', (params.logType ? 'log' : '')] },
                 cE('div', { class: ['colorStandart', 'size14'] }, msg)
             );
             root_container.appendChild(root_parent);
