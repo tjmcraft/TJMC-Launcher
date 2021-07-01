@@ -100,6 +100,7 @@ class Minecraft {
     async getNatives(version) {
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         logg.debug(`Set natives directory to ${nativeDirectory}`)
+        let stat;
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
             const natives = async () => {
@@ -116,18 +117,20 @@ class Minecraft {
                 }))
                 return natives
             }
-            const stat = await natives()
+            stat = await natives()
             this.client.emit('progress', {
                 type: 'natives',
                 task: 0,
                 total: stat.length,
                 version_hash: this.options.installation.hash
             })
+            let promise_counter = 0;
             await Promise.all(stat.map(async (native) => {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
                 if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
+                    (promise_counter <= 0) && logg.debug(`Downloading natives...`); promise_counter++;
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
                 }
                 try {
@@ -142,13 +145,13 @@ class Minecraft {
                     version_hash: this.options.installation.hash
                 })
             }))
-            logg.debug('Downloaded and extracted natives')
+            logg.debug(`Downloaded and extracted natives! ${stat.length}`)
         }
         this.count = 0
         this.client.emit('progress', {
             type: 'natives',
             task: this.count,
-            total: 1,
+            total: stat.length,
             version_hash: this.options.installation.hash
         })
         logg.debug(`Natives Collected!`)
@@ -173,22 +176,23 @@ class Minecraft {
             total: Object.keys(index.objects).length,
             version_hash: this.options.installation.hash
         })
-        await Promise.all(Object.keys(index.objects).map(async asset => {
+        let promise_counter = 0;
+        await Promise.all(Object.keys(index.objects).map(async (asset, number) => {
             const hash = index.objects[asset].hash
             const subhash = hash.substring(0, 2)
             const subAsset = path.join(assetDirectory, 'objects', subhash)
             assets_pathes.push(path.join(subAsset, hash))
             if (!fs.existsSync(path.join(subAsset, hash)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash)))) {
-                (this.count <= 1) && logg.debug('Downloading assets...');
-                await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets')
-                this.count++
-                this.client.emit('progress', {
-                    type: 'assets',
-                    task: this.count,
-                    total: Object.keys(index.objects).length,
-                    version_hash: this.options.installation.hash
-                })
+                (promise_counter <= 0) && logg.debug(`Downloading assets...`); promise_counter++;
+                await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
+            this.count++
+            this.client.emit('progress', {
+                type: 'assets',
+                task: this.count,
+                total: Object.keys(index.objects).length,
+                version_hash: this.options.installation.hash
+            })
         }))
         this.count = 0
         this.client.emit('progress', {
