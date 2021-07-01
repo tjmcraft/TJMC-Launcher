@@ -16,7 +16,6 @@ class Minecraft {
      * @param client U may set here "this"
      */
     constructor(client) {
-        this.count = 0
         this.client = client
         this.options = client.options
         this.baseRequest = request.defaults({
@@ -82,7 +81,6 @@ class Minecraft {
             if (lib_ex) return lib
         })
         libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
-        this.count = 0
         logg.debug(`Collected Class Patches! (count: ${libs.length})`)
         return libs
     }
@@ -98,6 +96,7 @@ class Minecraft {
      * @param version Main version JSON
      */
     async getNatives(version) {
+        let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         logg.debug(`Set natives directory to ${nativeDirectory}`)
         let stat;
@@ -137,20 +136,20 @@ class Minecraft {
                     new Zip(native_path).extractAllTo(nativeDirectory, true)
                 } catch (e) { logg.warn(e) }
                 fs.unlinkSync(native_path)
-                this.count++
+                count++
                 this.client.emit('progress', {
                     type: 'natives',
-                    task: this.count,
+                    task: count,
                     total: stat.length,
                     version_hash: this.options.installation.hash
                 })
             }))
             logg.debug(`Downloaded and extracted natives! ${stat.length}`)
         }
-        this.count = 0
+        count = 0
         this.client.emit('progress', {
             type: 'natives',
-            task: this.count,
+            task: count,
             total: stat.length,
             version_hash: this.options.installation.hash
         })
@@ -163,6 +162,7 @@ class Minecraft {
      * @param version Main version JSON
      */
     async getAssets(version) {
+        let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
@@ -186,18 +186,18 @@ class Minecraft {
                 (promise_counter <= 0) && logg.debug(`Downloading assets...`); promise_counter++;
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
-            this.count++
+            count++
             this.client.emit('progress', {
                 type: 'assets',
-                task: this.count,
+                task: count,
                 total: Object.keys(index.objects).length,
                 version_hash: this.options.installation.hash
             })
         }))
-        this.count = 0
+        count = 0
         this.client.emit('progress', {
             type: 'assets',
-            task: this.count,
+            task: count,
             total: Object.keys(index.objects).length,
             version_hash: this.options.installation.hash
         })
@@ -212,6 +212,7 @@ class Minecraft {
      * @param eventName 
      */
     async downloadToDirectory (directory, libraries, eventName) {
+        let count = 0;
         const libs = []
         await Promise.all(libraries.map(async library => {
             if (!library) return
@@ -239,20 +240,20 @@ class Minecraft {
                     if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
                 }
             }
-            this.count++
+            count++
             this.client.emit('progress', {
                 type: eventName,
-                task: this.count,
+                task: count,
                 total: libraries.length,
                 version_hash: this.options.installation.hash
             })
             if (library.mod || library.downloadOnly) return 
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
-        this.count = 0
+        count = 0
         this.client.emit('progress', {
             type: eventName,
-            task: this.count,
+            task: count,
             total: libraries.length,
             version_hash: this.options.installation.hash
         })
