@@ -1,6 +1,6 @@
 
 import { SVG } from './svg.js';
-import { escBinder } from './uibind.js';
+import { escBinder, overlayBinder } from './uibind.js';
 import { Button } from '../panel.js';
 import { randomString } from './Tools.js';
 
@@ -22,12 +22,15 @@ class ModalEx {
         this.root_container = container;
         this.overlay = this.createOverlay(this.params?.escButton, this.root_container);
 
-        
+        this.overlayBinder = new overlayBinder();
+        this.overlayBinder.bind(this);
 
         if (typeof this.params?.escBind !== 'undefined' ? this.params?.escBind : true) {
             this.escBinder = new escBinder();
             this.escBinder.bind((e) => { this.destroy(e) });
         }
+
+        this.overlay && document.body.qsl('#app-mount > .layerContainer').appendChild(this.overlay);
 
         this.handleModalMousedown();
         this.handleContainerMousedown();
@@ -51,16 +54,20 @@ class ModalEx {
     }
 
     show() {
-        this.overlay && document.body.qsl('#app-mount > .layerContainer').appendChild(this.overlay) &&
         setTimeout(() => {
             this.overlay.toggle(true);
-        }, 50);
+        }, 0);
         //this.overlay.fadeIn(300);
+    }
+
+    hide() {
+        this.overlay.toggle(false);
     }
 
     destroy() {
         this.escBinder?.uibind();
-        this.overlay.toggle(false);
+        this.overlayBinder.uibind();
+        this.hide();
         setTimeout(() => {
             this.overlay.remove();
         }, 400);
