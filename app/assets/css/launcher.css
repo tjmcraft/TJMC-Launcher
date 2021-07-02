@@ -728,7 +728,8 @@ var {
 
 .tools .overlayCloseButton {
     transition: none;
-    border: 2px solid #dcdddedd;
+    border-width: 2px;
+    border-style: solid;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -740,6 +741,13 @@ var {
 
 .tools .overlayCloseButton:hover {
     background: #7F7F7F5d;
+}
+
+.dark-theme .overlayCloseButton {
+    border-color: #72767d;
+}
+.light-theme .overlayCloseButton {
+    border-color: #929995;
 }
 
 
