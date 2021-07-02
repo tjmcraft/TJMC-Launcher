@@ -1,13 +1,13 @@
 const child                                  = require('child_process')
 const EventEmitter                           = require('events')
-const LoggerUtil                             = require('./loggerutil')
+const LoggerUtil                             = require('../util/loggerutil')
 const fs                                     = require('fs')
 const path                                   = require('path')
-const Minecraft                              = require('./libs/Minecraft')
+const Minecraft                              = require('./Minecraft')
 const logg                                   = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
-const InstallationsManager                   = require('./libs/InstallationsManager')
-const VersionManager                         = require('./libs/VersionManager')
-const ConfigManager                          = require('./libs/ConfigManager')
+const InstallationsManager                   = require('../managers/InstallationsManager')
+const VersionManager                         = require('../managers/VersionManager')
+const ConfigManager                          = require('../managers/ConfigManager')
 
 class launcher extends EventEmitter {
 

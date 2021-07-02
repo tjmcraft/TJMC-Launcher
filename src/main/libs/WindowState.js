@@ -1,9 +1,9 @@
 'use strict';
-const ConfigManager = require('./ConfigManager');
+const ConfigManager = require('../managers/ConfigManager');
 const path = require('path');
 const fs = require('fs');
 const electron = require('electron');
-const logg = require('../loggerutil')('%c[WindowState]', 'color: #d59215; font-weight: bold');
+const logg = require('../util/loggerutil')('%c[WindowState]', 'color: #d59215; font-weight: bold');
 
 module.exports = function (config) {
     loadWindowState();

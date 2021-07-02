@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 const ConfigManager = require('./ConfigManager')
-const LoggerUtil = require('../loggerutil')
+const LoggerUtil = require('../util/loggerutil')
 const request = require('request')
-const { merge, cleanObject } = require('./Tools')
+const { merge, cleanObject } = require('../util/Tools')
 const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
 
 exports.getLocalVersions = async function() {

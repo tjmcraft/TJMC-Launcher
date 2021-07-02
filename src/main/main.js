@@ -6,16 +6,16 @@ const WebSocket = require('ws')
 const path = require('path');
 const url = require('url');
 const os = require('os');
-const WindowState = require('./app/assets/js/libs/WindowState');
-const logger = require('./app/assets/js/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
+const WindowState = require('./libs/WindowState');
+const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
 require('@electron/remote/main').initialize();
 
-const ConfigManager = require('./app/assets/js/libs/ConfigManager');
+const ConfigManager = require('./managers/ConfigManager');
 ConfigManager.load();
-const VersionManager = require('./app/assets/js/libs/VersionManager');
+const VersionManager = require('./managers/VersionManager');
 VersionManager.updateGlobalVersionsConfig();
-const launcher = require('./app/assets/js/launcher');
-const InstallationsManager = require('./app/assets/js/libs/InstallationsManager');
+const launcher = require('./game/launcher');
+const InstallationsManager = require('./managers/InstallationsManager');
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
@@ -67,7 +67,7 @@ function createWindow() {
         resizable: true,
         frame: process.platform === 'darwin',
         webPreferences: {
-            preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
+            preload: path.join(__dirname, 'preloader.js'),
             nodeIntegration: false,
             contextIsolation: true,
             enableRemoteModule: true,
@@ -83,7 +83,7 @@ function createWindow() {
     windowState.manage(win)
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'app', 'app.html'),
+        pathname: path.join(__dirname, '../../app/app.html'),
         protocol: 'file:',
         slashes: true
     }))

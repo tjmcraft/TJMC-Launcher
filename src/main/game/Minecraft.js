@@ -1,12 +1,12 @@
 const child                                  = require('child_process')
-const LoggerUtil                             = require('../loggerutil')
+const LoggerUtil                             = require('../util/loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const crypto                                 = require('crypto')
 const os                                     = require('os')
 const Zip                                    = require('adm-zip')
-const { merge }                              = require('./Tools')
+const { merge }                              = require('../util/Tools')
 const logg                                   = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft {

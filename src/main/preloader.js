@@ -1,5 +1,5 @@
 const { shell, ipcRenderer, contextBridge } = require('electron')
-const logger = require('./loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
+const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const remote = require('@electron/remote')
 //logger.debug('Application loading..')
 
