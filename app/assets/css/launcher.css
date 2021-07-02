@@ -517,7 +517,7 @@ var {
 
 .overlay {
     user-select: none;
-    transition: all 0.5s ease !important;
+    transition: all .3s ease !important;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -537,7 +537,7 @@ var {
 
 .overlay>.container-ov1 {
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6), opacity 0.5s ease, width .5s ease, height .5s ease !important;
+    transition: transform 0.25s cubic-bezier(0.68, -0.6, 0.32, 1.6), opacity 0.5s ease, width .3s ease, height .3s ease !important;
     max-width: 85vw;
     max-height: 85vh;
     background: var(--background-primary);
@@ -589,7 +589,7 @@ var {
 }
 
 .overlay.hidden>.container-ov1 {
-    transform: scale(0.5);
+    transform: scale(0.7);
     opacity: 0;
 }
 
