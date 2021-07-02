@@ -49,7 +49,7 @@ export class Settings {
                 content: this.content.about_tab
             }
         ];
-        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container' }, this.Base))
+        this.alertex = modal.createRaw({ escButton: true, label: 'settings'}, cE('div', { class: 'inner-container' }, this.Base))
         this.setTab(tab || 'my-account-tab')
     }
     async setTab(tab) {
