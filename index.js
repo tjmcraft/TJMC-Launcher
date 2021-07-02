@@ -21,7 +21,7 @@ const InstallationsManager = require('./app/assets/js/libs/InstallationsManager'
 //app.disableHardwareAcceleration()
 
 app.allowRendererProcessReuse = true
-var socket_connector;
+
 const gotTheLock = app.requestSingleInstanceLock()
 
 /**
@@ -221,6 +221,8 @@ function openMineDir() {
     logger.debug('Using default path: ' + path)
     shell.openPath(path);
 }
+
+var socket_connector;
 
 ipcMain.handle('ping', async(event, ...args) => args);
 
