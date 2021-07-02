@@ -239,7 +239,7 @@ export class Settings {
                     this.icf3v_ints({
                         header: 'Проверять Hash файлов',
                         note: 'Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!',
-                        checked: typeof config.overrides.checkHash !== 'undefined' ? config.overrides.checkHash : true,
+                        checked: typeof config.overrides?.checkHash != undefined ? config.overrides.checkHash : true,
                         action: function(s, n) {
                             config.overrides.checkHash = s;
                             setConfig(config);
