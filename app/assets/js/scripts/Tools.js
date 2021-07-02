@@ -13,6 +13,22 @@ export function getPreferredColorScheme() {
     return 'light';
 }
 
+export const randomInteger = (max) => {
+    let min = 0
+    let rand = min + Math.random() * (max + 1 - min)
+    return Math.floor(rand)
+}
+
+export const randomString = (length) => {
+    var result           = ''
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    var charactersLength = characters.length
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+    }
+    return result
+}
+
 /* ============== Fetches ============== */
 
 /**
