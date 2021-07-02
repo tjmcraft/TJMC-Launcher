@@ -1,3 +1,4 @@
+'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
 const express = require('express')
 const express_app = express()
@@ -268,19 +269,13 @@ ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(ar
 
 function progress(e) {
     const progress = (e.task / e.total);
-    //logger.debug(`Version hash: ${e.version_hash}`)
-    //logger.debug(`Progress ${progress}`)
-    //win?.setProgressBar(progress);
     win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
 
 function download_progress(e) {
     const progress = (e.current / e.total);
-    //logger.debug(`Version hash: ${e.version_hash}`)
     if (e.type != 'version-jar') return;
-    //logger.debug(`Progress ${progress}`)
-    //win?.setProgressBar(progress);
     win?.webContents.send('progress', { progress: progress, version_hash: e.version_hash });
     if (socket_connector) socket_connector.send('progress', { progress: progress, version_hash: e.version_hash });
 }
@@ -358,54 +353,21 @@ express_app.get('*', function(req, res) {
     });
 });
 
+const ws_server = new WebSocket.Server({ port: 4836 });
+
+ws_server.on('connection', socket => {
+    socket_connector = new SocketConnect(socket);
+});
+
 function SocketConnect(socket) {
     const sendJSON = (type = null, data) => {
-        //logger.debug(data)
         socket.send(JSON.stringify({
             type: type,
             data: data
         }));
     }
     sendJSON('status', 'connected');
-    this.send = function(type = null, data) {
+    this.send = (type = null, data) => {
         if (socket) sendJSON(type, data);
     }
-}
-
-const ws_server = new WebSocket.Server({
-    port: 4836
-});
-
-ws_server.on('connection', function(socket) {
-    socket_connector = new SocketConnect(socket);
-});
-
-function onConnect(client) {
-
-    sendJSON('status', 'connected');
-    client.on('message', function(message) {
-        logger.debug(message)
-        try {
-            const json_message = JSON.parse(message);
-            switch (json_message.action) {
-                case 'get_installations':
-                    InstallationsManager.getInstallations().then(i => sendJSON('get_installations', i));
-                    break;
-                case 'echo':
-                    sendJSON('data', json_message.data);
-                    break;
-                case 'ping':
-                    sendJSON(null, 'pong');
-                    break;
-                default:
-                    logger.log('unknown action');
-                    break;
-            }
-        } catch (error) {
-            logger.log('Error: ', error);
-        }
-    });
-    client.on('close', function() {
-        logger.log('closed');
-    });
 }
