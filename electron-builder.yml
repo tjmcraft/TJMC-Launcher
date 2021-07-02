@@ -19,12 +19,18 @@ compression: 'maximum'
 
 win:
   publisherName: "MakAndJo"
-  target: 'nsis'
+  target: 
+    - target: 'nsis'
+      arch: 'x64'
 
 mac:
-  target: 'dmg'
-  title: "Welcome to TJMC"
-  icon: 'icon.icns'
+  target: 
+    - target: 'dmg'
+      arch:
+        - 'x64'
+        - 'arm64'
+  category: 'public.app-category.games'
+  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
 
 linux:
   target: 'AppImage'
@@ -53,6 +59,7 @@ nsis:
 
 dmg:
   background: ""
-  category: 'public.app-category.games'
-  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
+  title: "Welcome to TJMC"
+  icon: 'icon.icns'
+
 
