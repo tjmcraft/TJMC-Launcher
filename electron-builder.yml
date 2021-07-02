@@ -1,0 +1,58 @@
+appId: 'tjmc.launcher'
+productName: 'TJMC-Launcher'
+artifactName: '${productName}-setup-${version}.${ext}'
+
+copyright: 'Copyright © 2020-2021 MakAndJo'
+
+directories:
+  buildResources: 'build'
+  output: 'dist'
+
+files:
+  - '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}'
+
+extraResources:
+  - 'libraries'
+
+asar: true
+compression: 'maximum'
+
+win:
+  publisherName: "MakAndJo"
+  target: 'nsis'
+
+mac:
+  target: 'dmg'
+  title: "Welcome to TJMC"
+  icon: 'icon.icns'
+
+linux:
+  target: 'AppImage'
+  maintainer: 'MakAndJo'
+  vendor: 'MakAndJo'
+  synopsis: 'TJMC Minecraft Launcher'
+  description: 'Our custom minecraft launcher which contains Vanilla, OptiFine, Forge, ForgeOptiFine and other cool versions in one app'
+  category: 'Game'
+
+nsis:
+  oneClick: true
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  license: ""
+  installerIcon: 'icon.ico'
+  installerSidebar: ""
+  installerHeader: ""
+  installerHeaderIcon: ""
+  uninstallDisplayName: ""
+  uninstallerIcon: ""
+  uninstallerSidebar: ""
+  deleteAppDataOnUninstall: false
+
+dmg:
+  background: ""
+  category: 'public.app-category.games'
+  artifactName: '${productName}-setup-${version}-${arch}.${ext}'
+

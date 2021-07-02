@@ -4,11 +4,11 @@
   "description": "An ElectronJS version if TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
-    "test": "electron .",
-    "dist": "node build.js",
-    "dist:win": "npm run dist -- WINDOWS",
-    "dist:mac": "npm run dist -- MAC",
-    "dist:linux": "npm run dist -- LINUX"
+    "start": "electron .",
+    "dist": "electron-builder build",
+    "dist:win": "npm run dist -- -w",
+    "dist:mac": "npm run dist -- -m",
+    "dist:linux": "npm run dist -- -l"
   },
   "keywords": [
     "Minecraft",
