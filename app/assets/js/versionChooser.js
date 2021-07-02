@@ -9,7 +9,7 @@ export class VersionChooser {
     
     constructor() {
         this.sidebar = new versionsSidebar();
-        this.alertex = modal.createRaw({ escButton: true }, cE('div', { class: 'inner-container'}, this.Base))
+        this.alertex = modal.createRaw({ escButton: true, label: 'version-chooser' }, cE('div', { class: 'inner-container'}, this.Base))
         this.refreshVersions()
     }
 
