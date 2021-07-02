@@ -2,6 +2,7 @@
 import { SVG } from './svg.js';
 import { escBinder } from './uibind.js';
 import { Button } from '../panel.js';
+import { randomString } from './Tools.js';
 
 /**
  * Creates modal overlay
@@ -9,18 +10,23 @@ import { Button } from '../panel.js';
  * @param {Object} params.escButton - Create esc button
  * @param {Object} params.escBind - Allow to destroy the overlay when ESC click
  * @param {Object} params.allowOutsideClick - Allow outside click on the overlay
+ * @param {Object} params.label - Unique Label for the overlay
  * @param {Object} container - Container to insert to overlay
  */
 class ModalEx {
 
     constructor(params = {}, container = null) {
         this.params = params;
-        this.root_container = container
-        this.overlay = this.createOverlay(this.params?.escButton, this.root_container)
+        this.label = `layer-${this.params.label || randomString(5)}`;
+        if (qsl(`#${this.label}`)) return;
+        this.root_container = container;
+        this.overlay = this.createOverlay(this.params?.escButton, this.root_container);
+
+        
 
         if (typeof this.params?.escBind !== 'undefined' ? this.params?.escBind : true) {
-            this.escBinder = new escBinder()
-            this.escBinder.bind((e) => { this.destroy(e) })
+            this.escBinder = new escBinder();
+            this.escBinder.bind((e) => { this.destroy(e) });
         }
 
         this.handleModalMousedown();
@@ -35,7 +41,7 @@ class ModalEx {
      * @returns 
      */
     createOverlay(closeButton = false, ...nodes) {
-        const overlay = cE('div', { class: 'overlay hidden' }, ...nodes, closeButton ? this.createToolsContainer((e) => this.destroy(e)) : null);
+        const overlay = cE('div', { class: 'overlay hidden', id: this.label }, ...nodes, closeButton ? this.createToolsContainer((e) => this.destroy(e)) : null);
         return overlay;
     }
 
@@ -45,15 +51,15 @@ class ModalEx {
     }
 
     show() {
-        document.body.appendChild(this.overlay)
+        this.overlay && document.body.qsl('#app-mount > .layerContainer').appendChild(this.overlay) &&
         setTimeout(() => {
             this.overlay.toggle(true);
-        }, 50)
+        }, 50);
         //this.overlay.fadeIn(300);
     }
 
     destroy() {
-        if (this.escBinder) this.escBinder.uibind()
+        this.escBinder?.uibind();
         this.overlay.toggle(false);
         setTimeout(() => {
             this.overlay.remove();
@@ -68,10 +74,12 @@ class ModalEx {
      * @param {*} content 
      */
     append(content) {
-        this.overlay.append(content)
+        this.overlay.append(content);
     }
 
-    get content() { return this.overlay; }
+    get content() { 
+        return this.overlay;
+    }
 
     /**
      * The function creates and returns tools container for overlay
@@ -155,7 +163,8 @@ export const modal = {
 
         const modal_ex = new ModalEx({
             escButton: typeof params?.escButton !== 'undefined' ? params?.escButton : true,
-            allowOutsideClick: typeof params?.allowOutsideClick !== 'undefined' ? params?.allowOutsideClick : true
+            allowOutsideClick: typeof params?.allowOutsideClick !== 'undefined' ? params?.allowOutsideClick : true,
+            label: randomString(5)
         }, root_container);
 
         /*if (type) {
@@ -215,6 +224,8 @@ export const modal = {
     /**
      * Creates raw modal with given elements and parameters
      * @param {Object} props - Properties for the dialog
+     * @param {Object} props.escButton - ESC Button to close
+     * @param {Object} props.label - Unique Label for the overlay
      * @param  {...any} elements - Elements to add
      * @returns {Element} instance of element
      */
@@ -224,6 +235,7 @@ export const modal = {
 
         const modal_ex = new ModalEx({
             escButton: typeof props?.escButton !== 'undefined' ? props?.escButton : true,
+            label: props?.label || randomString(5),
         }, root_container);
 
         modal_ex.show();
@@ -234,7 +246,8 @@ export const modal = {
         const root_container = cE('div', { class: ['container-ov1', 'small'] });
 
         const modal_ex = new ModalEx({
-            escButton: false
+            escButton: false,
+            label: 'whats-new'
         }, root_container);
 
         const s_date = date ? new Date(date) : new Date();
