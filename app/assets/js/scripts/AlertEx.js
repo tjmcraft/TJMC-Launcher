@@ -55,13 +55,13 @@ class ModalEx {
 
     show() {
         setTimeout(() => {
-            this.overlay.toggle(true);
-        }, 0);
+            this.overlay?.toggle(true);
+        }, 10);
         //this.overlay.fadeIn(300);
     }
 
     hide() {
-        this.overlay.toggle(false);
+        this.overlay?.toggle(false);
     }
 
     destroy() {
@@ -69,8 +69,8 @@ class ModalEx {
         this.overlayBinder.uibind();
         this.hide();
         setTimeout(() => {
-            this.overlay.remove();
-        }, 400);
+            this.overlay?.remove();
+        }, 300);
         /*this.overlay.fadeOut(300, () => {
             this.overlay.remove()
         });*/
