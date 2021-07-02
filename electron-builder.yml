@@ -56,10 +56,3 @@ nsis:
   uninstallerIcon: ""
   uninstallerSidebar: ""
   deleteAppDataOnUninstall: false
-
-dmg:
-  background: ""
-  title: "Welcome to TJMC"
-  icon: 'icon.icns'
-
-
