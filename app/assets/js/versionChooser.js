@@ -1,9 +1,10 @@
 
-import { versionsSidebar, Input, Button } from './panel.js';
+import { versionsSidebar } from './panel.js';
 import { DropdownSelector } from './ui/dropdown-selector.js';
 import { modal } from "./scripts/AlertEx.js";
 import { createInstallation, getGlobalVersions } from './scripts/Tools.js';
 import { mainContainer } from './scripts/renderer.js';
+import { Input } from './ui/Input.js';
 
 export class VersionChooser {
     
