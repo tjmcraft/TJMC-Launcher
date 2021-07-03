@@ -44,6 +44,11 @@ export class Settings {
                 content: this.content.launcher_settings_tab
             },
             {
+                id: 'launcher-appearance',
+                name: 'Внешний вид',
+                content: this.content.launcher_appearance_tab
+            },
+            {
                 id: 'about-tab',
                 name: 'О программе',
                 content: this.content.about_tab
@@ -81,6 +86,8 @@ export class Settings {
             { type: 'navItem', rti: 'minecraft-settings' },
             { type: 'navItem', rti: 'java-settings' },
             { type: 'separator' },
+            { type: 'header', content: 'Настроки Приложения' },
+            { type: 'navItem', rti: 'launcher-appearance' },
             { type: 'navItem', rti: 'launcher-settings' },
             { type: 'separator' },
             { type: 'navItem', rti: 'about-tab' }
@@ -267,6 +274,33 @@ export class Settings {
                 )
             )
             return this.base('launcher-settings-tab', heading, children);
+        },
+        async launcher_appearance_tab() {
+            const config = await getConfig();
+            const heading = cE('h2', null, 'Внешний вид');
+            const children = this.createChilderContainer(
+                cE('div', { class: 'container-cc3V' },
+                    cE('h5', null, 'Тема'),
+                    cE('h5', null, 'Как мы используем ваши данные'),
+                    this.icf3v_ints({
+                        header: 'Использование данных для улучшения TJMC',
+                        note: 'Эта настройка позволяет нам в аналитических целях использовать и обрабатывать информацию о том, как вы перемещаетесь по TJMC и используете его. Это позволяет, к примеру, давать вам доступ к тестированию новых функций.',
+                        checked: true,
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    }),
+                    this.icf3v_ints({
+                        header: 'Использование данных для персонализации опыта использования TJMC',
+                        note: ' Этот параметр позволяет нам использовать информацию (например, о том, с кем вы общаетесь или во что играете), чтобы настроить TJMC лично для вас. <a class="anchor" href="https://www.tjmcraft.ga/help">Подробнее</a>',
+                        checked: true,
+                        action: function(s, n) {
+                            console.log(n + ' ' + s);
+                        }
+                    })
+                )
+            )
+            return this.base('launcher-appearance-tab', heading, children);
         },
         async about_tab() {
             const heading = cE('h2', null, 'О программе');
