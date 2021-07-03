@@ -110,6 +110,7 @@ body {
     transition: 1s all;
     overflow: hidden;
     height: 100%;
+    background: var(--background-tertiary);
 }
 
 body,
