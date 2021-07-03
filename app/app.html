@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html class="preload" style="background-color: #171614">
+<html class="preload dark-theme" style="background-color: #171614">
     <head>
         <meta charset="UTF-8">
         <title>TJMC-Launcher</title>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
         <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
         <script src="./assets/js/scripts/ElementEx.js"></script>
-        <script type="module">
+        <!--<script type="module">
             import {FrameBar} from "./assets/js/panel.js";
             import {getPreferredColorScheme} from "./assets/js/scripts/Tools.js";
             if (window.__STANDALONE__ && window.system?.os != 'osx') {
@@ -35,28 +35,11 @@
                     document.documentElement.classList.toggle('dark-theme', true)
                     break;
             }
-        </script>
+        </script>-->
     </head>
     <body>
-        <div id="app-mount" class="app-mount">
-            <div class="app">
-                <div class="app-container">
-                    <div class="app-layers"></div>
-                    <div class="uploadArea">
-                        <div class="uploadDropModal"></div>
-                    </div>
-                </div>
-                <div id="preloader">
-                    <img src="./assets/images/icon.png">
-                    <div class="circle"></div>
-                    <div class="circle" style="animation-delay: .9s !important;"></div>
-                </div>
-            </div>
-            <div class="layerContainer"></div>
-            <div></div>
-            <div></div>
-            <div style="position: fixed; opacity: 0; pointer-events: none;"></div>
-        </div>
+        <div id="app-mount"></div>
+        <script src="./assets/js/index.js" type="module"></script>
         <script src="./assets/js/scripts/Animation.js"></script>
         <script src="./assets/js/scripts/tooltip.js" type="module"></script>
         <script src="./assets/js/scripts/renderer.js" type="module"></script>

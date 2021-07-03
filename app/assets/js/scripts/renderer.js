@@ -29,15 +29,16 @@ playButton.onclick = async (e) => {
 
 window.onload = async (e) => {
     setProgressBar(-1);
-    const preloader = qsl('#preloader');
+    //const preloader = qsl('.preloader');
     switchView(VIEWS.landing, 100, 100);
-    if (await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents()))
-        setTimeout(() => {
+    if (await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents())){
+        /*setTimeout(() => {
             preloader.fadeOut(500, () => {
                 preloader.remove();
                 document.documentElement.classList.remove('preload');
             })
-        }, 1000)
+        }, 1000)*/
+    }
 }
 
 async function registerElectronEvents() {

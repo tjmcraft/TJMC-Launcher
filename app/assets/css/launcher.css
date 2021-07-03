@@ -68,8 +68,7 @@
     box-sizing: border-box;
 }
 
-.preload *,
-.preload,
+
 .disable-animation,
 .disable-animation * {
     -moz-animation: none !important;
@@ -212,6 +211,10 @@ var {
     vertical-align: baseline;
 }
 
+img, a {
+    pointer-events: none;
+}
+
 
 /************* DARK THEME ***************/
 
@@ -288,7 +291,7 @@ var {
 
 /*******************************************************************************
  *                                                                             *
- * Frame Styles (frame.ejs)                                                    *
+ * Frame Styles                                                    *
  *                                                                             *
  ******************************************************************************/
 
@@ -404,8 +407,8 @@ var {
 
 /* =============================================== */
 
-#preloader {
-    /*animation: fadein 1s !important;*/
+.preloader {
+    animation: fadein .5s !important;
     opacity: 0;
     position: absolute;
     display: flex;
@@ -417,14 +420,51 @@ var {
     right: 0;
     left: 0;
     background-repeat: no-repeat;
-    background: var(--background-secondary);
+    background: var(--background-tertiary);
     z-index: 9999;
     user-select: none;
     transition: none;
     -webkit-app-region: drag;
 }
 
-#preloader img {
+.preloader img.background {
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preloader .title {
+    font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: -0.9px;
+    line-height: 1.2em;
+    z-index: 2;
+    position: absolute;
+    top: 10vh;
+    user-select: none;
+    font-size: 3em;
+    color: var(--header-primary);
+    font-weight: 600;
+    text-shadow: 0 0 8px #aaa;
+    -webkit-font-smoothing: antialiased;
+}
+
+.preloader .subtitle {
+    z-index: 3;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 10px;
+    user-select: none;
+    font-size: 1.3em;
+    color: var(--header-primary);
+    font-weight: 600;
+    text-shadow: 0 0 5px #888;
+    -webkit-font-smoothing: antialiased;
+}
+
+.preloader img[data-type="logo"] {
     animation: bounce 1s ease !important;
     backface-visibility: hidden;
     border-radius: 50%;
@@ -437,7 +477,7 @@ var {
 
 .circle {
     border-radius: 50%;
-    background: radial-gradient(circle, transparent 15%, #115fff 100%);
+    background: radial-gradient(circle, transparent 25%, #115fff 100%);
     width: 500px;
     height: 500px;
     position: absolute;
@@ -453,7 +493,7 @@ var {
     font-weight: 900;
 }
 
-.preload #preloader {
+.preload .preloader {
     opacity: 1;
     visibility: visible;
 }
@@ -1397,6 +1437,12 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transition: .5s;
+}
+
+.app-mount {
+    opacity: 1 !important;
 }
 
 .app {
@@ -1444,7 +1490,7 @@ body {
     background: transparent;
 }
 
-.platform-win #preloader {
+.platform-win .preloader {
     top: -22px;
 }
 
