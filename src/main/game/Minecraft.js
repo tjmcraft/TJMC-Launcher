@@ -420,8 +420,8 @@ class Minecraft {
 
         // Java Arguments
         if(process.platform === 'darwin'){
-            args.push('-Xdock:name=TJMC')
-            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+            args.push('-Xdock:name=TJMC-Launcher')
+            args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
         }
         args.push('-Xmx' + this.getMemory()[0])
         args.push('-Xms' + this.getMemory()[1])
@@ -452,8 +452,8 @@ class Minecraft {
         let args = []
 
         if(process.platform === 'darwin'){
-            args.push('-Xdock:name=TJMC')
-            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+            args.push('-Xdock:name=TJMC-Launcher')
+            args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
         }
         args.push('-Xmx' + this.getMemory()[0])
         args.push('-Xms' + this.getMemory()[1])
