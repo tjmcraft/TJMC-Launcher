@@ -1,4 +1,5 @@
-import { getConfig } from "./scripts/Tools.js";
+import { FrameBar } from "./panel.js";
+import { getConfig, getPreferredColorScheme } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -33,7 +34,7 @@ class Preloader {
     root
 
     constructor(props) {
-        this.background = cE('img', { class: ['background'], src: "https://picsum.photos/1920/1080" });
+        this.background = cE('img', { class: ['background'], src: "https://picsum.photos/1920/1080?v=1", onerror: "this.src='./assets/images/background.jpg'" });
         this.title = cE('div', { class: ['title'] });
         this.subtitle = cE('div', { class: ['subtitle'] }, 'TJMCRAFT');
         
@@ -137,13 +138,46 @@ class LayerContainer {
 
 async function init(props) {
     const mount = qsl(`#app-mount`);
+
+    let frame = cE('div');
     const app = new App();
     const layerContainer = new LayerContainer();
-    mount.append(app.content, layerContainer.content);
+
+    if (window.__STANDALONE__ && window.system?.os != 'osx') {
+        frame = FrameBar();
+        app.appContainer.content.toggle(true, 'frame-fix');
+    }
+
+    mount.append(frame, app.content, layerContainer.content);
+
     window.addEventListener('load', () => {
         mount.toggle(true, 'app-mount')
         setTimeout(() => app.preloader.destroy(), 2500)
     }, { once: true });
+
+    switch (window.system?.os) {
+        case 'windows':
+            document.documentElement.classList.toggle('platform-win', true)
+            break;
+        case 'osx':
+            document.documentElement.classList.toggle('platform-darwin', true)
+            break;
+        case 'linux':
+            document.documentElement.classList.toggle('platform-linux', true)
+            break;
+        default:
+            document.documentElement.classList.toggle('platform-web', true)
+            break;
+    }
+
+    switch (window.system?.colorScheme || getPreferredColorScheme()) {
+        case 'light':
+            document.documentElement.classList.toggle('light-theme', true)
+            break;
+        default:
+            document.documentElement.classList.toggle('dark-theme', true)
+            break;
+    }
 }
 
 init();

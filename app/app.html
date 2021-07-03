@@ -5,40 +5,10 @@
         <title>TJMC-Launcher</title>
         <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
         <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
-        <script src="./assets/js/scripts/ElementEx.js"></script>
-        <!--<script type="module">
-            import {FrameBar} from "./assets/js/panel.js";
-            import {getPreferredColorScheme} from "./assets/js/scripts/Tools.js";
-            if (window.__STANDALONE__ && window.system?.os != 'osx') {
-                qsl("#app-mount").prepend(FrameBar());
-                qsl('.app-container').toggle(true, 'frame-fix');
-            }
-            switch (window.system?.os) {
-                case 'windows':
-                    document.documentElement.classList.toggle('platform-win', true)
-                    break;
-                case 'osx':
-                    document.documentElement.classList.toggle('platform-darwin', true)
-                    break;
-                case 'linux':
-                    document.documentElement.classList.toggle('platform-linux', true)
-                    break;
-                default:
-                    document.documentElement.classList.toggle('platform-web', true)
-                    break;
-            }
-            switch (window.system?.colorScheme || getPreferredColorScheme()) {
-                case 'light':
-                    document.documentElement.classList.toggle('light-theme', true)
-                    break;
-                default:
-                    document.documentElement.classList.toggle('dark-theme', true)
-                    break;
-            }
-        </script>-->
     </head>
     <body>
         <div id="app-mount"></div>
+        <script src="./assets/js/scripts/ElementEx.js"></script>
         <script src="./assets/js/index.js" type="module"></script>
         <script src="./assets/js/scripts/Animation.js"></script>
         <script src="./assets/js/scripts/tooltip.js" type="module"></script>

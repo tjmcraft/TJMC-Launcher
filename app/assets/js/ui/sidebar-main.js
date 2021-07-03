@@ -54,8 +54,8 @@ class TopContainer {
     create() {
         this.root = cE('div', { class: 'top' },
             cE('img', {
-                src: "./assets/images/background.jpg",
-                onerror: "this.src='../app/assets/images/default.png'"
+                src: "https://picsum.photos/1920/1080?v=2",
+                onerror: "this.src='./assets/images/background.jpg'"
             }),
             cE('div', { class: 'top-overlay' },
                 this.toolbar.content
