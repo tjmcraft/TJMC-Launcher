@@ -34,11 +34,6 @@ class Preloader {
 
     constructor(props) {
         this.background = cE('img', { class: ['background'], src: "https://picsum.photos/1920/1080" });
-        /*this.logo = cE('img', { src: './assets/images/icon.png', 'data-type': 'logo' });
-        this.circles = [
-            cE('div', { class: ['circle'] }),
-            cE('div', { class: ['circle'], style: 'animation-delay: .9s !important'})
-        ];*/
         this.title = cE('div', { class: ['title'] });
         this.subtitle = cE('div', { class: ['subtitle'] }, 'TJMCRAFT');
         
@@ -50,8 +45,6 @@ class Preloader {
             this.title,
             this.background,
             this.subtitle
-            //this.logo,
-            //...this.circles
         );
     }
     destroy() {
@@ -114,7 +107,6 @@ class App {
         this.root = cE('div', { class: ['app'] },
             this.preloader.content,
             this.appContainer.content,
-            
         )
     }
     get content() {
@@ -152,7 +144,6 @@ async function init(props) {
         mount.toggle(true, 'app-mount')
         setTimeout(() => app.preloader.destroy(), 2500)
     }, { once: true });
-    
 }
 
 init();
