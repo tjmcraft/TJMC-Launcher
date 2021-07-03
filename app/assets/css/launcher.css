@@ -212,7 +212,7 @@ var {
     vertical-align: baseline;
 }
 
-img, a {
+img {
     pointer-events: none;
 }
 
@@ -887,11 +887,11 @@ input,
 select {
     border: 1px solid gray;
     border-width: 0px 0px 1px 0px;
-    background-color: #1a1a1a !important;
+    background-color: var(--background-secondary-alt);
     outline: none;
     height: 32px;
     width: 184px;
-    color: #eee;
+    color: var(--text-normal);
     font-size: 14px;
     font-family: var(--font-primary);
     opacity: 0.8;
@@ -933,7 +933,7 @@ button.filled.colorBrand:hover {
 }
 
 button:hover {
-    background-color: #3F3F3F;
+    background-color: var(--interactive-hover);
 }
 
 button:active {
@@ -2281,7 +2281,7 @@ a.anchor:hover {
     border-image: initial;
     border: 1px solid gray;
     border-width: 0px 0px 1px 0px;
-    background-color: #1a1a1a !important;
+    background-color: var(--background-secondary-alt);
     outline: none;
     height: 32px;
     width: 184px;
