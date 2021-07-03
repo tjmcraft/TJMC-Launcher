@@ -38,17 +38,10 @@ if (!gotTheLock) {
             win.focus()
         }
     })
-
     app.on('ready', createWindow)
     app.on('ready', createMenu)
-
-    app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') app.quit()
-    })
-
-    app.on('activate', () => {
-        if (win === null) createWindow()
-    })
+    app.on('window-all-closed', () => app.quit())
+    app.on('activate', () => (win === null) && createWindow())
 }
 
 function createWindow() {
