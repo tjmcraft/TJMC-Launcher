@@ -1379,20 +1379,20 @@ input:checked+.toggleSwitchSlider:before {
 
 /* === app === */
 
-.app-mount,
+#app-mount,
 body,
 html {
     width: 100%;
     height: 100%;
 }
 
-.app-mount,
+#app-mount,
 body {
     background-color: var(--background-tertiary);
     text-rendering: optimizeLegibility;
 }
 
-.app-mount {
+#app-mount {
     position: absolute;
     overflow: hidden;
     display: flex;

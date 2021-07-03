@@ -1,66 +1,64 @@
 <!DOCTYPE html>
 <html class="preload" style="background-color: #171614">
-<head>
-    <meta charset="UTF-8">
-    <title>TJMC-Launcher</title>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
-    <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
-    <script src="./assets/js/scripts/ElementEx.js"></script>
-    <script type="module">
-        import {FrameBar} from "./assets/js/panel.js";
-        import {getPreferredColorScheme} from "./assets/js/scripts/Tools.js";
-        if (window.__STANDALONE__ && window.system?.os != 'osx') {
-            qsl(".app-mount").prepend(FrameBar());
-            qsl('.app-container').toggle(true, 'frame-fix');
-        }
-        switch (window.system?.os) {
-            case 'windows':
-                document.documentElement.classList.toggle('platform-win', true)
-                break;
-            case 'osx':
-                document.documentElement.classList.toggle('platform-darwin', true)
-                break;
-            case 'linux':
-                document.documentElement.classList.toggle('platform-linux', true)
-                break;
-            default:
-                document.documentElement.classList.toggle('platform-web', true)
-                break;
-        }
-        switch (window.system?.colorScheme || getPreferredColorScheme()) {
-            case 'light':
-                document.documentElement.classList.toggle('light-theme', true)
-                break;
-            default:
-                document.documentElement.classList.toggle('dark-theme', true)
-                break;
-        }
-    </script>
-</head>
-<body>
-    <div id="app-mount" class="app-mount">
-        <div class="app">
-            <div class="app-container">
-                <div class="app-layers">
-                    <!--<div class="layer base-layer" id="main-layer"></div>-->
+    <head>
+        <meta charset="UTF-8">
+        <title>TJMC-Launcher</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline'">
+        <link type="text/css" rel="stylesheet" href="./assets/css/launcher.css">
+        <script src="./assets/js/scripts/ElementEx.js"></script>
+        <script type="module">
+            import {FrameBar} from "./assets/js/panel.js";
+            import {getPreferredColorScheme} from "./assets/js/scripts/Tools.js";
+            if (window.__STANDALONE__ && window.system?.os != 'osx') {
+                qsl("#app-mount").prepend(FrameBar());
+                qsl('.app-container').toggle(true, 'frame-fix');
+            }
+            switch (window.system?.os) {
+                case 'windows':
+                    document.documentElement.classList.toggle('platform-win', true)
+                    break;
+                case 'osx':
+                    document.documentElement.classList.toggle('platform-darwin', true)
+                    break;
+                case 'linux':
+                    document.documentElement.classList.toggle('platform-linux', true)
+                    break;
+                default:
+                    document.documentElement.classList.toggle('platform-web', true)
+                    break;
+            }
+            switch (window.system?.colorScheme || getPreferredColorScheme()) {
+                case 'light':
+                    document.documentElement.classList.toggle('light-theme', true)
+                    break;
+                default:
+                    document.documentElement.classList.toggle('dark-theme', true)
+                    break;
+            }
+        </script>
+    </head>
+    <body>
+        <div id="app-mount" class="app-mount">
+            <div class="app">
+                <div class="app-container">
+                    <div class="app-layers"></div>
+                    <div class="uploadArea">
+                        <div class="uploadDropModal"></div>
+                    </div>
                 </div>
-                <div class="uploadArea">
-                    <div class="uploadDropModal"></div>
+                <div id="preloader">
+                    <img src="./assets/images/icon.png">
+                    <div class="circle"></div>
+                    <div class="circle" style="animation-delay: .9s !important;"></div>
                 </div>
             </div>
-            <div id="preloader">
-                <img src="./assets/images/icon.png">
-                <div class="circle"></div>
-                <div class="circle" style="animation-delay: .9s !important;"></div>
-            </div>
+            <div class="layerContainer"></div>
+            <div></div>
+            <div></div>
+            <div style="position: fixed; opacity: 0; pointer-events: none;"></div>
         </div>
-        <div class="layerContainer"></div>
-        <div></div>
-        <div></div>
-        <div style="position: fixed; opacity: 0; pointer-events: none;"></div>
-    </div>
-    <script src="./assets/js/scripts/Animation.js"></script>    
-    <script src="./assets/js/scripts/tooltip.js" type="module"></script>
-    <script src="./assets/js/scripts/renderer.js" type="module"></script>
-</body>
+        <script src="./assets/js/scripts/Animation.js"></script>
+        <script src="./assets/js/scripts/tooltip.js" type="module"></script>
+        <script src="./assets/js/scripts/renderer.js" type="module"></script>
+    </body>
 </html>
