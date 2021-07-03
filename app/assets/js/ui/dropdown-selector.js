@@ -1,4 +1,6 @@
+
 import {SVG} from '../scripts/svg.js';
+
 /**
  * Dropdown selector element
  */
