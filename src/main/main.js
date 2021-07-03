@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
 const express = require('express')
 const express_app = express()
 const WebSocket = require('ws')
@@ -365,4 +365,15 @@ function SocketConnect(socket) {
     this.send = (type = null, data) => {
         if (socket) sendJSON(type, data);
     }
+}
+
+if (process.platform == 'darwin') {
+  
+    const setOSTheme = () => {
+      let source = nativeTheme.themeSource;
+      const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+      win.webContents.send('theme.update', {source: source, theme: theme});
+    }
+  
+    nativeTheme.on('updated', () => setOSTheme());
 }

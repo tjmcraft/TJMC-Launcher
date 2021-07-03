@@ -1,5 +1,5 @@
 import { FrameBar } from "./panel.js";
-import { getConfig, getPreferredColorScheme } from "./scripts/Tools.js";
+import { getConfig, getPreferredColorScheme, setTheme } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -169,15 +169,8 @@ async function init(props) {
             document.documentElement.classList.toggle('platform-web', true)
             break;
     }
-
-    switch (window.system?.colorScheme || getPreferredColorScheme()) {
-        case 'light':
-            document.documentElement.classList.toggle('light-theme', true)
-            break;
-        default:
-            document.documentElement.classList.toggle('dark-theme', true)
-            break;
-    }
+    
+    setTheme();
 }
 
 init();

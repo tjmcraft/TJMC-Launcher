@@ -68,8 +68,7 @@ process.once('loaded', () => {
 
 contextBridge.exposeInMainWorld('__STANDALONE__', true)
 contextBridge.exposeInMainWorld('system', {
-    os: getOS(),
-    colorScheme: null
+    os: getOS()
 })
 
 // Init global instances

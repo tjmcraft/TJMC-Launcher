@@ -13,6 +13,24 @@ export function getPreferredColorScheme() {
     return 'light';
 }
 
+export const setTheme = (system = null) => {
+    const userTheme = window.localStorage.theme;
+    const defaultTheme = 'dark';
+
+    switch (userTheme || system || defaultTheme) {
+        case 'light':
+            document.documentElement.classList.toggle('light-theme', true)
+            document.documentElement.classList.toggle('dark-theme', false)
+            break;
+        case 'dark':
+            document.documentElement.classList.toggle('dark-theme', true)
+            document.documentElement.classList.toggle('light-theme', false)
+            break;
+        default:
+            break;
+    }
+}
+
 export const randomInteger = (max) => {
     let min = 0
     let rand = min + Math.random() * (max + 1 - min)
