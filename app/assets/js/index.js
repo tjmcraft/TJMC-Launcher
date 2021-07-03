@@ -1,5 +1,5 @@
 import { FrameBar } from "./panel.js";
-import { getConfig, getPreferredColorScheme, setTheme } from "./scripts/Tools.js";
+import { getConfig, getPreferredColorScheme, updateTheme, updateThemeWeb } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -169,8 +169,12 @@ async function init(props) {
             document.documentElement.classList.toggle('platform-web', true)
             break;
     }
-    
-    setTheme();
+
+    if (window.__STANDALONE__ && electron) {
+        updateTheme();
+    } else {
+        updateThemeWeb();
+    }
 }
 
 init();

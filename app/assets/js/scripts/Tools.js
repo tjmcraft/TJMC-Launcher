@@ -13,11 +13,9 @@ export function getPreferredColorScheme() {
     return 'light';
 }
 
-export const setTheme = (system = null) => {
-    const userTheme = window.localStorage.theme;
-    const defaultTheme = 'dark';
-
-    switch (userTheme || system || defaultTheme) {
+export function setColorScheme(colorScheme = null) {
+    console.log(colorScheme)
+    switch (colorScheme) {
         case 'light':
             document.documentElement.classList.toggle('light-theme', true)
             document.documentElement.classList.toggle('dark-theme', false)
@@ -29,6 +27,20 @@ export const setTheme = (system = null) => {
         default:
             break;
     }
+}
+
+export const updateTheme = (system = null) => {
+    const userTheme = window.localStorage.theme;
+    const defaultTheme = 'dark';
+    setColorScheme(userTheme || system || defaultTheme);
+}
+
+export const updateThemeWeb = () => {
+    const userTheme = window.localStorage.theme;
+    const defaultTheme = 'dark';
+
+    var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    colorSchemeQuery.addEventListener('change', () => setColorScheme(userTheme || getPreferredColorScheme() || defaultTheme));
 }
 
 export const randomInteger = (max) => {

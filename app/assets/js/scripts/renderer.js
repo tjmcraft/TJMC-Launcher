@@ -2,7 +2,7 @@
 import { Layer } from './Layer.js';
 import { Settings } from '../settings.js';
 import { VIEWS, switchView } from './LayerSwitcher.js';
-import { setProgressBar, setTheme, startMinecraft } from './Tools.js';
+import { setProgressBar, updateTheme, startMinecraft } from './Tools.js';
 import { getCurrentVersionHash, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';
 
@@ -70,7 +70,7 @@ async function registerElectronEvents() {
         setProgressBar(data.progress);
     });
     electron.on('theme.update', (e, data) => {
-        setTheme(data.theme)
+        updateTheme(data.theme)
     })
     return true;
 }
