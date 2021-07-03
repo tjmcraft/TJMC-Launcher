@@ -30,7 +30,9 @@ playButton.onclick = async (e) => {
 window.onload = async (e) => {
     setProgressBar(-1);
     if (await (window.__STANDALONE__ ? registerElectronEvents() : registerWSEvents())){
-        switchView(VIEWS.landing, 100, 100);
+        setTimeout(() => switchView(VIEWS.landing, 100, 100), 1000);
+    } else {
+        throw new Error('Register listeners error!')
     }
 }
 
@@ -70,64 +72,66 @@ async function registerElectronEvents() {
     return true;
 }
 
-async function registerWSEvents(attempt = 0) {
-    attempt++;
-    if (attempt >= 3) {
-        modal.alert("Ошибочка получается...", "Не возможно присоединиться к сокет-серверу вашего лаунчера!\n Возможно он не установлен или банально не запущен.\n Устраните неполадки и попробуйте снова!", null, {
-            buttons: [{
-                name: "Окей",
-                class: ['filled', 'colorBrand'],
-                closeOverlay: false,
-                callback: () => location.reload()
-            }],
-            escButton: false,
-            allowOutsideClick: false
-        });
-        return false;
-    }
-    const reconnect_timeout = 1;
-    let ws = new WebSocket("ws://localhost:4836");
-    ws.onopen = function(event) {
-        ws.onmessage = function(event) {
-            let msg = JSON.parse(event.data);
-            parseEvent(msg);
+function registerWSEvents(attempt = 0) {
+    return new Promise((resolve, reject) => {
+        attempt++;
+        if (attempt >= 3) {
+            modal.alert("Ошибочка получается...", "Не возможно присоединиться к сокет-серверу вашего лаунчера!\n Возможно он не установлен или банально не запущен.\n Устраните неполадки и попробуйте снова!", null, {
+                buttons: [{
+                    name: "Окей",
+                    class: ['filled', 'colorBrand'],
+                    closeOverlay: false,
+                    callback: () => location.reload()
+                }],
+                escButton: false,
+                allowOutsideClick: false
+            });
+            return reject(false);
         }
-        return true;
-    };
-    ws.onclose = async (e) => {
-        console.warn(`Socket is closed. Reconnect will be attempted in ${reconnect_timeout} second.`, e.reason);
-        setTimeout(await registerWSEvents(attempt), reconnect_timeout * 1000);
-    };
-    const parseEvent = (event) => {
-        switch (event.type) {
-            case 'startup-success':
-                progressBars[event.data.version_hash].hide();
-                setTimeout(() => processDots[event.data.version_hash].hide(), 1000);
-                break;
-            case 'startup-error':
-                console.warn(event.data.error);
-                processDots[data.version_hash].hide();
-                modal.alert('Что-то пошло не так...', event.data.error, 'error', { logType: true });
-                break;
-            case 'error':
-                console.error(event.data.error);
-                processDots[data.version_hash].hide();
-                modal.alert('Ошибочка...', event.data.error, 'error', { logType: true });
-                break;
-            case 'progress':
-                const version_hash = event.data.version_hash;
-                if (event.data.progress > 0) {
-                    processDots[version_hash].hide();
-                    progressBars[version_hash].show();
-                }
-                if (event.data.progress <= 0) {
-                    progressBars[version_hash].hide();
-                    processDots[version_hash].show();
-                }
-                progressBars[version_hash].setPrecentage(event.data.progress * 100);
-                break;
-            default:
-                break;
-        }
-    };
+        const reconnect_timeout = 1;
+        let ws = new WebSocket("ws://localhost:4836");
+        ws.onopen = function(event) {
+            ws.onmessage = function(event) {
+                let msg = JSON.parse(event.data);
+                parseEvent(msg);
+            }
+            return resolve(true);
+        };
+        ws.onclose = async (e) => {
+            console.warn(`Socket is closed. Reconnect will be attempted in ${reconnect_timeout} second.`, e.reason);
+            setTimeout(await registerWSEvents(attempt), reconnect_timeout * 1000);
+        };
+        const parseEvent = (event) => {
+            switch (event.type) {
+                case 'startup-success':
+                    progressBars[event.data.version_hash].hide();
+                    setTimeout(() => processDots[event.data.version_hash].hide(), 1000);
+                    break;
+                case 'startup-error':
+                    console.warn(event.data.error);
+                    processDots[data.version_hash].hide();
+                    modal.alert('Что-то пошло не так...', event.data.error, 'error', { logType: true });
+                    break;
+                case 'error':
+                    console.error(event.data.error);
+                    processDots[data.version_hash].hide();
+                    modal.alert('Ошибочка...', event.data.error, 'error', { logType: true });
+                    break;
+                case 'progress':
+                    const version_hash = event.data.version_hash;
+                    if (event.data.progress > 0) {
+                        processDots[version_hash].hide();
+                        progressBars[version_hash].show();
+                    }
+                    if (event.data.progress <= 0) {
+                        progressBars[version_hash].hide();
+                        processDots[version_hash].show();
+                    }
+                    progressBars[version_hash].setPrecentage(event.data.progress * 100);
+                    break;
+                default:
+                    break;
+            }
+        };
+    });
 }
