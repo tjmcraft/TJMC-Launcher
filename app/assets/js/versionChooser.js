@@ -3,7 +3,7 @@ import { versionsSidebar } from './panel.js';
 import { DropdownSelector } from './ui/dropdown-selector.js';
 import { modal } from "./scripts/AlertEx.js";
 import { createInstallation, getGlobalVersions } from './scripts/Tools.js';
-import { mainContainer } from './scripts/renderer.js';
+// import { mainContainer } from './scripts/renderer.js';
 import { Input } from './ui/Input.js';
 
 export class VersionChooser {
@@ -134,10 +134,10 @@ export class VersionChooser {
         accept_button.onclick = () => {
             this.addVersion(props.version.id, version_opts).then(version_hash => {
                 //console.log(version_hash)
-                mainContainer.refreshVersions().then(() => {
-                    mainContainer.selectVersion(version_hash);
+                //mainContainer.refreshVersions().then(() => {
+                //    mainContainer.selectVersion(version_hash);
                     this.alertex.destroy();
-                })
+                //})
             });
         };
         const footer = cE('section', { class: 'VT-footer vertical-button-container' },
