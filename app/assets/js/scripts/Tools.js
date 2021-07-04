@@ -35,14 +35,6 @@ export const updateTheme = (system = null) => {
     setColorScheme(userTheme || system || defaultTheme);
 }
 
-export const updateThemeWeb = () => {
-    const userTheme = window.localStorage.theme;
-    const defaultTheme = 'dark';
-
-    var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    colorSchemeQuery.addEventListener('change', () => setColorScheme(userTheme || getPreferredColorScheme() || defaultTheme));
-}
-
 export const updatePlatform = (system = null) => {
     const defaultPlatform = 'web';
     switch (system || defaultPlatform) {
@@ -60,6 +52,8 @@ export const updatePlatform = (system = null) => {
             break;
     }
 }
+
+export const isWeb = !(window.__STANDALONE__ && electron);
 
 export const randomInteger = (max) => {
     let min = 0
@@ -162,3 +156,4 @@ export async function setProgressBar(progress) {
         return ;
     }
 }
+
