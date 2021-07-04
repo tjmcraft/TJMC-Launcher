@@ -1,6 +1,7 @@
 
+import { Main } from "./Layers/Main.js";
 import { FrameBar } from "./panel.js";
-import { getConfig, updatePlatform, updateTheme, updateThemeWeb } from "./scripts/Tools.js";
+import { getConfig, isWeb } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -144,7 +145,7 @@ async function init(props) {
     const app = new App();
     const layerContainer = new LayerContainer();
 
-    if (window.__STANDALONE__ && window.system?.os != 'osx') {
+    if (!isWeb && window.system?.os != 'osx') {
         frame = FrameBar();
         app.appContainer.content.toggle(true, 'frame-fix');
     }
@@ -156,13 +157,7 @@ async function init(props) {
         setTimeout(() => app.preloader.destroy(), 2500)
     }, { once: true });
 
-    if (window.__STANDALONE__ && electron) {
-        updatePlatform(window.system?.os);
-        updateTheme();
-    } else {
-        updatePlatform();
-        updateThemeWeb();
-    }
+    Main();
 }
 
 init();
