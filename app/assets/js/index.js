@@ -1,5 +1,6 @@
+
 import { FrameBar } from "./panel.js";
-import { getConfig, getPreferredColorScheme, updateTheme, updateThemeWeb } from "./scripts/Tools.js";
+import { getConfig, updatePlatform, updateTheme, updateThemeWeb } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -155,24 +156,11 @@ async function init(props) {
         setTimeout(() => app.preloader.destroy(), 2500)
     }, { once: true });
 
-    switch (window.system?.os) {
-        case 'windows':
-            document.documentElement.classList.toggle('platform-win', true)
-            break;
-        case 'osx':
-            document.documentElement.classList.toggle('platform-darwin', true)
-            break;
-        case 'linux':
-            document.documentElement.classList.toggle('platform-linux', true)
-            break;
-        default:
-            document.documentElement.classList.toggle('platform-web', true)
-            break;
-    }
-
     if (window.__STANDALONE__ && electron) {
+        updatePlatform(window.system?.os);
         updateTheme();
     } else {
+        updatePlatform();
         updateThemeWeb();
     }
 }

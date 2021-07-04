@@ -43,6 +43,24 @@ export const updateThemeWeb = () => {
     colorSchemeQuery.addEventListener('change', () => setColorScheme(userTheme || getPreferredColorScheme() || defaultTheme));
 }
 
+export const updatePlatform = (system = null) => {
+    const defaultPlatform = 'web';
+    switch (system || defaultPlatform) {
+        case 'windows':
+            document.documentElement.classList.toggle('platform-win', true)
+            break;
+        case 'osx':
+            document.documentElement.classList.toggle('platform-darwin', true)
+            break;
+        case 'linux':
+            document.documentElement.classList.toggle('platform-linux', true)
+            break;
+        default:
+            document.documentElement.classList.toggle('platform-web', true)
+            break;
+    }
+}
+
 export const randomInteger = (max) => {
     let min = 0
     let rand = min + Math.random() * (max + 1 - min)
