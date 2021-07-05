@@ -1,5 +1,7 @@
+
+import { Main } from "./Layers/Main.js";
 import { FrameBar } from "./panel.js";
-import { getConfig, getPreferredColorScheme, updateTheme, updateThemeWeb } from "./scripts/Tools.js";
+import { getConfig, isWeb } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -143,7 +145,7 @@ async function init(props) {
     const app = new App();
     const layerContainer = new LayerContainer();
 
-    if (window.__STANDALONE__ && window.system?.os != 'osx') {
+    if (!isWeb && window.system?.os != 'osx') {
         frame = FrameBar();
         app.appContainer.content.toggle(true, 'frame-fix');
     }
@@ -155,26 +157,7 @@ async function init(props) {
         setTimeout(() => app.preloader.destroy(), 2500)
     }, { once: true });
 
-    switch (window.system?.os) {
-        case 'windows':
-            document.documentElement.classList.toggle('platform-win', true)
-            break;
-        case 'osx':
-            document.documentElement.classList.toggle('platform-darwin', true)
-            break;
-        case 'linux':
-            document.documentElement.classList.toggle('platform-linux', true)
-            break;
-        default:
-            document.documentElement.classList.toggle('platform-web', true)
-            break;
-    }
-
-    if (window.__STANDALONE__ && electron) {
-        updateTheme();
-    } else {
-        updateThemeWeb();
-    }
+    Main();
 }
 
 init();

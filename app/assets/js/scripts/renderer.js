@@ -1,7 +1,7 @@
 
-import { Layer } from './Layer.js';
+import { Layer } from '../Layer/Layer.js';
 import { Settings } from '../settings.js';
-import { VIEWS, switchView } from './LayerSwitcher.js';
+import { VIEWS, switchView } from '../Layer/LayerSwitcher.js';
 import { setProgressBar, updateTheme, startMinecraft } from './Tools.js';
 import { getCurrentVersionHash, MainContainer } from '../ui/sidebar-main.js';
 import { modal } from './AlertEx.js';

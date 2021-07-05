@@ -14,7 +14,6 @@ export function getPreferredColorScheme() {
 }
 
 export function setColorScheme(colorScheme = null) {
-    console.log(colorScheme)
     switch (colorScheme) {
         case 'light':
             document.documentElement.classList.toggle('light-theme', true)
@@ -32,16 +31,28 @@ export function setColorScheme(colorScheme = null) {
 export const updateTheme = (system = null) => {
     const userTheme = window.localStorage.theme;
     const defaultTheme = 'dark';
-    setColorScheme(userTheme || system || defaultTheme);
+    setColorScheme(userTheme || system || getPreferredColorScheme() || defaultTheme);
 }
 
-export const updateThemeWeb = () => {
-    const userTheme = window.localStorage.theme;
-    const defaultTheme = 'dark';
-
-    var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    colorSchemeQuery.addEventListener('change', () => setColorScheme(userTheme || getPreferredColorScheme() || defaultTheme));
+export const updatePlatform = (system = null) => {
+    const defaultPlatform = 'web';
+    switch (system || defaultPlatform) {
+        case 'windows':
+            document.documentElement.classList.toggle('platform-win', true)
+            break;
+        case 'osx':
+            document.documentElement.classList.toggle('platform-darwin', true)
+            break;
+        case 'linux':
+            document.documentElement.classList.toggle('platform-linux', true)
+            break;
+        default:
+            document.documentElement.classList.toggle('platform-web', true)
+            break;
+    }
 }
+
+export const isWeb = !(window.__STANDALONE__ && electron);
 
 export const randomInteger = (max) => {
     let min = 0
@@ -144,3 +155,4 @@ export async function setProgressBar(progress) {
         return ;
     }
 }
+

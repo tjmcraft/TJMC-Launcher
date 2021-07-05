@@ -268,7 +268,7 @@ img {
     --background-modifier-selected: rgba(116, 127, 141, 0.24);
     --background-modifier-accent: rgba(6, 6, 7, 0.08);
     --background-floating: #fff;
-    --header-primary: #0d0d0e;
+    --header-primary: #060607;
     --header-secondary: #4f5660;
     --text-link: #00b0f4;
     --text-normal: #2e3338;
@@ -1978,7 +1978,7 @@ body {
 
 .container-f .dropdown a {
     cursor: pointer;
-    color: #eee;
+    color: var(--header-primary);
     padding: 12px 15px;
     text-decoration: none;
     display: block;
