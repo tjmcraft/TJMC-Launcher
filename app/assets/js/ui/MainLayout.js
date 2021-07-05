@@ -1,5 +1,6 @@
 // Imports
 import { SVG } from "../scripts/svg.js";
+import { getConfig } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
 import { VersionChooser } from "../versionChooser.js";
 import { Guilds } from "./guilds.js";
@@ -46,7 +47,7 @@ export class MainBase {
 }
 
 export class userPanel {
-    constructor(username = '', permission = '') {
+    constructor() {
         this.avatar = cE('img');
         this.username = cE('div', { class: 'title' });
         this.permission = cE('div', { class: 'subtitle'});
@@ -58,7 +59,7 @@ export class userPanel {
         this.settingsButton.onclick = (e) => new Settings();
         this.root;
         this.create();
-        this.update(username, permission);
+        this.update();
     };
     create() {
         this.root = cE('div', { class: 'panel' },
@@ -74,10 +75,11 @@ export class userPanel {
             )
         );
     };
-    update(username, permission) {
-        this.username.innerText = username || '';
-        this.permission.innerText = permission || '';
-        this.avatar.src = `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${username}`;
+    async update() {
+        const config = await getConfig();
+        this.username.innerText = config?.auth?.username || '';
+        this.permission.innerText = config?.auth?.permission || '';
+        this.avatar.src = `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${config?.auth?.username}`;
     };
     get content() {
         return this.root;
