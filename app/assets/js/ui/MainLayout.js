@@ -5,8 +5,8 @@ import { Settings } from "../settings.js";
 import { VersionChooser } from "../versionChooser.js";
 import { Guilds } from "./guilds.js";
 
-class Base {
-    constructor(id = null, sidebar, main_content) {
+export class Base {
+    constructor(id = null, sidebar = [], main_content = []) {
         this.id = id;
         this.sideBar = sidebar;
         this.userPanel = new userPanel();
@@ -27,23 +27,27 @@ class Base {
         return this.root;
     }
     update(props) {}
+    destroy() {}
 }
 
 export class MainBase {
-    constructor(sidebar, main_content) {
+    constructor(mainContainer = null) {
         this.guilds = new Guilds();
-        this.base = new Base(null, sidebar, main_content);
         this.create();
+        this.update(mainContainer);
     };
     create() {
         this.root = cE('div', { class: 'container' },
-            this.guilds.content,
-            this.base.content
+            this.guilds.content
         );
     };
     get content() {
         return this.root;
     };
+    update(props) {
+        this.root.qsla('.base').forEach(i => i.remove());
+        props && this.root.append(props);
+    }
 }
 
 export class userPanel {
