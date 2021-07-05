@@ -1540,7 +1540,7 @@ body {
     padding: 0 8px;
 }
 
-.sidebar-main>.localVersions {
+.sidebar-main > .container-3Wc7 {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1549,36 +1549,36 @@ body {
     flex: 1;
 }
 
-.sidebar-main>.localVersions>.scroller {
+.sidebar-main > .container-3Wc7 > .scroller {
     padding-right: 0;
     padding-top: 4px;
     overflow: hidden scroll;
     background: var(--background-secondary);
 }
 
-.sidebar-main>.localVersions>.scroller>.content {
+.sidebar-main > .container-3Wc7 > .scroller > .content {
     position: relative;
     /*height: 100%;*/
 }
 
-.sidebar-main>.localVersions>.scroller .fp {
+.sidebar-main > .container-3Wc7 > .scroller .fp {
     height: 90%;
     line-height: normal;
     font-size: 1.2em;
 }
 
-.sidebar-main>.localVersions .versionsHeader {
+.sidebar-main > .container-3Wc7 .versionsHeader {
     display: flex;
     padding: 18px 8px 4px 18px;
     height: 40px;
     color: var(--interactive-normal);
 }
 
-.sidebar-main>.localVersions .versionsHeader:hover {
+.sidebar-main > .container-3Wc7 .versionsHeader:hover {
     color: var(--interactive-hover);
 }
 
-.sidebar-main>.localVersions .versionsHeader span {
+.sidebar-main > .container-3Wc7 .versionsHeader span {
     flex: 1;
 }
 
