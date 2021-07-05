@@ -7,7 +7,7 @@ import { Guilds } from '../ui/guilds.js';
 import { Button } from '../panel.js';
 import { processDots, progressBar } from './round-progress-bar.js';
 import { Settings } from '../settings.js';
-import { getCurrentVersionHash, getInstallation, setCurrentVersionHash } from '../scripts/Installations.js';
+import { getCurrentVersionHash, getInstallation, refreshInstallations, setCurrentVersionHash } from '../scripts/Installations.js';
 
 class TopToolbar {
     constructor(title = '', subtitle = '') {
@@ -54,19 +54,36 @@ class TopContainer {
     };
 }
 
+class Base {
+    constructor(id = null, sidebar, main_content) {
+        this.id = id;
+        this.sideBar = sidebar;
+        this.MainContent = main_content;
+        this.create();
+        this.update();
+    }
+    create() {
+        this.root = cE('div', { id: 'main', class: 'base', 'data-id': this.id },
+            cE('div', { class: 'sidebar-main' }, ...this.sideBar),
+            cE('div', { class: 'main-content' }, ...this.MainContent)
+        );
+    }
+    get content() {
+        return this.root;
+    }
+    update(props) {}
+}
+
 class MainBase {
     constructor(sidebar, main_content) {
-        this.sidebar = sidebar;
-        this.main_content = main_content;
+        this.guilds = new Guilds();
+        this.base = new Base(null, sidebar, main_content);
         this.create();
     };
     create() {
         this.root = cE('div', { class: 'container' },
-            new Guilds().content,
-            cE('div', { id: 'main', class: 'base' },
-                cE('div', { class: 'sidebar-main' }, ...this.sidebar),
-                cE('div', { class: 'main-content' }, ...this.main_content)
-            )
+            this.guilds.content,
+            this.base.content
         );
     };
     get content() {
@@ -193,12 +210,7 @@ export class MainContainer {
         this.sideBar = new SidebarMain();
         this.userPanel = new userPanel();
         this.topContainer = new TopContainer();
-        this.create();
-        this.refreshUserPanel();
-        this.refreshVersions();
-    };
-    create() {
-        this.root = new MainBase(
+        this.mainBase = new MainBase(
             [
                 cE('nav', { class: 'localVersions' }, this.sideBar.content()),
                 this.userPanel.content
@@ -206,7 +218,13 @@ export class MainContainer {
             [
                 this.topContainer.content
             ]
-        ).content;
+        );
+        this.create();
+        this.refreshUserPanel();
+        this.refreshVersions();
+    };
+    create() {
+        this.root = this.mainBase.content;
     };
     get content() {
         return this.root;
@@ -216,7 +234,7 @@ export class MainContainer {
         this.userPanel.update(config?.auth?.username, config?.auth?.permission);
     };
     async refreshVersions() {
-        Installations = await getInstallations();
+        const Installations = await refreshInstallations();
         const CurrentVersionHash = await getCurrentVersionHash();
         const installations_entries = Object.entries(Installations);
         this.sideBar.removeAll();
