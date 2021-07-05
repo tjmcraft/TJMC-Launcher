@@ -2,25 +2,12 @@
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
-import { getConfig, getInstallations, startMinecraft } from '../scripts/Tools.js';
+import { getConfig, getInstallations } from '../scripts/Tools.js';
 import { Guilds } from '../ui/guilds.js';
 import { Button } from '../panel.js';
 import { processDots, progressBar } from './round-progress-bar.js';
 import { Settings } from '../settings.js';
-
-export var Installations
-
-export async function getInstallation(version_hash) {
-    if (Installations && Object(Installations).hasOwnProperty(version_hash)) 
-        return { hash: version_hash, ...Installations[version_hash] } || null;
-}
-
-export async function getCurrentVersionHash() {
-    return localStorage.version_hash || null;
-}
-export async function setCurrentVersionHash(version_hash) {
-    return localStorage.version_hash = version_hash || null;
-}
+import { getCurrentVersionHash, getInstallation, setCurrentVersionHash } from '../scripts/Installations.js';
 
 class TopToolbar {
     constructor(title = '', subtitle = '') {

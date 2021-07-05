@@ -2,9 +2,10 @@
 import { Layer } from "../Layer/Layer.js";
 import { switchView, VIEWS } from "../Layer/LayerSwitcher.js";
 import { modal } from "../Libs/AlertEx.js";
+import { getCurrentVersionHash } from "../scripts/Installations.js";
 import { isWeb, setProgressBar, startMinecraft, updatePlatform, updateTheme } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
-import { getCurrentVersionHash, MainContainer } from "../ui/sidebar-main.js";
+import { MainContainer } from "../ui/sidebar-main.js";
 
 export function Main(props) {
     //Define main variables
