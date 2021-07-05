@@ -196,11 +196,6 @@ export class MainContainer {
         });
 
         const registerEvents = await (!isWeb ? registerElectronEvents() : registerWebEvents()); // Register events handling
-        if (registerEvents) { // If register success
-            if (!isWeb) {
-                updateTheme();
-            }
-        }
 
         // Define main events
         const Events = {
@@ -237,9 +232,6 @@ export class MainContainer {
                 progressBars[versionHash].setPrecentage(progress * 100);
                 setProgressBar(progress);
             },
-            updateSystemTheme: (data) => { // On theme update
-                updateTheme(data.theme);
-            },
         }
 
         // Register electron events handling
@@ -249,14 +241,11 @@ export class MainContainer {
             electron.on('startup-error', (e, data) => Events.startupError(data)); // Error while starting
             electron.on('error', (e, data) => Events.error(data)); // Programm error event
             electron.on('progress', (e, data) => Events.progress(data)); // Progress event
-            electron.on('theme.update', (e, data) => Events.updateSystemTheme(data)); // Theme update event
             return true;
         }
 
         // Register Web events handling
         async function registerWebEvents() {
-            let colorScheme = window.matchMedia('(prefers-color-scheme: dark)'); // Current web color scheme
-            colorScheme.addEventListener("change", () => updateTheme()); // Register new eventListener for colorScheme change
             // code here
             return true;
         }

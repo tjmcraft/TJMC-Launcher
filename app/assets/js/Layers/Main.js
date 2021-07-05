@@ -1,9 +1,7 @@
 // Imports
 import { Layer } from "../Layer/Layer.js";
 import { switchView, VIEWS } from "../Layer/LayerSwitcher.js";
-import { modal } from "../Libs/AlertEx.js";
 import { isWeb, setProgressBar, updatePlatform, updateTheme } from "../scripts/Tools.js";
-import { Settings } from "../settings.js";
 import { HomeContainer } from "./HomeContainer.js";
 import { MainContainer } from "./MainContainer.js";
 
@@ -19,8 +17,25 @@ export function Main(props) {
     window.addEventListener("load", async (event) => { // Register new eventListener for window load event
         setProgressBar(-1); // Resete window progress bar
         updatePlatform(window.system?.os); // Update platform
+        updateTheme();
+        if (!isWeb) {
+            registerImpElectronEvents();
+        } else {
+            registerImpWebEvents();
+        }
         setTimeout(() => switchView(VIEWS.main, 100, 100), 1000); // Switch view to main
     }, { once: true }); // Call it once and then destroy
+
+    async function registerImpElectronEvents() {
+        electron.on('theme.update', (e, data) => updateTheme(data.theme)); // Theme update event
+        return true;
+    }
+
+    async function registerImpWebEvents() {
+        let colorScheme = window.matchMedia('(prefers-color-scheme: dark)'); // Current web color scheme
+        colorScheme.addEventListener("change", () => updateTheme()); // Register new eventListener for colorScheme change
+        return true;
+    }
 
     //mainContainer.init();
 }
