@@ -8,13 +8,17 @@ class Base {
     constructor(id = null, sidebar, main_content) {
         this.id = id;
         this.sideBar = sidebar;
+        this.userPanel = new userPanel();
         this.MainContent = main_content;
         this.create();
         this.update();
     }
     create() {
         this.root = cE('div', { id: 'main', class: 'base', 'data-id': this.id },
-            cE('div', { class: 'sidebar-main' }, ...this.sideBar),
+            cE('div', { class: 'sidebar-main' }, 
+                cE('nav', { class: 'container-3Wc7' }, ...this.sideBar), 
+                this.userPanel.content
+            ),
             cE('div', { class: 'main-content' }, ...this.MainContent)
         );
     }
@@ -78,4 +82,28 @@ export class userPanel {
     get content() {
         return this.root;
     };
+}
+
+class Sidebar {
+    constructor(props) {
+
+    }
+    create() {
+        this.root = null;
+    }
+    addItem(item, click = () => {}) {
+
+    }
+    get content() {
+        return this.root;
+    }
+    selectItem() {
+
+    }
+    removeItem() {
+
+    }
+    removeAll() {
+
+    }
 }
