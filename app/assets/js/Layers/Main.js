@@ -3,14 +3,20 @@ import { Layer } from "../Layer/Layer.js";
 import { switchView, VIEWS } from "../Layer/LayerSwitcher.js";
 import { isWeb, setProgressBar, updatePlatform, updateTheme } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
+import { MainBase } from "../ui/MainLayout.js";
 import { HomeContainer } from "./HomeContainer.js";
 import { MainContainer } from "./MainContainer.js";
 
 
 export function Main(props) {
     //Define main variables
-    const mainContainer = new HomeContainer(); // Main container of app
-    const layer = new Layer({ label: '' }, mainContainer.content); // Create new layer
+    const homeContainer = new HomeContainer(); // Home container of app
+    homeContainer.init();
+    const mainContainer = new MainContainer(); // Main container of app
+    mainContainer.init();
+    
+    const mainBase = new MainBase(homeContainer.content);
+    const layer = new Layer({ label: '' }, mainBase.content); // Create new layer
     layer.join(); // Join new layer
 
     VIEWS.main = layer.content; // Add main content to layer switcher
@@ -50,5 +56,7 @@ export function Main(props) {
         return true;
     }
 
-    mainContainer.init();
+    
+    setTimeout(() => mainBase.update(mainContainer.content), 5000)
+
 }
