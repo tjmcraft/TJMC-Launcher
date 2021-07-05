@@ -2,7 +2,7 @@
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
-import { getConfig, isWeb, setProgressBar, startMinecraft, updateTheme } from '../scripts/Tools.js';
+import { getConfig, isWeb, setProgressBar, startMinecraft} from '../scripts/Tools.js';
 import { Button } from '../panel.js';
 import { processDots, progressBar } from '../ui/round-progress-bar.js';
 import { getCurrentVersionHash, getInstallation, refreshInstallations, setCurrentVersionHash } from '../scripts/Installations.js';
@@ -142,7 +142,6 @@ export class MainContainer {
             ]
         );
         this.create();
-        this.refreshUserPanel();
         this.refreshVersions();
     };
     create() {
@@ -150,10 +149,6 @@ export class MainContainer {
     };
     get content() {
         return this.root;
-    };
-    async refreshUserPanel() {
-        const config = await getConfig();
-        this.mainBase.base.userPanel.update(config?.auth?.username, config?.auth?.permission);
     };
     async refreshVersions() {
         const Installations = await refreshInstallations();
@@ -199,7 +194,6 @@ export class MainContainer {
 
         // Define main events
         const Events = {
-            openSettings: (data) => new Settings(), // Open settings
             startupSuccess: (data) => { // On success startup
                 console.log(data);
                 setProgressBar(-1);
@@ -211,12 +205,6 @@ export class MainContainer {
                 setProgressBar(-1);
                 processDots[data.version_hash].hide();
                 modal.alert("Что-то пошло не так...", data.error, 'error', { logType: true });
-            },
-            error: (data) => { // Programm error
-                console.error(data);
-                setProgressBar(-1);
-                processDots[data.version_hash].hide();
-                modal.alert("Ошибочка...", data.error, 'error', { logType: true });
             },
             progress: (data) => { // On progress
                 console.log(data);
@@ -236,10 +224,8 @@ export class MainContainer {
 
         // Register electron events handling
         async function registerElectronEvents() {
-            electron.on('open-settings', (e, data) => Events.openSettings(data)); // Open settings
             electron.on('startup-success', (e, data) => Events.startupSuccess(data)); // Success start event
             electron.on('startup-error', (e, data) => Events.startupError(data)); // Error while starting
-            electron.on('error', (e, data) => Events.error(data)); // Programm error event
             electron.on('progress', (e, data) => Events.progress(data)); // Progress event
             return true;
         }
