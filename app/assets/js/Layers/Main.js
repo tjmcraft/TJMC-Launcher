@@ -1,8 +1,8 @@
 // Imports
 import { Layer } from "../Layer/Layer.js";
 import { switchView, VIEWS } from "../Layer/LayerSwitcher.js";
-import { modal } from "../scripts/AlertEx.js";
-import { getPreferredColorScheme, isWeb, setProgressBar, startMinecraft, updatePlatform, updateTheme } from "../scripts/Tools.js";
+import { modal } from "../Libs/AlertEx.js";
+import { isWeb, setProgressBar, startMinecraft, updatePlatform, updateTheme } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
 import { getCurrentVersionHash, MainContainer } from "../ui/sidebar-main.js";
 
@@ -34,6 +34,10 @@ export function Main(props) {
             setTimeout(() => switchView(VIEWS.main, 100, 100), 1000); // Switch view to main
         }
     }, { once: true }); // Call it once and then destroy
+
+    document.addEventListener("versions.refresh", async (event) => {
+        mainContainer.refreshVersions();
+    });
 
     // Define main events
     const Events = {
@@ -88,12 +92,8 @@ export function Main(props) {
     // Register Web events handling
     async function registerWebEvents() {
         let colorScheme = window.matchMedia('(prefers-color-scheme: dark)'); // Current web color scheme
-        colorScheme.addEventListener("change", () => updateTheme(getPreferredColorScheme())); // Register new eventListener for colorScheme change
+        colorScheme.addEventListener("change", () => updateTheme()); // Register new eventListener for colorScheme change
         // code here
         return true;
     }
-}
-
-export function refreshVersions() {
-    
 }
