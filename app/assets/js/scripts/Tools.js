@@ -14,7 +14,6 @@ export function getPreferredColorScheme() {
 }
 
 export function setColorScheme(colorScheme = null) {
-    console.log(colorScheme)
     switch (colorScheme) {
         case 'light':
             document.documentElement.classList.toggle('light-theme', true)
