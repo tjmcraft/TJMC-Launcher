@@ -1,6 +1,6 @@
 
 import { slider } from './ui/slider-element.js';
-import { modal } from "./scripts/AlertEx.js";
+import { modal } from "./Libs/AlertEx.js";
 import { getConfig, getMem, setConfig } from "./scripts/Tools.js";
 
 export class Settings {
