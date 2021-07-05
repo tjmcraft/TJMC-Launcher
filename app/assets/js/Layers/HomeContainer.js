@@ -1,6 +1,6 @@
 
 import { SVG } from "../scripts/svg.js";
-import { MainBase } from "../ui/MainLayout.js";
+import { Base } from "../ui/MainLayout.js";
 
 /*class SidebarHome {
     items = [];
@@ -71,7 +71,7 @@ export class HomeContainer {
     constructor(props) {
         this.sideBar = new Sidebar();
         this.topContainer = null;
-        this.mainBase = new MainBase([
+        this.mainBase = new Base(null, [
             /*cE('div', { class: ['scroller', 'thin-s']},
                 cE('h2', {class: ['headerDiscover', 'size24']}, 'Главная'),
                 cE('div', {class: ['categoryItem', 'selected'] }, 
