@@ -1,3 +1,4 @@
+import { getInstallations } from "./Tools.js";
 
 /**
  * All Installations
@@ -29,4 +30,9 @@ export async function getCurrentVersionHash() {
  */
 export async function setCurrentVersionHash(version_hash) {
     return localStorage.version_hash = version_hash || null;
+}
+
+export async function refreshInstallations() {
+    Installations = await getInstallations();
+    return Installations;
 }
