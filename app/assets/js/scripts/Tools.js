@@ -32,7 +32,7 @@ export function setColorScheme(colorScheme = null) {
 export const updateTheme = (system = null) => {
     const userTheme = window.localStorage.theme;
     const defaultTheme = 'dark';
-    setColorScheme(userTheme || system || defaultTheme);
+    setColorScheme(userTheme || system || getPreferredColorScheme() || defaultTheme);
 }
 
 export const updatePlatform = (system = null) => {
