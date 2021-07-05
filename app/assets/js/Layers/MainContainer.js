@@ -2,11 +2,11 @@
 import { VersionChooser } from '../versionChooser.js';
 import { SVG } from '../scripts/svg.js';
 import { tooltip } from '../scripts/tooltip.js';
-import { getConfig, isWeb, setProgressBar, startMinecraft} from '../scripts/Tools.js';
+import { isWeb, setProgressBar, startMinecraft} from '../scripts/Tools.js';
 import { Button } from '../panel.js';
 import { processDots, progressBar } from '../ui/round-progress-bar.js';
 import { getCurrentVersionHash, getInstallation, refreshInstallations, setCurrentVersionHash } from '../scripts/Installations.js';
-import { MainBase } from '../ui/MainLayout.js';
+import { Base } from '../ui/MainLayout.js';
 import { modal } from '../Libs/AlertEx.js';
 
 class TopToolbar {
@@ -133,7 +133,7 @@ export class MainContainer {
     constructor(props) {
         this.sideBar = new SidebarMain();
         this.topContainer = new TopContainer();
-        this.mainBase = new MainBase (
+        this.mainBase = new Base (null,
             [
                 this.sideBar.content()
             ],
