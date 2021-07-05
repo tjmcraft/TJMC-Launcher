@@ -136,10 +136,8 @@ export class VersionChooser {
             this.addVersion(props.version.id, version_opts).then(version_hash => {
                 //console.log(version_hash)
                 (new DOMEvent('versions.refresh')).dispatchEvent();
-                //mainContainer.refreshVersions().then(() => {
-                //    mainContainer.selectVersion(version_hash);
-                    this.alertex.destroy();
-                //})
+                this.alertex.destroy();
+                //mainContainer.selectVersion(version_hash);
             });
         };
         const footer = cE('section', { class: 'VT-footer vertical-button-container' },
