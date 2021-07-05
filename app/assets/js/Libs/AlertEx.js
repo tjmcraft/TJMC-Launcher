@@ -1,8 +1,8 @@
 
-import { SVG } from './svg.js';
-import { escBinder, overlayBinder } from './uibind.js';
+import { SVG } from '../scripts/svg.js';
+import { escBinder, overlayBinder } from '../scripts/uibind.js';
 import { Button } from '../panel.js';
-import { randomString } from './Tools.js';
+import { randomString } from '../scripts/Tools.js';
 
 /**
  * Creates modal overlay
