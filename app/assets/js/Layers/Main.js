@@ -50,5 +50,5 @@ export function Main(props) {
         return true;
     }
 
-    //mainContainer.init();
+    mainContainer.init();
 }
