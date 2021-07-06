@@ -10,9 +10,10 @@ export class Base {
         this.id = id;
         this.sideBar = sidebar;
         this.userPanel = new userPanel();
-        this.MainContent = main_content;
+        this.MainContent = cE('div', { class: 'main-content' });
         this.create();
         this.update();
+        this.updateMainContent(main_content);
     }
     create() {
         this.root = cE('div', { id: 'main', class: 'base', 'data-id': this.id },
@@ -21,7 +22,7 @@ export class Base {
                     cE('nav', { class: 'container-3Wc7' }, ...this.sideBar), 
                     this.userPanel.content
                 ),
-                cE('div', { class: 'main-content' }, ...this.MainContent)
+                this.MainContent
             )
         );
     }
@@ -30,12 +31,19 @@ export class Base {
     }
     update(props) {}
     destroy() {}
+    updateMainContent(props) {
+        this.MainContent.removeAllChildNodes();
+        this.MainContent.append(...props);
+
+    }
 }
 
 export class MainBase {
-    constructor(mainContainer = null) {
+    constructor(guilds = null, mainContainer = null) {
         this.guilds = new Guilds();
+        this.guilds.removeAll();
         this.create();
+        this.updateGuilds(guilds);
         this.update(mainContainer);
     };
     create() {
@@ -50,9 +58,36 @@ export class MainBase {
         this.root.qsla('.base').forEach(i => i.remove());
         props && this.root.append(props);
     }
+    updateGuilds(guilds = null) {
+        const Items = guilds || [
+            {
+                type: 'item',
+                image: 'https://picsum.photos/48/48?h=11',
+                click: () => console.log(11)
+            },
+            {
+                type: 'item',
+                image: 'https://picsum.photos/48/48?h=22',
+                click: () => console.log(22)
+            },
+            {
+                type: 'item',
+                image: 'https://picsum.photos/48/48?h=11',
+                click: () => {}
+            },
+            { type: 'separator' },
+            {
+                type: 'item',
+                image: 'https://picsum.photos/48/48?h=11',
+                click: () => {}
+            }
+        ];
+        this.guilds.removeAll();
+        this.guilds.addItems(Items);
+    }
 }
 
-export class userPanel {
+class userPanel {
     constructor() {
         this.avatar = cE('img');
         this.username = cE('div', { class: 'title' });
