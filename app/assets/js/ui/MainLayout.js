@@ -118,9 +118,9 @@ class userPanel {
     };
     async update() {
         const user = await getUser();
-        this.username.innerText = user.realname || '';
+        this.username.innerText = user.realname || user.username || '';
         this.permission.innerText = user.permission_display_name || '';
-        this.avatar.src = user.realname ? `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${user.realname}` : '';
+        this.avatar.src = (user.realname || user.username) ? `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${(user.realname || user.username)}` : '';
     };
     get content() {
         return this.root;
