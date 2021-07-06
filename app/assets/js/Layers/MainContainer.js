@@ -130,6 +130,7 @@ class SidebarMain {
 }
 
 export class MainContainer {
+    initialized = false
     constructor(props) {
         this.sideBar = new SidebarMain();
         this.topContainer = new TopContainer();
@@ -176,6 +177,7 @@ export class MainContainer {
         this.sideBar.selectItem(version_hash); this.topContainer.toolbar.update(version.name || version.hash, version.type);
     };
     async init() {
+        if (this.initialized) return;
         const progressBars = this.sideBar.progressBars(); // Progress bar s in sidebar (installations)
         const processDots = this.sideBar.processDots(); // Process dots in sidebar (installations)
         const playButton = this.topContainer.toolbar.playButton; // Play button in the top toolbar (main content)
@@ -235,5 +237,7 @@ export class MainContainer {
             // code here
             return true;
         }
+
+        this.initialized = true;
     };
 }
