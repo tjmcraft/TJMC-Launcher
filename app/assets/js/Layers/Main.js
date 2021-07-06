@@ -42,10 +42,12 @@ export function Main(props) {
         let match = potentialMatches.find(match => match.isMatch);
 
         if (!match) {
-            match = {
+            navigateTo(routes[0].path);
+            return;
+            /*match = {
                 route: routes[0],
                 isMatch: true
-            };
+            };*/
         }
 
         const view = match.route.view;
