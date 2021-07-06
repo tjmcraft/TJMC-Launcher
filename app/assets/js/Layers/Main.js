@@ -10,17 +10,54 @@ import { MainContainer } from "./MainContainer.js";
 
 
 export function Main(props) {
-    //Define main variables
-    const homeContainer = new HomeContainer(); // Home container of app
-    const mainContainer = new MainContainer(); // Main container of app
+
+    let views = {
+        home: new HomeContainer(),
+        main: new MainContainer()
+    };
+
+    const navigateTo = url => {
+        history.pushState(null, null, url);
+        router(url);
+    };
+
+    const router = async (url = null) => {
+        const routes = [
+            { path: '/home', view: views.home },
+            { path: '/minecraft', view: views.main }
+        ];
+
+        const potentialMatches = routes.map(route => {
+            return {
+                route: route,
+                isMatch: (url || location.pathname) === route.path
+            }
+        });
+
+        let match = potentialMatches.find(match => match.isMatch);
+
+        if (!match) {
+            match = {
+                route: routes[0],
+                isMatch: true
+            };
+        }
+
+        const view = match.route.view;
+        view.init();
+
+        mainBase.update(view.content);
+    }
+
+    window.addEventListener("popstate", router);
 
     const guildsItems = [
         {
             type: 'item',
             svg: SVG('home'),
-            click: () => {
-                mainBase.update(homeContainer.content);
-                homeContainer.init();
+            click: (e) => {
+                //e.preventDefault();
+                navigateTo('/home');
             },
             selected: true
         },
@@ -63,9 +100,9 @@ export function Main(props) {
         {
             type: 'item',
             svg: SVG('cube'),
-            click: () => {
-                mainBase.update(mainContainer.content);
-                mainContainer.init();
+            click: (e) => {
+                //e.preventDefault();
+                navigateTo('/minecraft');
             }
         },
         {
@@ -80,9 +117,11 @@ export function Main(props) {
         }
     ];
     
-    const mainBase = new MainBase(guildsItems, homeContainer.content); homeContainer.init();
+    const mainBase = new MainBase(guildsItems, null);
     const layer = new Layer({ label: '' }, mainBase.content); // Create new layer
     layer.join(); // Join new layer
+
+    router();
 
     VIEWS.main = layer.content; // Add main content to layer switcher
 
