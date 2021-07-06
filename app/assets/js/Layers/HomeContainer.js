@@ -50,7 +50,7 @@ class Sidebar {
         items.forEach(item => item.classList[item.getAttribute('data-id') === id ? 'add' : 'remove']('selected'))
     }
     removeAll() {
-        this.root.qsla('.categoryItem').forEach(item => item.remove());
+        this.root.removeAllChildNodes();
     }
 }
 
@@ -68,6 +68,7 @@ function sidebarItem(props) {
 }
 
 export class HomeContainer {
+    initialized = false;
     constructor(props) {
         this.sideBar = new Sidebar();
         this.topContainer = null;
@@ -106,20 +107,46 @@ export class HomeContainer {
             sidebarItem({
                 id: '1',
                 avatar: SVG('compass'),
-                content: 'Главная',
-                click: () => this.sideBar.selectItem('1')
+                content: 'Обзор',
+                click: () => {
+                    this.sideBar.selectItem('1')
+                    this.mainBase.updateMainContent([
+                        cE('iframe', { src: 'https://www.tjmcraft.ga', seamless: true, style: 'width: 100%;height: 100%;'})
+                    ]);
+                }
             }),
             sidebarItem({
                 id: '2',
-                avatar: SVG('compass'),
-                content: 'Главная',
-                click: () => this.sideBar.selectItem('2')
+                avatar: SVG('news'),
+                content: 'Новости',
+                click: () => {
+                    this.sideBar.selectItem('2')
+                    this.mainBase.updateMainContent([
+                        cE('iframe', { src: 'https://www.tjmcraft.ga/news', seamless: true, style: 'width: 100%;height: 100%;'})
+                    ]);
+                }
             }),
             sidebarItem({
                 id: '3',
-                avatar: SVG('compass'),
-                content: 'Главная',
-                click: () => this.sideBar.selectItem('3')
+                avatar: SVG('virus'),
+                content: 'COVID-19',
+                click: () => {
+                    this.sideBar.selectItem('3')
+                    this.mainBase.updateMainContent([
+                        cE('iframe', { src: 'https://www.tjmcraft.ga/coronavirus', seamless: true, style: 'width: 100%;height: 100%;'})
+                    ]);
+                }
+            }),
+            sidebarItem({
+                id: '4',
+                avatar: SVG('map'),
+                content: 'Карта',
+                click: () => {
+                    this.sideBar.selectItem('4')
+                    this.mainBase.updateMainContent([
+                        cE('iframe', { src: 'https://www.tjmcraft.ga/map', seamless: true, style: 'width: 100%;height: 100%;'})
+                    ]);
+                }
             })
         ];
         this.sideBar.removeAll();
@@ -130,5 +157,8 @@ export class HomeContainer {
     get content() {
         return this.root;
     }
-    init() {}
+    init() {
+        if (this.initialized) return;
+        this.initialized = true;
+    }
 }
