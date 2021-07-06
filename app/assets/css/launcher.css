@@ -1767,6 +1767,9 @@ body {
     width: 100%;
     overflow: hidden overlay;
     display: flex;
+    background: url(https://picsum.photos/1920/1080);
+    background-position: center;
+    background-size: cover;
 }
 
 .main-content > .top {
