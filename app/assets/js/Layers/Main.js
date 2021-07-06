@@ -1,6 +1,7 @@
 // Imports
 import { Layer } from "../Layer/Layer.js";
 import { switchView, VIEWS } from "../Layer/LayerSwitcher.js";
+import { SVG } from "../scripts/svg.js";
 import { isWeb, setProgressBar, updatePlatform, updateTheme } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
 import { MainBase } from "../ui/MainLayout.js";
@@ -11,11 +12,40 @@ import { MainContainer } from "./MainContainer.js";
 export function Main(props) {
     //Define main variables
     const homeContainer = new HomeContainer(); // Home container of app
-    homeContainer.init();
     const mainContainer = new MainContainer(); // Main container of app
-    mainContainer.init();
+
+    const guildsItems = [
+        {
+            type: 'item',
+            svg: SVG('home'),
+            click: () => {
+                mainBase.update(homeContainer.content);
+                homeContainer.init();
+            },
+            selected: true
+        },
+        {
+            type: 'item',
+            svg: SVG('play-circle'),
+            click: () => {
+                mainBase.update(mainContainer.content);
+                mainContainer.init();
+            }
+        },
+        {
+            type: 'item',
+            image: cE('img', {src: 'https://picsum.photos/48/48?h=33'}),
+            click: () => {}
+        },
+        { type: 'separator' },
+        {
+            type: 'item',
+            image: cE('img', {src: 'https://picsum.photos/48/48?h=44'}),
+            click: () => {}
+        }
+    ];
     
-    const mainBase = new MainBase(homeContainer.content);
+    const mainBase = new MainBase(guildsItems, homeContainer.content); homeContainer.init();
     const layer = new Layer({ label: '' }, mainBase.content); // Create new layer
     layer.join(); // Join new layer
 
@@ -55,8 +85,5 @@ export function Main(props) {
         colorScheme.addEventListener("change", () => updateTheme()); // Register new eventListener for colorScheme change
         return true;
     }
-
-    
-    setTimeout(() => mainBase.update(mainContainer.content), 5000)
 
 }
