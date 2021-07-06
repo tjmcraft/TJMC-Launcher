@@ -227,12 +227,10 @@ img {
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
     --interactive-active: #fff;
-    /*--background-modifier-selected: #393939;*/
-    /*--background-modifier-accent: #3d3d3d;*/
-    --background-modifier-hover: rgba(79, 84, 92, 0.16);
-    --background-modifier-active: rgba(79, 84, 92, 0.24);
-    --background-modifier-selected: rgba(79, 84, 92, 0.32);
-    --background-modifier-accent: hsla(0, 0%, 100%, 0.06);
+    --background-modifier-selected: #3f3f3f;
+    --background-modifier-accent: #393939;
+    --background-modifier-hover: #393939;
+    --background-modifier-active: #3a3a3a;
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -933,7 +931,7 @@ button.filled.colorBrand:hover {
 }
 
 button:hover {
-    background-color: var(--interactive-hover);
+    background-color: var(--background-modifier-selected);
 }
 
 button:active {
