@@ -44,10 +44,6 @@ export function Main(props) {
         if (!match) {
             navigateTo(routes[0].path);
             return;
-            /*match = {
-                route: routes[0],
-                isMatch: true
-            };*/
         }
 
         const view = match.route.view;
