@@ -16,11 +16,13 @@ export class Base {
     }
     create() {
         this.root = cE('div', { id: 'main', class: 'base', 'data-id': this.id },
-            cE('div', { class: 'sidebar-main' }, 
-                cE('nav', { class: 'container-3Wc7' }, ...this.sideBar), 
-                this.userPanel.content
-            ),
-            cE('div', { class: 'main-content' }, ...this.MainContent)
+            cE('div', {class: 'content'},
+                cE('div', { class: 'sidebar-main' }, 
+                    cE('nav', { class: 'container-3Wc7' }, ...this.sideBar), 
+                    this.userPanel.content
+                ),
+                cE('div', { class: 'main-content' }, ...this.MainContent)
+            )
         );
     }
     get content() {
