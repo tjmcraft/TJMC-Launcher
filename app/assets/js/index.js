@@ -1,7 +1,7 @@
 
 import { Main } from "./Layers/Main.js";
 import { FrameBar } from "./panel.js";
-import { getConfig, isWeb } from "./scripts/Tools.js";
+import { getConfig, getUser, isWeb } from "./scripts/Tools.js";
 
 class AppContainer {
 
@@ -60,9 +60,9 @@ class Preloader {
         return this.root;
     }
     async update() {
-        const config = await getConfig();
+        const user = await getUser();
         this.title.removeAllChildNodes();
-        this.title.appendChild(this.Greeting(this.Time, config?.auth?.username));
+        this.title.appendChild(this.Greeting(this.Time, user.realname));
     }
     Greeting(time, name = null) {
         if (name) {
