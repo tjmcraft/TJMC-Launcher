@@ -1,7 +1,7 @@
 
 import { slider } from './ui/slider-element.js';
 import { modal } from "./Libs/AlertEx.js";
-import { getConfig, getMem, setConfig } from "./scripts/Tools.js";
+import { getConfig, getMem, getUser, setConfig } from "./scripts/Tools.js";
 
 export class Settings {
 
@@ -109,18 +109,19 @@ export class Settings {
             return cE('div', { class: 'children' }, ...e);
         },
         async my_account_tab() {
+            const user = await getUser();
             const heading = cE('h2', null, 'Моя учётная запись');
             const actions_button = cE('button', { class: ['r', 'filled', 'colorBrand'] }, 'Профиль');
             const children = cE('div', { class: ['container-cc3V'] },
                 cE('div', { class: 'bxcF1-box' },
                     cE('div', { class: 'ictx-flex' },
-                        cE('div', { class: 'icon' }, cE('img', { src: 'https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=MakAndJo' })),
+                        cE('div', { class: 'icon' }, cE('img', { src: 'https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user='+(user.realname || user.username) })),
                         cE('div', { class: ['flex-group', 'vertical'] },
                             cE('span', { class: ['vbx', 'cu'] },
-                                cE('div', { class: 'text name' }, 'MakAndJo'),
-                                cE('div', { class: 'text id' }, '#11')
+                                cE('div', { class: 'text name' }, user.realname || user.username),
+                                cE('div', { class: 'text id' }, '#' + user.id)
                             ),
-                            cE('div', { class: ['sizeW', 'colorStandart', 'subtitle-p'] }, 'Default')
+                            cE('div', { class: ['sizeW', 'colorStandart', 'subtitle-p'] }, user.permission_display_name)
                         ),
                         actions_button
                     ),
@@ -131,7 +132,7 @@ export class Settings {
                                 cE('div', null,
                                     cE('h5', { class: '' }, 'Email'),
                                     cE('div', null,
-                                        cE('span', { class: ['colorHeaderPrimary'] }, 'makandjo@outlook.com')
+                                        cE('span', { class: ['colorHeaderPrimary'] }, user.email)
                                     )
                                 )
                             ),
