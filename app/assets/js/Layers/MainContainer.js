@@ -143,7 +143,6 @@ export class MainContainer {
             ]
         );
         this.create();
-        this.refreshVersions();
     };
     create() {
         this.root = this.mainBase.content;
@@ -237,6 +236,8 @@ export class MainContainer {
             // code here
             return true;
         }
+
+        this.refreshVersions();
 
         this.initialized = true;
     };
