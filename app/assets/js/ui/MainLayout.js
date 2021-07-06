@@ -1,6 +1,6 @@
 // Imports
 import { SVG } from "../scripts/svg.js";
-import { getConfig } from "../scripts/Tools.js";
+import { getConfig, getUser } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
 import { VersionChooser } from "../versionChooser.js";
 import { Guilds } from "./guilds.js";
@@ -117,10 +117,10 @@ class userPanel {
         );
     };
     async update() {
-        const config = await getConfig();
-        this.username.innerText = config?.auth?.username || '';
-        this.permission.innerText = config?.auth?.permission || '';
-        this.avatar.src = `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${config?.auth?.username}`;
+        const user = await getUser();
+        this.username.innerText = user.realname || '';
+        this.permission.innerText = user.permission_display_name || '';
+        this.avatar.src = user.realname ? `https://api.tjmcraft.ga/v1/skin.render?aa=true&ratio=20&vr=0&hr=0&headOnly=true&user=${user.realname}` : '';
     };
     get content() {
         return this.root;
