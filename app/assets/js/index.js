@@ -62,7 +62,7 @@ class Preloader {
     async update() {
         const user = await getUser();
         this.title.removeAllChildNodes();
-        this.title.appendChild(this.Greeting(this.Time, user.realname));
+        this.title.appendChild(this.Greeting(this.Time, user.realname || user.username));
     }
     Greeting(time, name = null) {
         if (name) {
