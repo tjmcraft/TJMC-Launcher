@@ -1,53 +1,8 @@
+import { randomString } from "../scripts/Tools.js";
+
 export class Guilds {
-    constructor() {
-        this.guilds = cE('nav', { class: 'guilds' },
-            cE('ul', { class: 'tree' },
-                cE('div', { class: ['scroller', 'no-scrollbar'] },
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=11`
-                        }),
-                        { onclick: (e) => { console.log(22) } }
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=22`
-                        })
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=33`
-                        })
-                    ),
-                    this.createSeparator(),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=2`
-                        })
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=3`
-                        })
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=4`
-                        })
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=5`
-                        })
-                    ),
-                    this.createListElement(
-                        cE('img', {
-                            src: `https://picsum.photos/48/48?h=6`
-                        })
-                    ),
-                )
-            )
-        );
+    constructor(props) {
+        this.scroller = cE('div', { class: ['scroller', 'no-scrollbar'] });
         /*this.guilds = `
         <nav class="guilds">
             <ul class="tree">
@@ -100,23 +55,54 @@ export class Guilds {
             </ul>
         </nav>
         `;*/
+        this.create();
+    }
+
+    create() {
+        this.root = cE('nav', { class: 'guilds' },
+            cE('ul', { class: 'tree' },
+                this.scroller
+            )
+        );
     }
 
     get content(){
-        return this.guilds || "";
+        return this.root;
     }
 
-    createListItem(...c) {
-        return cE('div', {class: 'listItem'}, ...c);
+    addItems(items){
+        const elements = items.map(item => this.createListElement(item))
+        //this.scroller.append(...elements);
     }
 
-    createListElement(c, props) {
-        const root = cE('div', { class: 'wrapper' }, c);
-        props?.onclick && (root.onclick = props.onclick);
-        return this.createListItem(root);
+    removeAll() {
+        this.scroller.removeAllChildNodes();
     }
 
-    createSeparator() {
-        return this.createListItem(cE('div', { class: ['guildSeparator'] }));
+    createListItem(id = null, ...c) {
+        return cE('div', {class: 'listItem', 'data-id': id}, ...c);
+    }
+
+    createListElement(props) {
+        props.id = props.id || randomString(3);
+        const root = props.type == 'separator' ? cE('div', { class: ['guildSeparator'] }) : 
+        cE('div', { class: 'wrapper' },
+            props.image ? props.image || cE('img', {src: 'https://picsum.photos/48/48?h=11'}) : 
+            cE('div', { class: 'singleIconBtn'}, props.svg || null)
+        );
+        root.onclick = (e) => {
+            this.selectItem(props.id);
+            if (typeof props.click === 'function') props.click.call(this, e);
+        }
+        const item = this.createListItem(props.id, root);
+        this.scroller.appendChild(item);
+
+        if (props.selected) {
+            this.selectItem(props.id);
+        }
+    }
+
+    selectItem(id) {
+        this.scroller.childNodes.forEach(i => i.classList[i.getAttribute('data-id') === id ? 'add' : 'remove']('selected'));
     }
 }
