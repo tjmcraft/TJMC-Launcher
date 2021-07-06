@@ -11,26 +11,31 @@ import { MainContainer } from "./MainContainer.js";
 
 export function Main(props) {
 
+    const lP = '/app/';
+
     let views = {
         home: new HomeContainer(),
         main: new MainContainer()
     };
 
     const navigateTo = url => {
-        history.pushState(null, null, url);
-        router(url);
+        history.pushState(null, null, lP + url);
+        router(lP + url);
     };
 
-    const router = async (url = null) => {
+    const router = async (url) => {
+
         const routes = [
-            { path: '/home', view: views.home },
-            { path: '/minecraft', view: views.main }
+            { path: 'home', view: views.home },
+            { path: 'minecraft', view: views.main }
         ];
 
         const potentialMatches = routes.map(route => {
+            console.log(`Url: ${(url)}`);
+            console.log(`Route: ${(lP + route.path)}`)
             return {
                 route: route,
-                isMatch: (url || location.pathname) === route.path
+                isMatch: (url) === (lP + route.path)
             }
         });
 
@@ -47,19 +52,17 @@ export function Main(props) {
         view.init();
 
         mainBase.update(view.content);
+        mainBase.guilds.selectItem(match.route.path);
     }
 
     window.addEventListener("popstate", router);
 
     const guildsItems = [
         {
+            id: 'home',
             type: 'item',
             svg: SVG('home'),
-            click: (e) => {
-                //e.preventDefault();
-                navigateTo('/home');
-            },
-            selected: true
+            click: () => navigateTo('home')
         },
         {
             type: 'item',
@@ -98,12 +101,11 @@ export function Main(props) {
         },
         { type: 'separator' },
         {
+            id: 'minecraft',
             type: 'item',
             svg: SVG('cube'),
-            click: (e) => {
-                //e.preventDefault();
-                navigateTo('/minecraft');
-            }
+            click: () => navigateTo('minecraft')
+            
         },
         {
             type: 'item',
@@ -121,7 +123,7 @@ export function Main(props) {
     const layer = new Layer({ label: '' }, mainBase.content); // Create new layer
     layer.join(); // Join new layer
 
-    router();
+    router(location.pathname);
 
     VIEWS.main = layer.content; // Add main content to layer switcher
 
