@@ -70,6 +70,11 @@ export const randomString = (length) => {
     return result
 }
 
+window.getCookie = function(name) {
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    if (match) return match[2];
+  }
+
 /* ============== Fetches ============== */
 
 /**
@@ -155,4 +160,17 @@ export async function setProgressBar(progress) {
         return ;
     }
 }
-
+export async function getUser(username) {
+    username = username || getCookie('un');
+    const params = new URLSearchParams({
+        user_ids: username,
+        fields: 'email,uuid,nickname,balance,permission,permission_display_name,last_login,reg_date,ip'
+    }).toString();
+    const result = await fetchData('https://api.tjmcraft.ga/v1/users.get?'+params);
+    if (result.error) {
+        console.error(result.error)
+        return false;
+    }
+    console.log(result.response[0])
+    return result.response[0]
+}
