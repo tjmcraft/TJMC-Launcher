@@ -71,8 +71,7 @@ export class Guilds {
     }
 
     addItems(items){
-        const elements = items.map(item => this.createListElement(item))
-        //this.scroller.append(...elements);
+        items.map(item => this.createListElement(item))
     }
 
     removeAll() {
