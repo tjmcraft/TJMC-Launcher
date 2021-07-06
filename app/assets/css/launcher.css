@@ -1655,7 +1655,7 @@ body {
     display: flex;
 }
 
-.guilds > .tree * {
+.guilds > .tree > .scroller > .listItem > .wrapper {
     transition: all .3s ease;
 }
 
@@ -1699,9 +1699,7 @@ body {
     overflow: auto;
 }
 
-.listItem > .wrapper:hover {
-    border-radius: 25%;
-}
+
 
 .listItem > .guildSeparator {
     height: 2px;
@@ -1724,8 +1722,24 @@ body {
     background-color: var(--background-primary);
 }
 
+.listItem > .wrapper:hover {
+    border-radius: 25%;
+}
+
 .listItem > .wrapper:hover > .singleIconBtn {
-    color: var(--background-accent);
+    color: var(--interactive-hover);
+    background-color: var(--brand-color-1);
+}
+
+/*.listItem.selected > .wrapper:hover > .singleIconBtn {
+    color: var(--interactive-active);
+}*/
+.listItem.selected > .wrapper {
+    border-radius: 25%;
+}
+.listItem.selected > .wrapper > .singleIconBtn {
+    color: var(--interactive-active);
+    background-color: var(--brand-color);
 }
 
 .listItem img {
