@@ -1722,6 +1722,11 @@ body {
     background-color: var(--background-primary);
 }
 
+.listItem > .wrapper > .singleIconBtn svg {
+    max-width: 24px;
+    max-height: 24px;
+}
+
 .listItem > .wrapper:hover {
     border-radius: 25%;
 }
@@ -1878,6 +1883,11 @@ body {
 .avatar img {
     width: 100%;
     height: 100%;
+}
+
+.avatar svg {
+    max-width: 24px;
+    max-height: 24px;
 }
 
 .avatar:hover {
