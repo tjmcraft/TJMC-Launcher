@@ -26,7 +26,43 @@ export function Main(props) {
         },
         {
             type: 'item',
-            svg: SVG('play-circle'),
+            svg: SVG('news'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('messages'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('user-friends'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('users'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('images'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('video'),
+            click: () => {}
+        },
+        {
+            type: 'item',
+            svg: SVG('music'),
+            click: () => {}
+        },
+        { type: 'separator' },
+        {
+            type: 'item',
+            svg: SVG('cube'),
             click: () => {
                 mainBase.update(mainContainer.content);
                 mainContainer.init();
@@ -37,7 +73,6 @@ export function Main(props) {
             image: cE('img', {src: 'https://picsum.photos/48/48?h=33'}),
             click: () => {}
         },
-        { type: 'separator' },
         {
             type: 'item',
             image: cE('img', {src: 'https://picsum.photos/48/48?h=44'}),
