@@ -18,44 +18,53 @@ export class Settings {
     ]
 
     constructor(tab = '') {
-        this.tablist = [{
-                id: 'my-account-tab',
-                name: 'Моя учётная запись',
-                content: this.content.my_account_tab
-            },
-            {
-                id: 'skin-tab',
-                name: 'Сменить скин',
-                content: this.content.skin_tab
-            },
-            {
-                id: 'minecraft-settings',
-                name: 'Игровые настройки',
-                content: this.content.minecraft_settings_tab
-            },
-            {
-                id: 'java-settings',
-                name: 'Настройки Java',
-                content: this.content.java_settings_tab
-            },
-            {
-                id: 'launcher-settings',
-                name: 'Настройки лаунчера',
-                content: this.content.launcher_settings_tab
-            },
-            {
-                id: 'launcher-appearance',
-                name: 'Внешний вид',
-                content: this.content.launcher_appearance_tab
-            },
-            {
-                id: 'about-tab',
-                name: 'О программе',
-                content: this.content.about_tab
-            }
-        ];
-        this.alertex = modal.createRaw({ escButton: true, label: 'settings'}, cE('div', { class: 'inner-container' }, this.Base))
-        this.setTab(tab || 'my-account-tab')
+        return (async () => {
+            this.tablist = [{
+                    id: 'my-account-tab',
+                    name: 'Моя учётная запись',
+                    content: this.content.my_account_tab
+                },
+                {
+                    id: 'skin-tab',
+                    name: 'Сменить скин',
+                    content: this.content.skin_tab
+                },
+                {
+                    id: 'minecraft-settings',
+                    name: 'Игровые настройки',
+                    content: this.content.minecraft_settings_tab
+                },
+                {
+                    id: 'java-settings',
+                    name: 'Настройки Java',
+                    content: this.content.java_settings_tab
+                },
+                {
+                    id: 'launcher-settings',
+                    name: 'Настройки лаунчера',
+                    content: this.content.launcher_settings_tab
+                },
+                {
+                    id: 'launcher-appearance',
+                    name: 'Внешний вид',
+                    content: this.content.launcher_appearance_tab
+                },
+                {
+                    id: 'about-tab',
+                    name: 'О программе',
+                    content: this.content.about_tab
+                }
+            ];
+            this.create();
+            await this.setTab(tab || 'my-account-tab')
+            this.alertex = modal.createRaw({
+                escButton: true,
+                label: 'settings'
+            }, cE('div', {
+                class: 'inner-container'
+            }, this.root));
+            return this;
+        })();
     }
     async setTab(tab) {
         const current_tab = this.tablist.find(i => i.id === tab) || tablist[0];
@@ -64,9 +73,9 @@ export class Settings {
         this.vdom.content.removeAllChildNodes();
         this.vdom.content.appendChild(tab_content);
     }
-    get Base() {
+    create() {
         this.vdom.content = cE('div', { class: ['content', 'auto-s'] });
-        const root = cE('div', { class: 'sidebarView', id: 'user-settings' },
+        this.root = cE('div', { class: 'sidebarView', id: 'user-settings' },
             cE('div', { class: 'sidebar-region' }, this.sideBar),
             cE('div', { class: 'content-region' },
                 cE('div', { class: 'transitionWrap' },
@@ -74,7 +83,6 @@ export class Settings {
                 )
             )
         );
-        return root;
     }
     get sideBar() {
         const sidebar_items = [
