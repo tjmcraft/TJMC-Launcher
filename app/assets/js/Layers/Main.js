@@ -6,7 +6,7 @@ import { isWeb, setProgressBar, updatePlatform, updateTheme } from "../scripts/T
 import { Settings } from "../settings.js";
 import { MainBase } from "../ui/MainLayout.js";
 import { HomeContainer } from "./HomeContainer.js";
-import { MainContainer } from "./MainContainer.js";
+import { CubeContainer } from "./CubeContainer.js";
 
 
 export function Main(props) {
@@ -15,7 +15,7 @@ export function Main(props) {
 
     let views = {
         home: new HomeContainer(),
-        main: new MainContainer()
+        main: new CubeContainer()
     };
 
     const navigateTo = url => {
