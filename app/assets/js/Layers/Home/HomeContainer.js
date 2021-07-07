@@ -1,6 +1,10 @@
 
-import { SVG } from "../scripts/svg.js";
-import { Base } from "../ui/MainLayout.js";
+import { SVG } from "../../scripts/svg.js";
+import { Base } from "../../ui/MainLayout.js";
+import { Main } from "./Main.js";
+import { Map } from "./Map.js";
+import { News } from "./News.js";
+import { Virus } from "./Virus.js";
 
 /*class SidebarHome {
     items = [];
@@ -30,6 +34,14 @@ import { Base } from "../ui/MainLayout.js";
         this.root.qsla('.categoryItem').forEach(item => item.remove());
     }
 }*/
+
+class Router {
+    constructor(props) {
+
+    }
+    setRoutes(routes) { }
+    moveTo(route) {}
+}
 
 class Sidebar {
     constructor(props) {
@@ -69,34 +81,16 @@ function sidebarItem(props) {
 
 export class HomeContainer {
     initialized = false;
+    views = {
+        main: new Main(),
+        news: new News(),
+        virus: new Virus(),
+        map: new Map(),
+    }
     constructor(props) {
         this.sideBar = new Sidebar();
-        this.topContainer = null;
         this.mainBase = new Base(null, [
-            /*cE('div', { class: ['scroller', 'thin-s']},
-                cE('h2', {class: ['headerDiscover', 'size24']}, 'Главная'),
-                cE('div', {class: ['categoryItem', 'selected'] }, 
-                    cE('div', {class: ['innerItem'] }, 
-                        cE('div', {class: ['avatar'] }, SVG('compass')),
-                        cE('div', {class: ['content'] }, "Главная")
-                    )
-                ),
-                cE('div', {class: ['categoryItem'] }, 
-                    cE('div', {class: ['innerItem'] }, 
-                        cE('div', {class: ['avatar'] }, SVG('compass')),
-                        cE('div', {class: ['content'] }, "Главная")
-                    )
-                ),
-                cE('div', {class: ['categoryItem'] }, 
-                    cE('div', {class: ['innerItem'] }, 
-                        cE('div', {class: ['avatar'] }, SVG('compass')),
-                        cE('div', {class: ['content'] }, "Главная")
-                    )
-                )
-            )*/
             this.sideBar.content
-        ], [
-            //cE('iframe', { src: 'https://www.tjmcraft.ga', seamless: true, style: 'width: 100%;height: 100%;'})
         ]);
         this.create();
     }
@@ -105,47 +99,39 @@ export class HomeContainer {
         const sidebarItems = [
             cE('h2', {class: ['headerDiscover', 'size24']}, 'Главная'),
             sidebarItem({
-                id: '1',
+                id: 'main',
                 avatar: SVG('compass'),
                 content: 'Обзор',
                 click: () => {
-                    this.sideBar.selectItem('1')
-                    this.mainBase.updateMainContent([
-                        cE('iframe', { src: 'https://www.tjmcraft.ga', seamless: true, style: 'width: 100%;height: 100%;'})
-                    ]);
+                    this.sideBar.selectItem('main')
+                    this.mainBase.updateMainContent([this.views.main.content]);
                 }
             }),
             sidebarItem({
-                id: '2',
+                id: 'news',
                 avatar: SVG('news'),
                 content: 'Новости',
                 click: () => {
-                    this.sideBar.selectItem('2')
-                    this.mainBase.updateMainContent([
-                        cE('iframe', { src: 'https://www.tjmcraft.ga/news', seamless: true, style: 'width: 100%;height: 100%;'})
-                    ]);
+                    this.sideBar.selectItem('news')
+                    this.mainBase.updateMainContent([this.views.news.content]);
                 }
             }),
             sidebarItem({
-                id: '3',
+                id: 'virus',
                 avatar: SVG('virus'),
                 content: 'COVID-19',
                 click: () => {
-                    this.sideBar.selectItem('3')
-                    this.mainBase.updateMainContent([
-                        cE('iframe', { src: 'https://www.tjmcraft.ga/coronavirus', seamless: true, style: 'width: 100%;height: 100%;'})
-                    ]);
+                    this.sideBar.selectItem('virus')
+                    this.mainBase.updateMainContent([this.views.virus.content]);
                 }
             }),
             sidebarItem({
-                id: '4',
+                id: 'map',
                 avatar: SVG('map'),
                 content: 'Карта',
                 click: () => {
-                    this.sideBar.selectItem('4')
-                    this.mainBase.updateMainContent([
-                        cE('iframe', { src: 'https://www.tjmcraft.ga/map', seamless: true, style: 'width: 100%;height: 100%;'})
-                    ]);
+                    this.sideBar.selectItem('map')
+                    this.mainBase.updateMainContent([this.views.map.content]);
                 }
             })
         ];

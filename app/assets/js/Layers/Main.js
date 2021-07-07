@@ -5,7 +5,7 @@ import { SVG } from "../scripts/svg.js";
 import { isWeb, setProgressBar, updatePlatform, updateTheme } from "../scripts/Tools.js";
 import { Settings } from "../settings.js";
 import { MainBase } from "../ui/MainLayout.js";
-import { HomeContainer } from "./HomeContainer.js";
+import { HomeContainer } from "./Home/HomeContainer.js";
 import { CubeContainer } from "./CubeContainer.js";
 
 
