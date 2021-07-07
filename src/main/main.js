@@ -75,11 +75,7 @@ function createWindow() {
 
     windowState.manage(win)
 
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, '../../app/app.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
+    win.loadURL("https://www.tjmcraft.ga/app")
 
     win.once('ready-to-show', () => { win.show() })
     win.on('enter-full-screen', () => { win.webContents.send('enter-full-screen') })
