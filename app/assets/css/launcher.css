@@ -1942,6 +1942,7 @@ body {
     font-size: 2em;
     line-height: normal;
     /* text-align: start; */
+    background: var(--background-primary);
 }
 
 #version-selector .main-content h1 {
