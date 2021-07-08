@@ -2678,6 +2678,7 @@ a:hover {
     width: 100%;
     height: 100%;
     margin: 0 auto;
+    max-width: 1608px;
 }
 .viewWrapper > .header-q {
     position: relative;
@@ -2710,6 +2711,12 @@ a:hover {
 }
 .viewWrapper > .main-q {
     position: relative;
+}
+.viewWrapper > .main-q .section {
+    position: relative;
+    width: 100%;
+    margin-bottom: 32px;
+    min-width: 580px;
 }
 .viewWrapper > .footer-q {
     margin: 32px 0;
