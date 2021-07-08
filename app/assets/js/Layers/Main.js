@@ -7,6 +7,7 @@ import { Settings } from "../settings.js";
 import { MainBase } from "../ui/MainLayout.js";
 import { HomeContainer } from "./Home/HomeContainer.js";
 import { CubeContainer } from "./CubeContainer.js";
+import { ChatContainer } from "./Chat/ChatContainer.js";
 
 
 export function Main(props) {
@@ -15,7 +16,9 @@ export function Main(props) {
 
     let views = {
         home: new HomeContainer(),
-        main: new CubeContainer()
+        main: new CubeContainer(),
+        news: null,
+        chat: new ChatContainer()
     };
 
     const navigateTo = url => {
@@ -27,7 +30,8 @@ export function Main(props) {
 
         const routes = [
             { path: 'home', view: views.home },
-            { path: 'minecraft', view: views.main }
+            { path: 'minecraft', view: views.main },
+            { path: 'chat', view: views.chat }
         ];
 
         const potentialMatches = routes.map(route => {
@@ -68,9 +72,10 @@ export function Main(props) {
             click: () => {}
         },
         {
+            id: 'chat',
             type: 'item',
             svg: SVG('messages'),
-            click: () => {}
+            click: () => navigateTo('chat')
         },
         {
             type: 'item',
