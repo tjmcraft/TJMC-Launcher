@@ -4,11 +4,26 @@ export class Main {
         this.update();
     }
     create() {
-        this.root = cE('iframe', {
-            src: 'https://www.tjmcraft.ga',
-            seamless: true,
-            style: 'width: 100%;height: 100%;'
-        });
+        this.root = cE('div', { class: ['pageWrapper'] },
+            cE('div', { class: ['scroller-qw','auto-s'] },
+                cE('div', { class: ['viewWrapper'] },
+                    cE('div', { class: ['header-q'] },
+                        cE('img', {
+                            class: ['headerImage'],
+                            src: "./assets/images/banner.jpg"
+                        }),
+                        cE('div', { class: ['headerContentWrapper'] },
+                            cE('div', { class: ['headerContent'] },
+                                cE('h2', { class: ['title', 'sizeZ'] }, 'ТюменьCraft'),
+                                cE('h2', { class: ['subtitle', 'sizeQ'] }, 'Любите девушки, простых романтиков, отважных лётчиков и моряков...')
+                            )
+                        )
+                    ),
+                    cE('div', { class: ['main-q'] }, 'main'),
+                    cE('div', { class: ['footer-q'] }, 'footer'),
+                )
+            )
+        )
     }
     get content() {
         return this.root;
