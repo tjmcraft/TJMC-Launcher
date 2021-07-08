@@ -36,9 +36,11 @@ import { Virus } from "./Virus.js";
 }*/
 
 class Router {
+    routes;
     constructor(props) {
 
     }
+    addRoute(route, view) {}
     setRoutes(routes) { }
     moveTo(route) {}
 }
@@ -145,6 +147,8 @@ export class HomeContainer {
     }
     init() {
         if (this.initialized) return;
+        this.sideBar.selectItem('main');
+        this.mainBase.updateMainContent([this.views.main.content]);
         this.initialized = true;
     }
 }
