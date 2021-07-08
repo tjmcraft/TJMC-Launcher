@@ -15,11 +15,15 @@ export class Main {
                         cE('div', { class: ['headerContentWrapper'] },
                             cE('div', { class: ['headerContent'] },
                                 cE('h2', { class: ['title', 'sizeZ'] }, 'ТюменьCraft'),
-                                cE('h2', { class: ['subtitle', 'sizeQ'] }, 'Любите девушки, простых романтиков, отважных лётчиков и моряков...')
+                                cE('h3', { class: ['subtitle', 'sizeQ'] }, 'Любите девушки, простых романтиков, отважных лётчиков и моряков...')
                             )
                         )
                     ),
-                    cE('div', { class: ['main-q'] }, 'main'),
+                    cE('div', { class: ['main-q'] },
+                        cE('div', { class: ['section'] },
+                            cE('h3', null, 'Что происходит')
+                        )
+                    ),
                     cE('div', { class: ['footer-q'] }, 'footer'),
                 )
             )
