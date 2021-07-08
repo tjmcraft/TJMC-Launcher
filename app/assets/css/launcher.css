@@ -2492,12 +2492,22 @@ a:hover {
 }
 
 .sizeR {
-    font-size: 1.8em;
+    font-size: 1.6em;
     line-height: normal;
 }
 
 .sizeT {
+    font-size: 1.8em;
+    line-height: normal;
+}
+
+.sizeY {
     font-size: 2em;
+    line-height: normal;
+}
+
+.sizeZ {
+    font-size: 3em;
     line-height: normal;
 }
 
@@ -2649,3 +2659,66 @@ a:hover {
     background: var(--brand-color);
 }
 /* -------------------- */
+
+.pageWrapper {
+    position: relative;
+    width: 100%;
+    color: var(--text-normal);
+    background: var(--background-primary);
+}
+.scroller-qw {
+    padding: 16px;
+    height: 100%;
+    overflow: hidden scroll;
+    flex: 1 1 auto;
+    padding-right: 0;
+}
+.viewWrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+}
+.viewWrapper > .header-q {
+    position: relative;
+    text-align: center;
+    margin-bottom: 32px;
+    min-height: 200px;
+}
+.viewWrapper > .header-q .headerImage {
+    width: 100%;
+    height: auto;
+    max-height: 40vh;
+    object-fit: cover;
+    border-radius: 8px;
+}
+.viewWrapper > .header-q .headerContentWrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.viewWrapper > .header-q .headerContentWrapper > .headerContent {
+    width: 100%;
+    min-width: 360px;
+    max-width: 720px;
+    margin: 0 240px;
+}
+.viewWrapper > .main-q {
+    position: relative;
+}
+.viewWrapper > .footer-q {
+    margin: 32px 0;
+    text-align: center;
+}
+
+.title {
+    font-weight: 700;
+}
+.subtitle {
+    font-weight: inherit;
+}
