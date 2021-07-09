@@ -59,7 +59,7 @@ export class Main {
                             )
                         )
                     ),
-                    cE('div', { class: ['footer-q'] }, 'footer'),
+                    cE('div', { class: ['footer-q'] }, "footer\nfooter?\nа нахуй он вообще нужен?"),
                 )
             )
         )
