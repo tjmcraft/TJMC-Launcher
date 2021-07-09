@@ -6,9 +6,7 @@ class Sidebar {
         this.create();
     }
     create() {
-        this.root = cE('div', {
-            class: ['scroller', 'thin-s']
-        });
+        this.root = cE('div', { class: ['scroller', 'thin-s'] });
     }
     get content() {
         return this.root;
@@ -37,10 +35,12 @@ export class ChatContainer {
     }
     create() {
         this.root = this.mainBase.content;
+        const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
         const sidebarItems = [
             cE('h2', {
                 class: ['headerDiscover', 'size24']
-            }, 'Сообщения')
+            }, 'Сообщения'),
+
         ];
         this.sideBar.removeAll();
         for (const item of sidebarItems) {
