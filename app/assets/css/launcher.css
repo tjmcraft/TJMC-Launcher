@@ -1565,18 +1565,18 @@ body {
     font-size: 1.2em;
 }
 
-.sidebar-main > .container-3Wc7 .versionsHeader {
+.sidebar-main > .container-3Wc7 .header-w {
     display: flex;
     padding: 18px 8px 4px 18px;
     height: 40px;
     color: var(--interactive-normal);
 }
 
-.sidebar-main > .container-3Wc7 .versionsHeader:hover {
+.sidebar-main > .container-3Wc7 .header-w:hover {
     color: var(--interactive-hover);
 }
 
-.sidebar-main > .container-3Wc7 .versionsHeader span {
+.sidebar-main > .container-3Wc7 .header-w span {
     flex: 1;
 }
 
