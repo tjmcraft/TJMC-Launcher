@@ -69,12 +69,12 @@ class SidebarMain {
         const add_button = cE('div', { class: 'simple-button' }, SVG('add-plus'));
         add_button.onclick = (e) => new VersionChooser();
         tooltip.call(add_button, 'Добавить версию');
-        this.root_content = cE('div', { class: ['content'] },
-            cE('h2', { class: ['versionsHeader', 'container-df'] },
+        this.root_content = [
+            cE('h2', { class: ['header-w', 'container-df'] },
                 cE('span', null, 'Версии'), add_button
             )
-        );
-        this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] }, this.root_content);
+        ];
+        this.root_scroller = cE('div', { class: ['scroller', 'thin-s'] }, ...this.root_content);
         return this.root_scroller;
     };
     addItem(item, click = () => {}) {
@@ -93,7 +93,7 @@ class SidebarMain {
         }
         this.vdom.progress_bars[item.hash] = progress_bar;
         this.vdom.process_dots[item.hash] = process_dots;
-        this.root_content.appendChild(root_item);
+        this.root_scroller.appendChild(root_item);
     };
     createFirstPage() {
         this.root_fp = cE('div', { class: ['item', 'centred', 'fp'] }, cE('h1', {}, 'Добавьте версию'));
@@ -103,19 +103,19 @@ class SidebarMain {
         this.root_fp && this.root_fp.remove();
     };
     selectItem(version_hash) {
-        let items = this.root_content.qsla('.item');
+        let items = this.root_scroller.qsla('.item');
         items.forEach(e => {
             e.classList[e.getAttribute('version-hash') === version_hash ? 'add' : 'remove']('selected')
         });
     };
     removeItem(item) {
-        const selected_item = this.root_content.qsl(`.item[version-hash=${item.hash}]`);
-        this.root_content.removeChild(selected_item);
+        const selected_item = this.root_scroller.qsl(`.item[version-hash=${item.hash}]`);
+        this.root_scroller.removeChild(selected_item);
         delete this.vdom.progress_bars[version_hash];
         delete this.vdom.process_dots[version_hash];
     };
-    content(def = false) {
-        return !def && this.root_scroller ? this.root_scroller : this.base();
+    get content() {
+        return this.root_scroller;
     };
     progressBars() {
         return this.vdom.progress_bars;
@@ -125,7 +125,7 @@ class SidebarMain {
     }
     removeAll() {
         this.removeFirstPage();
-        this.root_content.qsla('.item').forEach(e => e.remove());
+        this.root_scroller.qsla('.item').forEach(e => e.remove());
     };
 }
 
@@ -136,7 +136,7 @@ export class CubeContainer {
         this.topContainer = new TopContainer();
         this.mainBase = new Base (null,
             [
-                this.sideBar.content()
+                this.sideBar.content
             ],
             [
                 this.topContainer.content
