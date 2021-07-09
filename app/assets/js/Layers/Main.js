@@ -35,8 +35,8 @@ export function Main(props) {
         ];
 
         const potentialMatches = routes.map(route => {
-            console.log(`Url: ${(url)}`);
-            console.log(`Route: ${(lP + route.path)}`)
+            //console.log(`Url: ${(url)}`);
+            //console.log(`Route: ${(lP + route.path)}`)
             return {
                 route: route,
                 isMatch: (url) === (lP + route.path)
@@ -44,6 +44,8 @@ export function Main(props) {
         });
 
         let match = potentialMatches.find(match => match.isMatch);
+
+        console.log(match);
 
         if (!match) {
             navigateTo(routes[0].path);
