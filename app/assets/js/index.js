@@ -152,6 +152,10 @@ async function init(props) {
 
     mount.append(frame, app.content, layerContainer.content);
 
+    if (getCookie('session_cookie') == undefined) {
+        location.href = '/newlogin';
+    }
+
     window.addEventListener('load', () => {
         mount.toggle(true, 'app-mount')
         setTimeout(() => app.preloader.destroy(), 2500)
