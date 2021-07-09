@@ -2733,6 +2733,7 @@ a:hover {
 .viewWrapper > .footer-q {
     margin: 32px 0;
     text-align: center;
+    white-space: break-spaces;
 }
 
 .title {
