@@ -1,5 +1,6 @@
 'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
+const autoUpdater = require('electron-updater')
 const express = require('express')
 const express_app = express()
 const WebSocket = require('ws')
