@@ -19,6 +19,7 @@ const launcher = require('./game/launcher');
 const InstallationsManager = require('./managers/InstallationsManager');
 
 autoUpdater.logger = logger;
+autoUpdater.allowPrerelease = true;
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
