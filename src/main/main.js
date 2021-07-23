@@ -95,6 +95,7 @@ function createWindow() {
     //win.webContents.openDevTools()
 }
 
+autoUpdater.on('error', (e) => win?.webContents.send('error', e));
 autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'));
 autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
 autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
