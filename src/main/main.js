@@ -20,6 +20,7 @@ const InstallationsManager = require('./managers/InstallationsManager');
 
 autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
+autoUpdater.autoInstallOnAppQuit = true;
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
