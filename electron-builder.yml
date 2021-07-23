@@ -1,6 +1,8 @@
 appId: 'tjmc.launcher'
 productName: 'TJMC-Launcher'
-artifactName: '${productName}-setup-${version}.${ext}'
+artifactName: '${productName}-${version}-setup.${ext}'
+publish:
+  provider: github
 
 copyright: 'Copyright © 2020-2021 MakAndJo'
 
