@@ -66,6 +66,19 @@ process.once('loaded', () => {
   })
 })
 
+ipcRenderer.on('update.check', async () => {
+  logger.debug('[Update] Checking for updates...');
+})
+ipcRenderer.on('update.available', async (e) => {
+  logger.debug('[Update] Update available:', e);
+});
+ipcRenderer.on('update.downloaded', async (e) => {
+  logger.debug('[Update] Update downloaded:', e);
+});
+ipcRenderer.on('update.progress', async (e) => {
+  logger.debug('[Update] Update progress:', e);
+})
+
 contextBridge.exposeInMainWorld('__STANDALONE__', true)
 contextBridge.exposeInMainWorld('system', {
     os: getOS()

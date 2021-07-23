@@ -21,9 +21,7 @@ compression: 'maximum'
 
 win:
   publisherName: "MakAndJo"
-  target: 
-    - target: 'nsis'
-      arch: 'x64'
+  target: 'nsis'
 
 mac:
   target: 

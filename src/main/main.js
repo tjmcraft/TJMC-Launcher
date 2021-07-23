@@ -1,6 +1,6 @@
 'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
-const autoUpdater = require('electron-updater')
+const { autoUpdater } = require('electron-updater');
 const express = require('express')
 const express_app = express()
 const WebSocket = require('ws')
@@ -17,6 +17,8 @@ const VersionManager = require('./managers/VersionManager');
 VersionManager.updateGlobalVersionsConfig();
 const launcher = require('./game/launcher');
 const InstallationsManager = require('./managers/InstallationsManager');
+
+autoUpdater.logger = logger;
 
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
@@ -78,15 +80,23 @@ function createWindow() {
 
     win.loadURL("https://www.tjmcraft.ga/app")
 
-    win.once('ready-to-show', () => { win.show() })
-    win.on('enter-full-screen', () => { win.webContents.send('enter-full-screen') })
-    win.on('leave-full-screen', () => { win.webContents.send('leave-full-screen') })
-    win.on('blur', () => { win.webContents.send('blur') })
-    win.on('focus', () => { win.webContents.send('focus') })
-    win.on('closed', () => { win = null })
+    win.once('ready-to-show', () => {
+        autoUpdater.checkForUpdatesAndNotify();
+        win.show()
+    })
+    win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'))
+    win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'))
+    win.on('blur', () => win.webContents.send('blur'))
+    win.on('focus', () => win.webContents.send('focus'))
+    win.on('closed', () => win = null)
 
     //win.webContents.openDevTools()
 }
+
+autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'));
+autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
+autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
+autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
 
 function createMenu() {
     const isMac = (process.platform === 'darwin');
