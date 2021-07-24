@@ -313,7 +313,7 @@ express_app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Headers', '*');
     next();
 });
-express_app.get('/ping', (req, res) => { res.send('pong') })
+express_app.get('/ping', (req, res) => { res.json({ pong: true }) });
 express_app.get('/version', (req, res) => {
     res.json(autoUpdater.currentVersion);
 });
