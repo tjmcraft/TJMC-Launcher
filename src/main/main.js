@@ -315,9 +315,7 @@ express_app.use(function(req, res, next) {
 });
 express_app.get('/ping', (req, res) => { res.send('pong') })
 express_app.get('/version', (req, res) => {
-    res.json({
-        version: autoUpdater.currentVersion
-    })
+    res.json(autoUpdater.currentVersion);
 });
 express_app.post('/launch-mine', async(req, res) => {
     const data = req.body;
