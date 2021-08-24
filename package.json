@@ -5,10 +5,12 @@
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder build",
-    "dist:win": "npm run dist -- -w",
-    "dist:mac": "npm run dist -- -m",
-    "dist:linux": "npm run dist -- -l"
+    "build": "electron-builder build --publish never",
+    "build:win": "npm run build -- -w",
+    "build:mac": "npm run build -- -m",
+    "build:linux": "npm run build -- -l",
+    "deploy": "electron-builder build --publish always",
+    "deploy:win": "npm run deploy -- -w"
   },
   "keywords": [
     "Minecraft",
@@ -27,10 +29,12 @@
   "dependencies": {
     "@electron/remote": "^1.2.0",
     "adm-zip": "^0.5.1",
+    "electron-updater": "^4.3.9",
     "express": "^4.17.1",
     "fs-extra": "^9.1.0",
     "request": "^2.88.2",
-    "ws": "^7.5.1"
+    "ws": "^7.5.1",
+    "dotenv": "^9.0.2"
   },
   "devDependencies": {
     "electron": "^13.1.5",

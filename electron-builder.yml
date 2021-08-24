@@ -1,6 +1,8 @@
 appId: 'tjmc.launcher'
 productName: 'TJMC-Launcher'
-artifactName: '${productName}-setup-${version}.${ext}'
+artifactName: '${productName}-${version}-setup.${ext}'
+publish:
+  provider: github
 
 copyright: 'Copyright © 2020-2021 MakAndJo'
 
@@ -19,9 +21,7 @@ compression: 'maximum'
 
 win:
   publisherName: "MakAndJo"
-  target: 
-    - target: 'nsis'
-      arch: 'x64'
+  target: 'nsis'
 
 mac:
   target: 
