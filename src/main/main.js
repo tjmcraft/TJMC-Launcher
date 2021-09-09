@@ -53,8 +53,10 @@ const createPreloadWindow = async () => {
         backgroundColor: '#171614'
     });
 
-    window.once('show', () => {
+    window.once('show', async () => {
         logger.info('show loading')
+        await startSocketServer();
+        await startWebServer();
         createMainWindow(() => {
             logger.info('main loaded')
             window.hide()
@@ -138,73 +140,59 @@ const createMainWindow = async (cb = () => {}) => {
     win.on('closed', () => win = null)
 
     //win.webContents.openDevTools()
-
-    let socket_connector;
-
+    
     ipcMain.handle('ping', async (event, ...args) => args);
+    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params));
+    ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
+    ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations());
+    ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions());
+    ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options));
+    ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
+    ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
+    ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
 
-    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params))
-
-    async function launchMinecraft(version_hash = null, params = null) {
-        try {
-            const _launcher = await new launcher(version_hash, params);
-            _launcher.on('progress', progress);
-            _launcher.on('download-status', download_progress);
-
-            //const hb = await _launcher.heartbeat(60);
-
-            const java_path = await _launcher.getJava();
-            const versionFile = await _launcher.loadManifest();
-            const minecraftArguments = await _launcher.construct(versionFile);
-            logger.log('Starting minecraft! vh: ' + version_hash)
-            const vm = await _launcher.createJVM(java_path, minecraftArguments);
-
-            let error_out = null,
-                std_out = null,
-                logg_out = null;
-            vm.stderr.on('data', (data) => {
-                logg_out = error_out = data.toString('utf-8');
-            })
-            vm.stdout.on('data', (data) => {
-                logg_out = std_out = data.toString('utf-8');
-            })
-            vm.on('close', (code) => {
-                if (code != 0) {
-                    win?.webContents.send('startup-error', {
-                        error: logg_out,
-                        version_hash: version_hash
-                    });
-                    if (socket_connector) socket_connector.send('startup-error', {
-                        error: logg_out,
-                        version_hash: version_hash
-                    });
-                }
-            })
-            win?.webContents.send('startup-success', {
-                version_hash: version_hash
-            });
-            if (socket_connector) socket_connector.send('startup-success', {
-                version_hash: version_hash
-            });
-            return true;
-        } catch (error) {
-            win?.webContents.send('error', {
-                error: error.message,
-                version_hash: version_hash
-            });
-            if (socket_connector) socket_connector.send('error', {
-                error: error.message,
-                version_hash: version_hash
+    if (process.platform == 'darwin') {
+        const setOSTheme = () => {
+            let source = nativeTheme.themeSource;
+            const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+            win.webContents.send('theme.update', {
+                source: source,
+                theme: theme
             });
         }
-        return false;
+        nativeTheme.on('updated', () => setOSTheme());
     }
+}
 
-    ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args))
+var socket_connector;
 
+async function startSocketServer() {
+    const ws_server = new WebSocket.Server({
+        port: 4836
+    });
+    ws_server.on('connection', socket => {
+        socket_connector = new SocketConnect(socket);
+    });
+    function SocketConnect(socket) {
+        const sendJSON = (type = null, data) => {
+            socket.send(JSON.stringify({
+                type: type,
+                data: data
+            }));
+        }
+        sendJSON('status', 'connected');
+        this.send = (type = null, data) => {
+            if (socket) sendJSON(type, data);
+        }
+    }
+    return ws_server;
+}
+
+
+async function launchMinecraft(version_hash = null, params = null) {
     function progress(e) {
         const progress = (e.task / e.total);
-        win?.webContents.send('progress', {
+        if (win) win.webContents.send('progress', {
             progress: progress,
             version_hash: e.version_hash
         });
@@ -217,7 +205,7 @@ const createMainWindow = async (cb = () => {}) => {
     function download_progress(e) {
         const progress = (e.current / e.total);
         if (e.type != 'version-jar') return;
-        win?.webContents.send('progress', {
+        if (win) win.webContents.send('progress', {
             progress: progress,
             version_hash: e.version_hash
         });
@@ -226,27 +214,61 @@ const createMainWindow = async (cb = () => {}) => {
             version_hash: e.version_hash
         });
     }
+    try {
+        const _launcher = await new launcher(version_hash, params);
+        _launcher.on('progress', progress);
+        _launcher.on('download-status', download_progress);
 
-    ipcMain.handle('installations.get', async (event, ...args) => {
-        return await InstallationsManager.getInstallations();
-    })
-    ipcMain.handle('versions.get.global', async (event, ...args) => {
-        return await VersionManager.getGlobalVersions();
-    })
-    ipcMain.handle('installations.create', async (event, version, options) => {
-        return await InstallationsManager.createInstallation(version, options);
-    })
-    ipcMain.handle('configuration.get', async (event, ...args) => {
-        return await ConfigManager.getAllOptions();
-    })
-    ipcMain.handle('configuration.set', async (event, args) => {
-        return await ConfigManager.setOptions(args);
-    })
-    ipcMain.handle('system.mem', async (event, ...args) => {
-        return os.totalmem() / 1024 / 1024;
-    })
+        //const hb = await _launcher.heartbeat(60);
 
+        const java_path = await _launcher.getJava();
+        const versionFile = await _launcher.loadManifest();
+        const minecraftArguments = await _launcher.construct(versionFile);
+        logger.log('Starting minecraft! vh: ' + version_hash)
+        const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
+        let error_out = null,
+            std_out = null,
+            logg_out = null;
+        vm.stderr.on('data', (data) => {
+            logg_out = error_out = data.toString('utf-8');
+        })
+        vm.stdout.on('data', (data) => {
+            logg_out = std_out = data.toString('utf-8');
+        })
+        vm.on('close', (code) => {
+            if (code != 0) {
+                if (win) win.webContents.send('startup-error', {
+                    error: logg_out,
+                    version_hash: version_hash
+                });
+                if (socket_connector) socket_connector.send('startup-error', {
+                    error: logg_out,
+                    version_hash: version_hash
+                });
+            }
+        })
+        if (win) win.webContents.send('startup-success', {
+            version_hash: version_hash
+        });
+        if (socket_connector) socket_connector.send('startup-success', {
+            version_hash: version_hash
+        });
+        return true;
+    } catch (error) {
+        if (win) win.webContents.send('error', {
+            error: error.message,
+            version_hash: version_hash
+        });
+        if (socket_connector) socket_connector.send('error', {
+            error: error.message,
+            version_hash: version_hash
+        });
+    }
+    return false;
+}
+
+async function startWebServer() {
     const e_server = express_app.listen(5248);
     express_app.use(express.json()) // for parsing application/json
     express_app.use(function (req, res, next) {
@@ -258,7 +280,7 @@ const createMainWindow = async (cb = () => {}) => {
     express_app.get('/ping', (req, res) => {
         res.json({
             pong: true
-        })
+        });
     });
     express_app.get('/version', (req, res) => {
         res.json(autoUpdater.currentVersion);
@@ -303,45 +325,7 @@ const createMainWindow = async (cb = () => {}) => {
             success: false
         });
     });
-
-    const ws_server = new WebSocket.Server({
-        port: 4836
-    });
-
-    ws_server.on('connection', socket => {
-        socket_connector = new SocketConnect(socket);
-    });
-
-    function SocketConnect(socket) {
-        const sendJSON = (type = null, data) => {
-            socket.send(JSON.stringify({
-                type: type,
-                data: data
-            }));
-        }
-        sendJSON('status', 'connected');
-        this.send = (type = null, data) => {
-            if (socket) sendJSON(type, data);
-        }
-    }
-
-    if (process.platform == 'darwin') {
-
-        const setOSTheme = () => {
-            let source = nativeTheme.themeSource;
-            const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-            win.webContents.send('theme.update', {
-                source: source,
-                theme: theme
-            });
-        }
-
-        nativeTheme.on('updated', () => setOSTheme());
-    }
-}
-
-function initServer() {
-    
+    return express_app;
 }
 
 autoUpdater.on('error', (e) => win?.webContents.send('error', e));
@@ -350,7 +334,7 @@ autoUpdater.on('update-available', (e) => win?.webContents.send('update.availabl
 autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
 autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
 
-function createMenu() {
+async function createMenu() {
     const isMac = (process.platform === 'darwin');
     const template = [
         ...(isMac ? [{
