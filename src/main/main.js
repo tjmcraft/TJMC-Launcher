@@ -54,11 +54,9 @@ const createPreloadWindow = async () => {
     });
 
     window.once('show', async () => {
-        logger.info('show loading')
         await startSocketServer();
         await startWebServer();
         createMainWindow(() => {
-            logger.info('main loaded')
             window.hide()
             window.close()
         });
