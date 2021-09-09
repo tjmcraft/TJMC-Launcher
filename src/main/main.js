@@ -36,6 +36,40 @@ autoUpdater.autoInstallOnAppQuit = true;
 
 app.allowRendererProcessReuse = true
 
+const createPreloadWindow = async () => {
+    let window = new BrowserWindow({
+        width: 220,
+        height: 260,
+        resizable: false,
+        show: false,
+        frame: false,
+        webPreferences: {
+            nativeWindowOpen: true,
+            nodeIntegration: false
+        },
+        titleBarStyle: 'default',
+        roundedCorners: true,
+        icon: getPlatformIcon('icon'),
+        backgroundColor: '#171614'
+    });
+
+    window.once('show', () => {
+        logger.info('show loading')
+        createMainWindow(() => {
+            logger.info('main loaded')
+            window.hide()
+            window.close()
+        });
+        createMenu();
+    })
+
+    window.loadURL(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
+    window.once('ready-to-show', () => {
+        window.show();
+    })
+    
+}
+
 const gotTheLock = app.requestSingleInstanceLock()
 
 /**
@@ -52,13 +86,14 @@ if (!gotTheLock) {
             win.focus()
         }
     })
-    app.on('ready', createWindow)
-    app.on('ready', createMenu)
+    app.on('ready', createPreloadWindow)
+    //app.on('ready', createMenu)
     app.on('window-all-closed', () => app.quit())
     app.on('activate', () => (win === null) && createWindow())
 }
 
-function createWindow() {
+const createMainWindow = async (cb = () => {}) => {
+
     let windowState = WindowState({
         width: 1280,
         height: 720
@@ -93,7 +128,8 @@ function createWindow() {
 
     win.once('ready-to-show', () => {
         autoUpdater.checkForUpdatesAndNotify();
-        win.show()
+        win.show();
+        cb.call();
     })
     win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'))
     win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'))
@@ -302,6 +338,10 @@ function createWindow() {
 
         nativeTheme.on('updated', () => setOSTheme());
     }
+}
+
+function initServer() {
+    
 }
 
 autoUpdater.on('error', (e) => win?.webContents.send('error', e));
