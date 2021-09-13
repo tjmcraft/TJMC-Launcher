@@ -124,7 +124,7 @@ const createMainWindow = async (cb = () => {}) => {
 
     windowState.manage(win)
 
-    win.loadURL("https://www.tjmcraft.ga/app")
+    win.loadURL("https://app.tjmcraft.ga/")
 
     win.once('ready-to-show', () => {
         autoUpdater.checkForUpdatesAndNotify();
