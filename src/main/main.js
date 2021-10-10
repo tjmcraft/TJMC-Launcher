@@ -271,7 +271,11 @@ async function startWebServer() {
     express_app.use(express.json()) // for parsing application/json
     express_app.use(function (req, res, next) {
         res.header('Content-Type', 'application/json');
-        res.header('Access-Control-Allow-Origin', 'https://app.tjmcraft.ga');
+        const allowedOrigins = ['http://127.0.0.1:3333', 'http://localhost:3333', 'http://192.168.0.12:3333', 'https://app.tjmcraft.ga'];
+        const origin = req.headers.origin;
+        if (allowedOrigins.includes(origin)) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+        }
         res.header('Access-Control-Allow-Headers', '*');
         next();
     });
