@@ -9,7 +9,7 @@
     "build:win": "npm run build -- -w",
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
-    "deploy": "electron-builder build --publish always",
+    "deploy": "npm version patch && electron-builder build --publish always",
     "deploy:win": "npm run deploy -- -w"
   },
   "keywords": [
