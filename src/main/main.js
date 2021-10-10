@@ -271,7 +271,7 @@ async function startWebServer() {
     express_app.use(express.json()) // for parsing application/json
     express_app.use(function (req, res, next) {
         res.header('Content-Type', 'application/json');
-        res.header('Access-Control-Allow-Origin', 'https://www.tjmcraft.ga');
+        res.header('Access-Control-Allow-Origin', 'https://app.tjmcraft.ga');
         res.header('Access-Control-Allow-Headers', '*');
         next();
     });
