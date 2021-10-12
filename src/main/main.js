@@ -56,6 +56,7 @@ const createPreloadWindow = async () => {
     window.once('show', async () => {
         await startSocketServer();
         await startWebServer();
+        logger.debug(await autoUpdater.checkForUpdates());
         createMainWindow(() => {
             window.hide()
             window.close()
@@ -127,7 +128,7 @@ const createMainWindow = async (cb = () => {}) => {
     win.loadURL("https://app.tjmcraft.ga/")
 
     win.once('ready-to-show', () => {
-        autoUpdater.checkForUpdatesAndNotify();
+        
         win.show();
         cb.call();
     })
