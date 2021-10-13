@@ -128,7 +128,6 @@ const createMainWindow = async (cb = () => {}) => {
     win.loadURL("https://app.tjmcraft.ga/")
 
     win.once('ready-to-show', () => {
-        
         win.show();
         cb.call();
     })
@@ -149,6 +148,7 @@ const createMainWindow = async (cb = () => {}) => {
     ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
     ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
+    ipcMain.handle('version', async (event, ...args) => args);
 
     if (process.platform == 'darwin') {
         const setOSTheme = () => {
@@ -223,7 +223,7 @@ async function launchMinecraft(version_hash = null, params = null) {
         const java_path = await _launcher.getJava();
         const versionFile = await _launcher.loadManifest();
         const minecraftArguments = await _launcher.construct(versionFile);
-        logger.log('Starting minecraft! vh: ' + version_hash)
+        logger.log('Starting minecraft! Version Hash: ' + version_hash)
         const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
         let error_out = null,
