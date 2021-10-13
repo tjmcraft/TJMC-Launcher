@@ -148,7 +148,7 @@ const createMainWindow = async (cb = () => {}) => {
     ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
     ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
-    ipcMain.handle('version', async (event, ...args) => args);
+    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion);
 
     if (process.platform == 'darwin') {
         const setOSTheme = () => {
