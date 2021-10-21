@@ -237,32 +237,38 @@ async function launchMinecraft(version_hash = null, params = null) {
         })
         vm.on('close', (code) => {
             if (code != 0) {
-                if (win) win.webContents.send('startup-error', {
-                    error: logg_out,
-                    version_hash: version_hash
-                });
-                if (socket_connector) socket_connector.send('startup-error', {
-                    error: logg_out,
-                    version_hash: version_hash
-                });
+                if (win)
+                    win.webContents.send('startup-error', {
+                        error: logg_out,
+                        version_hash: version_hash
+                    }) && win.setProgressBar(-1)
+                if (socket_connector)
+                    socket_connector.send('startup-error', {
+                        error: logg_out,
+                        version_hash: version_hash
+                    });
             }
         })
-        if (win) win.webContents.send('startup-success', {
-            version_hash: version_hash
-        });
-        if (socket_connector) socket_connector.send('startup-success', {
-            version_hash: version_hash
-        });
+        if (win)
+            win.webContents.send('startup-success', {
+                version_hash: version_hash
+            }) && win.setProgressBar(-1)
+        if (socket_connector)
+            socket_connector.send('startup-success', {
+                version_hash: version_hash
+            });
         return true;
     } catch (error) {
-        if (win) win.webContents.send('error', {
-            error: error.message,
-            version_hash: version_hash
-        });
-        if (socket_connector) socket_connector.send('error', {
-            error: error.message,
-            version_hash: version_hash
-        });
+        if (win)
+            win.webContents.send('error', {
+                error: error.message,
+                version_hash: version_hash
+            }) && win.setProgressBar(-1)
+        if (socket_connector)
+            socket_connector.send('error', {
+                error: error.message,
+                version_hash: version_hash
+            });
     }
     return false;
 }
