@@ -71,7 +71,7 @@ exports.save = function(reason = ""){
 exports.load = function(){
     let loaded = false
     if(!fs.existsSync(configPath)){
-        fs.ensureDirSync(path.join(configPath, '..'))
+        fs.mkdirSync(path.join(configPath, '..'), { recursive: true })
         loaded = true
         config = DEFAULT_CONFIG
         exports.save('NEW')
@@ -85,7 +85,7 @@ exports.load = function(){
             logg.error(err)
             logg.log('Configuration file contains malformed JSON or is corrupt.')
             logg.log('Generating a new configuration file.')
-            fs.ensureDirSync(path.join(configPath, '..'))
+            fs.mkdirSync(path.join(configPath, '..'), { recursive: true })
             config = DEFAULT_CONFIG
             exports.save('ERROR_NEW')
         }

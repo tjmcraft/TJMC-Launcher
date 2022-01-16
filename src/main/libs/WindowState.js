@@ -175,7 +175,7 @@ const saveWindowState = function () {
 const loadWindowState = function () {
     let loaded = false
     if (!fs.existsSync(windowStateConfigPath)) {
-        fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+        fs.mkdirSync(path.join(windowStateConfigPath, '..'), { recursive: true },);
         loaded = true
         windowConfig = DEFAULT_WINDOW_CONFIG
         saveWindowState()
@@ -187,7 +187,7 @@ const loadWindowState = function () {
             logg.error(err)
             logg.log('Configuration file contains malformed JSON or is corrupt.')
             logg.log('Generating a new configuration file.')
-            fs.ensureDirSync(path.join(windowStateConfigPath, '..'))
+            fs.mkdirSync(path.join(windowStateConfigPath, '..'), { recursive: true });
             windowConfig = DEFAULT_WINDOW_CONFIG
             saveWindowState()
         }
