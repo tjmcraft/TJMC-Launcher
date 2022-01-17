@@ -53,10 +53,11 @@ const createPreloadWindow = async () => {
         backgroundColor: '#171614'
     });
 
+    logger.debug("Created preload window");
     window.once('show', async () => {
         await startSocketServer();
         await startWebServer();
-        logger.debug(await autoUpdater.checkForUpdates());
+        //logger.debug(await autoUpdater.checkForUpdates());
         createMainWindow(() => {
             window.hide()
             window.close()
@@ -65,8 +66,9 @@ const createPreloadWindow = async () => {
     })
 
     window.loadURL(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
+    window.show();
     window.once('ready-to-show', () => {
-        window.show();
+        logger.debug("Ready to show");
     })
     
 }
