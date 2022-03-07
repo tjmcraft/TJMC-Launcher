@@ -1,31 +1,28 @@
 'use strict';
-const {
-    app,
-    BrowserWindow,
-    Menu,
-    ipcMain,
-    shell,
-    nativeTheme
-} = require('electron');
-const {
-    autoUpdater
-} = require('electron-updater');
-const express = require('express')
-const express_app = express()
-const WebSocket = require('ws')
+const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
+const { autoUpdater } = require('electron-updater');
+const remoteMain = require("@electron/remote/main");
+remoteMain.initialize();
+
+const express = require('express');
+const express_app = express();
+const WebSocket = require('ws');
+
 const path = require('path');
 const url = require('url');
 const os = require('os');
+
 const WindowState = require('./libs/WindowState');
-const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
-require('@electron/remote/main').initialize();
 
 const ConfigManager = require('./managers/ConfigManager');
 ConfigManager.load();
 const VersionManager = require('./managers/VersionManager');
 VersionManager.updateGlobalVersionsConfig();
-const launcher = require('./game/launcher');
 const InstallationsManager = require('./managers/InstallationsManager');
+
+const launcher = require('./game/launcher');
+
+const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
 
 autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
@@ -45,7 +42,7 @@ const createPreloadWindow = async () => {
         frame: false,
         webPreferences: {
             nativeWindowOpen: true,
-            nodeIntegration: false
+            nodeIntegration: false,
         },
         titleBarStyle: 'default',
         roundedCorners: true,
@@ -54,45 +51,45 @@ const createPreloadWindow = async () => {
     });
 
     logger.debug("Created preload window");
+
     window.once('show', async () => {
         await startSocketServer();
         await startWebServer();
         //logger.debug(await autoUpdater.checkForUpdates());
         createMainWindow(() => {
-            window.hide()
-            window.close()
+            //window.hide();
+            window.close();
         });
-        createMenu();
     })
 
-    window.loadURL(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
-    window.show();
+    window.loadFile(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
+
     window.once('ready-to-show', () => {
-        logger.debug("Ready to show");
+        window.show();
     })
     
 }
 
-const gotTheLock = app.requestSingleInstanceLock()
+const gotTheLock = app.requestSingleInstanceLock();
 
 /**
  * @type {BrowserWindow} - The main window
  */
-let win
+let win;
 
 if (!gotTheLock) {
-    app.quit()
+    app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         if (win) {
-            if (win.isMinimized()) win.restore()
-            win.focus()
+            if (win.isMinimized()) win.restore();
+            win.focus();
         }
-    })
-    app.on('ready', createPreloadWindow)
-    //app.on('ready', createMenu)
-    app.on('window-all-closed', () => app.quit())
-    app.on('activate', () => (win === null) && createWindow())
+    });
+    app.on('ready', createPreloadWindow);
+    app.on('ready', createMenu);
+    //app.on('window-all-closed', () => app.quit());
+    app.on('activate', () => (win === null) && createWindow());
 }
 
 const createMainWindow = async (cb = () => {}) => {
@@ -115,29 +112,28 @@ const createMainWindow = async (cb = () => {}) => {
             preload: path.join(__dirname, 'preloader.js'),
             nodeIntegration: false,
             contextIsolation: true,
-            enableRemoteModule: true,
             worldSafeExecuteJavaScript: true,
-            spellcheck: true
+            spellcheck: true,
         },
         titleBarStyle: 'default',
         roundedCorners: true,
         icon: getPlatformIcon('icon'),
         backgroundColor: '#171614'
-    })
+    });
 
-    windowState.manage(win)
+    remoteMain.enable(win.webContents);
 
-    win.loadURL("https://app.tjmcraft.ga/")
+    windowState.manage(win);
 
-    win.once('ready-to-show', () => {
-        win.show();
-        cb.call();
-    })
-    win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'))
-    win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'))
-    win.on('blur', () => win.webContents.send('blur'))
-    win.on('focus', () => win.webContents.send('focus'))
-    win.on('closed', () => win = null)
+    win.loadURL("https://app.tjmcraft.ga/");
+
+    win.once('ready-to-show', () => win.show());
+    win.once('show', () => cb());
+    win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
+    win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
+    win.on('blur', () => win.webContents.send('blur'));
+    win.on('focus', () => win.webContents.send('focus'));
+    win.on('closed', () => win = null);
 
     //win.webContents.openDevTools()
     
@@ -517,7 +513,7 @@ function getPlatformIcon(filename) {
             ext = 'png';
             break;
     }
-    return path.join(__dirname, 'build', `${filename}.${ext}`);
+    return path.join(__dirname, '../..', 'build', `${filename}.${ext}`);
 }
 
 function openMineDir() {
