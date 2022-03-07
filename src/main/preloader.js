@@ -102,6 +102,17 @@ contextBridge.exposeInMainWorld('tjmcNative', {
   app: {
     getVersion: remote.app.getVersion,
     relaunch: remote.app.relaunch,
+    version: remote.process.versions,
+  },
+  process: {
+    platform: remote.process.platform,
+    arch: remote.process.arch,
+    env: remote.process.env, 
+  },
+  ipc: {
+    send: ipcRenderer.send,
+    on: ipcRenderer.on,
+    invoke: ipcRenderer.invoke,
   }
 })
 
