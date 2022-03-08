@@ -22,7 +22,7 @@ function getOS() {
 
 const windowEvents = {
   close: () => win.close(),
-  maximize: () => win.maximize(),
+  maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
   minimize: () => win.minimize(),
   restore: () => win.restore(),
   blur: () => win.blur(),
