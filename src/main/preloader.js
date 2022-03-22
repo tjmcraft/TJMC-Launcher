@@ -4,7 +4,7 @@ const os = require('os');
 
 const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
-//logger.debug('Application loading..')
+logger.debug('Application loading...')
 
 //Set Current Window as win
 const win = remote.getCurrentWindow()
