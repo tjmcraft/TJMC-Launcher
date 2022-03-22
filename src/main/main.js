@@ -1,8 +1,6 @@
 'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
 const { autoUpdater } = require('electron-updater');
-//const remoteMain = require("@electron/remote/main");
-//remoteMain.initialize();
 require('@electron/remote/main').initialize()
 
 const express = require('express');
@@ -122,8 +120,6 @@ const createMainWindow = async (cb = () => {}) => {
         icon: getPlatformIcon('icon'),
         backgroundColor: '#171614'
     });
-
-    //remoteMain.enable(win.webContents);
 
     windowState.manage(win);
 
