@@ -34,14 +34,10 @@ const windowEvents = {
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
-        logger.debug('Initializing..')
-        if (win.isFullScreen()) enterFullScreen()
+      logger.debug('Initializing...');
+      if (win.isFullScreen()) enterFullScreen();
     } else if (document.readyState === 'complete') {
-        if (process.platform !== 'darwin') {
-            document.querySelector('.fCb')?.addEventListener('click', (e) => win.close())
-            document.querySelector('.fRb')?.addEventListener('click', (e) => win.isMaximized() ? win.unmaximize() : win.maximize())
-            document.querySelector('.fMb')?.addEventListener('click', (e) => win.minimize())
-        }
+      logger.debug('Init complete!')
     }
     win.setProgressBar(-1)
 })
