@@ -9,8 +9,12 @@
     "build:win": "npm run build -- -w",
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
+    "build:multi": "npm run build -- -mwl",
     "deploy": "npm version patch && electron-builder build --publish always",
-    "deploy:win": "npm run deploy -- -w"
+    "deploy:win": "npm run deploy -- -w",
+    "deploy:mac": "npm run deploy -- -m",
+    "deploy:linux": "npm run deploy -- -l",
+    "deploy:multi": "npm run deploy -- -mwl"
   },
   "keywords": [
     "Minecraft",
