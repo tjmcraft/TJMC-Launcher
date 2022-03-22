@@ -1,6 +1,10 @@
 {
   "name": "tjmc-launcher",
+<<<<<<< HEAD
   "version": "0.1.43",
+=======
+  "version": "0.1.38",
+>>>>>>> parent of c602c8e (0.1.39)
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
