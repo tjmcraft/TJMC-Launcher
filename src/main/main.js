@@ -1,8 +1,9 @@
 'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
 const { autoUpdater } = require('electron-updater');
-const remoteMain = require("@electron/remote/main");
-remoteMain.initialize();
+//const remoteMain = require("@electron/remote/main");
+//remoteMain.initialize();
+require('@electron/remote/main').initialize()
 
 const express = require('express');
 const express_app = express();
@@ -114,6 +115,7 @@ const createMainWindow = async (cb = () => {}) => {
             contextIsolation: true,
             worldSafeExecuteJavaScript: true,
             spellcheck: true,
+            enableRemoteModule: true,
         },
         titleBarStyle: 'default',
         roundedCorners: true,
@@ -121,7 +123,7 @@ const createMainWindow = async (cb = () => {}) => {
         backgroundColor: '#171614'
     });
 
-    remoteMain.enable(win.webContents);
+    //remoteMain.enable(win.webContents);
 
     windowState.manage(win);
 
