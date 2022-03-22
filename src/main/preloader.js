@@ -1,7 +1,9 @@
-const { shell, ipcRenderer, contextBridge } = require('electron')
-const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
+const { shell, ipcRenderer, contextBridge } = require('electron');
 const remote = require('@electron/remote')
 const os = require('os');
+
+const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
+
 //logger.debug('Application loading..')
 
 //Set Current Window as win

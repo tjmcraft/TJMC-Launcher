@@ -4,7 +4,7 @@
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron . --trace-warnings --unhandled-rejections=strict",
     "build": "electron-builder build --publish never",
     "build:win": "npm run build -- -w",
     "build:mac": "npm run build -- -m",
