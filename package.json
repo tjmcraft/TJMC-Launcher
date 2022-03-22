@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
