@@ -146,17 +146,15 @@ const createMainWindow = async (cb = () => {}) => {
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
     ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion);
 
-    if (process.platform == 'darwin') {
-        const setOSTheme = () => {
-            let source = nativeTheme.themeSource;
-            const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-            win.webContents.send('theme.update', {
-                source: source,
-                theme: theme
-            });
-        }
-        nativeTheme.on('updated', () => setOSTheme());
+    const setOSTheme = () => {
+        let source = nativeTheme.themeSource;
+        const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+        win.webContents.send('theme.update', {
+            source: source,
+            theme: theme
+        });
     }
+    nativeTheme.on('updated', () => setOSTheme());
 }
 
 var socket_connector;
