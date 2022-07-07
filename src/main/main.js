@@ -27,6 +27,12 @@ autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
+autoUpdater.on('error', (e) => win?.webContents.send('error', e));
+autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'));
+autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
+autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
+autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
+
 // Disable hardware acceleration.
 //app.disableHardwareAcceleration()
 
@@ -156,31 +162,6 @@ const createMainWindow = async (cb = () => {}) => {
     }
     nativeTheme.on('updated', () => setOSTheme());
 }
-
-var socket_connector;
-
-async function startSocketServer() {
-    const ws_server = new WebSocket.Server({
-        port: 4836
-    });
-    ws_server.on('connection', socket => {
-        socket_connector = new SocketConnect(socket);
-    });
-    function SocketConnect(socket) {
-        const sendJSON = (type = null, data) => {
-            socket.send(JSON.stringify({
-                type: type,
-                data: data
-            }));
-        }
-        sendJSON('status', 'connected');
-        this.send = (type = null, data) => {
-            if (socket) sendJSON(type, data);
-        }
-    }
-    return ws_server;
-}
-
 
 async function launchMinecraft(version_hash = null, params = null) {
     function progress(e) {
@@ -331,11 +312,29 @@ async function startWebServer() {
     return express_app;
 }
 
-autoUpdater.on('error', (e) => win?.webContents.send('error', e));
-autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'));
-autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
-autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
-autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
+var socket_connector;
+
+async function startSocketServer() {
+    const ws_server = new WebSocket.Server({
+        port: 4836
+    });
+    ws_server.on('connection', socket => {
+        socket_connector = new SocketConnect(socket);
+    });
+    function SocketConnect(socket) {
+        const sendJSON = (type = null, data) => {
+            socket.send(JSON.stringify({
+                type: type,
+                data: data
+            }));
+        }
+        sendJSON('status', 'connected');
+        this.send = (type = null, data) => {
+            if (socket) sendJSON(type, data);
+        }
+    }
+    return ws_server;
+}
 
 async function createMenu() {
     const isMac = (process.platform === 'darwin');
