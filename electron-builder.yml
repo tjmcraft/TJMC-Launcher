@@ -3,6 +3,8 @@ productName: 'TJMC-Launcher'
 artifactName: '${productName}-${version}-setup.${ext}'
 publish:
   provider: github
+  owner: tjmcraft
+  repo: TJMC-Launcher
 
 copyright: 'Copyright © 2020-2021 MakAndJo'
 

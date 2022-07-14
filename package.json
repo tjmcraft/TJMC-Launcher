@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.53",
+  "version": "0.1.54",
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
     "build:multi": "npm run build -- -mwl",
-    "deploy": "npm version patch && electron-builder build --publish always",
+    "deploy": "electron-builder build --publish onTagOrDraft",
     "deploy:win": "npm run deploy -- -w",
     "deploy:mac": "npm run deploy -- -m",
     "deploy:linux": "npm run deploy -- -l",
