@@ -27,13 +27,6 @@ autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-autoUpdater.on('error', (e) => win?.webContents.send('error', e));
-autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'));
-autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
-autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
-autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
-ConfigManager.getCheckUpdates() && autoUpdater.checkForUpdatesAndNotify();
-
 // Disable hardware acceleration.
 ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
 
@@ -48,7 +41,11 @@ const createPreloadWindow = async () => {
         frame: false,
         webPreferences: {
             nativeWindowOpen: true,
+            preload: path.join(__dirname, 'loading_preloader.js'),
             nodeIntegration: false,
+            contextIsolation: true,
+            worldSafeExecuteJavaScript: true,
+            enableRemoteModule: true,
         },
         titleBarStyle: 'default',
         roundedCorners: true,
@@ -59,9 +56,15 @@ const createPreloadWindow = async () => {
     logger.debug("Created preload window");
 
     window.once('show', async () => {
+        autoUpdater.on('error', (e) => window.webContents.send('error', e));
+        autoUpdater.on('checking-for-update', (e) => window.webContents.send('update.check', e));
+        autoUpdater.on('update-available', (e) => window.webContents.send('update.available', e));
+        autoUpdater.on('download-progress', (e) => window.webContents.send('update.progress', e));
+        autoUpdater.on('update-downloaded', (e) => window.webContents.send('update.downloaded', e));
+        ConfigManager.getCheckUpdates() && autoUpdater.checkForUpdatesAndNotify();
         await startSocketServer();
         await startWebServer();
-        //logger.debug(await autoUpdater.checkForUpdates());
+        logger.debug("Updates:", await autoUpdater.checkForUpdates());
         createMainWindow(() => {
             //window.hide();
             window.close();

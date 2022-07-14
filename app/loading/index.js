@@ -21,3 +21,9 @@ function animate(element, className) {
 // Execution
 // =========
 animate(dots, "dots--animate");
+
+electron.on("error", (e) => console.error(e));
+electron.on("update.check", (e) => console.debug("Checking for updates...", e));
+electron.on("update.available", (e) => console.debug("Update available:", e));
+electron.on("update.progress", (e) => console.debug("Update progress:", e));
+electron.on("update.downloaded", (e) => console.debug("Update downloaded: ", e));
