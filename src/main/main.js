@@ -56,18 +56,35 @@ const createPreloadWindow = async () => {
     logger.debug("Created preload window");
 
     window.once('show', async () => {
-        autoUpdater.on('error', (e) => window.webContents.send('error', e));
-        autoUpdater.on('checking-for-update', (e) => window.webContents.send('update.check', e));
-        autoUpdater.on('update-available', (e) => window.webContents.send('update.available', e));
-        autoUpdater.on('download-progress', (e) => window.webContents.send('update.progress', e));
-        autoUpdater.on('update-downloaded', (e) => window.webContents.send('update.downloaded', e));
-        ConfigManager.getCheckUpdates() && autoUpdater.checkForUpdatesAndNotify();
-        await startSocketServer();
-        await startWebServer();
-        logger.debug("Updates:", await autoUpdater.checkForUpdates());
-        createMainWindow(() => {
-            //window.hide();
-            window.close();
+        const events = {
+            error: (e) => window.webContents.send('error', e),
+            updateChecking: (e) => window.webContents.send('update.check', e),
+            updateAvailable: (e) => window.webContents.send('update.available', e),
+            updateProgress: (e) => window.webContents.send('update.progress', e),
+            updateDownloaded: (e) => window.webContents.send('update.downloaded', e),
+        };
+        autoUpdater.on('error', events.error);
+        autoUpdater.on('checking-for-update', events.updateChecking);
+        autoUpdater.on('update-available', events.updateAvailable);
+        autoUpdater.on('download-progress', events.updateProgress);
+        autoUpdater.on('update-downloaded', events.updateDownloaded);
+        if (ConfigManager.getCheckUpdates()) {
+            const updates = await autoUpdater.checkForUpdatesAndNotify();
+            logger.debug("Updates:", updates);
+        }
+        //const updates = await autoUpdater.checkForUpdates();
+        autoUpdater.once('update-not-available', async () => {
+            await startSocketServer();
+            await startWebServer();
+            createMainWindow(() => {
+                //window.hide();
+                autoUpdater.off('error', events.error);
+                autoUpdater.off('checking-for-update', events.updateChecking);
+                autoUpdater.off('update-available', events.updateAvailable);
+                autoUpdater.off('download-progress', events.updateProgress);
+                autoUpdater.off('update-downloaded', events.updateDownloaded);
+                window.close();
+            });
         });
     })
 
