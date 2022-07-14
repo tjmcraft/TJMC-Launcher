@@ -68,11 +68,6 @@ const createPreloadWindow = async () => {
         autoUpdater.on('update-available', events.updateAvailable);
         autoUpdater.on('download-progress', events.updateProgress);
         autoUpdater.on('update-downloaded', events.updateDownloaded);
-        if (ConfigManager.getCheckUpdates()) {
-            const updates = await autoUpdater.checkForUpdatesAndNotify();
-            logger.debug("Updates:", updates);
-        }
-        //const updates = await autoUpdater.checkForUpdates();
         autoUpdater.once('update-not-available', async () => {
             await startSocketServer();
             await startWebServer();
@@ -86,6 +81,10 @@ const createPreloadWindow = async () => {
                 window.close();
             });
         });
+        if (ConfigManager.getCheckUpdates()) {
+            const updates = await autoUpdater.checkForUpdatesAndNotify();
+            logger.debug("Updates:", updates);
+        }
     })
 
     window.loadFile(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
