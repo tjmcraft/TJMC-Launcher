@@ -1,0 +1,73 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
+:root {
+  --text-color: #ddd;
+  --background-color: #252528;
+}
+body {
+  background-color: #222;
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+}
+img {
+  max-width: 100%;
+  pointer-events: none;
+}
+#app-mount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  min-width: 100vw;
+  max-width: 100vw;
+  max-height: 100vh;
+  padding: 1rem;
+  margin: auto;
+  background-color: var(--background-color);
+  -webkit-app-region: drag;
+}
+.container-c23 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.loading-container {
+  position: relative;
+  width: 100%;
+  height: 2em;
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  color: var(--text-color);
+}
+.status-container {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: nowrap;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transition: opacity 0.1s ease;
+  opacity: 0;
+}
+.status-container.show {
+  opacity: 1;
+}
+.status-container > #loading-text {
+  white-space: nowrap;
+}
+.logo-spl {
+  background: #fff;
+  border-radius: 20%;
+  box-shadow: 5px 5px 10px 0px #666;
+  max-width: 15em;
+}

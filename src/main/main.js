@@ -34,8 +34,8 @@ app.allowRendererProcessReuse = true
 
 const createPreloadWindow = async () => {
     let window = new BrowserWindow({
-        width: 240,
-        height: 280,
+        width: 320,
+        height: 360,
         resizable: false,
         show: false,
         frame: false,

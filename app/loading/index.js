@@ -1,13 +1,6 @@
-// Helper(s)
-// =========
+
 let $ = (e) => document.querySelector(e);
 
-// Dots
-// ====
-let dots = $(".dots");
-
-// Function
-// ========
 function animate(element, className) {
   element.classList.add(className);
   setTimeout(() => {
@@ -18,12 +11,40 @@ function animate(element, className) {
   }, 1250);
 }
 
-// Execution
-// =========
+let dots = $("[data-type=preload] .dots");
 animate(dots, "dots--animate");
 
-electron.on("error", (e) => console.error(e));
-electron.on("update.check", (e) => console.debug("Checking for updates...", e));
-electron.on("update.available", (e) => console.debug("Update available:", e));
-electron.on("update.progress", (e) => console.debug("Update progress:", e));
-electron.on("update.downloaded", (e) => console.debug("Update downloaded: ", e));
+function showLoading(status) {
+  $("[data-type=preload]").classList.toggle("show", true);
+  $("[data-type=status]").classList.toggle("show", false);
+  $("[data-type=preload] #loading-text").innerText = status;
+}
+
+function showStatus(status) {
+  $("[data-type=preload]").classList.toggle("show", false);
+  $("[data-type=status]").classList.toggle("show", true);
+  $("[data-type=status] #loading-text").innerText = status;
+}
+
+electron.on("error", (e) => {
+  console.error(e);
+  showStatus("Возникла ошибка!");
+});
+electron.on("update.check", (e) => {
+  console.debug("Checking for updates...", e);
+  showLoading("Проверка обновлений");
+});
+electron.on("update.available", (e) => {
+  console.debug("Update available:", e);
+  showStatus("Доступно обновление!");
+});
+electron.on("update.progress", (e) => {
+  console.debug("Update progress:", e)
+  showLoading("Загрузка обновления");
+});
+electron.on("update.downloaded", (e) => {
+  console.debug("Update downloaded: ", e)
+  showStatus("Обновление загружено!");
+});
+
+showLoading("Загрузка приложения");
