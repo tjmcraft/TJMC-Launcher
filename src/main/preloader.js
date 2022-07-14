@@ -94,6 +94,7 @@ contextBridge.exposeInMainWorld('tjmcNative', {
     setZoomFactor: windowEvents.setZoomFactor,
   },
   os: {
+    type: os.type(),
     release: os.release(),
     arch: os.arch(),
   },
