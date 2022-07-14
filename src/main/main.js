@@ -32,10 +32,10 @@ autoUpdater.on('checking-for-update', () => win?.webContents.send('update.check'
 autoUpdater.on('update-available', (e) => win?.webContents.send('update.available', e));
 autoUpdater.on('download-progress', (e) => win?.webContents.send('update.progress', e));
 autoUpdater.on('update-downloaded', (e) => win?.webContents.send('update.downloaded', e));
-autoUpdater.checkForUpdatesAndNotify();
+ConfigManager.getCheckUpdates() && autoUpdater.checkForUpdatesAndNotify();
 
 // Disable hardware acceleration.
-//app.disableHardwareAcceleration()
+ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
 
 app.allowRendererProcessReuse = true
 
