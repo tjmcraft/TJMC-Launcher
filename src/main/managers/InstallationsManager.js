@@ -124,9 +124,3 @@ exports.getInstallationSync = function (hash) {
 exports.removeInstallation = async function (hash) {
     return installations.remove(hash);
 }
-
-exports.getSelectedInstallation = async function () {
-    const v = ConfigManager.getVersion()
-    const i = await exports.getInstallation(v)
-    return i || null;
-}
