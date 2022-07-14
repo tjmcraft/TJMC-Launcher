@@ -153,3 +153,5 @@ Temporary Items
 
 .history
 package-lock.json
+.vs
+.vscode
