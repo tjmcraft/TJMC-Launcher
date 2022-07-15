@@ -11,13 +11,13 @@ const path = require('path');
 const url = require('url');
 const os = require('os');
 
-const WindowState = require('./libs/WindowState');
-
 const ConfigManager = require('./managers/ConfigManager');
 ConfigManager.load();
 const VersionManager = require('./managers/VersionManager');
 VersionManager.updateGlobalVersionsConfig();
 const InstallationsManager = require('./managers/InstallationsManager');
+
+const WindowState = require('./libs/WindowState');
 
 const launcher = require('./game/launcher');
 
@@ -89,6 +89,7 @@ const createPreloadWindow = async () => {
         if (ConfigManager.getCheckUpdates()) {
             const updates = await autoUpdater.checkForUpdatesAndNotify();
             logger.debug("Updates:", updates);
+            updates == null && autoUpdater.emit('update-not-available');
         }
     })
 

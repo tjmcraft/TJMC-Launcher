@@ -49,44 +49,37 @@ const DEFAULT_CONFIG =
         }
     },
 }
-//DEFAULT_CONFIG.path.version = path.join(DEFAULT_CONFIG.path.root, 'versions', DEFAULT_CONFIG.version.number)
 
-exports.getLauncherDirectory = () => launcherDir;
-exports.getDataDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.root : config.overrides.path.root;
-exports.getVersionsDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory;
-
-exports.save = (reason = "") => {
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8');
-    logg.debug('Config saved!' + (reason ? ` (${reason})` : ""));
+const createDefaultConfig = () => {
+    logg.debug('Generating a new configuration file.');
+    fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
+    config = DEFAULT_CONFIG;
+    exports.save("Create New Default");
 }
 
 exports.load = () => {
-    let loaded = false;
-    if(!fs.existsSync(configPath)){
-        fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
-        loaded = true;
-        config = DEFAULT_CONFIG;
-        exports.save('NEW');
-    }
-    if(!loaded){
-        let Validate = false;
+    if (!fs.existsSync(configPath)) createDefaultConfig();
+    if (!this.isLoaded()) {
         try {
             config = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
-            Validate = true;
         } catch (err){
-            logg.error(err);
-            logg.log('Configuration file contains malformed JSON or is corrupt.');
-            logg.log('Generating a new configuration file.');
-            fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
-            config = DEFAULT_CONFIG;
-            exports.save('ERROR_NEW');
+            logg.warn('Configuration file contains malformed JSON or is corrupt!');
+            createDefaultConfig();
         }
-        if(Validate){
-            config = validateKeySet(DEFAULT_CONFIG, config);
-            exports.save('VALIDATE');
-        }
+        config = validateKeySet(DEFAULT_CONFIG, config);
+        exports.save('VALIDATE');
     }
-    logg.log('Load launcher config - success!');
+    logg.debug("Load launcher config", "=>", (this.isLoaded() ? 'success' : 'failure'));
+}
+
+exports.save = (reason = "") => {
+    try {
+        fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8');
+    } catch (e) {
+        logg.error('Config save error:', e)
+    }
+    logg.debug('Config saved!', (reason ? `(${reason})` : null));
+    return config;
 }
 
 function validateKeySet(srcObj, destObj){
@@ -111,6 +104,10 @@ exports.isLoaded = () => config != undefined;
 exports.getAllOptionsSync = () => config;
 exports.getAllOptions = async () => config;
 exports.setOptions = async (options) => { config = Object.assign({}, config, objectHandler(options, DEFAULT_CONFIG)); exports.save(); }
+
+exports.getLauncherDirectory = () => launcherDir;
+exports.getDataDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.root : config.overrides.path.root;
+exports.getVersionsDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory;
 
 exports.setLaunchFullscreen = (value) => { config.minecraft.launch.fullscreen = boolHandler(value, DEFAULT_CONFIG.minecraft.launch.fullscreen); exports.save(); }
 exports.getLaunchFullscreen = () => !!config.minecraft.launch.fullscreen;
