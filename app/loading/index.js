@@ -1,3 +1,4 @@
+const { ipcRenderer } = require("electron");
 
 let $ = (e) => document.querySelector(e);
 
@@ -26,25 +27,27 @@ function showStatus(status) {
   $("[data-type=status] #loading-text").innerText = status;
 }
 
-electron.on("error", (sender, e) => {
+ipcRenderer.on("error", (sender, e) => {
   console.error(e);
   showStatus("Возникла ошибка!");
 });
-electron.on("update.check", (sender, e) => {
+ipcRenderer.on("update.check", (sender, e) => {
   console.debug("Checking for updates...", e);
   showLoading("Проверка обновлений");
 });
-electron.on("update.available", (sender, e) => {
+ipcRenderer.on("update.available", (sender, e) => {
   console.debug("Update available:", e);
   showStatus("Доступно обновление!");
 });
-electron.on("update.progress", (sender, e) => {
+ipcRenderer.on("update.progress", (sender, e) => {
   console.debug("Update progress:", e)
   showLoading("Загрузка обновления");
 });
-electron.on("update.downloaded", (sender, e) => {
+ipcRenderer.on("update.downloaded", (sender, e) => {
   console.debug("Update downloaded: ", e)
   showStatus("Обновление загружено!");
+  ipcRenderer.send("update.install", true, true);
+  showLoading("Установка обновления");
 });
 
 showLoading("Загрузка приложения");

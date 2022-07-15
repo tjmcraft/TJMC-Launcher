@@ -27,25 +27,21 @@ autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
-// Disable hardware acceleration.
+// Hardware acceleration.
 ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
+app.allowRendererProcessReuse = true;
 
-app.allowRendererProcessReuse = true
-
-const createPreloadWindow = async () => {
-    let window = new BrowserWindow({
+const createPreloadWindow = () => new Promise((resolve, reject) => {
+    const window = new BrowserWindow({
         width: 320,
         height: 360,
         resizable: false,
         show: false,
         frame: false,
         webPreferences: {
-            nativeWindowOpen: true,
-            preload: path.join(__dirname, 'loading_preloader.js'),
-            nodeIntegration: false,
-            contextIsolation: true,
-            worldSafeExecuteJavaScript: true,
-            enableRemoteModule: true,
+            nodeIntegration: true,
+            contextIsolation: false,
+            nativeWindowOpen: false,
         },
         titleBarStyle: 'default',
         roundedCorners: true,
@@ -53,60 +49,20 @@ const createPreloadWindow = async () => {
         backgroundColor: '#171614'
     });
 
-    logger.debug("Created preload window");
-
-    window.once('show', async () => {
-        const events = {
-            error: (e) => window.webContents.send('error', e),
-            updateChecking: (e) => window.webContents.send('update.check', e),
-            updateAvailable: (e) => window.webContents.send('update.available', e),
-            updateProgress: (e) => window.webContents.send('update.progress', e),
-            updateDownloaded: (e) => {
-                window.webContents.send('update.downloaded', e);
-                const isSilent = true;
-                const isForceRunAfter = true;
-                autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
-            },
-        };
-        autoUpdater.on('error', events.error);
-        autoUpdater.on('checking-for-update', events.updateChecking);
-        autoUpdater.on('update-available', events.updateAvailable);
-        autoUpdater.on('download-progress', events.updateProgress);
-        autoUpdater.on('update-downloaded', events.updateDownloaded);
-        autoUpdater.once('update-not-available', async () => {
-            await startSocketServer();
-            await startWebServer();
-            createMainWindow(() => {
-                //window.hide();
-                autoUpdater.off('error', events.error);
-                autoUpdater.off('checking-for-update', events.updateChecking);
-                autoUpdater.off('update-available', events.updateAvailable);
-                autoUpdater.off('download-progress', events.updateProgress);
-                autoUpdater.off('update-downloaded', events.updateDownloaded);
-                window.close();
-            });
-        });
-        if (ConfigManager.getCheckUpdates()) {
-            const updates = await autoUpdater.checkForUpdates();
-            logger.debug("Updates:", updates);
-            updates == null && autoUpdater.emit('update-not-available');
-        }
-    })
-
     window.loadFile(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
 
-    window.once('ready-to-show', () => {
-        window.show();
-    })
-    
-}
+    logger.debug("Created preload window!");
+
+    window.once('show', () => resolve(window));
+    window.once('ready-to-show', () => window.show());
+});
 
 const gotTheLock = app.requestSingleInstanceLock();
 
 /**
  * @type {BrowserWindow} - The main window
  */
-let win;
+var win = undefined;
 
 if (!gotTheLock) {
     app.quit();
@@ -117,13 +73,48 @@ if (!gotTheLock) {
             win.focus();
         }
     });
-    app.on('ready', createPreloadWindow);
-    app.on('ready', createMenu);
+    app.once('ready', () => {
+        createPreloadWindow().then(window => {
+            const event_error = (e) => window.webContents.send('error', e);
+            const event_updateChecking = (e) => window.webContents.send('update.check', e);
+            const event_updateAvailable = (e) => window.webContents.send('update.available', e);
+            const event_updateProgress = (e) => window.webContents.send('update.progress', e);
+            const event_updateDownloaded = (e) => window.webContents.send('update.downloaded', e);
+            const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
+            autoUpdater.on('error', event_error);
+            autoUpdater.on('checking-for-update', event_updateChecking);
+            autoUpdater.on('update-available', event_updateAvailable);
+            autoUpdater.on('download-progress', event_updateProgress);
+            autoUpdater.on('update-downloaded', event_updateDownloaded);
+            ipcMain.on('update.install', action_updateInstall);
+            autoUpdater.once('update-not-available', async () => {
+                await startSocketServer();
+                await startWebServer();
+                createMainWindow().then(() => {
+                    //window.hide();
+                    autoUpdater.off('error', event_error);
+                    autoUpdater.off('checking-for-update', event_updateChecking);
+                    autoUpdater.off('update-available', event_updateAvailable);
+                    autoUpdater.off('download-progress', event_updateProgress);
+                    autoUpdater.off('update-downloaded', event_updateDownloaded);
+                    ipcMain.off('update.install', action_updateInstall);
+                    window.close();
+                });
+            });
+            if (ConfigManager.getCheckUpdates()) {
+                autoUpdater.checkForUpdates().then(updates => {
+                    logger.debug("Updates:", updates);
+                    updates == null && autoUpdater.emit('update-not-available');
+                });
+            }
+        });
+    });
+    app.once('ready', () => createMenu());
     //app.on('window-all-closed', () => app.quit());
-    app.on('activate', () => (win === null) && createWindow());
+    //app.on('activate', () => (win === null) && createWindow());
 }
 
-const createMainWindow = async (cb = () => {}) => {
+const createMainWindow = () => new Promise((resolve, reject) => {
 
     let windowState = WindowState({
         width: 1280,
@@ -159,8 +150,10 @@ const createMainWindow = async (cb = () => {}) => {
 
     win.loadURL("https://app.tjmcraft.ga/");
 
+    logger.log("Created main window!");
+
+    win.once('show', () => resolve(win));
     win.once('ready-to-show', () => win.show());
-    win.once('show', () => cb());
     win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
     win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
     win.on('blur', () => win.webContents.send('blur'));
@@ -189,7 +182,7 @@ const createMainWindow = async (cb = () => {}) => {
         });
     }
     nativeTheme.on('updated', () => setOSTheme());
-}
+});
 
 async function launchMinecraft(version_hash = null, params = null) {
     function progress(e) {
@@ -364,7 +357,7 @@ async function startSocketServer() {
     return ws_server;
 }
 
-async function createMenu() {
+const createMenu = async () => {
     const isMac = (process.platform === 'darwin');
     const template = [
         ...(isMac ? [{
