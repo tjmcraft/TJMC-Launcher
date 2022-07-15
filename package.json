@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.61",
+  "version": "0.1.62",
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
@@ -74,7 +74,6 @@
       "category": "public.app-category.games"
     },
     "win": {
-      "publisherName": "MakAndJo",
       "target": "nsis"
     },
     "linux": {
