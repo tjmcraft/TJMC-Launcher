@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.60",
+  "version": "0.1.61",
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
@@ -42,5 +42,57 @@
   "devDependencies": {
     "electron": "^13.1.5",
     "electron-builder": "^23.0.2"
+  },
+  "build": {
+    "appId": "com.github.makandjo.tjmc.app.launcher",
+    "productName": "TJMC-Launcher",
+    "artifactName": "${productName}-${version}-setup.${ext}",
+    "copyright": "Copyright © 2020-2022 MakAndJo",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}"
+    ],
+    "extraResources": [
+      "libraries"
+    ],
+    "asar": true,
+    "compression": "maximum",
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
+      "category": "public.app-category.games"
+    },
+    "win": {
+      "publisherName": "MakAndJo",
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage",
+      "maintainer": "MakAndJo",
+      "vendor": "MakAndJo",
+      "synopsis": "TJMC-Launcher",
+      "description": "TJMC Minecraft Launcher which contains Vanilla, OptiFine, Forge, ForgeOptiFine and other cool versions in one app",
+      "category": "Game"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "installerIcon": "icon.ico"
+    }
   }
 }
