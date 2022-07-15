@@ -61,7 +61,10 @@ const createPreloadWindow = async () => {
             updateChecking: (e) => window.webContents.send('update.check', e),
             updateAvailable: (e) => window.webContents.send('update.available', e),
             updateProgress: (e) => window.webContents.send('update.progress', e),
-            updateDownloaded: (e) => window.webContents.send('update.downloaded', e),
+            updateDownloaded: (e) => {
+                window.webContents.send('update.downloaded', e),
+                autoUpdater.quitAndInstall();
+            },
         };
         autoUpdater.on('error', events.error);
         autoUpdater.on('checking-for-update', events.updateChecking);
