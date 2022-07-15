@@ -33,7 +33,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.8",
     "adm-zip": "^0.5.1",
-    "electron-updater": "^5.0.5",
+    "electron-updater": "^4.6.5",
     "express": "^4.17.1",
     "fs-extra": "^9.1.0",
     "request": "^2.88.2",
@@ -48,11 +48,9 @@
     "productName": "TJMC-Launcher",
     "artifactName": "${productName}-${version}-setup.${ext}",
     "copyright": "Copyright © 2020-2022 MakAndJo",
-    "publish": [
-      {
+    "publish": {
         "provider": "github"
-      }
-    ],
+    },
     "directories": {
       "buildResources": "build",
       "output": "dist"
