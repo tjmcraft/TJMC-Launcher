@@ -153,6 +153,8 @@ const createMainWindow = async (cb = () => {}) => {
         backgroundColor: '#171614'
     });
 
+    require('@electron/remote/main').enable(win.webContents);
+
     windowState.manage(win);
 
     win.loadURL("https://app.tjmcraft.ga/");

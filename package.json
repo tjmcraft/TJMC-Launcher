@@ -48,6 +48,11 @@
     "productName": "TJMC-Launcher",
     "artifactName": "${productName}-${version}-setup.${ext}",
     "copyright": "Copyright © 2020-2022 MakAndJo",
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
     "directories": {
       "buildResources": "build",
       "output": "dist"
