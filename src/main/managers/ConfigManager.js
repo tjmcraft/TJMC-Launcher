@@ -8,8 +8,10 @@ const configPath = path.join(launcherDir, 'launcher-config.json');
 
 logg.debug("Config Path:", configPath);
 
-/**
+
+/** 
  * Configuration
+ * @type {DEFAULT_CONFIG} 
  */
 var config = undefined;
 
@@ -100,21 +102,21 @@ function validateKeySet(srcObj, destObj){
     return destObj;
 }
 
-function boolHandler(value, default_value) {
-    return typeof value === 'boolean' ? value : default_value;
-}
+const boolHandler = (value, default_value) => typeof value === 'boolean' ? value : default_value;
+const stringHandler = (value, default_value) => typeof value === 'string' ? value : default_value;
+const objectHandler = (value, default_value) => typeof value === 'object' ? value : default_value;
 
 exports.isLoaded = () => config != undefined;
 
 exports.getAllOptionsSync = () => config;
 exports.getAllOptions = async () => config;
-exports.setOptions = async (options) => { config = Object.assign({}, config, options); exports.save(); }
+exports.setOptions = async (options) => { config = Object.assign({}, config, objectHandler(options, DEFAULT_CONFIG)); exports.save(); }
 
-exports.setLaunchFullscreen = (value) => { config.minecraft.launch.fullscreen = boolHandler(value, false); exports.save(); }
+exports.setLaunchFullscreen = (value) => { config.minecraft.launch.fullscreen = boolHandler(value, DEFAULT_CONFIG.minecraft.launch.fullscreen); exports.save(); }
 exports.getLaunchFullscreen = () => !!config.minecraft.launch.fullscreen;
 
 exports.getCheckUpdates = () => !!config.launcher.checkUpdates;
-exports.setCheckUpdates = (value) => { config.launcher.checkUpdates = boolHandler(value, true); exports.save(); }
+exports.setCheckUpdates = (value) => { config.launcher.checkUpdates = boolHandler(value, DEFAULT_CONFIG.launcher.checkUpdates); exports.save(); }
 
 exports.getDisableHarwareAcceleration = () => !!config.launcher.disableHardwareAcceleration;
-exports.setDisableHarwareAcceleration = (value) => { config.launcher.disableHardwareAcceleration = boolHandler(value, false); exports.save(); }
+exports.setDisableHarwareAcceleration = (value) => { config.launcher.disableHardwareAcceleration = boolHandler(value, DEFAULT_CONFIG.launcher.disableHardwareAcceleration); exports.save(); }
