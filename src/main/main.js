@@ -87,7 +87,7 @@ const createPreloadWindow = async () => {
             });
         });
         if (ConfigManager.getCheckUpdates()) {
-            const updates = await autoUpdater.checkForUpdatesAndNotify();
+            const updates = await autoUpdater.checkForUpdates();
             logger.debug("Updates:", updates);
             updates == null && autoUpdater.emit('update-not-available');
         }
