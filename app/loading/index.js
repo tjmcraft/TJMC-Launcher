@@ -26,23 +26,23 @@ function showStatus(status) {
   $("[data-type=status] #loading-text").innerText = status;
 }
 
-electron.on("error", (e) => {
+electron.on("error", (sender, e) => {
   console.error(e);
   showStatus("Возникла ошибка!");
 });
-electron.on("update.check", (e) => {
+electron.on("update.check", (sender, e) => {
   console.debug("Checking for updates...", e);
   showLoading("Проверка обновлений");
 });
-electron.on("update.available", (e) => {
+electron.on("update.available", (sender, e) => {
   console.debug("Update available:", e);
   showStatus("Доступно обновление!");
 });
-electron.on("update.progress", (e) => {
+electron.on("update.progress", (sender, e) => {
   console.debug("Update progress:", e)
   showLoading("Загрузка обновления");
 });
-electron.on("update.downloaded", (e) => {
+electron.on("update.downloaded", (sender, e) => {
   console.debug("Update downloaded: ", e)
   showStatus("Обновление загружено!");
 });
