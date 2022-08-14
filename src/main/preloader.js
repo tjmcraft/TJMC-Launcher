@@ -1,6 +1,7 @@
 const { shell, ipcRenderer, contextBridge } = require('electron')
 const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 const remote = require('@electron/remote')
+const os = require('os');
 //logger.debug('Application loading..')
 
 //Set Current Window as win
@@ -18,6 +19,18 @@ function getOS() {
         default: return 'web'
     }
 }
+
+const windowEvents = {
+  close: () => win.close(),
+  maximize: () => win.maximize(),
+  minimize: () => win.minimize(),
+  restore: () => win.restore(),
+  blur: () => win.blur(),
+  focus: () => win.focus(),
+  fullscreen: () => win.fullscreen(),
+  setProgressBar: (e) => win.setProgressBar(e),
+  setZoomFactor: (e) => win.webContents.setZoomFactor(e),
+};
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
@@ -82,6 +95,27 @@ ipcRenderer.on('update.progress', async (e) => {
 contextBridge.exposeInMainWorld('__STANDALONE__', true)
 contextBridge.exposeInMainWorld('system', {
     os: getOS()
+})
+contextBridge.exposeInMainWorld('tjmcNative', {
+  window: {
+    close: windowEvents.close,
+    maximize: windowEvents.maximize,
+    minimize: windowEvents.minimize,
+    restore: windowEvents.restore,
+    blur: windowEvents.blur,
+    focus: windowEvents.focus,
+    fullscreen: windowEvents.fullscreen,
+    setProgressBar: windowEvents.setProgressBar,
+    setZoomFactor: windowEvents.setZoomFactor,
+  },
+  os: {
+    release: os.release(),
+    arch: os.arch(),
+  },
+  app: {
+    getVersion: remote.app.getVersion,
+    relaunch: remote.app.relaunch,
+  }
 })
 
 // Init global instances
