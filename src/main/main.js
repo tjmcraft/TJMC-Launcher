@@ -33,8 +33,8 @@ app.allowRendererProcessReuse = true;
 
 const createPreloadWindow = () => new Promise((resolve, reject) => {
     const window = new BrowserWindow({
-        width: 320,
-        height: 360,
+        width: 300,
+        height: 300,
         resizable: false,
         show: false,
         frame: false,
@@ -53,7 +53,7 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
 
     logger.debug("Created preload window!");
 
-    window.once('show', () => resolve(window));
+    // window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
 });
 
@@ -161,7 +161,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('closed', () => win = null);
 
     //win.webContents.openDevTools()
-    
+
     ipcMain.handle('ping', async (event, ...args) => args);
     ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params));
     ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));

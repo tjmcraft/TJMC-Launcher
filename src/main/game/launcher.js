@@ -14,7 +14,7 @@ class launcher extends EventEmitter {
     /**
      * Minecraft launcher constructor
      * @param {String} version_hash - The version hash
-     * @param {Object} options - Options to construct the launcher 
+     * @param {Object} options - Options to construct the launcher
      * @param {Object} options.overrides.path.version - Path to directory of version (where main jar located)
      * @param {Object} options.overrides.path.root - Path to root directory of minecraft
      * @param {Object} options.overrides.path.mcPath - Path to version main jar
@@ -33,6 +33,7 @@ class launcher extends EventEmitter {
             this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
             this.handler = new Minecraft(this)
             logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
+            logg.debug("Launcher options:", this.options);
 
             return this; // when done
         })();
@@ -88,7 +89,7 @@ class launcher extends EventEmitter {
             logg.log('Attempting to load Minecraft version jar')
             const mcpath = await this.handler.getJar(versionFile)
         }
-        
+
         logg.log('Attempting to load natives')
         const nativePath = await this.handler.getNatives(versionFile)
 
@@ -97,9 +98,9 @@ class launcher extends EventEmitter {
 
         logg.log('Attempting to load assets')
         const assets = await this.handler.getAssets(versionFile)
-        
+
         const args = this.handler.constructJVMArguments(versionFile, nativePath, classes)
-        
+
         return args
     }
     async createJVM (java, launchArguments) {
