@@ -53,7 +53,7 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
 
     logger.debug("Created preload window!");
 
-    // window.once('show', () => resolve(window));
+    window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
 });
 
