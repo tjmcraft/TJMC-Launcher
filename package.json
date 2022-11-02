@@ -10,7 +10,7 @@
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
     "build:multi": "npm run build -- -mwl",
-    "deploy": "electron-builder build --publish onTagOrDraft",
+    "deploy": "electron-builder build --publish always",
     "deploy:win": "npm run deploy -- -w",
     "deploy:mac": "npm run deploy -- -m",
     "deploy:linux": "npm run deploy -- -l",
