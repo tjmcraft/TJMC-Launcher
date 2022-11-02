@@ -47,8 +47,8 @@
   "build": {
     "appId": "com.github.makandjo.tjmc.app.launcher",
     "productName": "TJMC-Launcher",
-    "artifactName": "${productName}-${version}-setup.${ext}",
     "copyright": "Copyright © 2020-2022 MakAndJo",
+    "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
     "publish": {
       "provider": "github"
     },
@@ -74,7 +74,6 @@
           ]
         }
       ],
-      "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
       "category": "public.app-category.games"
     },
     "win": {
@@ -89,9 +88,6 @@
       ]
     },
     "linux": {
-      "synopsis": "TJMC-Launcher",
-      "description": "TJMC Minecraft Launcher which contains Vanilla, OptiFine, Forge, ForgeOptiFine and other cool versions in one app",
-      "category": "Game",
       "target": [
         {
           "target": "AppImage",
@@ -100,7 +96,8 @@
             "arm64"
           ]
         }
-      ]
+      ],
+      "category": "Game"
     },
     "nsis": {
       "oneClick": true,
