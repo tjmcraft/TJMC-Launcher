@@ -89,12 +89,18 @@
       ]
     },
     "linux": {
-      "target": "AppImage",
-      "maintainer": "MakAndJo",
-      "vendor": "MakAndJo",
       "synopsis": "TJMC-Launcher",
       "description": "TJMC Minecraft Launcher which contains Vanilla, OptiFine, Forge, ForgeOptiFine and other cool versions in one app",
-      "category": "Game"
+      "category": "Game",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
     },
     "nsis": {
       "oneClick": true,
