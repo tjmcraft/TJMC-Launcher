@@ -8,6 +8,7 @@ const logg                                   = LoggerUtil('%c[Launcher]', 'color
 const InstallationsManager                   = require('../managers/InstallationsManager')
 const VersionManager                         = require('../managers/VersionManager')
 const ConfigManager                          = require('../managers/ConfigManager')
+const md5                                    = require('md5');
 
 class launcher extends EventEmitter {
 
@@ -32,6 +33,9 @@ class launcher extends EventEmitter {
             this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
             this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
             this.handler = new Minecraft(this)
+            this.options.auth = Object.assign({}, this.options.auth, {
+                uuid: getOfflineUUID(this.options.auth.username)
+            });
             logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
             logg.debug("Launcher options:", this.options);
 
@@ -129,6 +133,53 @@ class launcher extends EventEmitter {
         })
         return minecraft
     }
+}
+
+function getOfflineUUID(username) {
+    let data = hex2bin(md5("OfflinePlayer:" + username));
+    data = data.replaceAt(6, chr(ord(data.substr(6, 1)) & 0x0f | 0x30));
+    data = data.replaceAt(8, chr(ord(data.substr(8, 1)) & 0x3f | 0x80));
+    let components = [
+        bin2hex(data).substr(0, 8),
+        bin2hex(data).substr(8, 4),
+        bin2hex(data).substr(12, 4),
+        bin2hex(data).substr(16, 4),
+        bin2hex(data).substr(20),
+    ];
+    let useruuid = components.join("");
+    return useruuid;
+}
+
+const hex2bin = function (string) {
+    var i = 0,
+        l = string.length - 1,
+        bytes = []
+    for (i; i < l; i += 2) {
+        bytes.push(parseInt(string.substr(i, 2), 16))
+    }
+    return String.fromCharCode.apply(String, bytes)
+}
+
+const bin2hex = function (string) {
+    var i = 0,
+        l = string.length,
+        chr, hex = '';
+    for (i; i < l; ++i) {
+        chr = string.charCodeAt(i).toString(16)
+        hex += chr.length < 2 ? '0' + chr : chr
+    }
+    return hex;
+}
+
+function chr(ascii) {
+    return String.fromCharCode(ascii);
+}
+function ord(string) {
+    return string.charCodeAt(0);
+}
+
+String.prototype.replaceAt = function (index, replacement) {
+    return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
 
 module.exports = launcher

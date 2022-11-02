@@ -51,7 +51,7 @@ exports.getVersionManifest = async function (version, props = {}) {
         const parsed = await this.getGlobalVersions();
         for (const cv in parsed) {
             if (parsed[cv].id === version) {
-                c_version = JSON.parse(await downloadFile(parsed[cv].url || `https://tlauncher.ru/repo/versions/${version}.json`, true))
+                c_version = JSON.parse(await downloadFile(parsed[cv].url || `https://tlaun.ch/repo/versions/${version}.json`, true))
             }
         }
     }

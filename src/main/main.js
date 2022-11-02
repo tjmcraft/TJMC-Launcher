@@ -257,12 +257,12 @@ async function launchMinecraft(version_hash = null, params = null) {
     } catch (error) {
         if (win)
             win.webContents.send('error', {
-                error: error.message,
+                error: error,
                 version_hash: version_hash
             }) && win.setProgressBar(-1)
         if (socket_connector)
             socket_connector.send('error', {
-                error: error.message,
+                error: error,
                 version_hash: version_hash
             });
     }

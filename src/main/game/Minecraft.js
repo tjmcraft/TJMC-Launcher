@@ -44,17 +44,17 @@ class Minecraft {
             let cmd = `"${java}" -version`;
             child.exec(cmd, {  }, (error, stdout, stderr) => {
                 if (error) {
-                    resolve({run: false, message: error})
+                    resolve({ run: false, message: error });
                 } else {
-                    logg.debug(`Using Java version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`)
-                    resolve({run: true})
+                    logg.debug(`Using Java (${java}) version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`);
+                    resolve({ run: true });
                 }
             })
         })
     }
 
     /**
-     * Function downloads main jar 
+     * Function downloads main jar
      * @param version Main version JSON
      */
     async getJar (version) {
@@ -107,10 +107,10 @@ class Minecraft {
                     if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
                     if (this.parseRule(lib)) return
                     const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
-                    const native = 
-                        this.getOS() === 'osx' 
-                        ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos']) 
-                        : (lib_clfs[`natives-${this.getOS()}`]) 
+                    const native =
+                        this.getOS() === 'osx'
+                        ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
+                        : (lib_clfs[`natives-${this.getOS()}`])
                     natives.push(native)
                 }))
                 return natives
@@ -206,9 +206,9 @@ class Minecraft {
 
     /**
      * Function download libraries
-     * @param directory 
-     * @param libraries 
-     * @param eventName 
+     * @param directory
+     * @param libraries
+     * @param eventName
      */
     async downloadToDirectory (directory, libraries, eventName) {
         let count = 0;
@@ -222,15 +222,15 @@ class Minecraft {
             if (!fs.existsSync(path.join(jarPath, name))) {
                 const lib_url = library?.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
                     library?.artifact?.url.includes('http') ? library.artifact.url :
-                        library.url ? library.url : 
+                        library.url ? library.url :
                             library.exact_url ? library.exact_url : '';
                 const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
                 const url = [
                     lib_url,
-                    'https://libraries.minecraft.net/' + jar_name, 
-                    'https://tlauncherrepo.com/repo/libraries/' + jar_name, 
-                    'https://files.minecraftforge.net/maven/' + jar_name, 
-                    'http://dl.liteloader.com/versions/' + jar_name, 
+                    'https://libraries.minecraft.net/' + jar_name,
+                    'https://tlauncherrepo.com/repo/libraries/' + jar_name,
+                    'https://files.minecraftforge.net/maven/' + jar_name,
+                    'http://dl.liteloader.com/versions/' + jar_name,
                     'https://repo1.maven.org/maven2/' + jar_name,
                     'https://maven.minecraftforge.net/' + jar_name,
                     (library.url ? library.url : '') + jar_name
@@ -246,7 +246,7 @@ class Minecraft {
                 total: libraries.length,
                 version_hash: this.options.installation.hash
             })
-            if (library.mod || library.downloadOnly) return 
+            if (library.mod || library.downloadOnly) return
             libs.push(`${jarPath}${path.sep}${name}`)
         }))
         count = 0
@@ -319,7 +319,7 @@ class Minecraft {
                         total: totalBytes,
                         version_hash: this.options.installation.hash
                     })
-                })            
+                })
             })
         }
     }
@@ -350,7 +350,7 @@ class Minecraft {
                     return true
                 }
             } else {
-                if (lib.rules[0].action === 'allow' && lib.rules[0].os) return this.getOS() !== 'osx'
+                if (lib.rules[0].action === 'allow' && lib.rules[0].os) return lib.rules[0].os.name !== this.getOS()
             }
         } else { return false }
     }
@@ -375,17 +375,18 @@ class Minecraft {
 
     /**
      * Construct the argument array that will be passed to the JVM process.
-     * 
+     *
      */
     constructJVMArguments(versionFile, tempNativePath, cp) {
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
         const jar = this.overrides.javaSep + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
         this.fields = {
-            '${auth_access_token}': this.options.auth.access_token,
-            '${auth_session}': this.options.auth.access_token,
+            '${auth_access_token}': this.options.auth.access_token || this.options.auth.uuid,
+            '${auth_session}': this.options.auth.access_token || this.options.auth.uuid,
             '${auth_player_name}': this.options.auth.username,
             '${auth_uuid}': this.options.auth.uuid,
+            '${auth_xuid}': this.options.auth.uuid,
             '${user_properties}': this.options.auth.user_properties || `{}`,
             '${user_type}': 'mojang',
             '${version_name}': this.overrides.version.id,
@@ -394,6 +395,7 @@ class Minecraft {
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
             '${version_type}': this.overrides.version.type,
+            '${clientid}': this.options.auth.access_token,
             '${resolution_width}': this.overrides.resolution.width,
             '${resolution_height}': this.overrides.resolution.height,
             '${classpath}': `${cp.join(this.overrides.javaSep) + jar}`,
@@ -443,9 +445,9 @@ class Minecraft {
     /**
      * Construct the argument array that will be passed to the JVM process.
      * This function is for 1.13+
-     * 
+     *
      * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
-     * 
+     *
      */
     getJVMArgs113(versionFile){
 
@@ -537,7 +539,7 @@ class Minecraft {
 
     /**
      * Resolve the arguments
-     * 
+     *
      * @returns {Array.<string>} An array containing the arguments
      */
     resolveArgs(versionFile){
