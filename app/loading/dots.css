@@ -20,12 +20,12 @@
 
 .dot {
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 3px;
+  height: 3px;
   background: var(--text-color);
   border-radius: 50%;
   position: relative;
-  margin-left: 6px;
+  margin-left: 4px;
 }
 
 .dot.z {
@@ -52,13 +52,13 @@
 
 @-webkit-keyframes right {
   100% {
-    transform: translateX(11px);
+    transform: translateX(7px);
   }
 }
 
 @keyframes right {
   100% {
-    transform: translateX(11px);
+    transform: translateX(7px);
   }
 }
 
