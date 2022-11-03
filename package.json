@@ -53,7 +53,8 @@
     "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
     "publish": {
       "provider": "github",
-      "releaseType": "release"
+      "releaseType": "draft",
+      "channel": "latest"
     },
     "directories": {
       "buildResources": "build",
