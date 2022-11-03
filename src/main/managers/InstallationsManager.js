@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const ConfigManager = require('./ConfigManager')
 const LoggerUtil = require('../util/loggerutil')
 const { randomString, cleanObject } = require('../util/Tools')
 const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold')
@@ -8,12 +7,13 @@ const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weig
 /* ============= INSTALLATIONS ============= */
 
 class Installations {
+    manifest_path = undefined;
     constructor(params = {}) {
         this.params = params;
-        this.manifest_path = path.join(this.params.dir_path, `launcher-profiles.json`);
-        this.load();
     }
-    load() {
+    load(dir_path) {
+        if (!dir_path) return;
+        this.manifest_path = path.join(dir_path, `launcher-profiles.json`);
         if (!fs.existsSync(this.manifest_path)) this.createEmpty();
         const file = fs.readFileSync(this.manifest_path);
         if (file.length < 1) this.createEmpty();
@@ -56,7 +56,11 @@ class Installations {
     }
 }
 
-const installations = new Installations({ auto_save: true, dir_path: ConfigManager.getLauncherDirectory() })
+const installations = new Installations({ auto_save: true })
+
+exports.load = function (dir_path) {
+    return installations.load(dir_path);
+}
 
 /**
  * Create new installation

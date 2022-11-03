@@ -114,8 +114,10 @@ if (!gotTheLock) {
 
             ConfigManager.load();
 
+            InstallationsManager.load(ConfigManager.getLauncherDirectory());
+
             // Hardware acceleration.
-            ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
+            if (ConfigManager.getDisableHarwareAcceleration()) app.disableHardwareAcceleration();
 
             if (ConfigManager.getCheckUpdates()) {
                 autoUpdater.checkForUpdates().then(updates => {
