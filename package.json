@@ -9,6 +9,7 @@
     "build:win": "npm run build -- -w",
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
+    "build:linux-snap": "electron-builder --linux snap",
     "build:multi": "npm run build -- -mwl",
     "deploy": "electron-builder build --publish always",
     "deploy:win": "npm run deploy -- -w",
@@ -24,7 +25,7 @@
     "TJMC-Launcher",
     "ТюменьCraft"
   ],
-  "author": "MakAndJo",
+  "author": "MakAndJo <makandjo@outlook.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -59,11 +60,9 @@
     "files": [
       "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}"
     ],
-    "extraResources": [
-      "libraries"
-    ],
     "asar": true,
     "compression": "maximum",
+    "icon": "build/icons/512x512.png",
     "mac": {
       "target": [
         {
@@ -74,6 +73,7 @@
           ]
         }
       ],
+      "icon": "build/icons/icon.icns",
       "category": "public.app-category.games"
     },
     "win": {
@@ -85,19 +85,43 @@
             "ia32"
           ]
         }
-      ]
+      ],
+      "icon": "build/icons/icon.ico"
     },
     "linux": {
       "target": [
         {
           "target": "AppImage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": ["x64", "arm64", "armv7l"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64", "armv7l"]
+        },
+        {
+          "target": "rpm",
+          "arch": ["x64", "armv7l"]
+        },
+        {
+          "target": "tar.gz",
+          "arch": ["x64", "arm64", "armv7l"]
         }
       ],
-      "category": "Game"
+      "synopsis": "TJMC-Launcher",
+      "executableName": "tjmc-launcher",
+      "desktop": {
+        "Name": "TJMC-Launcher",
+        "Comment": "TJMC-Launcher",
+        "GenericName": "TJMC-Launcher",
+        "Type": "Application",
+        "Icon": "icon",
+        "StartupNotify": true,
+        "Categories": "Game"
+      },
+      "icon": "build/icons"
+    },
+    "deb": {
+      "compression": "gz"
     },
     "nsis": {
       "oneClick": true,

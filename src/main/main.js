@@ -27,6 +27,12 @@ autoUpdater.logger = logger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
+autoUpdater.setFeedURL({
+    provider: "github",
+    owner: "tjmcraft",
+    repo: "TJMC-Launcher",
+});
+
 // Hardware acceleration.
 ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
 app.allowRendererProcessReuse = true;
