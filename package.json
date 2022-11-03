@@ -69,10 +69,7 @@
       "target": [
         {
           "target": "default",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": ["x64", "arm64"]
         }
       ],
       "icon": "build/icons/icon.icns",
@@ -82,10 +79,7 @@
       "target": [
         {
           "target": "nsis",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": "x64"
         }
       ],
       "icon": "build/icons/icon.ico"
@@ -94,17 +88,11 @@
       "target": [
         {
           "target": "deb",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": ["x64", "arm64"]
         },
         {
           "target": "tar.gz",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "arch": ["x64", "arm64"]
         }
       ],
       "synopsis": "TJMC-Launcher",
@@ -123,9 +111,7 @@
     "snap": {
       "publish": {
         "provider": "snapStore",
-        "channels": [
-          "stable"
-        ]
+        "channels": ["stable"]
       },
       "grade": "stable"
     },
