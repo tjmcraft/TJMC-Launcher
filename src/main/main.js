@@ -93,7 +93,9 @@ if (!gotTheLock) {
 
             autoUpdater.once('update-not-available', async () => {
                 try {
+                    VersionManager.load(ConfigManager.getVersionsDirectory());
                     VersionManager.updateGlobalVersionsConfig();
+                    InstallationsManager.load(ConfigManager.getLauncherDirectory());
                     startSocketServer().catch((e) => { throw e; });
                     startWebServer().catch((e) => { throw e; });
                 } catch (e) {
@@ -113,8 +115,6 @@ if (!gotTheLock) {
             });
 
             ConfigManager.load();
-
-            InstallationsManager.load(ConfigManager.getLauncherDirectory());
 
             // Hardware acceleration.
             if (ConfigManager.getDisableHarwareAcceleration()) app.disableHardwareAcceleration();

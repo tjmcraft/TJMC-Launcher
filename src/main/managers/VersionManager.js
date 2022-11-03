@@ -1,17 +1,18 @@
 const fs = require('fs')
 const path = require('path')
-const ConfigManager = require('./ConfigManager')
-const LoggerUtil = require('../util/loggerutil')
-const request = require('request')
+
 const { merge, cleanObject } = require('../util/Tools')
-const logger = LoggerUtil('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
+const { downloadFile } = require('../util/download')
+
+const logger = require('../util/loggerutil')('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
+var versions_directory = undefined;
 
 exports.getLocalVersions = async function () {
-    const dir_path = getVersionsDirectory();
+    if (!versions_directory) return;
     let ver_list = []
     try {
-        fs.readdirSync(dir_path)?.forEach(folder => {
-            const ver_path = path.join(dir_path, folder, folder + '.json')
+        fs.readdirSync(versions_directory)?.forEach(folder => {
+            const ver_path = path.join(versions_directory, folder, folder + '.json')
             if (fs.existsSync(ver_path)) {
                 const file_c = JSON.parse(fs.readFileSync(ver_path, 'utf8'))
                 let version = {
@@ -42,7 +43,8 @@ exports.getLocalVersions = async function () {
  */
 exports.getVersionManifest = async function (version, props = {}) {
     logger.debug('Loading Version JSON for: ' + version);
-    const versionPath = path.join(getVersionsDirectory(), version);
+    if (!versions_directory) return;
+    const versionPath = path.join(versions_directory, version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
     var c_version = null;
     if (fs.existsSync(versionJsonPath)) {
@@ -75,8 +77,9 @@ exports.getVersionManifest = async function (version, props = {}) {
 }
 
 exports.removeVersion = async function (version) {
+    if (!versions_directory) return;
     const versionFile = await this.getVersionManifest(version)
-    const versionPath = path.join(getVersionsDirectory(), version)
+    const versionPath = path.join(versions_directory, version)
     const assetsIndexDir = path.join(ConfigManager.getDataDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
     fs.rmdirSync(versionPath, { recursive: true })
     fs.rmdirSync(assetsIndexDir, { recursive: true })
@@ -93,16 +96,16 @@ exports.getGlobalVersionsManifests = async function () {
 }
 
 exports.updateGlobalVersionsConfig = async function () {
-    const dir_path = getVersionsDirectory();
-    const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
+    if (!versions_directory) return;
+    const manifest_path = path.join(versions_directory, `version_manifest_v2.json`);
     const versions = await this.getGlobalVersionsManifests();
     fs.writeFileSync(manifest_path, JSON.stringify(versions, null, 4));
     return versions;
 }
 
 exports.getGlobalVersions = async function () {
-    const dir_path = getVersionsDirectory();
-    const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
+    if (!versions_directory) return;
+    const manifest_path = path.join(versions_directory, `version_manifest_v2.json`);
     if (!fs.existsSync(manifest_path)) await this.updateGlobalVersionsConfig();
     const versions = JSON.parse(fs.readFileSync(manifest_path));
     return versions;
@@ -115,31 +118,10 @@ exports.getGlobalVersion = async function (version) {
 
 /* ================================== */
 
-/* ========================================= */
-
-
-/**
- * Function just download a single file and return its body
- * @param url give url of file
- */
-function downloadFile(url, retry = false) {
-    return new Promise((resolve, reject) => {
-        request(url, async (error, response, body) => {
-            if (error) {
-                logger.debug(`Failed to download ${url} due to\n${error}.` + ` Retrying... ${retry}`)
-                if (retry) { await downloadFile(url, false) } else reject(error);
-            } else if (response?.statusCode != 200) {
-                reject('Invalid status code <' + response.statusCode + '>')
-            } else resolve(body)
-        })
-    })
-}
-
-function getVersionsDirectory() {
-    const dir_path = ConfigManager.getVersionsDirectory();
-    if (!fs.existsSync(dir_path)) {
+exports.load = function (versions_directory) {
+    if (!fs.existsSync(versions_directory)) {
         logger.log('Attempting to create versions folder');
-        fs.mkdirSync(dir_path, { recursive: true });
+        fs.mkdirSync(versions_directory, { recursive: true });
     }
-    return dir_path;
+    return versions_directory;
 }
