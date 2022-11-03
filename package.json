@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.77",
+  "version": "0.1.78",
   "description": "An Electron.js version of TJM-Launcher",
   "main": "src/main/main.js",
   "scripts": {
@@ -100,13 +100,15 @@
         {
           "target": "deb",
           "arch": [
-            "x64", "arm64"
+            "x64",
+            "arm64"
           ]
         },
         {
           "target": "rpm",
           "arch": [
-            "x64", "arm64"
+            "x64",
+            "arm64"
           ]
         },
         {
