@@ -5,7 +5,7 @@
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron . --trace-warnings --unhandled-rejections=strict",
-    "build": "electron-builder build --publish onTagOrDraft",
+    "build": "electron-builder build --publish never",
     "build:win": "npm run build -- -w",
     "build:mac": "npm run build -- -m",
     "build:linux": "npm run build -- -l",
@@ -15,6 +15,7 @@
     "deploy:win": "npm run deploy -- -w",
     "deploy:mac": "npm run deploy -- -m",
     "deploy:linux": "npm run deploy -- -l",
+    "deploy:linux-snap": "electron-builder --linux snap --publish always",
     "deploy:multi": "npm run deploy -- -mwl"
   },
   "keywords": [
@@ -51,7 +52,8 @@
     "copyright": "Copyright © 2020-2022 MakAndJo",
     "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
     "publish": {
-      "provider": "github"
+      "provider": "github",
+      "releaseType": "release"
     },
     "directories": {
       "buildResources": "build",
@@ -91,21 +93,7 @@
     "linux": {
       "target": [
         {
-          "target": "AppImage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
           "target": "deb",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        },
-        {
-          "target": "rpm",
           "arch": [
             "x64",
             "arm64"
@@ -123,8 +111,6 @@
       "executableName": "tjmc-launcher",
       "desktop": {
         "Name": "TJMC-Launcher",
-        "Comment": "TJMC-Launcher",
-        "GenericName": "TJMC-Launcher",
         "Type": "Application",
         "StartupNotify": true,
         "Categories": "Game"
@@ -133,6 +119,13 @@
     },
     "deb": {
       "compression": "gz"
+    },
+    "snap": {
+      "publish": {
+        "provider": "snapStore",
+        "channels": ["stable"]
+      },
+      "grade": "stable"
     },
     "nsis": {
       "oneClick": true,
