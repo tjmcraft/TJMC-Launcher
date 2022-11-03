@@ -129,6 +129,8 @@ if (!gotTheLock) {
                     updateLogger.error("-> Error:", err);
                     autoUpdater.emit('update-not-available');
                 });
+            } else {
+                autoUpdater.emit('update-not-available');
             }
 
         });
