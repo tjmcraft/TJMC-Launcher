@@ -1,21 +1,20 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
-const logg = require('../util/loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
 
+const logg = require('../util/loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME);
 const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share")) + '/.tjmc') || require('electron').remote.app.getPath('userData');
 const configPath = path.join(launcherDir, 'launcher-config.json');
 
 logg.debug("Config Path:", configPath);
 
-
-/** 
+/**
  * Configuration
- * @type {DEFAULT_CONFIG} 
+ * @type {DEFAULT_CONFIG}
  */
 var config = undefined;
 
-const DEFAULT_CONFIG = 
+const DEFAULT_CONFIG =
 {
     java: {
         javaPath: 'javaw',

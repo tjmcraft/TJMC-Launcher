@@ -5,6 +5,7 @@ const { merge, cleanObject } = require('../util/Tools')
 const { downloadFile } = require('../util/download')
 
 const logger = require('../util/loggerutil')('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
+
 var versions_directory = undefined;
 
 exports.getLocalVersions = async function () {
@@ -53,7 +54,7 @@ exports.getVersionManifest = async function (version, props = {}) {
         const parsed = await this.getGlobalVersions();
         for (const cv in parsed) {
             if (parsed[cv].id === version) {
-                c_version = JSON.parse(await downloadFile(parsed[cv].url || `https://tlaun.ch/repo/versions/${version}.json`, true))
+                c_version = await downloadFile(parsed[cv].url || `https://tlaun.ch/repo/versions/${version}.json`);
             }
         }
     }
@@ -90,9 +91,13 @@ exports.removeVersion = async function (version) {
 /* ============= GLOBAL ============= */
 
 exports.getGlobalVersionsManifests = async function () {
-    let m = JSON.parse(await downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`, true)),
-        t = JSON.parse(await downloadFile(`https://tlaun.ch/repo/versions/versions.json`, true))
-    return merge(m.versions, t.versions)
+    let [mojang_versions, tlaunch_versions] = await Promise.all([
+        downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`),
+        downloadFile(`https://tlaun.ch/repo/versions/versions.json`)
+    ]);
+    mojang_versions = mojang_versions.versions || [];
+    tlaunch_versions = tlaunch_versions.versions || [];
+    return merge(mojang_versions, tlaunch_versions);
 }
 
 exports.updateGlobalVersionsConfig = async function () {
@@ -118,10 +123,11 @@ exports.getGlobalVersion = async function (version) {
 
 /* ================================== */
 
-exports.load = function (versions_directory) {
-    if (!fs.existsSync(versions_directory)) {
+exports.load = function (ver_path) {
+    if (!fs.existsSync(ver_path)) {
         logger.log('Attempting to create versions folder');
-        fs.mkdirSync(versions_directory, { recursive: true });
+        fs.mkdirSync(ver_path, { recursive: true });
     }
-    return versions_directory;
+    versions_directory = ver_path;
+    return ver_path;
 }

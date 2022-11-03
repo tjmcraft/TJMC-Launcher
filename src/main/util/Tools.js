@@ -7,9 +7,10 @@
 exports.merge = function(...args) {
     let set = new Set()
     for (let arr of args) {
-        arr.map((value) => {
-            set.add(value)
-        })
+        arr && Array.isArray(arr) &&
+            arr.map((value) => {
+                set.add(value)
+            })
     }
     return [...set]
 }
@@ -51,7 +52,7 @@ function naturalCompare(a, b) {
 
     a.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { ax.push([$1 || Infinity, $2 || ""]) });
     b.replace(/(\d+)|(\D+)/g, function(_, $1, $2) { bx.push([$1 || Infinity, $2 || ""]) });
-    
+
     while(ax.length && bx.length) {
         var an = ax.shift();
         var bn = bx.shift();
@@ -72,10 +73,10 @@ Array.prototype.natsort = natsort
 
 /**
  * Sort a 2 dimensional array based on 1 or more indexes
- * 
+ *
  * @param {Array} arr - array to sort
  * @param {String|Array} key - The index(es) to sort the array on.
- * 
+ *
  * @return {Array} sorted array
  */
 function msort(arr, key) {

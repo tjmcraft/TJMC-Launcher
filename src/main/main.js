@@ -2,6 +2,8 @@
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
+console.time("> require");
+
 const path = require('path');
 const url = require('url');
 const os = require('os');
@@ -12,10 +14,10 @@ const InstallationsManager = require('./managers/InstallationsManager');
 
 const WindowState = require('./libs/WindowState');
 
-const launcher = require('./game/launcher');
-
 const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold');
 const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold');
+
+console.timeEnd("> require");
 
 autoUpdater.logger = updateLogger;
 autoUpdater.allowPrerelease = true;
@@ -208,6 +210,9 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 });
 
 async function launchMinecraft(version_hash = null, params = null) {
+
+    const launcher = require('./game/launcher');
+
     function progress(e) {
         const progress = (e.task / e.total);
         if (win) win.webContents.send('progress', {

@@ -1,8 +1,9 @@
 const fs = require('fs')
 const path = require('path')
-const LoggerUtil = require('../util/loggerutil')
-const { randomString, cleanObject } = require('../util/Tools')
-const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold')
+
+const { randomString, cleanObject } = require('../util/Tools');
+
+const logger = require('../util/loggerutil')('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold')
 
 /* ============= INSTALLATIONS ============= */
 
