@@ -97,7 +97,7 @@ exports.updateGlobalVersionsConfig = async function () {
     const manifest_path = path.join(dir_path, `version_manifest_v2.json`);
     const versions = await this.getGlobalVersionsManifests();
     fs.writeFileSync(manifest_path, JSON.stringify(versions, null, 4));
-
+    return versions;
 }
 
 exports.getGlobalVersions = async function () {

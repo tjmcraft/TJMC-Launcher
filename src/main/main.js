@@ -1,20 +1,13 @@
 'use strict';
 const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
 const { autoUpdater } = require('electron-updater');
-require('@electron/remote/main').initialize()
-
-const express = require('express');
-const express_app = express();
-const WebSocket = require('ws');
 
 const path = require('path');
 const url = require('url');
 const os = require('os');
 
 const ConfigManager = require('./managers/ConfigManager');
-ConfigManager.load();
 const VersionManager = require('./managers/VersionManager');
-VersionManager.updateGlobalVersionsConfig();
 const InstallationsManager = require('./managers/InstallationsManager');
 
 const WindowState = require('./libs/WindowState');
@@ -34,8 +27,6 @@ autoUpdater.setFeedURL({
     repo: "TJMC-Launcher",
 });
 
-// Hardware acceleration.
-ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
 app.allowRendererProcessReuse = true;
 
 const createPreloadWindow = () => new Promise((resolve, reject) => {
@@ -81,22 +72,34 @@ if (!gotTheLock) {
         }
     });
     app.once('ready', () => {
+
+        require('@electron/remote/main').initialize();
+
         createPreloadWindow().then(window => {
+
             const event_updateError = (e) => window.webContents.send('update.error', e);
             const event_updateChecking = (e) => window.webContents.send('update.check', e);
             const event_updateAvailable = (e) => window.webContents.send('update.available', e);
             const event_updateProgress = (e) => window.webContents.send('update.progress', e);
             const event_updateDownloaded = (e) => window.webContents.send('update.downloaded', e);
             const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
+
             autoUpdater.on('error', event_updateError);
             autoUpdater.on('checking-for-update', event_updateChecking);
             autoUpdater.on('update-available', event_updateAvailable);
             autoUpdater.on('download-progress', event_updateProgress);
             autoUpdater.on('update-downloaded', event_updateDownloaded);
             ipcMain.on('update.install', action_updateInstall);
+
             autoUpdater.once('update-not-available', async () => {
-                await startSocketServer();
-                await startWebServer();
+                try {
+                    VersionManager.updateGlobalVersionsConfig();
+                    startSocketServer().catch((e) => { throw e; });
+                    startWebServer().catch((e) => { throw e; });
+                } catch (e) {
+                    logger.error("[Startup]", "Error:", e);
+                    app.quit();
+                }
                 createMainWindow().then(() => {
                     //window.hide();
                     autoUpdater.off('error', event_updateError);
@@ -108,6 +111,12 @@ if (!gotTheLock) {
                     window.close();
                 });
             });
+
+            ConfigManager.load();
+
+            // Hardware acceleration.
+            ConfigManager.getDisableHarwareAcceleration() && app.disableHardwareAcceleration();
+
             if (ConfigManager.getCheckUpdates()) {
                 autoUpdater.checkForUpdates().then(updates => {
                     updateLogger.debug("-> Updates:", updates);
@@ -117,6 +126,7 @@ if (!gotTheLock) {
                     autoUpdater.emit('update-not-available');
                 });
             }
+
         });
     });
     app.once('ready', () => createMenu());
@@ -130,6 +140,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         width: 1280,
         height: 720
     })
+
     win = new BrowserWindow({
         x: windowState.x,
         y: windowState.y,
@@ -279,93 +290,107 @@ async function launchMinecraft(version_hash = null, params = null) {
     return false;
 }
 
-async function startWebServer() {
-    const e_server = express_app.listen(5248);
-    express_app.use(express.json()) // for parsing application/json
-    express_app.use(function (req, res, next) {
-        res.header('Content-Type', 'application/json');
-        const allowedOrigins = ['http://127.0.0.1:3333', 'http://localhost:3333', 'http://192.168.0.12:3333', 'https://app.tjmcraft.ga'];
-        const origin = req.headers.origin;
-        if (allowedOrigins.includes(origin)) {
-            res.setHeader('Access-Control-Allow-Origin', origin);
-        }
-        res.header('Access-Control-Allow-Headers', '*');
-        next();
-    });
-    express_app.get('/ping', (req, res) => {
-        res.json({
-            pong: true
+const express = require('express');
+const express_app = express();
+
+function startWebServer() {
+    return new Promise((resolve, reject) => {
+        const e_server = express_app.listen(5248);
+        e_server.on('error', err => reject(err));
+        express_app.use(express.json()) // for parsing application/json
+        express_app.use(function (req, res, next) {
+            res.header('Content-Type', 'application/json');
+            const allowedOrigins = ['http://127.0.0.1:3333', 'http://localhost:3333', 'http://192.168.0.12:3333', 'https://app.tjmcraft.ga'];
+            const origin = req.headers.origin;
+            if (allowedOrigins.includes(origin)) {
+                res.setHeader('Access-Control-Allow-Origin', origin);
+            }
+            res.header('Access-Control-Allow-Headers', '*');
+            next();
         });
-    });
-    express_app.get('/version', (req, res) => {
-        res.json(autoUpdater.currentVersion);
-    });
-    express_app.post('/launch-mine', async (req, res) => {
-        const data = req.body;
-        if (!data || !data.version_hash) res.json({
-            success: false
+        express_app.get('/ping', (req, res) => {
+            res.json({
+                pong: true
+            });
         });
-        res.json(await launchMinecraft(data.version_hash, data.params));
-    });
-    express_app.get('/installations.get', async (req, res) => {
-        res.json(await InstallationsManager.getInstallations());
-    });
-    express_app.get('/versions.get.global', async (req, res) => {
-        res.json(await VersionManager.getGlobalVersions());
-    });
-    express_app.post('/installations.create', async (req, res) => {
-        const data = req.body;
-        if (!data || !data.version || !data.options) res.json({
-            success: false
+        express_app.get('/version', (req, res) => {
+            res.json(autoUpdater.currentVersion);
         });
-        res.json(await InstallationsManager.createInstallation(data.version, data.options));
-    });
-    express_app.get('/configuration.get', async (req, res) => {
-        res.json(await ConfigManager.getAllOptions());
-    });
-    express_app.post('/configuration.set', async (req, res) => {
-        const data = req.body;
-        if (!data) res.json({
-            success: false
+        express_app.post('/launch-mine', async (req, res) => {
+            const data = req.body;
+            if (!data || !data.version_hash) res.json({
+                success: false
+            });
+            res.json(await launchMinecraft(data.version_hash, data.params));
         });
-        res.json(await ConfigManager.setOptions(data));
-    });
-    express_app.get('/system.mem', async (req, res) => {
-        res.json(os.totalmem() / 1024 / 1024);
+        express_app.get('/installations.get', async (req, res) => {
+            res.json(await InstallationsManager.getInstallations());
+        });
+        express_app.get('/versions.get.global', async (req, res) => {
+            res.json(await VersionManager.getGlobalVersions());
+        });
+        express_app.post('/installations.create', async (req, res) => {
+            const data = req.body;
+            if (!data || !data.version || !data.options) res.json({
+                success: false
+            });
+            res.json(await InstallationsManager.createInstallation(data.version, data.options));
+        });
+        express_app.get('/configuration.get', async (req, res) => {
+            res.json(await ConfigManager.getAllOptions());
+        });
+        express_app.post('/configuration.set', async (req, res) => {
+            const data = req.body;
+            if (!data) res.json({
+                success: false
+            });
+            res.json(await ConfigManager.setOptions(data));
+        });
+        express_app.get('/system.mem', async (req, res) => {
+            res.json(os.totalmem() / 1024 / 1024);
+        })
+        express_app.get('*', function (req, res) {
+            res.send({
+                status: 404,
+                error: `Not found`,
+                success: false
+            });
+        });
+        resolve(express_app);
     })
-    express_app.get('*', function (req, res) {
-        res.send({
-            status: 404,
-            error: `Not found`,
-            success: false
-        });
-    });
-    return express_app;
 }
+
+const WebSocket = require('ws');
 
 var socket_connector;
 
-async function startSocketServer() {
-    const ws_server = new WebSocket.Server({
-        port: 4836
-    });
-    ws_server.on('connection', socket => {
-        socket_connector = new SocketConnect(socket);
-    });
-    function SocketConnect(socket) {
-        const sendJSON = (type = null, data) => {
-            socket.send(JSON.stringify({
-                type: type,
-                data: data
-            }));
+const startSocketServer = () =>
+    new Promise((resolve, reject) => {
+        function SocketConnect(socket) {
+            const sendJSON = (type = null, data) => {
+                socket.send(JSON.stringify({
+                    type: type,
+                    data: data
+                }));
+            }
+            sendJSON('status', 'connected');
+            this.send = (type = null, data) => {
+                if (socket) sendJSON(type, data);
+            }
+            return this;
         }
-        sendJSON('status', 'connected');
-        this.send = (type = null, data) => {
-            if (socket) sendJSON(type, data);
-        }
-    }
-    return ws_server;
-}
+        const wss = new WebSocket.Server({
+            port: 4836
+        });
+        wss.on('error', (err) => {
+            reject(err);
+        });
+        wss.on('connection', socket => {
+            socket_connector = new SocketConnect(socket);
+        });
+        resolve(wss);
+    });
+
 
 const createMenu = async () => {
     const isMac = (process.platform === 'darwin');
