@@ -15,10 +15,16 @@ function animate(element, className) {
 let dots = $("[data-type=preload] .dots");
 animate(dots, "dots--animate");
 
-function showLoading(status) {
+function showLoading(status, progress = null) {
   $("[data-type=preload]").classList.toggle("show", true);
   $("[data-type=status]").classList.toggle("show", false);
   $("[data-type=preload] #loading-text").innerText = status;
+  if (progress) {
+    $("[data-type=progress]").classList.toggle("show", true);
+    $("[data-type=progress] progress").value = progress;
+  } else {
+    $("[data-type=progress]").classList.toggle("show", false);
+  }
 }
 
 function showStatus(status) {
@@ -41,7 +47,7 @@ ipcRenderer.on("update.available", (sender, e) => {
 });
 ipcRenderer.on("update.progress", (sender, e) => {
   console.debug("Update progress:", e)
-  showLoading("Загрузка обновления");
+  showLoading("Загрузка обновления", e.percent);
 });
 ipcRenderer.on("update.downloaded", (sender, e) => {
   console.debug("Update downloaded:", e)
