@@ -27,9 +27,9 @@ function showStatus(status) {
   $("[data-type=status] #loading-text").innerText = status;
 }
 
-ipcRenderer.on("error", (sender, e) => {
-  console.error(e);
-  showStatus("Возникла ошибка!");
+ipcRenderer.on("update.error", (sender, e) => {
+  console.error("Update Error:", e);
+  showStatus("Ошибка обновления");
 });
 ipcRenderer.on("update.check", (sender, e) => {
   console.debug("Checking for updates...", e);
@@ -44,7 +44,7 @@ ipcRenderer.on("update.progress", (sender, e) => {
   showLoading("Загрузка обновления");
 });
 ipcRenderer.on("update.downloaded", (sender, e) => {
-  console.debug("Update downloaded: ", e)
+  console.debug("Update downloaded:", e)
   showStatus("Обновление загружено!");
   ipcRenderer.send("update.install", true, true);
   showLoading("Установка обновления");

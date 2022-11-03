@@ -4,7 +4,7 @@ const os = require('os');
 
 const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
-logger.debug('Application loading...')
+logger.debug("[Preload]", "Application loading...")
 
 //Set Current Window as win
 const win = remote.getCurrentWindow()
@@ -36,10 +36,10 @@ const windowEvents = {
 
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
-      logger.debug('Initializing...');
+      logger.debug("[Preload]", "Initializing...");
       if (win.isFullScreen()) enterFullScreen();
     } else if (document.readyState === 'complete') {
-      logger.debug('Init complete!')
+      logger.debug("[Preload]", "Init complete!")
     }
     win.setProgressBar(-1)
 })
@@ -106,7 +106,7 @@ contextBridge.exposeInMainWorld('tjmcNative', {
   process: {
     platform: remote.process.platform,
     arch: remote.process.arch,
-    env: remote.process.env, 
+    env: remote.process.env,
   },
   ipc: {
     send: ipcRenderer.send,

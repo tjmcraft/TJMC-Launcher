@@ -21,9 +21,10 @@ const WindowState = require('./libs/WindowState');
 
 const launcher = require('./game/launcher');
 
-const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #dfa109; font-weight: bold');
+const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold');
+const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold');
 
-autoUpdater.logger = logger;
+autoUpdater.logger = updateLogger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 
@@ -57,7 +58,7 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
 
     window.loadFile(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
 
-    logger.debug("Created preload window!");
+    logger.debug("[Preload]", "Created preload window!");
 
     window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
@@ -81,13 +82,13 @@ if (!gotTheLock) {
     });
     app.once('ready', () => {
         createPreloadWindow().then(window => {
-            const event_error = (e) => window.webContents.send('error', e);
+            const event_updateError = (e) => window.webContents.send('update.error', e);
             const event_updateChecking = (e) => window.webContents.send('update.check', e);
             const event_updateAvailable = (e) => window.webContents.send('update.available', e);
             const event_updateProgress = (e) => window.webContents.send('update.progress', e);
             const event_updateDownloaded = (e) => window.webContents.send('update.downloaded', e);
             const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
-            autoUpdater.on('error', event_error);
+            autoUpdater.on('error', event_updateError);
             autoUpdater.on('checking-for-update', event_updateChecking);
             autoUpdater.on('update-available', event_updateAvailable);
             autoUpdater.on('download-progress', event_updateProgress);
@@ -98,7 +99,7 @@ if (!gotTheLock) {
                 await startWebServer();
                 createMainWindow().then(() => {
                     //window.hide();
-                    autoUpdater.off('error', event_error);
+                    autoUpdater.off('error', event_updateError);
                     autoUpdater.off('checking-for-update', event_updateChecking);
                     autoUpdater.off('update-available', event_updateAvailable);
                     autoUpdater.off('download-progress', event_updateProgress);
@@ -109,8 +110,11 @@ if (!gotTheLock) {
             });
             if (ConfigManager.getCheckUpdates()) {
                 autoUpdater.checkForUpdates().then(updates => {
-                    logger.debug("Updates:", updates);
-                    updates == null && autoUpdater.emit('update-not-available');
+                    updateLogger.debug("-> Updates:", updates);
+                    if (!updates) autoUpdater.emit('update-not-available');
+                }).catch(err => {
+                    updateLogger.error("-> Error:", err);
+                    autoUpdater.emit('update-not-available');
                 });
             }
         });
@@ -156,7 +160,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     win.loadURL("https://app.tjmcraft.ga/");
 
-    logger.log("Created main window!");
+    logger.log("[Main]", "Created main window!");
 
     win.once('show', () => resolve(win));
     win.once('ready-to-show', () => win.show());
@@ -225,7 +229,7 @@ async function launchMinecraft(version_hash = null, params = null) {
         const java_path = await _launcher.getJava();
         const versionFile = await _launcher.loadManifest();
         const minecraftArguments = await _launcher.construct(versionFile);
-        logger.log('Starting minecraft! Version Hash: ' + version_hash)
+        logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
         const vm = await _launcher.createJVM(java_path, minecraftArguments);
 
         let error_out = null,
@@ -540,6 +544,6 @@ function getPlatformIcon(filename) {
 
 function openMineDir() {
     const path = ConfigManager.getDataDirectory();
-    logger.debug('Using default path: ' + path)
+    logger.debug("[Main]", "{OpenMineDir}", "Path:", path);
     shell.openPath(path);
 }
