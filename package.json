@@ -1,7 +1,7 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.78",
-  "description": "An Electron.js version of TJM-Launcher",
+  "version": "0.1.79",
+  "description": "An lightweight minecraft launcher by TJMC",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron . --trace-warnings --unhandled-rejections=strict",
@@ -126,7 +126,6 @@
         "Comment": "TJMC-Launcher",
         "GenericName": "TJMC-Launcher",
         "Type": "Application",
-        "Icon": "icon",
         "StartupNotify": true,
         "Categories": "Game"
       },
