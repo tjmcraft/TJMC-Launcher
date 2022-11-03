@@ -68,7 +68,9 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
+        console.debug("Second instance call");
         if (win) {
+            if (!win.isVisible()) win.show();
             if (win.isMinimized()) win.restore();
             win.focus();
         }
@@ -119,7 +121,7 @@ if (!gotTheLock) {
             ConfigManager.load();
 
             // Hardware acceleration.
-            if (ConfigManager.getDisableHarwareAcceleration()) app.disableHardwareAcceleration();
+            if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
 
             if (ConfigManager.getCheckUpdates()) {
                 autoUpdater.checkForUpdates().then(updates => {
@@ -136,8 +138,8 @@ if (!gotTheLock) {
         });
     });
     app.once('ready', () => createMenu());
-    //app.on('window-all-closed', () => app.quit());
-    //app.on('activate', () => (win === null) && createWindow());
+    app.on('window-all-closed', () => {});
+    app.on('activate', () => (win === null) && createMainWindow());
 }
 
 const createMainWindow = () => new Promise((resolve, reject) => {
@@ -185,7 +187,15 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
     win.on('blur', () => win.webContents.send('blur'));
     win.on('focus', () => win.webContents.send('focus'));
-    win.on('closed', () => win = null);
+    //win.on('closed', () => win = null);
+    win.on('close', (event) => {
+        event.preventDefault();
+        if (ConfigManager.getHideOnClose()) {
+            win.hide();
+        } else {
+            app.quit();
+        }
+    })
 
     //win.webContents.openDevTools()
 
@@ -379,6 +389,7 @@ function startWebServer() {
 }
 
 const WebSocket = require('ws');
+const { error } = require('console');
 
 var socket_connector;
 

@@ -29,6 +29,7 @@ const DEFAULT_CONFIG =
     launcher: {
         checkUpdates: true,
         disableHardwareAcceleration: false,
+        hideOnClose: true,
     },
     overrides: {
         request: {
@@ -109,11 +110,14 @@ exports.getLauncherDirectory = () => launcherDir;
 exports.getDataDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.root : config.overrides.path.root;
 exports.getVersionsDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory;
 
+exports.getLaunchFullscreen = () => Boolean(config.minecraft.launch.fullscreen);
 exports.setLaunchFullscreen = (value) => { config.minecraft.launch.fullscreen = boolHandler(value, DEFAULT_CONFIG.minecraft.launch.fullscreen); exports.save(); }
-exports.getLaunchFullscreen = () => !!config.minecraft.launch.fullscreen;
 
-exports.getCheckUpdates = () => !!config.launcher.checkUpdates;
+exports.getCheckUpdates = () => Boolean(config.launcher.checkUpdates);
 exports.setCheckUpdates = (value) => { config.launcher.checkUpdates = boolHandler(value, DEFAULT_CONFIG.launcher.checkUpdates); exports.save(); }
 
-exports.getDisableHarwareAcceleration = () => !!config.launcher.disableHardwareAcceleration;
-exports.setDisableHarwareAcceleration = (value) => { config.launcher.disableHardwareAcceleration = boolHandler(value, DEFAULT_CONFIG.launcher.disableHardwareAcceleration); exports.save(); }
+exports.getDisableHardwareAcceleration = () => Boolean(config.launcher.disableHardwareAcceleration);
+exports.setDisableHardwareAcceleration = (value) => { config.launcher.disableHardwareAcceleration = boolHandler(value, DEFAULT_CONFIG.launcher.disableHardwareAcceleration); exports.save(); }
+
+exports.getHideOnClose = () => Boolean(config.launcher.hideOnClose);
+exports.setHideOnClose = (value) => { config.launcher.hideOnClose = boolHandler(value, DEFAULT_CONFIG.launcher.hideOnClose); exports.save(); }
