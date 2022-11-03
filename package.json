@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.81",
+  "version": "0.1.82",
   "description": "An lightweight minecraft launcher by TJMC",
   "main": "src/main/main.js",
   "scripts": {
@@ -69,7 +69,10 @@
       "target": [
         {
           "target": "default",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "icon": "build/icons/icon.icns",
@@ -88,11 +91,17 @@
       "target": [
         {
           "target": "deb",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         },
         {
           "target": "tar.gz",
-          "arch": ["x64", "arm64"]
+          "arch": [
+            "x64",
+            "arm64"
+          ]
         }
       ],
       "synopsis": "TJMC-Launcher",
@@ -111,7 +120,9 @@
     "snap": {
       "publish": {
         "provider": "snapStore",
-        "channels": ["stable"]
+        "channels": [
+          "stable"
+        ]
       },
       "grade": "stable"
     },
