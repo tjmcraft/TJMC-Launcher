@@ -144,7 +144,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false,
-      "installerIcon": "icon.ico"
+      "installerIcon": "build/icons/icon.ico"
     }
   }
 }
