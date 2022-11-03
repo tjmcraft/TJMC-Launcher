@@ -213,7 +213,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
 async function launchMinecraft(version_hash = null, params = null) {
 
-    const launcher = require('./game/launcher');
+    const GameLauncher = require('./game/launcher');
 
     function progress(e) {
         const progress = (e.task / e.total);
@@ -240,28 +240,32 @@ async function launchMinecraft(version_hash = null, params = null) {
         });
     }
     try {
-        const _launcher = await new launcher(version_hash, params);
-        _launcher.on('progress', progress);
-        _launcher.on('download-status', download_progress);
+        const launcher = await new GameLauncher(version_hash, params);
 
-        //const hb = await _launcher.heartbeat(60);
+        launcher.on('progress', progress);
+        launcher.on('download-status', download_progress);
 
-        const java_path = await _launcher.getJava();
-        const versionFile = await _launcher.loadManifest();
-        const minecraftArguments = await _launcher.construct(versionFile);
+        const java_path = await launcher.getJava();
+        const versionFile = await launcher.loadManifest();
+        const minecraftArguments = await launcher.construct(versionFile);
+
         logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
-        const vm = await _launcher.createJVM(java_path, minecraftArguments);
+
+        const JVM = await launcher.createJVM(java_path, minecraftArguments);
 
         let error_out = null,
             std_out = null,
             logg_out = null;
-        vm.stderr.on('data', (data) => {
+
+        JVM.stderr.on('data', (data) => {
             logg_out = error_out = data.toString('utf-8');
-        })
-        vm.stdout.on('data', (data) => {
+        });
+
+        JVM.stdout.on('data', (data) => {
             logg_out = std_out = data.toString('utf-8');
-        })
-        vm.on('close', (code) => {
+        });
+
+        JVM.on('close', (code) => {
             if (code != 0) {
                 if (win)
                     win.webContents.send('startup-error', {
@@ -274,16 +278,20 @@ async function launchMinecraft(version_hash = null, params = null) {
                         version_hash: version_hash
                     });
             }
-        })
+        });
+
         if (win)
             win.webContents.send('startup-success', {
                 version_hash: version_hash
             }) && win.setProgressBar(-1)
+
         if (socket_connector)
             socket_connector.send('startup-success', {
                 version_hash: version_hash
             });
+
         return true;
+
     } catch (error) {
         if (win)
             win.webContents.send('error', {
@@ -330,7 +338,8 @@ function startWebServer() {
             if (!data || !data.version_hash) res.json({
                 success: false
             });
-            res.json(await launchMinecraft(data.version_hash, data.params));
+            launchMinecraft(data.version_hash, data.params);
+            res.json(true);
         });
         express_app.get('/installations.get', async (req, res) => {
             res.json(await InstallationsManager.getInstallations());

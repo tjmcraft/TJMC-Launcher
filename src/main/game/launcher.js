@@ -4,7 +4,7 @@ const LoggerUtil                             = require('../util/loggerutil')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./Minecraft')
-const logg                                   = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
+const logger                                 = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 const InstallationsManager                   = require('../managers/InstallationsManager')
 const VersionManager                         = require('../managers/VersionManager')
 const ConfigManager                          = require('../managers/ConfigManager')
@@ -28,87 +28,80 @@ class launcher extends EventEmitter {
         super();
         return (async () => {
 
-            this.options = Object.assign({}, await ConfigManager.getAllOptions(), { installation: await InstallationsManager.getInstallation(version_hash) }, options);
+            const configOptions = await ConfigManager.getAllOptions();
+            const currentInstallation = await InstallationsManager.getInstallation(version_hash);
+            this.options = Object.assign({}, configOptions, {
+                installation: currentInstallation
+            }, options);
+
             this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
-            this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId)
-            this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`)
-            this.handler = new Minecraft(this)
+            this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId);
+            this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
             this.options.auth = Object.assign({}, this.options.auth, {
                 uuid: getOfflineUUID(this.options.auth.username)
             });
-            logg.debug(`Minecraft folder is ${this.options.overrides.path.root}`)
-            logg.debug("Launcher options:", this.options);
+
+            this.handler = new Minecraft(this);
+
+            logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
+            logger.debug("Launcher options:", this.options);
 
             return this; // when done
         })();
     }
 
-    async heartbeat(hrs_time) {
-        let count = 0;
-        const interval = 500;
-        const total = Math.floor((hrs_time * 1e3) / interval);
-        setInterval(() => {
-            if (count >= total) return;
-            count++;
-            this.emit('progress', {
-                type: 'natives',
-                task: count,
-                total: total,
-                version_hash: this.options.installation.hash
-            });
-            console.debug(`Version hash: ${this.options.installation.hash}`)
-        }, interval);
+    async getJava() {
+        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw';
+        const java = await this.handler.checkJava(javaPath);
+        if (!java.run) {
+            logger.error(`Couldn't start Minecraft due to: ${java.message}`);
+            throw new Error(`Wrong java (${javaPath})`);
+        }
+        return javaPath;
     }
 
     async loadManifest() {
-        logg.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`)
-        const versionFile = await VersionManager.getVersionManifest(this.options.installation.lastVersionId)
-        return versionFile
-    }
-
-    async getJava() {
-        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw'
-        const java = await this.handler.checkJava(javaPath)
-        if (!java.run) {
-            logg.error(`Couldn't start Minecraft due to: ${java.message}`)
-            throw new Error(`Wrong java (${javaPath})`)
-        }
-        return javaPath
+        logger.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`);
+        return VersionManager.getVersionManifest(this.options.installation.lastVersionId);
     }
 
     async construct(versionFile) {
 
         if (!fs.existsSync(this.options.overrides.path.root)) {
-            logg.log(`Attempting to create root folder (${this.options.overrides.path.root})`)
-            fs.mkdirSync(this.options.overrides.path.root, {recursive: true})
+            logger.log(`Attempting to create root folder (${this.options.overrides.path.root})`);
+            fs.mkdirSync(this.options.overrides.path.root, { recursive: true });
         }
+
         if (this.options.overrides.path.gameDirectory) {
-            this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path.gameDirectory)
+            this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path.gameDirectory);
             if (!fs.existsSync(this.options.overrides.path.gameDirectory)) {
-                fs.mkdirSync(this.options.overrides.path.gameDirectory, {recursive: true})
+                fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
             }
         }
 
         if (!fs.existsSync(this.options.mcPath)) {
-            logg.log('Attempting to load Minecraft version jar')
-            const mcpath = await this.handler.getJar(versionFile)
+            logger.log('Attempting to load Minecraft version jar');
+            await this.handler.getJar(versionFile);
         }
 
-        logg.log('Attempting to load natives')
-        const nativePath = await this.handler.getNatives(versionFile)
+        logger.log('Attempting to load natives');
+        const nativePath = await this.handler.getNatives(versionFile);
 
-        logg.log('Attempting to load classes')
-        const classes = await this.handler.getClasses(versionFile)
+        logger.log('Attempting to load classes');
+        const classes = await this.handler.getClasses(versionFile);
 
-        logg.log('Attempting to load assets')
-        const assets = await this.handler.getAssets(versionFile)
+        logger.log('Attempting to load assets');
+        const assets = await this.handler.getAssets(versionFile);
 
-        const args = this.handler.constructJVMArguments(versionFile, nativePath, classes)
+        const args = this.handler.constructJVMArguments(versionFile, nativePath, classes);
 
-        return args
+        return args;
     }
-    async createJVM (java, launchArguments) {
-        logg.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`)
+
+    async createJVM(java, launchArguments) {
+
+        logger.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`);
+
         const minecraft = child.spawn(
             java,
             launchArguments,
@@ -117,21 +110,21 @@ class launcher extends EventEmitter {
                 cwd: this.options.java.cwd || this.options.overrides.path.root,
                 detached: this.options.java.detached
             }
-        )
-        let logg_out;
-        let error_out;
+        );
+
         minecraft.stdout.on('data', (data) => {
-            logg_out = data.toString('utf-8');
-            logg.log(logg_out);
-        })
+            logger.log(data.toString('utf-8'));
+        });
+
         minecraft.stderr.on('data', (data) => {
-            error_out = data.toString('utf-8');
-            logg.error(error_out);
-        })
+            logger.error(data.toString('utf-8'));
+        });
+
         minecraft.on('close', (code) => {
-            logg.warn('ExitCode: ' + code);
-        })
-        return minecraft
+            logger.warn('ExitCode: ' + code);
+        });
+
+        return minecraft;
     }
 }
 

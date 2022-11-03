@@ -1,12 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-const logg = require('../util/loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
+const logger = require('../util/loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
+
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME);
 const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share")) + '/.tjmc') || require('electron').remote.app.getPath('userData');
 const configPath = path.join(launcherDir, 'launcher-config.json');
 
-logg.debug("Config Path:", configPath);
+logger.debug("Config Path:", configPath);
 
 /**
  * Configuration
@@ -50,7 +51,7 @@ const DEFAULT_CONFIG =
 }
 
 const createDefaultConfig = () => {
-    logg.debug('Generating a new configuration file.');
+    logger.debug('Generating a new configuration file.');
     fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
     config = DEFAULT_CONFIG;
     exports.save("Create New Default");
@@ -62,22 +63,22 @@ exports.load = () => {
         try {
             config = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
         } catch (err){
-            logg.warn('Configuration file contains malformed JSON or is corrupt!');
+            logger.warn('Configuration file contains malformed JSON or is corrupt!');
             createDefaultConfig();
         }
         config = validateKeySet(DEFAULT_CONFIG, config);
         exports.save('VALIDATE');
     }
-    logg.debug("Load launcher config", "=>", (this.isLoaded() ? 'success' : 'failure'));
+    logger.debug("Load launcher config", "=>", (this.isLoaded() ? 'success' : 'failure'));
 }
 
 exports.save = (reason = "") => {
     try {
         fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8');
     } catch (e) {
-        logg.error('Config save error:', e)
+        logger.error('Config save error:', e)
     }
-    logg.debug('Config saved!', (reason ? `(${reason})` : null));
+    logger.debug('Config saved!', (reason ? `(${reason})` : null));
     return config;
 }
 
