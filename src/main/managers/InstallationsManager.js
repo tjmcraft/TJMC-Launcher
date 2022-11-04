@@ -98,7 +98,7 @@ exports.createInstallation = async function (version, options) {
 }
 
 exports.getInstallations = async function () {
-    return installations.get.profiles || null;
+    return installations.get.profiles || undefined;
 }
 
 /**
@@ -108,7 +108,8 @@ exports.getInstallations = async function () {
  */
 exports.getInstallation = async function (hash) {
     if (hash && Object(installations.get.profiles).hasOwnProperty(hash))
-        return { hash: hash, ...installations.get.profiles[hash] } || null;
+        return { hash: hash, ...installations.get.profiles[hash] };
+    return undefined;
 }
 
 /**
@@ -118,7 +119,8 @@ exports.getInstallation = async function (hash) {
  */
 exports.getInstallationSync = function (hash) {
     if (hash && Object(installations.get.profiles).hasOwnProperty(hash))
-        return { hash: hash, ...installations.get.profiles[hash] } || null;
+        return { hash: hash, ...installations.get.profiles[hash] };
+    return undefined;
 }
 
 /**

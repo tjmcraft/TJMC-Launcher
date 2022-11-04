@@ -252,7 +252,13 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     nativeTheme.on('updated', () => setOSTheme());
 });
 
-async function launchMinecraft(version_hash = null, params = null) {
+async function launchMinecraft(version_hash, params = {}) {
+
+    if (!version_hash) return;
+
+    const currentInstallation = InstallationsManager.getInstallationSync(version_hash);
+
+    if (!currentInstallation) return;
 
     const GameLauncher = require('./game/launcher');
 
@@ -284,7 +290,7 @@ async function launchMinecraft(version_hash = null, params = null) {
     try {
 
         const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
-            installation: InstallationsManager.getInstallationSync(version_hash),
+            installation: currentInstallation,
             auth: {
                 access_token: undefined,
                 user_properties: {},
