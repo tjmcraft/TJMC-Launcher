@@ -64,7 +64,7 @@
     "files": [
       "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}"
     ],
-    "asar": false,
+    "asar": true,
     "compression": "maximum",
     "icon": "app/assets/images/icon.png",
     "mac": {
