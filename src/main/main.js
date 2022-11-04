@@ -144,9 +144,10 @@ if (!gotTheLock) {
         if (!handleArgsLink(commandLine)) restoreWindow();
     });
 
-    app.on('open-url', function (event, data) {
+    app.on('open-url', (event, data) => {
         event.preventDefault();
-        console.debug("Open url", data);
+        console.debug("Open url call", data);
+        if (!protoHandler(data)) restoreWindow();
     });
 
     app.once('ready', () => {
