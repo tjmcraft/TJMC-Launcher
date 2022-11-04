@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, Tray, nativeImage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
@@ -31,6 +31,14 @@ autoUpdater.setFeedURL({
 
 app.allowRendererProcessReuse = true;
 
+const platformIcon = (() => {
+    let ext = "png";
+    let filename = "512x512";
+    const image = nativeImage.createFromPath(path.join(__dirname, '../..', 'build', 'icons', `${filename}.${ext}`));
+    image.setTemplateImage(true);
+    return image;
+})();
+
 const createPreloadWindow = () => new Promise((resolve, reject) => {
     const window = new BrowserWindow({
         width: 300,
@@ -45,7 +53,7 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
         },
         titleBarStyle: 'default',
         roundedCorners: true,
-        icon: getPlatformIcon('icon'),
+        icon: platformIcon,
         backgroundColor: '#171614'
     });
 
@@ -64,16 +72,24 @@ const gotTheLock = app.requestSingleInstanceLock();
  */
 var win = undefined;
 
+/**
+ * @type {Tray} - Tray instance
+ */
+var tray = undefined;
+
+const restoreWindow = () => {
+    if (!win) return;
+    if (!win.isVisible()) win.show();
+    if (win.isMinimized()) win.restore();
+    win.focus();
+}
+
 if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         console.debug("Second instance call");
-        if (win) {
-            if (!win.isVisible()) win.show();
-            if (win.isMinimized()) win.restore();
-            win.focus();
-        }
+        restoreWindow();
     });
     app.once('ready', () => {
 
@@ -138,8 +154,16 @@ if (!gotTheLock) {
         });
     });
     app.once('ready', () => createMenu());
-    app.on('window-all-closed', () => {});
-    app.on('activate', () => (win === null) && createMainWindow());
+    app.once('ready', () => createTray());
+    app.on('activate', () => {
+        if (win === null) createMainWindow();
+        else restoreWindow();
+    });
+    app.on('before-quit', () => {
+        logger.debug("Will quit")
+        win && win.destroy();
+        tray && tray.destroy();
+    });
 }
 
 const createMainWindow = () => new Promise((resolve, reject) => {
@@ -169,7 +193,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         },
         titleBarStyle: 'default',
         roundedCorners: true,
-        icon: getPlatformIcon('icon'),
+        icon: platformIcon,
         backgroundColor: '#171614'
     });
 
@@ -187,13 +211,10 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
     win.on('blur', () => win.webContents.send('blur'));
     win.on('focus', () => win.webContents.send('focus'));
-    //win.on('closed', () => win = null);
-    win.on('close', (event) => {
-        event.preventDefault();
-        if (ConfigManager.getHideOnClose()) {
-            win.hide();
-        } else {
-            app.quit();
+    win.on('closed', () => win = null);
+    win.on('hide', (event) => {
+        if (!ConfigManager.getHideOnClose()) {
+            win.close();
         }
     })
 
@@ -426,7 +447,8 @@ const createMenu = async () => {
     const template = [
         ...(isMac ? [{
             label: 'Application',
-            submenu: [{
+            submenu: [
+                {
                     label: 'About Application',
                     selector: 'orderFrontStandardAboutPanel:'
                 },
@@ -579,21 +601,40 @@ const createMenu = async () => {
 
 }
 
-function getPlatformIcon(filename) {
-    let ext;
-    switch (process.platform) {
-        case 'win32':
-            ext = 'ico';
-            break;
-        case 'darwin':
-            ext = 'icns';
-            break;
-        case 'linux':
-        default:
-            ext = 'png';
-            break;
-    }
-    return path.join(__dirname, '../..', 'build', `${filename}.${ext}`);
+const createTray = async () => {
+    tray = new Tray(platformIcon);
+    //tray.on('right-click', toggleWindow)
+    //tray.on('double-click', toggleWindow)
+    tray.on('click', function (event) {
+        restoreWindow();
+    })
+    const menu = Menu.buildFromTemplate([
+        {
+            label: 'TJMC-Launcher',
+            icon: platformIcon.resize({ width: 16, height: 16 }),
+            enabled: false
+        },
+        {
+            type: 'separator'
+        },
+        {
+            label: 'Settings',
+            click: () => { restoreWindow(); win.webContents.send('open-settings'); }
+        },
+        {
+            label: 'Open Folder',
+            click: () => openMineDir()
+        },
+        {
+            type: 'separator'
+        },
+        {
+            label: 'Quit',
+            click: () => app.quit()
+        }
+    ]);
+    tray.setContextMenu(menu);
+    tray.setToolTip("TJMC-Launcher");
 }
 
 function openMineDir() {

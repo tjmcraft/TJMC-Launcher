@@ -23,7 +23,7 @@ function getOS() {
 }
 
 const windowEvents = {
-  close: () => win.close(),
+  hide: () => win.hide(),
   maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
   minimize: () => win.minimize(),
   restore: () => win.restore(),
@@ -83,7 +83,7 @@ contextBridge.exposeInMainWorld('system', {
 })
 contextBridge.exposeInMainWorld('tjmcNative', {
   window: {
-    close: windowEvents.close,
+    close: windowEvents.hide,
     maximize: windowEvents.maximize,
     minimize: windowEvents.minimize,
     restore: windowEvents.restore,
