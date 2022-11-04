@@ -155,12 +155,13 @@ if (!gotTheLock) {
     });
     app.once('ready', () => createMenu());
     app.once('ready', () => createTray());
+    app.on("window-all-closed", () => { });
     app.on('activate', () => {
         if (win === null) createMainWindow();
         else restoreWindow();
     });
     app.on('before-quit', () => {
-        logger.debug("Will quit")
+        logger.debug("Before quit")
         win && win.destroy();
         tray && tray.destroy();
     });
@@ -212,11 +213,12 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('blur', () => win.webContents.send('blur'));
     win.on('focus', () => win.webContents.send('focus'));
     win.on('closed', () => win = null);
-    win.on('hide', (event) => {
-        if (!ConfigManager.getHideOnClose()) {
-            win.close();
+    win.on('close', (event) => {
+        if (ConfigManager.getHideOnClose()) {
+            event.preventDefault();
+            win.hide();
         }
-    })
+    });
 
     //win.webContents.openDevTools()
 
@@ -602,7 +604,7 @@ const createMenu = async () => {
 }
 
 const createTray = async () => {
-    tray = new Tray(platformIcon);
+    tray = new Tray(platformIcon.resize({ width: 16, height: 16 }));
     //tray.on('right-click', toggleWindow)
     //tray.on('double-click', toggleWindow)
     tray.on('click', function (event) {

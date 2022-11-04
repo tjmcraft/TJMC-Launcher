@@ -2,6 +2,7 @@ const { shell, ipcRenderer, contextBridge } = require('electron');
 const remote = require('@electron/remote')
 const os = require('os');
 
+
 const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
 
 logger.debug("[Preload]", "Application loading...")
@@ -23,7 +24,7 @@ function getOS() {
 }
 
 const windowEvents = {
-  hide: () => win.hide(),
+  close: () => win.close(),
   maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
   minimize: () => win.minimize(),
   restore: () => win.restore(),
@@ -83,7 +84,7 @@ contextBridge.exposeInMainWorld('system', {
 })
 contextBridge.exposeInMainWorld('tjmcNative', {
   window: {
-    close: windowEvents.hide,
+    close: windowEvents.close,
     maximize: windowEvents.maximize,
     minimize: windowEvents.minimize,
     restore: windowEvents.restore,
