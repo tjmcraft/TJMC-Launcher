@@ -40,10 +40,10 @@ exports.getLocalVersions = async function () {
 
 /**
  * Gets Main JSON of given version
- * @param version Version of Minecraft
+ * @param {String} version - Version of Minecraft
  */
 exports.getVersionManifest = async function (version, props = {}) {
-    logger.debug('Loading Version JSON for: ' + version);
+    logger.debug(`Loading ${version} version manifest...`);
     if (!versions_directory) return;
     const versionPath = path.join(versions_directory, version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
@@ -54,7 +54,7 @@ exports.getVersionManifest = async function (version, props = {}) {
         const parsed = await this.getGlobalVersions();
         for (const cv in parsed) {
             if (parsed[cv].id === version) {
-                c_version = await downloadFile(parsed[cv].url || `https://tlaun.ch/repo/versions/${version}.json`);
+                c_version = await downloadFile(parsed[cv].url ?? `https://tlaun.ch/repo/versions/${version}.json`);
             }
         }
     }

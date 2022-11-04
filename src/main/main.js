@@ -280,19 +280,33 @@ async function launchMinecraft(version_hash = null, params = null) {
             version_hash: e.version_hash
         });
     }
+
     try {
-        const launcher = await new GameLauncher(version_hash, params);
+
+        const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
+            installation: InstallationsManager.getInstallationSync(version_hash),
+            auth: {
+                access_token: undefined,
+                user_properties: {},
+                username: "MakAndJo",
+                uuid: undefined,
+            }
+        }, params);
+
+        logger.debug('launcherOptions', launcherOptions);
+
+        const launcher = new GameLauncher(launcherOptions);
 
         launcher.on('progress', progress);
         launcher.on('download-status', download_progress);
 
-        const java_path = await launcher.getJava();
-        const versionFile = await launcher.loadManifest();
-        const minecraftArguments = await launcher.construct(versionFile);
+        const javaPath = await launcher.getJava();
+        const manifest = await launcher.loadManifest();
+        const minecraftArguments = await launcher.construct(manifest);
 
         logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
 
-        const JVM = await launcher.createJVM(java_path, minecraftArguments);
+        const JVM = await launcher.createJVM(javaPath, minecraftArguments);
 
         let error_out = null,
             std_out = null,
@@ -334,6 +348,7 @@ async function launchMinecraft(version_hash = null, params = null) {
         return true;
 
     } catch (error) {
+        logger.error(error);
         if (win)
             win.webContents.send('error', {
                 error: error,

@@ -16,23 +16,24 @@ class Minecraft {
      * @param client U may set here "this"
      */
     constructor(client) {
-        this.client = client
-        this.options = client.options
+        this.client = client;
+        this.options = client.options;
         this.baseRequest = request.defaults({
-            pool: { maxSockets: this.options.overrides.request.maxSockets || 4 },
-            timeout: this.options.overrides.request.timeout || 10000
-        })
-        this.overrides = {}
-        this.overrides.javaSep = process.platform === 'win32' ? ';' : ':'
-        this.overrides.resolution = {
-            width: this.options.installation?.resolution?.width || this.options.minecraft?.launch?.width || 854,
-            height: this.options.installation?.resolution?.height || this.options.minecraft?.launch?.height || 480
-        }
-        this.overrides.version = {
-            id: this.options.installation.lastVersionId,
-            type: this.options.installation.type
-        }
-        this.overrides.checkHash = this.options.overrides?.checkHash ? this.options.overrides.checkHash : true;
+            pool: { maxSockets: this.options.overrides.request.maxSockets ?? 4 },
+            timeout: this.options.overrides.request.timeout ?? 10000
+        });
+        this.overrides = {
+            javaSep: process.platform === 'win32' ? ';' : ':',
+            resolution: {
+                width: this.options.installation?.resolution?.width ?? this.options.minecraft?.launch?.width ?? 854,
+                height: this.options.installation?.resolution?.height ?? this.options.minecraft?.launch?.height ?? 480
+            },
+            version: {
+                id: this.options.installation.lastVersionId,
+                type: this.options.installation.type
+            },
+            checkHash: this.options.overrides?.checkHash ?? true
+        };
     }
 
     /**
@@ -54,25 +55,26 @@ class Minecraft {
     }
 
     /**
-     * Function downloads main jar
+     * Loads main client jar
      * @param version Main version JSON
      */
-    async getJar (version) {
-        const versionPath = path.join(this.options.overrides.path.version)
-        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar')
-        logg.debug('Downloaded version jar')
-        return path.join(versionPath, `${this.overrides.version.id}.jar`)
+    async loadClient(version) {
+        const versionPath = path.join(this.options.overrides.path.version);
+        logg.debug(`<- Attempting to load ${this.overrides.version.id}.jar`);
+        await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar');
+        logg.debug(`-> Loaded ${this.overrides.version.id}.jar`);
+        return path.join(versionPath, `${this.overrides.version.id}.jar`);
     }
 
     /**
-     * Function creates classpathes to libraries
-     * @param classJson Main version JSON
+     * Collect cp of libraries
+     * @param {Object} classJson - version JSON
      */
     async getClasses (classJson) {
         let libs = []
         const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'))
         if (classJson.mavenFiles) {
-            await this.downloadToDirectory(libraryDirectory, classJson.mavenFiles, 'classes-maven')
+            await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven')
         }
         const parsed = classJson.libraries.map(lib => {
             const lib_url_ex = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
@@ -80,8 +82,8 @@ class Minecraft {
             const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib)
             if (lib_ex) return lib
         })
-        libs = merge(await this.downloadToDirectory(libraryDirectory, parsed, 'classes'))
-        logg.debug(`Collected Class Patches! (count: ${libs.length})`)
+        libs = merge(await this.downloadLibrary(libraryDirectory, parsed, 'classes'))
+        logg.debug(`Collected Class Path's! (count: ${libs.length})`)
         return libs
     }
 
@@ -129,31 +131,31 @@ class Minecraft {
                 const native_path = path.join(nativeDirectory, name);
                 if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
                     (promise_counter <= 0) && logg.debug(`Downloading natives...`); promise_counter++;
-                    await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives')
+                    await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives');
                 }
                 try {
-                    new Zip(native_path).extractAllTo(nativeDirectory, true)
+                    new Zip(native_path).extractAllTo(nativeDirectory, true);
                 } catch (e) { logg.warn(e) }
-                fs.unlinkSync(native_path)
-                count++
+                fs.unlinkSync(native_path);
+                count++;
                 this.client.emit('progress', {
                     type: 'natives',
                     task: count,
                     total: stat.length,
                     version_hash: this.options.installation.hash
-                })
+                });
             }))
-            logg.debug(`Downloaded and extracted natives! ${stat.length}`)
-            count = 0
+            logg.debug(`Downloaded and extracted natives! ${stat.length}`);
+            count = 0;
             this.client.emit('progress', {
                 type: 'natives',
                 task: count,
                 total: stat.length,
                 version_hash: this.options.installation.hash
-            })
+            });
         }
-        logg.debug(`Natives Collected!`)
-        return nativeDirectory
+        logg.debug(`Natives Collected!`);
+        return nativeDirectory;
     }
 
     /**
@@ -205,26 +207,27 @@ class Minecraft {
     }
 
     /**
-     * Function download libraries
-     * @param directory
-     * @param libraries
-     * @param eventName
+     * Download library to directory
+     * @param {String} directory - directory
+     * @param {Array.<Object>} libraries - libraries array
+     * @param {String} type - Meta library type
      */
-    async downloadToDirectory (directory, libraries, eventName) {
+    async downloadLibrary(directory, libraries, type = 'classes') {
         let count = 0;
-        const libs = []
+        const libs = [];
         await Promise.all(libraries.map(async library => {
-            if (!library) return
-            const lib = library.name.split(':')
-            const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`)
-            const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`
+            if (!library) return;
+
+            const lib = library.name.split(':');
+            const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
+            const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
 
             if (!fs.existsSync(path.join(jarPath, name))) {
-                const lib_url = library?.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
-                    library?.artifact?.url.includes('http') ? library.artifact.url :
+                const lib_url = library.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
+                    library.artifact?.url.includes('http') ? library.artifact.url :
                         library.url ? library.url :
-                            library.exact_url ? library.exact_url : '';
-                const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`
+                            library.exact_url ? library.exact_url : undefined;
+                const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`;
                 const url = [
                     lib_url,
                     'https://libraries.minecraft.net/' + jar_name,
@@ -234,110 +237,133 @@ class Minecraft {
                     'https://repo1.maven.org/maven2/' + jar_name,
                     'https://maven.minecraftforge.net/' + jar_name,
                     (library.url ? library.url : '') + jar_name
-                ]
-                for (let c of url){
-                    if(await this.downloadAsync(c, jarPath, name, true, eventName)) {continue}
+                ];
+                for (let c of url) {
+                    if (await this.downloadAsync(c, jarPath, name, true, type)) { continue };
                 }
             }
-            count++
+
+            count++;
+
             this.client.emit('progress', {
-                type: eventName,
+                type: type,
                 task: count,
                 total: libraries.length,
                 version_hash: this.options.installation.hash
-            })
-            if (library.mod || library.downloadOnly) return
-            libs.push(`${jarPath}${path.sep}${name}`)
-        }))
-        count = 0
+            });
+
+            if (library.mod || library.downloadOnly) return;
+
+            libs.push(`${jarPath}${path.sep}${name}`);
+        }));
+
+        count = 0;
+
         this.client.emit('progress', {
-            type: eventName,
+            type: type,
             task: count,
             total: libraries.length,
             version_hash: this.options.installation.hash
-        })
-        return libs
+        });
+
+        return libs;
     }
 
     /**
-     * Function download file async
-     * @param url URL to download
-     * @param directory Directory to download
-     * @param name FileName to download
-     * @param retry Try again?
-     * @param type Type of download
+     * TODO: Move to "got" lib
+     * Download file asynchronous to directory
+     * @param {String} url - URL to download
+     * @param {String} directory - Directory to download
+     * @param {String} filename - Filename to download
+     * @param {Boolean} retry - Try again?
+     * @param {String} type - Meta type of download
      */
-    downloadAsync(url, directory, name, retry, type) {
-        const _path = path.join(directory, name)
-        if (fs.existsSync(_path) && fs.readFileSync(_path).length > 0) return new Promise(resolve => {return resolve(false)})
-        if (url.includes('http')) {
-            return new Promise(resolve => {
-                fs.mkdirSync(directory, { recursive: true })
-                const _request = this.baseRequest(url)
-                let receivedBytes = 0
-                let totalBytes = 0
+    downloadAsync(url, directory, filename, retry, type = null) {
+        return new Promise(resolve => {
+            const _path = path.join(directory, filename)
+
+            if (fs.existsSync(_path) && fs.readFileSync(_path).length > 0) return resolve(true);
+
+            fs.mkdirSync(directory, { recursive: true });
+
+            if (url.includes('http')) {
+
+                const _request = this.baseRequest(url);
+
+                let receivedBytes = 0;
+                let totalBytes = 0;
+
                 _request.on('response', (data) => {
+
                     if (data.statusCode !== 200) {
-                        //logg.warn(`[REQUEST] Failed to download ${url} due to: File not found (404)...`)
-                        if (fs.existsSync(_path)) fs.unlinkSync(_path)
-                        resolve(false)
-                    } else {
-                        //logg.debug(`[REQUEST] Download get code ${data.statusCode} on ${url}`)
-                        totalBytes = parseInt(data.headers['content-length'])
-                        const file = fs.createWriteStream(_path, { flags: 'w+' })
-                        _request.pipe(file)
-                        file.once('finish', () => {
-                            this.client.emit('download-status', {
-                                name: name,
-                                type: type,
-                                current: 0,
-                                total: totalBytes,
-                                version_hash: this.options.installation.hash
-                            })
-                            resolve({ failed: false, asset: null })
-                        })
-                        file.on('error', async (e) => {
-                            logg.debug(`[FILE] Failed to download ${url} to ${_path} due to\n${e}.` + ` Retrying... ${retry}`)
-                            if (fs.existsSync(_path)) fs.unlinkSync(_path)
-                            if (retry) await this.downloadAsync(url, directory, name, false, type)
-                            resolve()
-                        })
+                        logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
+                        if (fs.existsSync(_path)) fs.unlinkSync(_path);
+                        resolve(false);
+                        return;
                     }
-                })
+
+                    totalBytes = parseInt(data.headers['content-length']);
+
+                    const file = fs.createWriteStream(_path, { flags: 'w+' });
+
+                    _request.pipe(file);
+
+                    file.once('finish', () => {
+                        this.client.emit('download-status', {
+                            name: filename,
+                            type: type,
+                            current: 0,
+                            total: totalBytes,
+                            version_hash: this.options.installation.hash
+                        });
+                        resolve({ failed: false, asset: null });
+                    })
+
+                    file.on('error', async (e) => {
+                        logg.debug(`[FILE] Failed to download ${url} to ${_path} due to\n${e}.` + ` Retrying... ${retry}`);
+                        if (fs.existsSync(_path)) fs.unlinkSync(_path);
+                        if (retry) await this.downloadAsync(url, directory, filename, false, type);
+                        resolve();
+                    })
+
+                });
+
                 _request.on('error', async (error) => {
-                    logg.warn(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`)
-                    if (fs.existsSync(_path)) fs.unlinkSync(_path)
-                    if (retry) await this.downloadAsync(url, directory, name, false, type)
-                    resolve()
-                })
+                    logg.warn(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`);
+                    if (fs.existsSync(_path)) fs.unlinkSync(_path);
+                    if (retry) await this.downloadAsync(url, directory, filename, false, type);
+                    resolve();
+                });
+
                 _request.on('data', (data) => {
-                    receivedBytes += data.length
+                    receivedBytes += data.length;
                     this.client.emit('download-status', {
-                        name: name,
+                        name: filename,
                         type: type,
                         current: receivedBytes,
                         total: totalBytes,
                         version_hash: this.options.installation.hash
                     })
-                })
-            })
-        }
+                });
+            }
+        })
     }
 
     /**
-     * Function checks file hash
-     * @param ghash given hash
-     * @param file file
+     * Check sha1 file hash
+     * @param {String} file_hash - file hash
+     * @param {String} file - file path
      */
-    checkSum = (ghash, file) => new Promise((resolve, reject) => {
+    checkSum = (file_hash, file) => new Promise((resolve, reject) => {
         const hash = crypto.createHash('sha1');
-        fs.createReadStream(file).on('data', data => hash.update(data)).on('end', () => resolve(ghash === hash.digest('hex')));
+        fs.createReadStream(file).on('data', data => hash.update(data)).on('end', () => resolve(file_hash === hash.digest('hex')));
     })
 
 
     /**
-     * Function checks rules of lib
-     * @param lib Library to check
+     * Parse rule for library
+     * @param lib - Library to check
+     * @returns {Boolean} - allow or disallow rule is
      */
     parseRule (lib) {
         if (lib.rules) {
@@ -355,6 +381,9 @@ class Minecraft {
         } else { return false }
     }
 
+    /**
+     * Returns memory arguments for JVM process.
+     */
     getMemory () {
         if (!this.options.java.memory) {
             logg.debug('Memory not set! Setting 1GB as MAX!')
@@ -375,12 +404,11 @@ class Minecraft {
 
     /**
      * Construct the argument array that will be passed to the JVM process.
-     *
      */
     constructJVMArguments(versionFile, tempNativePath, cp) {
         const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = this.overrides.javaSep + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
+        const jar = this.overrides.javaSep + this.options.mcPath;
         this.fields = {
             '${auth_access_token}': this.options.auth.access_token || this.options.auth.uuid,
             '${auth_session}': this.options.auth.access_token || this.options.auth.uuid,
@@ -391,7 +419,7 @@ class Minecraft {
             '${user_type}': 'mojang',
             '${version_name}': this.overrides.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
-            '${game_directory}': this.options.overrides?.path?.gameDirectory || this.options.overrides?.path?.root,
+            '${game_directory}': this.options.overrides.path?.gameDirectory,
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
             '${version_type}': this.overrides.version.type,
@@ -418,7 +446,7 @@ class Minecraft {
     getJVMArgs112(versionFile, tempNativePath, cp){
 
         let args = []
-        const jar = (this.overrides.javaSep) + (fs.existsSync(this.options.mcPath) ? `${this.options.mcPath}` : `${path.join(this.options.overrides.path.version, `${this.overrides.version.id}.jar`)}`)
+        const jar = (this.overrides.javaSep) + this.options.mcPath;
 
         // Java Arguments
         if(process.platform === 'darwin'){

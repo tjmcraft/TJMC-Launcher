@@ -14,7 +14,6 @@ class launcher extends EventEmitter {
 
     /**
      * Minecraft launcher constructor
-     * @param {String} version_hash - The version hash
      * @param {Object} options - Options to construct the launcher
      * @param {Object} options.overrides.path.version - Path to directory of version (where main jar located)
      * @param {Object} options.overrides.path.root - Path to root directory of minecraft
@@ -24,30 +23,22 @@ class launcher extends EventEmitter {
      * @param {Object} options.installation.lastVersionId - ID of current version
      * @param {Object} options.installation.type - Type of current version
      */
-    constructor(version_hash, options = {}) {
+    constructor(options = {}) {
         super();
-        return (async () => {
 
-            const configOptions = await ConfigManager.getAllOptions();
-            const currentInstallation = await InstallationsManager.getInstallation(version_hash);
-            this.options = Object.assign({}, configOptions, {
-                installation: currentInstallation
-            }, options);
+        this.options = Object.assign({}, options);
+        this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path?.gameDirectory || this.options.installation?.gameDir || this.options.overrides.path?.root || undefined);
+        this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId);
+        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
+        this.options.auth = Object.assign({}, this.options.auth, {
+            uuid: getOfflineUUID(this.options.auth.username)
+        });
 
-            this.options.overrides.path.gameDirectory = this.options?.installation?.gameDir || undefined;
-            this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId);
-            this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
-            this.options.auth = Object.assign({}, this.options.auth, {
-                uuid: getOfflineUUID(this.options.auth.username)
-            });
+        this.handler = new Minecraft(this);
 
-            this.handler = new Minecraft(this);
+        logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
+        logger.debug("Launcher compiled options:", this.options);
 
-            logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
-            logger.debug("Launcher options:", this.options);
-
-            return this; // when done
-        })();
     }
 
     async getJava() {
@@ -61,28 +52,19 @@ class launcher extends EventEmitter {
     }
 
     async loadManifest() {
-        logger.log(`Attempting to load main json for ${this.options.installation.lastVersionId}`);
-        return VersionManager.getVersionManifest(this.options.installation.lastVersionId);
+        const manifest = await VersionManager.getVersionManifest(this.options.installation.lastVersionId);
+        this.options.manifest = manifest;
+        return this.options.manifest;
     }
 
     async construct(versionFile) {
 
-        if (!fs.existsSync(this.options.overrides.path.root)) {
-            logger.log(`Attempting to create root folder (${this.options.overrides.path.root})`);
+        if (!fs.existsSync(this.options.overrides.path.root))
             fs.mkdirSync(this.options.overrides.path.root, { recursive: true });
-        }
-
-        if (this.options.overrides.path.gameDirectory) {
-            this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path.gameDirectory);
-            if (!fs.existsSync(this.options.overrides.path.gameDirectory)) {
-                fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
-            }
-        }
-
-        if (!fs.existsSync(this.options.mcPath)) {
-            logger.log('Attempting to load Minecraft version jar');
-            await this.handler.getJar(versionFile);
-        }
+        if (!fs.existsSync(this.options.overrides.path.gameDirectory))
+            fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
+        if (!fs.existsSync(this.options.mcPath))
+            await this.handler.loadClient(versionFile);
 
         logger.log('Attempting to load natives');
         const nativePath = await this.handler.getNatives(versionFile);
