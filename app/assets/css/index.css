@@ -1,24 +1,29 @@
 
 @import url(fonts.css);
+@import url(dots.css);
 
 * {
   box-sizing: border-box;
   user-select: none;
 }
+
 :root {
   --text-color: #333;
   --background-color: #fff;
 }
+
 body {
   background-color: #fff;
   margin: 0;
   overflow: hidden;
   font-family: "Roboto", Arial, Helvetica, sans-serif;
 }
+
 img {
   max-width: 100%;
   pointer-events: none;
 }
+
 #app-mount {
   display: flex;
   justify-content: center;
@@ -34,11 +39,13 @@ img {
   background-color: var(--background-color);
   -webkit-app-region: drag;
 }
+
 .container-c23 {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .loading-container {
   position: relative;
   width: 100%;
@@ -52,6 +59,7 @@ img {
   gap: 8px;
   padding: 8px;
 }
+
 .status-container {
   display: flex;
   flex-direction: row;
@@ -60,9 +68,11 @@ img {
   flex-wrap: nowrap;
   white-space: nowrap;
 }
+
 .status-container:not(.show) {
   display: none;
 }
+
 .logo-spl {
   max-width: 240px;
   margin: -16px 0;

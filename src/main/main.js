@@ -31,13 +31,26 @@ autoUpdater.setFeedURL({
 
 app.allowRendererProcessReuse = true;
 
-const platformIcon = (() => {
-    let ext = "png";
-    let filename = "512x512";
-    const image = nativeImage.createFromPath(path.join(__dirname, '../..', 'build', 'icons', `${filename}.${ext}`));
-    image.setTemplateImage(true);
+const platformIcon = ((platform) => {
+    let ext, filename;
+    switch (platform) {
+        case "win32":
+            ext = "ico";
+            filename = "icon";
+            break;
+        case "darwin":
+            ext = "icns";
+            filename = "icon";
+            break;
+        default:
+            ext = "png";
+            filename = "512x512";
+    }
+    const iconPath = path.join(__dirname, '../..', 'app', 'assets', 'images', `${filename}.${ext}`);
+    logger.log('platformIcon', iconPath);
+    const image = nativeImage.createFromPath(iconPath);
     return image;
-})();
+})(process.platform);
 
 const createPreloadWindow = () => new Promise((resolve, reject) => {
     const window = new BrowserWindow({
@@ -57,7 +70,7 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
         backgroundColor: '#171614'
     });
 
-    window.loadFile(path.join(__dirname, '../..', 'app', 'loading', 'index.html'));
+    window.loadFile(path.join(__dirname, '../..', 'app', 'index.html'));
 
     logger.debug("[Preload]", "Created preload window!");
 
@@ -604,7 +617,7 @@ const createMenu = async () => {
 }
 
 const createTray = async () => {
-    tray = new Tray(platformIcon.resize({ width: 16, height: 16 }));
+    tray = new Tray(process.platform === "darwin" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
     //tray.on('right-click', toggleWindow)
     //tray.on('double-click', toggleWindow)
     tray.on('click', function (event) {

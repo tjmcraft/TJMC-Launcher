@@ -64,9 +64,9 @@
     "files": [
       "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}"
     ],
-    "asar": true,
+    "asar": false,
     "compression": "maximum",
-    "icon": "build/icons/512x512.png",
+    "icon": "app/assets/images/icon.png",
     "mac": {
       "target": [
         {
@@ -77,7 +77,7 @@
           ]
         }
       ],
-      "icon": "build/icons/icon.icns",
+      "icon": "app/assets/images/icon.icns",
       "category": "public.app-category.games"
     },
     "win": {
@@ -87,7 +87,7 @@
           "arch": "x64"
         }
       ],
-      "icon": "build/icons/icon.ico"
+      "icon": "app/assets/images/icon.ico"
     },
     "linux": {
       "target": [
@@ -134,8 +134,7 @@
       "allowElevation": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "deleteAppDataOnUninstall": false,
-      "installerIcon": "build/icons/icon.ico"
+      "deleteAppDataOnUninstall": false
     }
   }
 }
