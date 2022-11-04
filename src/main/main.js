@@ -38,17 +38,14 @@ const platformIcon = ((platform) => {
             ext = "ico";
             filename = "icon";
             break;
-        case "darwin":
-            ext = "icns";
-            filename = "icon";
-            break;
         default:
             ext = "png";
-            filename = "512x512";
+            filename = "icon";
     }
     const iconPath = path.join(__dirname, '../..', 'app', 'assets', 'images', `${filename}.${ext}`);
     logger.log('platformIcon', iconPath);
     const image = nativeImage.createFromPath(iconPath);
+    image.setTemplateImage(true);
     return image;
 })(process.platform);
 
@@ -66,7 +63,6 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
         },
         titleBarStyle: 'default',
         roundedCorners: true,
-        icon: platformIcon,
         backgroundColor: '#171614'
     });
 
@@ -207,7 +203,6 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         },
         titleBarStyle: 'default',
         roundedCorners: true,
-        icon: platformIcon,
         backgroundColor: '#171614'
     });
 
@@ -620,14 +615,15 @@ const createTray = async () => {
     tray = new Tray(process.platform === "darwin" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
     //tray.on('right-click', toggleWindow)
     //tray.on('double-click', toggleWindow)
-    tray.on('click', function (event) {
+    process.platform != "darwin" && tray.on('click', function (event) {
         restoreWindow();
     })
     const menu = Menu.buildFromTemplate([
         {
             label: 'TJMC-Launcher',
             icon: platformIcon.resize({ width: 16, height: 16 }),
-            enabled: false
+            enabled: process.platform === "darwin",
+            click: () => process.platform === "darwin" && restoreWindow()
         },
         {
             type: 'separator'
