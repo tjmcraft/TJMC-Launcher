@@ -71,20 +71,17 @@ class Minecraft {
      * @param {Object} classJson - version JSON
      */
     async getClasses (classJson) {
-        let libs = []
-        const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'))
-        if (classJson.mavenFiles) {
-            await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven')
-        }
+        const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'));
+        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
         const parsed = classJson.libraries.map(lib => {
-            const lib_url_ex = ( lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined)
-            const lib_no_clfs_ex = ( !lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name )
-            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib)
-            if (lib_ex) return lib
-        })
-        libs = merge(await this.downloadLibrary(libraryDirectory, parsed, 'classes'))
-        logg.debug(`Collected Class Path's! (count: ${libs.length})`)
-        return libs
+            const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
+            const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
+            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
+            if (lib_ex) return lib;
+        }).filter(lib => Boolean(lib));
+        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
+        logg.log(`Collected Class Path's! (count: ${libs.length})`);
+        return libs;
     }
 
     popString (path) {
@@ -214,9 +211,8 @@ class Minecraft {
      */
     async downloadLibrary(directory, libraries, type = 'classes') {
         let count = 0;
-        const libs = [];
-        await Promise.all(libraries.map(async library => {
-            if (!library) return;
+        const libs = await Promise.all(libraries.map(async library => {
+            if (!library) return false;
 
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
@@ -226,9 +222,9 @@ class Minecraft {
                 const lib_url = library.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
                     library.artifact?.url.includes('http') ? library.artifact.url :
                         library.url ? library.url :
-                            library.exact_url ? library.exact_url : undefined;
+                            library.exact_url ? library.exact_url : "";
                 const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`;
-                const url = [
+                const urls = [
                     lib_url,
                     'https://libraries.minecraft.net/' + jar_name,
                     'https://tlauncherrepo.com/repo/libraries/' + jar_name,
@@ -238,8 +234,8 @@ class Minecraft {
                     'https://maven.minecraftforge.net/' + jar_name,
                     (library.url ? library.url : '') + jar_name
                 ];
-                for (let c of url) {
-                    if (await this.downloadAsync(c, jarPath, name, true, type)) { continue };
+                for (const url of urls) {
+                    if (await this.downloadAsync(url, jarPath, name, true, type)) { break; };
                 }
             }
 
@@ -252,9 +248,9 @@ class Minecraft {
                 version_hash: this.options.installation.hash
             });
 
-            if (library.mod || library.downloadOnly) return;
+            if (library.mod || library.downloadOnly) return false;
 
-            libs.push(`${jarPath}${path.sep}${name}`);
+            return (`${jarPath}${path.sep}${name}`);
         }));
 
         count = 0;
@@ -266,7 +262,7 @@ class Minecraft {
             version_hash: this.options.installation.hash
         });
 
-        return libs;
+        return libs.filter(lib => Boolean(lib));
     }
 
     /**
@@ -279,73 +275,70 @@ class Minecraft {
      * @param {String} type - Meta type of download
      */
     downloadAsync(url, directory, filename, retry, type = null) {
-        return new Promise(resolve => {
-            const _path = path.join(directory, filename)
+        return new Promise((resolve) => {
 
-            if (fs.existsSync(_path) && fs.readFileSync(_path).length > 0) return resolve(true);
+            const filepath = path.join(directory, filename);
+
+            if (fs.existsSync(filepath) && fs.readFileSync(filepath).length > 0) return resolve(false);
+            if (!url.includes('http')) return resolve(false);
+
+            const _request = this.baseRequest(url);
+
+            let receivedBytes = 0;
+            let totalBytes = 0;
 
             fs.mkdirSync(directory, { recursive: true });
 
-            if (url.includes('http')) {
+            const runRetry = async () => {
+                logg.debug(`[FILE] Failed to download ${url} to ${filepath} due to\n${e}.` + ` Retrying... ${retry}`);
+                if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+                if (retry) return resolve(await this.downloadAsync(url, directory, filename, false, type));
+                resolve(false);
+            };
 
-                const _request = this.baseRequest(url);
+            _request.on('response', (data) => {
 
-                let receivedBytes = 0;
-                let totalBytes = 0;
+                if (data.statusCode !== 200) {
+                    logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
+                    if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+                    resolve(false);
+                    return;
+                }
 
-                _request.on('response', (data) => {
+                totalBytes = parseInt(data.headers['content-length']);
 
-                    if (data.statusCode !== 200) {
-                        logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
-                        if (fs.existsSync(_path)) fs.unlinkSync(_path);
-                        resolve(false);
-                        return;
-                    }
+                const file = fs.createWriteStream(filepath, { flags: 'w+' });
 
-                    totalBytes = parseInt(data.headers['content-length']);
+                _request.pipe(file);
 
-                    const file = fs.createWriteStream(_path, { flags: 'w+' });
-
-                    _request.pipe(file);
-
-                    file.once('finish', () => {
-                        this.client.emit('download-status', {
-                            name: filename,
-                            type: type,
-                            current: 0,
-                            total: totalBytes,
-                            version_hash: this.options.installation.hash
-                        });
-                        resolve({ failed: false, asset: null });
-                    })
-
-                    file.on('error', async (e) => {
-                        logg.debug(`[FILE] Failed to download ${url} to ${_path} due to\n${e}.` + ` Retrying... ${retry}`);
-                        if (fs.existsSync(_path)) fs.unlinkSync(_path);
-                        if (retry) await this.downloadAsync(url, directory, filename, false, type);
-                        resolve();
-                    })
-
-                });
-
-                _request.on('error', async (error) => {
-                    logg.warn(`[REQUEST] Failed to download ${url} to ${_path} due to\n${error}.` + ` Retrying... ${retry}`);
-                    if (fs.existsSync(_path)) fs.unlinkSync(_path);
-                    if (retry) await this.downloadAsync(url, directory, filename, false, type);
-                    resolve();
-                });
-
-                _request.on('data', (data) => {
-                    receivedBytes += data.length;
+                file.once('finish', () => {
                     this.client.emit('download-status', {
                         name: filename,
                         type: type,
-                        current: receivedBytes,
+                        current: 0,
                         total: totalBytes,
                         version_hash: this.options.installation.hash
-                    })
-                });
-            }
+                    });
+                    resolve(true);
+                })
+
+                file.on('error', () => runRetry());
+
+            });
+
+            _request.on('error', () => runRetry());
+
+            _request.on('data', (data) => {
+                receivedBytes += data.length;
+                this.client.emit('download-status', {
+                    name: filename,
+                    type: type,
+                    current: receivedBytes,
+                    total: totalBytes,
+                    version_hash: this.options.installation.hash
+                })
+            });
+
         })
     }
 
