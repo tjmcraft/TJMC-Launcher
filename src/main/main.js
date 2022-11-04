@@ -49,6 +49,14 @@ const platformIcon = ((platform) => {
     return image;
 })(process.platform);
 
+if (process.defaultApp) {
+    if (process.argv.length >= 2) {
+        app.setAsDefaultProtocolClient('tjmc', process.execPath, [path.resolve(process.argv[1])]);
+    }
+} else {
+    app.setAsDefaultProtocolClient('tjmc');
+}
+
 const createPreloadWindow = () => new Promise((resolve, reject) => {
     const window = new BrowserWindow({
         width: 300,
@@ -93,13 +101,54 @@ const restoreWindow = () => {
     win.focus();
 }
 
+const protoHandler = (link) => {
+    if (!link) return;
+
+    const { host: command, path: argument } = url.parse(link);
+    const args = argument.split('/').slice(1);
+
+    logger.debug("[ProtoHandler]", link, "->", command, args);
+
+    switch (command) {
+
+        case "launch": {
+            const version_hash = args[0];
+            launchMinecraft(version_hash);
+        }; break;
+
+        default: return false;
+    }
+
+    return true;
+};
+
+const handleArgsLink = (args) => {
+    if (process.platform === 'win32') {
+        const deepLink = args.find((arg) => arg.startsWith('tjmc://'));
+        if (deepLink) return protoHandler(deepLink);
+    }
+    return false;
+}
+
 if (!gotTheLock) {
     app.quit();
+    return;
 } else {
+
+    logger.debug("Process args:", process.argv);
+    /* FIXME: need to load managers on fly to use this */
+    // handleArgsLink(process.argv); // first run
+
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        console.debug("Second instance call");
-        restoreWindow();
+        console.debug("Second instance call", commandLine);
+        if (!handleArgsLink(commandLine)) restoreWindow();
     });
+
+    app.on('open-url', function (event, data) {
+        event.preventDefault();
+        console.debug("Open url", data);
+    });
+
     app.once('ready', () => {
 
         require('@electron/remote/main').initialize();
@@ -162,13 +211,17 @@ if (!gotTheLock) {
 
         });
     });
+
     app.once('ready', () => createMenu());
     app.once('ready', () => createTray());
+
     app.on("window-all-closed", () => { });
+
     app.on('activate', () => {
         if (win === null) createMainWindow();
         else restoreWindow();
     });
+
     app.on('before-quit', () => {
         logger.debug("Before quit")
         win && win.destroy();
@@ -231,7 +284,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     //win.webContents.openDevTools()
 
     ipcMain.handle('ping', async (event, ...args) => args);
-    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => launchMinecraft(version_hash, params));
+    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params));
     ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
     ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations());
     ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions());

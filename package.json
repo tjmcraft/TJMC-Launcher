@@ -57,6 +57,12 @@
       "releaseType": "draft",
       "channel": "latest"
     },
+    "protocols": [
+      {
+        "name": "tjmc-protocol",
+        "schemes": ["tjmc"]
+      }
+    ],
     "directories": {
       "buildResources": "build",
       "output": "dist"
