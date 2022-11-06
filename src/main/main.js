@@ -7,6 +7,7 @@ console.time("> require");
 const path = require('path');
 const url = require('url');
 const os = require('os');
+const { exec } = require('child_process');
 
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -49,12 +50,24 @@ const platformIcon = ((platform) => {
     return image;
 })(process.platform);
 
-if (process.defaultApp) {
-    if (process.argv.length >= 2) {
-        app.setAsDefaultProtocolClient('tjmc', process.execPath, [path.resolve(process.argv[1])]);
+const DEFAULT_PROTOCOL_HANDLER = "tjmc";
+
+const setInstanceProtocolHandler = () => {
+    if (process.platform === "linux") {
+        const command = "xdg-settings set default-url-scheme-handler"
+        const packageName = "tjmc-launcher_tjmc-launcher.desktop"
+
+        // TODO: Figure out bug in setAsDefaultProtocolClient on Linux
+        // Set Protocol Handler on Linux manually because of bug in Electron
+        try {
+            exec(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
+            logger.info("Successfully set protocol handler on Linux.")
+        } catch (e) {
+            logger.warn(`Failed to set Protocol Handler on Linux: ${e}`)
+        }
+    } else {
+        app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER)
     }
-} else {
-    app.setAsDefaultProtocolClient('tjmc');
 }
 
 const createPreloadWindow = () => new Promise((resolve, reject) => {
@@ -81,8 +94,6 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
     window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
 });
-
-const gotTheLock = app.requestSingleInstanceLock();
 
 /**
  * @type {BrowserWindow} - The main window
@@ -130,6 +141,8 @@ const handleArgsLink = (args) => {
     return false;
 }
 
+const gotTheLock = app.requestSingleInstanceLock();
+
 if (!gotTheLock) {
     app.quit();
     return;
@@ -151,6 +164,8 @@ if (!gotTheLock) {
     });
 
     app.once('ready', () => {
+
+        setInstanceProtocolHandler();
 
         require('@electron/remote/main').initialize();
 
@@ -495,7 +510,6 @@ function startWebServer() {
 }
 
 const WebSocket = require('ws');
-const { error } = require('console');
 
 var socket_connector;
 
