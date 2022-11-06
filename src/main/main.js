@@ -687,18 +687,18 @@ const createMenu = async () => {
 }
 
 const createTray = async () => {
-    tray = new Tray(process.platform === "darwin" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
+    tray = new Tray(process.platform != "win32" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
     //tray.on('right-click', toggleWindow)
     //tray.on('double-click', toggleWindow)
-    process.platform != "darwin" && tray.on('click', function (event) {
+    process.platform === "win32" && tray.on('click', function (event) {
         restoreWindow();
     })
     const menu = Menu.buildFromTemplate([
         {
             label: 'TJMC-Launcher',
             icon: platformIcon.resize({ width: 16, height: 16 }),
-            enabled: process.platform === "darwin",
-            click: () => process.platform === "darwin" && restoreWindow()
+            enabled: process.platform != "win32",
+            click: () => process.platform != "win32" && restoreWindow()
         },
         {
             type: 'separator'
