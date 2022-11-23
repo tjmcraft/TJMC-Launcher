@@ -5,15 +5,11 @@ const { autoUpdater } = require('electron-updater');
 console.time("> require");
 
 const path = require('path');
-const url = require('url');
 const os = require('os');
-const { exec } = require('child_process');
 
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
-
-const WindowState = require('./libs/WindowState');
 
 const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold');
 const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold');
@@ -60,7 +56,7 @@ const setInstanceProtocolHandler = () => {
         // TODO: Figure out bug in setAsDefaultProtocolClient on Linux
         // Set Protocol Handler on Linux manually because of bug in Electron
         try {
-            exec(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
+            require('child_process').exec(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
             logger.info("Successfully set protocol handler on Linux.")
         } catch (e) {
             logger.warn(`Failed to set Protocol Handler on Linux: ${e}`)
@@ -68,6 +64,52 @@ const setInstanceProtocolHandler = () => {
     } else {
         app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER)
     }
+}
+
+/**
+ * @type {BrowserWindow} - The main window
+ */
+var win = undefined;
+
+/**
+ * @type {Tray} - Tray instance
+ */
+var tray = undefined;
+
+const restoreWindow = () => {
+    if (!win) return;
+    if (!win.isVisible()) win.show();
+    if (win.isMinimized()) win.restore();
+    win.focus();
+}
+
+const protoHandler = (link) => {
+    if (!link) return;
+
+    const { host: command, path: argument } = require('url').parse(link);
+    const args = argument.split('/').slice(1);
+
+    logger.debug("[ProtoHandler]", link, "->", command, args);
+
+    switch (command) {
+
+        case "launch": {
+            const version_hash = args[0];
+            launchMinecraft(version_hash);
+        }; break;
+
+        default: return false;
+    }
+
+    return true;
+};
+
+const handleArgsLink = (args) => {
+    if (process.platform === 'win32') {
+        const deepLink = args.find((arg) => arg.startsWith('tjmc://'));
+        if (deepLink) return protoHandler(deepLink);
+    }
+    return false;
 }
 
 const createPreloadWindow = () => new Promise((resolve, reject) => {
@@ -94,52 +136,6 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
     window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
 });
-
-/**
- * @type {BrowserWindow} - The main window
- */
-var win = undefined;
-
-/**
- * @type {Tray} - Tray instance
- */
-var tray = undefined;
-
-const restoreWindow = () => {
-    if (!win) return;
-    if (!win.isVisible()) win.show();
-    if (win.isMinimized()) win.restore();
-    win.focus();
-}
-
-const protoHandler = (link) => {
-    if (!link) return;
-
-    const { host: command, path: argument } = url.parse(link);
-    const args = argument.split('/').slice(1);
-
-    logger.debug("[ProtoHandler]", link, "->", command, args);
-
-    switch (command) {
-
-        case "launch": {
-            const version_hash = args[0];
-            launchMinecraft(version_hash);
-        }; break;
-
-        default: return false;
-    }
-
-    return true;
-};
-
-const handleArgsLink = (args) => {
-    if (process.platform === 'win32') {
-        const deepLink = args.find((arg) => arg.startsWith('tjmc://'));
-        if (deepLink) return protoHandler(deepLink);
-    }
-    return false;
-}
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -228,7 +224,7 @@ if (!gotTheLock) {
         });
     });
 
-    app.once('ready', () => createMenu());
+    app.once('ready', () => require('./menu').createMenu());
     app.once('ready', () => createTray());
 
     app.on("window-all-closed", () => { });
@@ -247,10 +243,10 @@ if (!gotTheLock) {
 
 const createMainWindow = () => new Promise((resolve, reject) => {
 
-    let windowState = WindowState({
+    let windowState = require('./libs/WindowState')({
         width: 1280,
         height: 720
-    })
+    });
 
     win = new BrowserWindow({
         x: windowState.x,
@@ -522,7 +518,6 @@ const startSocketServer = () =>
                     data: data
                 }));
             }
-            sendJSON('status', 'connected');
             this.send = (type = null, data) => {
                 if (socket) sendJSON(type, data);
             }
@@ -533,172 +528,19 @@ const startSocketServer = () =>
         });
         wss.on('error', (err) => {
             reject(err);
+            logger.error('socket error', err);
         });
-        wss.on('connection', socket => {
+        wss.on('connection', (socket) => {
             socket_connector = new SocketConnect(socket);
+            socket_connector.send('ready', {
+                host_vendor: 'tjmc',
+                host_version: autoUpdater.currentVersion,
+            });
+            logger.debug('new socket connection');
         });
         resolve(wss);
     });
 
-
-const createMenu = async () => {
-    const isMac = (process.platform === 'darwin');
-    const template = [
-        ...(isMac ? [{
-            label: 'Application',
-            submenu: [
-                {
-                    label: 'About Application',
-                    selector: 'orderFrontStandardAboutPanel:'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    label: 'Quit',
-                    accelerator: 'Command+Q',
-                    click: () => {
-                        app.quit()
-                    }
-                }
-            ]
-        }] : []),
-        {
-            label: 'Minecraft',
-            submenu: [{
-                    label: 'Root Directory',
-                    accelerator: isMac ? 'Cmd+Alt+D' : 'Ctrl+Shift+D',
-                    click: () => openMineDir()
-                },
-                {
-                    label: 'Options',
-                    accelerator: isMac ? 'Cmd+Alt+I' : 'Ctrl+Shift+I',
-                    click: () => win.webContents.send('open-settings')
-                }
-            ]
-        },
-        // { role: 'editMenu' }
-        {
-            label: 'Edit',
-            submenu: [{
-                    role: 'undo'
-                },
-                {
-                    role: 'redo'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'cut'
-                },
-                {
-                    role: 'copy'
-                },
-                {
-                    role: 'paste'
-                },
-                ...(isMac ? [{
-                        role: 'pasteAndMatchStyle'
-                    },
-                    {
-                        role: 'delete'
-                    },
-                    {
-                        role: 'selectAll'
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        label: 'Speech',
-                        submenu: [{
-                                role: 'startSpeaking'
-                            },
-                            {
-                                role: 'stopSpeaking'
-                            }
-                        ]
-                    }
-                ] : [{
-                        role: 'delete'
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        role: 'selectAll'
-                    }
-                ])
-            ]
-        },
-        // { role: 'viewMenu' }
-        {
-            label: 'View',
-            submenu: [{
-                    role: 'reload'
-                },
-                {
-                    role: 'forceReload'
-                },
-                {
-                    role: 'toggleDevTools',
-                    accelerator: 'F12'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'resetZoom'
-                },
-                {
-                    role: 'zoomIn',
-                    accelerator: 'Ctrl+='
-                },
-                {
-                    role: 'zoomOut',
-                    accelerator: 'Ctrl+-'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'togglefullscreen',
-                    accelerator: 'F11'
-                }
-            ]
-        },
-        // { role: 'windowMenu' }
-        {
-            label: 'Window',
-            submenu: [{
-                    role: 'minimize'
-                },
-                {
-                    role: 'zoom'
-                },
-                ...(isMac ? [{
-                        type: 'separator'
-                    },
-                    {
-                        role: 'front'
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        role: 'window'
-                    }
-                ] : [{
-                    role: 'close'
-                }])
-            ]
-        }
-    ];
-    const menuObject = Menu.buildFromTemplate(template);
-    Menu.setApplicationMenu(menuObject);
-
-}
 
 const createTray = async () => {
     tray = new Tray(process.platform != "win32" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
