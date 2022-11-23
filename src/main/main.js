@@ -532,11 +532,13 @@ const startSocketServer = () =>
         });
         wss.on('connection', (socket) => {
             socket_connector = new SocketConnect(socket);
-            socket_connector.send('ready', {
-                host_vendor: 'tjmc',
-                host_version: autoUpdater.currentVersion,
-            });
-            logger.debug('new socket connection');
+            socket_connector.send('connected');
+            setTimeout(() => {
+                socket_connector.send('ready', {
+                    host_vendor: 'tjmc',
+                    host_version: autoUpdater.currentVersion,
+                });
+            }, 1000);
         });
         resolve(wss);
     });
