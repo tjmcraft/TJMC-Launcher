@@ -130,9 +130,8 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
     });
 
     window.loadFile(path.join(__dirname, '../..', 'app', 'index.html'));
-
+    //return resolve(window);
     logger.debug("[Preload]", "Created preload window!");
-
     window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
 });
@@ -167,6 +166,7 @@ if (!gotTheLock) {
 
         createPreloadWindow().then(window => {
 
+            // Handlers
             const event_updateError = (e) => window.webContents.send('update.error', e);
             const event_updateChecking = (e) => window.webContents.send('update.check', e);
             const event_updateAvailable = (e) => window.webContents.send('update.available', e);
@@ -187,13 +187,15 @@ if (!gotTheLock) {
                     VersionManager.updateGlobalVersionsConfig();
                     InstallationsManager.load(ConfigManager.getLauncherDirectory());
                     startSocketServer().catch((e) => { throw e; });
-                    startWebServer().catch((e) => { throw e; });
+                    //startWebServer().catch((e) => { throw e; });
                 } catch (e) {
                     logger.error("[Startup]", "Error:", e);
                     app.quit();
                 }
+                //return;
                 createMainWindow().then(() => {
                     //window.hide();
+                    // Disable handlers
                     autoUpdater.off('error', event_updateError);
                     autoUpdater.off('checking-for-update', event_updateChecking);
                     autoUpdater.off('update-available', event_updateAvailable);
@@ -204,12 +206,14 @@ if (!gotTheLock) {
                 });
             });
 
-            ConfigManager.load();
+            // Entry point -->
+
+            ConfigManager.load(); // Load config
 
             // Hardware acceleration.
             if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
 
-            if (ConfigManager.getCheckUpdates()) {
+            if (ConfigManager.getCheckUpdates()) { // Check updates if need
                 autoUpdater.checkForUpdates().then(updates => {
                     updateLogger.debug("-> Updates:", updates);
                     if (!updates) autoUpdater.emit('update-not-available');
@@ -295,7 +299,52 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     //win.webContents.openDevTools()
 
-    ipcMain.handle('ping', async (event, ...args) => args);
+    const validChannels = {
+        requestHostInfo: 'requestHostInfo',
+        invokeLaunch: 'invokeLaunch',
+        setProgress: 'setProgress',
+        fetchInstallations: 'fetchInstallations',
+        fetchVersions: 'fetchVersions',
+        createInstallation: 'createInstallation',
+        fetchConfiguration: 'fetchConfiguration',
+        setConfiguration: 'setConfiguration',
+        fetchSystemMem: 'fetchSystemMem',
+        fetchHostVersion: 'fetchHostVersion',
+    };
+
+    // add sender to main window web contents
+    WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
+    //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
+
+    Object.keys(validChannels).forEach(channel => {
+        const event = validChannels[channel];
+        ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
+    })
+
+    WSSHost.addReducer(validChannels.invokeLaunch, ({ data }) => {
+        if (data.version_hash) {
+            return launchMinecraft(data.version_hash, data.params = {})
+        }
+        return false;
+    });
+
+    WSSHost.addReducer(validChannels.setProgress, ({ data }) => {
+        if (data.progress) {
+            win?.setProgressBar(data.progress);
+        }
+    });
+
+    WSSHost.addReducer(validChannels.fetchInstallations, async ({ msgId }) => {
+        const installations = await InstallationsManager.getInstallations();
+        return WSSHost.RPCResponse("updateInstallations", {
+            installations
+        }, msgId);
+    })
+
+
+    // TODO: Implement all known methods to new api
+
+    /* ipcMain.handle('ping', async (event, ...args) => args);
     ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params));
     ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
     ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations());
@@ -304,7 +353,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
     ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
-    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion);
+    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion); */
 
     const setOSTheme = () => {
         let source = nativeTheme.themeSource;
@@ -329,11 +378,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
     function progress(e) {
         const progress = (e.task / e.total);
-        if (win) win.webContents.send('progress', {
-            progress: progress,
-            version_hash: e.version_hash
-        });
-        if (socket_connector) socket_connector.send('progress', {
+        WSSHost.emit('game.progress.load', {
             progress: progress,
             version_hash: e.version_hash
         });
@@ -342,11 +387,7 @@ async function launchMinecraft(version_hash, params = {}) {
     function download_progress(e) {
         const progress = (e.current / e.total);
         if (e.type != 'version-jar') return;
-        if (win) win.webContents.send('progress', {
-            progress: progress,
-            version_hash: e.version_hash
-        });
-        if (socket_connector) socket_connector.send('progress', {
+        WSSHost.emit('game.progress.download', {
             progress: progress,
             version_hash: e.version_hash
         });
@@ -393,43 +434,44 @@ async function launchMinecraft(version_hash, params = {}) {
 
         JVM.on('close', (code) => {
             if (code != 0) {
-                if (win)
-                    win.webContents.send('startup-error', {
-                        error: logg_out,
-                        version_hash: version_hash
-                    }) && win.setProgressBar(-1)
-                if (socket_connector)
-                    socket_connector.send('startup-error', {
-                        error: logg_out,
-                        version_hash: version_hash
-                    });
+
+                /* win?.webContents.send('startup-error', {
+                    error: logg_out,
+                    version_hash: version_hash
+                }) */
+
+                win?.setProgressBar(-1)
+
+                WSSHost?.emit('game.startup.error', {
+                    error: logg_out,
+                    version_hash: version_hash
+                });
             }
         });
 
-        if (win)
-            win.webContents.send('startup-success', {
-                version_hash: version_hash
-            }) && win.setProgressBar(-1)
+        /* win?.webContents.send('startup-success', {
+            version_hash: version_hash
+        }); */
 
-        if (socket_connector)
-            socket_connector.send('startup-success', {
-                version_hash: version_hash
-            });
+        win?.setProgressBar(-1);
+
+        WSSHost?.emit('game.startup.success', {
+            version_hash: version_hash
+        });
 
         return true;
 
     } catch (error) {
         logger.error(error);
-        if (win)
-            win.webContents.send('error', {
-                error: error,
-                version_hash: version_hash
-            }) && win.setProgressBar(-1)
-        if (socket_connector)
-            socket_connector.send('error', {
-                error: error,
-                version_hash: version_hash
-            });
+        /* win?.webContents.send('error', {
+            error: error,
+            version_hash: version_hash
+        }) */
+        win?.setProgressBar(-1);
+        WSSHost?.emit('game.error', {
+            error: error,
+            version_hash: version_hash
+        });
     }
     return false;
 }
@@ -505,44 +547,34 @@ function startWebServer() {
     })
 }
 
-const WebSocket = require('ws');
 
-var socket_connector;
 
-const startSocketServer = () =>
-    new Promise((resolve, reject) => {
-        function SocketConnect(socket) {
-            const sendJSON = (type = null, data) => {
-                socket.send(JSON.stringify({
-                    type: type,
-                    data: data
-                }));
-            }
-            this.send = (type = null, data) => {
-                if (socket) sendJSON(type, data);
-            }
-            return this;
-        }
-        const wss = new WebSocket.Server({
-            port: 4836
-        });
-        wss.on('error', (err) => {
-            reject(err);
-            logger.error('socket error', err);
-        });
-        wss.on('connection', (socket) => {
-            socket_connector = new SocketConnect(socket);
-            socket_connector.send('connected');
-            setTimeout(() => {
-                socket_connector.send('ready', {
-                    host_vendor: 'tjmc',
-                    host_version: autoUpdater.currentVersion,
-                });
-            }, 1000);
-        });
-        resolve(wss);
+const TCHost = require('./libs/TCHost');
+
+/**
+ * TCHost instance
+ * @type {TCHost}
+ */
+var WSSHost = new TCHost();
+
+const startSocketServer = () => {
+
+    WSSHost.addReducer("requestHostInfo", (update) => {
+        setTimeout(() => {
+            WSSHost.emit('host.load', {
+                loaded: true
+            });
+        }, 3000);
+        return WSSHost.RPCResponse("updateHostInfo", {
+            hostVendor: 'TJMC-Launcher',
+            hostVersion: autoUpdater.currentVersion,
+        }, update.msgId);
     });
 
+    WSSHost.start();
+
+    return new Promise((resolve, reject) => resolve(WSSHost));
+}
 
 const createTray = async () => {
     tray = new Tray(process.platform != "win32" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
@@ -563,7 +595,10 @@ const createTray = async () => {
         },
         {
             label: 'Settings',
-            click: () => { restoreWindow(); win.webContents.send('open-settings'); }
+            click: () => {
+                restoreWindow();
+                win.webContents.send('open-settings');
+            }
         },
         {
             label: 'Open Folder',

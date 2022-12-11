@@ -60,7 +60,7 @@ function windowFocus () {
 
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
-    on (eventName, callback) {
+    on(eventName, callback) {
       ipcRenderer.on(eventName, callback)
     },
     async invoke (eventName, ...params) {
