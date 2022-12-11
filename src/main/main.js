@@ -187,7 +187,6 @@ if (!gotTheLock) {
                     VersionManager.updateGlobalVersionsConfig();
                     InstallationsManager.load(ConfigManager.getLauncherDirectory());
                     startSocketServer().catch((e) => { throw e; });
-                    //startWebServer().catch((e) => { throw e; });
                 } catch (e) {
                     logger.error("[Startup]", "Error:", e);
                     app.quit();
@@ -475,79 +474,6 @@ async function launchMinecraft(version_hash, params = {}) {
     }
     return false;
 }
-
-const express = require('express');
-const express_app = express();
-
-function startWebServer() {
-    return new Promise((resolve, reject) => {
-        const e_server = express_app.listen(5248);
-        e_server.on('error', err => reject(err));
-        express_app.use(express.json()) // for parsing application/json
-        express_app.use(function (req, res, next) {
-            res.header('Content-Type', 'application/json');
-            const allowedOrigins = ['http://127.0.0.1:3333', 'http://localhost:3333', 'http://192.168.0.12:3333', 'https://app.tjmcraft.ga'];
-            const origin = req.headers.origin;
-            if (allowedOrigins.includes(origin)) {
-                res.setHeader('Access-Control-Allow-Origin', origin);
-            }
-            res.header('Access-Control-Allow-Headers', '*');
-            next();
-        });
-        express_app.get('/ping', (req, res) => {
-            res.json({
-                pong: true
-            });
-        });
-        express_app.get('/version', (req, res) => {
-            res.json(autoUpdater.currentVersion);
-        });
-        express_app.post('/launch-mine', async (req, res) => {
-            const data = req.body;
-            if (!data || !data.version_hash) res.json({
-                success: false
-            });
-            launchMinecraft(data.version_hash, data.params);
-            res.json(true);
-        });
-        express_app.get('/installations.get', async (req, res) => {
-            res.json(await InstallationsManager.getInstallations());
-        });
-        express_app.get('/versions.get.global', async (req, res) => {
-            res.json(await VersionManager.getGlobalVersions());
-        });
-        express_app.post('/installations.create', async (req, res) => {
-            const data = req.body;
-            if (!data || !data.version || !data.options) res.json({
-                success: false
-            });
-            res.json(await InstallationsManager.createInstallation(data.version, data.options));
-        });
-        express_app.get('/configuration.get', async (req, res) => {
-            res.json(await ConfigManager.getAllOptions());
-        });
-        express_app.post('/configuration.set', async (req, res) => {
-            const data = req.body;
-            if (!data) res.json({
-                success: false
-            });
-            res.json(await ConfigManager.setOptions(data));
-        });
-        express_app.get('/system.mem', async (req, res) => {
-            res.json(os.totalmem() / 1024 / 1024);
-        })
-        express_app.get('*', function (req, res) {
-            res.send({
-                status: 404,
-                error: `Not found`,
-                success: false
-            });
-        });
-        resolve(express_app);
-    })
-}
-
-
 
 const TCHost = require('./libs/TCHost');
 
