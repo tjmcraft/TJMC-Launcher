@@ -15,6 +15,17 @@ exports.merge = function(...args) {
     return [...set]
 }
 
+exports.keySort = function (array, key, order) {
+    const sort = {
+        asc: (a, b) => {
+            a[key].localeCompare(b[key], undefined, { numeric: true, sensitivity: 'base' })
+        },
+        desc: (a, b) => sort.asc(b, a),
+    };
+    array.sort(sort[order] || sort.asc);
+    return array;
+}
+
 exports.randomInteger = function(max) {
     let min = 0
     let rand = min + Math.random() * (max + 1 - min)
@@ -69,7 +80,7 @@ function natsort(arr) {
         return arr.sort(naturalCompare);
     }
 }
-Array.prototype.natsort = natsort
+exports.natsort = natsort;
 
 /**
  * Sort a 2 dimensional array based on 1 or more indexes
@@ -102,3 +113,5 @@ function msort(arr, key) {
     }
     return arr;
 }
+
+exports.msort = msort;

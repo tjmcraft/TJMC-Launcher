@@ -338,6 +338,13 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         return WSSHost.RPCResponse("updateInstallations", {
             installations
         }, msgId);
+    });
+
+    WSSHost.addReducer(validChannels.fetchVersions, async ({ msgId }) => {
+        const versions = await VersionManager.getGlobalVersions();
+        return WSSHost.RPCResponse("updateVersions", {
+            versions
+        }, msgId);
     })
 
 

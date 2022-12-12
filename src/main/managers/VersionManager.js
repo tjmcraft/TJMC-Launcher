@@ -1,13 +1,18 @@
 const fs = require('fs')
 const path = require('path')
 
-const { merge, cleanObject } = require('../util/Tools')
+const { merge, cleanObject, natsort, msort, keySort } = require('../util/Tools')
 const { downloadFile } = require('../util/download')
 
 const logger = require('../util/loggerutil')('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
 
 var versions_directory = undefined;
 
+/**
+ * Get Local versions (based on dirs/manifests)
+ * @deprecated
+ * @returns {Array<object>}
+ */
 exports.getLocalVersions = async function () {
     if (!versions_directory) return;
     let ver_list = []
