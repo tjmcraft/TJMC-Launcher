@@ -223,7 +223,7 @@ class TCSender { // TCClient instance
    * @param {*} isBinary
    */
   async handleMessage(data, isBinary) {
-    console.debug(">> SS RECV", data);
+    // console.debug(">> SS RECV", data);
     data = socketUnpacker(data); // unpack message
     const update = await handleTCUpdate(data); // handle update
     if (update) this.sendMessage(update); // send like rpc result
@@ -233,7 +233,7 @@ class TCSender { // TCClient instance
 
   sendMessage(update) {
     const body = socketPacker(update);
-    console.debug(">>> SS SEND", body);
+    // console.debug(">>> SS SEND", body);
     if (body) this.connection.send(body);
   }
 
@@ -362,14 +362,14 @@ class TCHost { // TCHost connector instance
 
   // deprecated
   __handleMainMessage(event, data) {
-    console.debug(">> IPC RECV", data);
+    //console.debug(">> IPC RECV", data);
     data = senderUnpacker(event, data);
     const update = handleTCUpdate(data); // handle update
     if (update) {
         const sender = this.senders[update.type]; // ACK, RPC
         if (sender) {
           const senderBody = senderPacker(update);
-          console.debug(">>> IPC SEND", senderBody);
+          //console.debug(">>> IPC SEND", senderBody);
           sender(update.type, senderBody);
         }
     }
