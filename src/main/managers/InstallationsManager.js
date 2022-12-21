@@ -76,23 +76,23 @@ exports.load = function (dir_path) {
  * @param {Object} options.resolution.width - Width of the game window
  * @param {Object} options.resolution.height - Height of the game window
  */
-exports.createInstallation = async function (version, options) {
+exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
-    let new_profile = {
+    let new_profile = Object.assign({}, {
         created: current_date,
-        gameDir: options.gameDir || undefined,
+        gameDir: undefined,
         icon: undefined,
-        javaArgs: options.javaArgs || undefined,
-        javaPath: options.javaPath || undefined,
+        javaArgs: undefined,
+        javaPath: undefined,
         lastUsed: undefined,
-        lastVersionId: version || undefined,
-        name: options.name || version || undefined,
+        lastVersionId: undefined,
+        name: undefined,
         resolution: {
             width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
             height: options.resolution?.height <= 0 ? 480 : options.resolution?.height
         },
-        type: options.type || 'custom' || undefined
-    };
+        type: 'custom'
+    }, options);
     cleanObject(new_profile);
     return installations.add(new_profile);
 }

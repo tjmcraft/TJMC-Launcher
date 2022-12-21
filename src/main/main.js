@@ -340,6 +340,13 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         }, msgId);
     });
 
+    WSSHost.addReducer(validChannels.createInstallation, async ({ msgId, data }) => {
+        const installations = await InstallationsManager.createInstallation(data);
+        return WSSHost.RPCResponse("updateInstallations", {
+            installations
+        }, msgId);
+    });
+
     WSSHost.addReducer(validChannels.fetchVersions, async ({ msgId }) => {
         const versions = await VersionManager.getGlobalVersions();
         return WSSHost.RPCResponse("updateVersions", {
@@ -351,10 +358,10 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     // TODO: Implement all known methods to new api
 
     /* ipcMain.handle('ping', async (event, ...args) => args);
-    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params));
+    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params)); // imp
     ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
-    ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations());
-    ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions());
+    ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations()); // imp
+    ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions()); // imp
     ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options));
     ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
     ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
