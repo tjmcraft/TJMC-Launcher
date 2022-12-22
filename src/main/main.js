@@ -341,7 +341,8 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     });
 
     WSSHost.addReducer(validChannels.createInstallation, async ({ msgId, data }) => {
-        const installations = await InstallationsManager.createInstallation(data);
+        await InstallationsManager.createInstallation(data);
+        const installations = await InstallationsManager.getInstallations();
         return WSSHost.RPCResponse("updateInstallations", {
             installations
         }, msgId);

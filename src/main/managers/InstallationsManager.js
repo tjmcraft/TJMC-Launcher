@@ -8,10 +8,26 @@ const logger = require('../util/loggerutil')('%c[InstallationsManager]', 'color:
 /* ============= INSTALLATIONS ============= */
 
 class Installations {
+
+    /**
+     * Current manifest path
+     */
     manifest_path = undefined;
+
+    /**
+     * Current manifest
+     */
+    parsed_manifest = undefined;
+
     constructor(params = {}) {
         this.params = params;
     }
+
+    /**
+     * Load installations manifest from directory
+     * @param {String} dir_path - path to directory where installation manifest is stored
+     * @returns {Boolean} true if manifest is loaded
+     */
     load(dir_path) {
         if (!dir_path) return;
         this.manifest_path = path.join(dir_path, `launcher-profiles.json`);
@@ -21,27 +37,51 @@ class Installations {
         this.parsed_manifest = JSON.parse(fs.readFileSync(this.manifest_path));
         return true;
     }
+
+    /**
+     * Get current (loaded) manifest
+     */
     get get() {
         return this.parsed_manifest || null;
     }
+
+    /**
+     * Add new profile to manifest
+     * @param {Object} profile - profile object
+     * @param {String} id - id of installation
+     * @returns {String | Boolean} - hash of the created installation or false if failed
+     */
     add(profile, id = null) {
         let version_id = id || randomString(32);
         if (profile && !Object(this.parsed_manifest.profiles).hasOwnProperty(version_id)) {
             this.parsed_manifest.profiles[version_id] = cleanObject(profile);
         } else { throw new Error("RND Mismatch") }
-        (this.params.auto_save && this.save()) || true;
-        return version_id;
+        ;
+        return (this.params.auto_save && this.save()) && version_id;
     }
+
+    /**
+     * Remove profile from manifest
+     * @param {String} profile_id - profile id to remove
+     * @returns {Boolean} - true if profile was removed
+     */
     remove(profile_id) {
         if (profile_id && Object(this.parsed_manifest.profiles).hasOwnProperty(profile_id)) {
             delete this.parsed_manifest.profiles[profile_id];
         }
         return (this.params.auto_save && this.save()) || true;
     }
+
+    /**
+     * Set installations to current manifest and save
+     * @param {Object} profiles - current profiles
+     * @returns
+     */
     set(profiles) {
         this.parsed_manifest.profiles = cleanObject(profiles);
         return (this.params.auto_save && this.save()) || true;
     }
+
     createEmpty() {
         this.parsed_manifest = {
             tjmcVersion: '1.0.0',
@@ -49,6 +89,11 @@ class Installations {
         }
         return (this.params.auto_save && this.save()) || true;
     }
+
+    /**
+     * Save current profile
+     * @returns {Boolean} - true if success
+     */
     save() {
         fs.writeFileSync(this.manifest_path, JSON.stringify(this.parsed_manifest, null, 4));
         logger.debug('Installation profile saved!');
@@ -75,10 +120,17 @@ exports.load = function (dir_path) {
  * @param {Object} options.resolution - Resolution of the game window
  * @param {Object} options.resolution.width - Width of the game window
  * @param {Object} options.resolution.height - Height of the game window
+ * @returns {String} - Hash of the created installation profile
  */
 exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
-    let new_profile = Object.assign({}, {
+    options = Object.assign(options, { // preassign
+        resolution: {
+            width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
+            height: options.resolution?.height <= 0 ? 480 : options.resolution?.height,
+        }
+    });
+    options = Object.assign({}, { // reassign
         created: current_date,
         gameDir: undefined,
         icon: undefined,
@@ -88,13 +140,12 @@ exports.createInstallation = async function (options = {}) {
         lastVersionId: undefined,
         name: undefined,
         resolution: {
-            width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
-            height: options.resolution?.height <= 0 ? 480 : options.resolution?.height
+            width: 0,
+            height: 0,
         },
         type: 'custom'
     }, options);
-    cleanObject(new_profile);
-    return installations.add(new_profile);
+    return installations.add(options); // returns hash (dont need)
 }
 
 exports.getInstallations = async function () {
