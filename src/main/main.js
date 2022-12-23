@@ -353,7 +353,22 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         return WSSHost.RPCResponse("updateVersions", {
             versions
         }, msgId);
-    })
+    });
+
+    WSSHost.addReducer(validChannels.fetchConfiguration, async ({ msgId }) => {
+        const configuration = await ConfigManager.getAllOptions();
+        return WSSHost.RPCResponse("updateConfiguration", {
+            configuration
+        }, msgId);
+    });
+
+    WSSHost.addReducer(validChannels.setConfiguration, async ({ msgId, data }) => {
+        await ConfigManager.setOptions(data);
+        const configuration = await ConfigManager.getAllOptions();
+        return WSSHost.RPCResponse("updateConfiguration", {
+            configuration
+        }, msgId);
+    });
 
 
     // TODO: Implement all known methods to new api
@@ -363,9 +378,9 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
     ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations()); // imp
     ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions()); // imp
-    ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options));
-    ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions());
-    ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args));
+    ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options)); // imp
+    ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions()); // imp
+    ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args)); // imp
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
     ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion); */
 
