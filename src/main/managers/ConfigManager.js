@@ -104,7 +104,7 @@ exports.isLoaded = () => config != undefined;
 
 exports.getAllOptionsSync = () => config;
 exports.getAllOptions = async () => config;
-exports.setOptions = async (options) => { config = Object.assign({}, config, objectHandler(options, DEFAULT_CONFIG)); exports.save(); }
+exports.setOptions = async (options) => { config = Object.assign({}, config, objectHandler(options, DEFAULT_CONFIG)); exports.save(); return true; }
 
 exports.getLauncherDirectory = () => launcherDir;
 exports.getDataDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.root : config.overrides.path.root;
