@@ -320,11 +320,12 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
 
-    WSSHost.addReducer(validChannels.invokeLaunch, ({ data }) => {
+    WSSHost.addReducer(validChannels.invokeLaunch, async ({ data, msgId }) => {
         if (data.version_hash) {
-            return launchMinecraft(data.version_hash, data.params = {})
+            const result = await launchMinecraft(data.version_hash, data.params = {});
+            return WSSHost.RPCResponse(undefined, result, msgId);
         }
-        return false;
+        return WSSHost.RPCResponse(undefined, false, msgId);
     });
 
     WSSHost.addReducer(validChannels.setProgress, ({ data }) => {
@@ -335,54 +336,46 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     WSSHost.addReducer(validChannels.fetchInstallations, async ({ msgId }) => {
         const installations = await InstallationsManager.getInstallations();
-        return WSSHost.RPCResponse("updateInstallations", {
-            installations
-        }, msgId);
+        return WSSHost.RPCResponse(undefined, { installations }, msgId);
     });
 
     WSSHost.addReducer(validChannels.createInstallation, async ({ msgId, data }) => {
-        await InstallationsManager.createInstallation(data);
-        const installations = await InstallationsManager.getInstallations();
-        return WSSHost.RPCResponse("updateInstallations", {
-            installations
-        }, msgId);
+        const hash = await InstallationsManager.createInstallation(data);
+        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
+        return WSSHost.RPCResponse(undefined, { hash }, msgId);
     });
 
     WSSHost.addReducer(validChannels.fetchVersions, async ({ msgId }) => {
         const versions = await VersionManager.getGlobalVersions();
-        return WSSHost.RPCResponse("updateVersions", {
-            versions
-        }, msgId);
+        return WSSHost.RPCResponse(undefined, { versions }, msgId);
     });
 
     WSSHost.addReducer(validChannels.fetchConfiguration, async ({ msgId }) => {
         const configuration = await ConfigManager.getAllOptions();
-        return WSSHost.RPCResponse("updateConfiguration", {
-            configuration
-        }, msgId);
+        return WSSHost.RPCResponse(undefined, { configuration }, msgId);
     });
 
     WSSHost.addReducer(validChannels.setConfiguration, async ({ msgId, data }) => {
-        await ConfigManager.setOptions(data);
-        const configuration = await ConfigManager.getAllOptions();
-        return WSSHost.RPCResponse("updateConfiguration", {
-            configuration
-        }, msgId);
+        const result = await ConfigManager.setOptions(data);
+        ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
+        return WSSHost.RPCResponse(undefined, result, msgId);
     });
 
 
     // TODO: Implement all known methods to new api
 
-    /* ipcMain.handle('ping', async (event, ...args) => args);
+    /*
+    ipcMain.handle('ping', async (event, ...args) => args); // imp
     ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params)); // imp
-    ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args));
+    ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args)); // imp (nn)
     ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations()); // imp
     ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions()); // imp
     ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options)); // imp
     ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions()); // imp
     ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args)); // imp
     ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
-    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion); */
+    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion); // nn
+    */
 
     const setOSTheme = () => {
         let source = nativeTheme.themeSource;

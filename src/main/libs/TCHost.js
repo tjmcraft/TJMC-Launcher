@@ -112,9 +112,9 @@ const socketPacker = (update) => {
   let payload;
   try {
     payload = Object.assign({}, {
-      type: update.type,
+      type: update.type || undefined,
       msgId: update.msgId || generateRequestId(),
-      data: update.data,
+      data: update.data || undefined,
     });
     payload = Object.fromEntries(Object.entries(payload).filter(([k, v]) => v != null));
   } catch (e) {
