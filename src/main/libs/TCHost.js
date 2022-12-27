@@ -32,14 +32,12 @@ const buildUpdate = (type, data = null, msgId = 0) => ({
 
 /**
  * Create RPC Response object
- * @param {string} name - name of RPC response
  * @param {object} payload - response payload
  * @param {number} regId - request ID
  * @returns {object} - plain TCUpdate object
  */
-const RPCResponse = (name, payload = {}, regId = 0) => {
+const RPCResponse = (payload = {}, regId = 0) => {
   return buildUpdate(updateTypes.RPC, {
-    type: name,
     payload: payload,
     regId: regId,
   });
@@ -79,12 +77,15 @@ async function handleTCUpdate(update) {
   let response;
   if (updateReducers[update.type]) {
     response = await updateReducers[update.type].reduce(async (acc, reducer, idx) => {
-      const response = await reducer(update); // request update from reducer
+      const response = await reducer(update.data); // request update from reducer
       if (response) acc = Object.assign({}, acc, response); // assign current state with new state
       return acc; // return current state
     }, undefined);
+    if (response != undefined) {
+      response = RPCResponse(response, update.msgId);
+    }
   }
-  if (!response) {
+  if (response == undefined) {
     response = buildUpdate("error", { message: "Unknown wsapisx request" });
   }
   return response;
@@ -155,7 +156,7 @@ const senderPacker = (update) => {
 const socketUnpacker = (body) => {
   let type;
   let msgId;
-  let payload;
+  let data;
   try {
     body = JSON.parse(body);
   } catch (e) {
@@ -164,14 +165,14 @@ const socketUnpacker = (body) => {
   try {
     type = body['type'];
     msgId = body['msgId'];
-    payload = body['data'];
+    data = body['data'];
   } catch (e) {
     return;
   }
   return Object.seal({
     type: type,
     msgId: msgId,
-    data: payload,
+    data: data,
   });
 }
 
@@ -180,17 +181,9 @@ const socketUnpacker = (body) => {
  * @param {object} body - packed message data
  */
 const senderUnpacker = (eventName, body) => {
-  let type;
-  let payload;
-  try {
-    type = eventName;
-    payload = body;
-  } catch (e) {
-    return;
-  }
   return Object.seal({
-    type: type,
-    data: payload,
+    type: eventName,
+    data: body,
   });
 }
 
@@ -388,10 +381,6 @@ class TCHost { // TCHost connector instance
 
   // Class exports from global
   addReducer = addReducer;
-  buildUpdate = buildUpdate;
-  RPCResponse = RPCResponse;
-  ACKResponse = ACKResponse;
-  PongResponse = PongResponse;
   updateTypes = updateTypes;
 }
 

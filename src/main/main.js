@@ -298,19 +298,6 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     //win.webContents.openDevTools()
 
-    const validChannels = {
-        requestHostInfo: 'requestHostInfo',
-        invokeLaunch: 'invokeLaunch',
-        setProgress: 'setProgress',
-        fetchInstallations: 'fetchInstallations',
-        fetchVersions: 'fetchVersions',
-        createInstallation: 'createInstallation',
-        fetchConfiguration: 'fetchConfiguration',
-        setConfiguration: 'setConfiguration',
-        fetchSystemMem: 'fetchSystemMem',
-        fetchHostVersion: 'fetchHostVersion',
-    };
-
     // add sender to main window web contents
     WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
     //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
@@ -320,62 +307,46 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
 
-    WSSHost.addReducer(validChannels.invokeLaunch, async ({ data, msgId }) => {
+    WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
             const result = await launchMinecraft(data.version_hash, data.params = {});
-            return WSSHost.RPCResponse(undefined, result, msgId);
+            return result;
         }
-        return WSSHost.RPCResponse(undefined, false, msgId);
+        return false;
     });
 
-    WSSHost.addReducer(validChannels.setProgress, ({ data }) => {
+    WSSHost.addReducer(validChannels.setProgress, (data) => {
         if (data.progress) {
             win?.setProgressBar(data.progress);
         }
     });
 
-    WSSHost.addReducer(validChannels.fetchInstallations, async ({ msgId }) => {
+    WSSHost.addReducer(validChannels.fetchInstallations, async () => {
         const installations = await InstallationsManager.getInstallations();
-        return WSSHost.RPCResponse(undefined, { installations }, msgId);
+        return { installations };
     });
 
-    WSSHost.addReducer(validChannels.createInstallation, async ({ msgId, data }) => {
+    WSSHost.addReducer(validChannels.createInstallation, async (data) => {
         const hash = await InstallationsManager.createInstallation(data);
         InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
-        return WSSHost.RPCResponse(undefined, { hash }, msgId);
+        return { hash };
     });
 
-    WSSHost.addReducer(validChannels.fetchVersions, async ({ msgId }) => {
+    WSSHost.addReducer(validChannels.fetchVersions, async () => {
         const versions = await VersionManager.getGlobalVersions();
-        return WSSHost.RPCResponse(undefined, { versions }, msgId);
+        return { versions };
     });
 
-    WSSHost.addReducer(validChannels.fetchConfiguration, async ({ msgId }) => {
+    WSSHost.addReducer(validChannels.fetchConfiguration, async () => {
         const configuration = await ConfigManager.getAllOptions();
-        return WSSHost.RPCResponse(undefined, { configuration }, msgId);
+        return { configuration };
     });
 
-    WSSHost.addReducer(validChannels.setConfiguration, async ({ msgId, data }) => {
+    WSSHost.addReducer(validChannels.setConfiguration, async (data) => {
         const result = await ConfigManager.setOptions(data);
         ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
-        return WSSHost.RPCResponse(undefined, result, msgId);
+        return result;
     });
-
-
-    // TODO: Implement all known methods to new api
-
-    /*
-    ipcMain.handle('ping', async (event, ...args) => args); // imp
-    ipcMain.handle('launch-mine', async (event, version_hash = null, params = null) => await launchMinecraft(version_hash, params)); // imp
-    ipcMain.handle('set.progress.bar', async (event, args) => win?.setProgressBar(args)); // imp (nn)
-    ipcMain.handle('installations.get', async (event, ...args) => await InstallationsManager.getInstallations()); // imp
-    ipcMain.handle('versions.get.global', async (event, ...args) => await VersionManager.getGlobalVersions()); // imp
-    ipcMain.handle('installations.create', async (event, version, options) => await InstallationsManager.createInstallation(version, options)); // imp
-    ipcMain.handle('configuration.get', async (event, ...args) => await ConfigManager.getAllOptions()); // imp
-    ipcMain.handle('configuration.set', async (event, args) => await ConfigManager.setOptions(args)); // imp
-    ipcMain.handle('system.mem', async (event, ...args) => os.totalmem() / 1024 / 1024);
-    ipcMain.handle('version', async (event, ...args) => autoUpdater.currentVersion); // nn
-    */
 
     const setOSTheme = () => {
         let source = nativeTheme.themeSource;
@@ -456,28 +427,16 @@ async function launchMinecraft(version_hash, params = {}) {
 
         JVM.on('close', (code) => {
             if (code != 0) {
-
-                /* win?.webContents.send('startup-error', {
-                    error: logg_out,
-                    version_hash: version_hash
-                }) */
-
-                win?.setProgressBar(-1)
-
-                WSSHost?.emit('game.startup.error', {
+                win?.setProgressBar(-1);
+                WSSHost.emit('game.startup.error', {
                     error: logg_out,
                     version_hash: version_hash
                 });
             }
         });
 
-        /* win?.webContents.send('startup-success', {
-            version_hash: version_hash
-        }); */
-
         win?.setProgressBar(-1);
-
-        WSSHost?.emit('game.startup.success', {
+        WSSHost.emit('game.startup.success', {
             version_hash: version_hash
         });
 
@@ -485,12 +444,8 @@ async function launchMinecraft(version_hash, params = {}) {
 
     } catch (error) {
         logger.error(error);
-        /* win?.webContents.send('error', {
-            error: error,
-            version_hash: version_hash
-        }) */
         win?.setProgressBar(-1);
-        WSSHost?.emit('game.error', {
+        WSSHost.emit('game.error', {
             error: error,
             version_hash: version_hash
         });
@@ -498,7 +453,22 @@ async function launchMinecraft(version_hash, params = {}) {
     return false;
 }
 
+/* === TCHost init === */
+
 const TCHost = require('./libs/TCHost');
+
+const validChannels = {
+    requestHostInfo: 'requestHostInfo',
+    invokeLaunch: 'invokeLaunch',
+    setProgress: 'setProgress',
+    fetchInstallations: 'fetchInstallations',
+    fetchVersions: 'fetchVersions',
+    createInstallation: 'createInstallation',
+    fetchConfiguration: 'fetchConfiguration',
+    setConfiguration: 'setConfiguration',
+    fetchSystemMem: 'fetchSystemMem',
+    fetchHostVersion: 'fetchHostVersion',
+};
 
 /**
  * TCHost instance
@@ -508,17 +478,11 @@ var WSSHost = new TCHost();
 
 const startSocketServer = () => {
 
-    WSSHost.addReducer("requestHostInfo", (update) => {
-        setTimeout(() => {
-            WSSHost.emit('host.load', {
-                loaded: true
-            });
-        }, 3000);
-        return WSSHost.RPCResponse("updateHostInfo", {
-            hostVendor: 'TJMC-Launcher',
-            hostVersion: autoUpdater.currentVersion,
-        }, update.msgId);
-    });
+    WSSHost.addReducer(validChannels.requestHostInfo, () => ({
+        hostVendor: 'TJMC-Launcher',
+        hostVersion: autoUpdater.currentVersion,
+        hostMemory: os.totalmem() / 1024 / 1024,
+    }));
 
     WSSHost.start();
 
