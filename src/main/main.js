@@ -345,8 +345,8 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         return { configuration };
     });
 
-    WSSHost.addReducer(validChannels.setConfiguration, async (data) => {
-        const result = await ConfigManager.setOptions(data);
+    WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
+        const result = await ConfigManager.setOption(key, value);
         ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
         return result;
     });
