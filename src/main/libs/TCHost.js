@@ -219,7 +219,7 @@ class TCSender { // TCClient instance
     // console.debug(">> SS RECV", data);
     data = socketUnpacker(data); // unpack message
     const update = await handleTCUpdate(data); // handle update
-    if (update) this.sendMessage(update); // send like rpc result
+    if (update != undefined) this.sendMessage(update); // send like rpc result
   }
 
   handleError(err) { }
@@ -316,7 +316,7 @@ class TCHost { // TCHost connector instance
    */
   emit(type, payload = {}, localOnly = false) {
     const update = ACKResponse(type, payload);
-    if (update) {
+    if (update != undefined) {
       {
         const sender = this.senders.get(update.type);
         if (sender) {
@@ -345,26 +345,11 @@ class TCHost { // TCHost connector instance
       console.debug(">> IPC INV RECV", channel, "->", data);
       data = senderUnpacker(channel, data);
       const update = await handleTCUpdate(data);
-      if (update) {
+      if (update != undefined) {
         console.debug(">> IPC INV SEND", channel, "->", update);
         return update;
       }
       return false;
-    }
-  }
-
-  // deprecated
-  __handleMainMessage(event, data) {
-    //console.debug(">> IPC RECV", data);
-    data = senderUnpacker(event, data);
-    const update = handleTCUpdate(data); // handle update
-    if (update) {
-        const sender = this.senders[update.type]; // ACK, RPC
-        if (sender) {
-          const senderBody = senderPacker(update);
-          //console.debug(">>> IPC SEND", senderBody);
-          sender(update.type, senderBody);
-        }
     }
   }
 
