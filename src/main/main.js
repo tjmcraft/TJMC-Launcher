@@ -144,8 +144,6 @@ if (!gotTheLock) {
 } else {
 
     logger.debug("Process args:", process.argv);
-    /* FIXME: need to load managers on fly to use this */
-    // handleArgsLink(process.argv); // first run
 
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         console.debug("Second instance call", commandLine);
@@ -192,17 +190,22 @@ if (!gotTheLock) {
                     app.quit();
                 }
                 //return;
-                createMainWindow().then(() => {
-                    //window.hide();
-                    // Disable handlers
-                    autoUpdater.off('error', event_updateError);
-                    autoUpdater.off('checking-for-update', event_updateChecking);
-                    autoUpdater.off('update-available', event_updateAvailable);
-                    autoUpdater.off('download-progress', event_updateProgress);
-                    autoUpdater.off('update-downloaded', event_updateDownloaded);
-                    ipcMain.off('update.install', action_updateInstall);
-                    window.close();
-                });
+                if (!handleArgsLink(process.argv)) {
+                    try {
+                        await createMainWindow();
+                    } catch (e) {
+                        logger.error("[MainWindow]", "Error:", e);
+                        app.quit();
+                    };
+                }
+                // Disable handlers
+                autoUpdater.off('error', event_updateError);
+                autoUpdater.off('checking-for-update', event_updateChecking);
+                autoUpdater.off('update-available', event_updateAvailable);
+                autoUpdater.off('download-progress', event_updateProgress);
+                autoUpdater.off('update-downloaded', event_updateDownloaded);
+                ipcMain.off('update.install', action_updateInstall);
+                window.close();
             });
 
             // Entry point -->
