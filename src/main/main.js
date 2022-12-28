@@ -11,6 +11,11 @@ const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 
+const TCHost = require('./libs/TCHost');
+
+const { destroyTray, createTray } = require('./tray');
+const { restoreWindow } = require('./helpers');
+
 const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold');
 const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold');
 
@@ -27,24 +32,6 @@ autoUpdater.setFeedURL({
 });
 
 app.allowRendererProcessReuse = true;
-
-const platformIcon = ((platform) => {
-    let ext, filename;
-    switch (platform) {
-        case "win32":
-            ext = "ico";
-            filename = "icon";
-            break;
-        default:
-            ext = "png";
-            filename = "icon";
-    }
-    const iconPath = path.join(__dirname, '../..', 'app', 'assets', 'images', `${filename}.${ext}`);
-    logger.log('platformIcon', iconPath);
-    const image = nativeImage.createFromPath(iconPath);
-    image.setTemplateImage(true);
-    return image;
-})(process.platform);
 
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
@@ -70,18 +57,6 @@ const setInstanceProtocolHandler = () => {
  * @type {BrowserWindow} - The main window
  */
 var win = undefined;
-
-/**
- * @type {Tray} - Tray instance
- */
-var tray = undefined;
-
-const restoreWindow = () => {
-    if (!win) return;
-    if (!win.isVisible()) win.show();
-    if (win.isMinimized()) win.restore();
-    win.focus();
-}
 
 const protoHandler = (link) => {
     if (!link) return;
@@ -143,6 +118,8 @@ if (!gotTheLock) {
     return;
 } else {
 
+    console.time("> init lock");
+
     logger.debug("Process args:", process.argv);
 
     app.on('second-instance', (event, commandLine, workingDirectory) => {
@@ -157,12 +134,14 @@ if (!gotTheLock) {
     });
 
     app.once('ready', () => {
-
+        console.time("> init ready");
         setInstanceProtocolHandler();
 
         require('@electron/remote/main').initialize();
 
-        createPreloadWindow().then(window => {
+        createPreloadWindow().then(async (window) => {
+
+            console.time("> init preload");
 
             // Handlers
             const event_updateError = (e) => window.webContents.send('update.error', e);
@@ -180,6 +159,7 @@ if (!gotTheLock) {
             ipcMain.on('update.install', action_updateInstall);
 
             autoUpdater.once('update-not-available', async () => {
+                console.time("> init managers");
                 try {
                     VersionManager.load(ConfigManager.getVersionsDirectory());
                     VersionManager.updateGlobalVersionsConfig();
@@ -189,9 +169,11 @@ if (!gotTheLock) {
                     logger.error("[Startup]", "Error:", e);
                     app.quit();
                 }
+                console.timeEnd("> init managers");
                 //return;
                 if (!handleArgsLink(process.argv)) {
                     try {
+                        require('./menu').createMenu();
                         await createMainWindow();
                     } catch (e) {
                         logger.error("[MainWindow]", "Error:", e);
@@ -215,6 +197,8 @@ if (!gotTheLock) {
             // Hardware acceleration.
             if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
 
+            createTray();
+
             if (ConfigManager.getCheckUpdates()) { // Check updates if need
                 autoUpdater.checkForUpdates().then(updates => {
                     updateLogger.debug("-> Updates:", updates);
@@ -227,11 +211,11 @@ if (!gotTheLock) {
                 autoUpdater.emit('update-not-available');
             }
 
-        });
-    });
+            console.timeEnd("> init preload");
 
-    app.once('ready', () => require('./menu').createMenu());
-    app.once('ready', () => createTray());
+        });
+        console.timeEnd("> init ready");
+    });
 
     app.on("window-all-closed", () => { });
 
@@ -241,10 +225,11 @@ if (!gotTheLock) {
     });
 
     app.on('before-quit', () => {
-        logger.debug("Before quit")
         win && win.destroy();
-        tray && tray.destroy();
+        destroyTray();
     });
+
+    console.timeEnd("> init lock");
 }
 
 const createMainWindow = () => new Promise((resolve, reject) => {
@@ -301,65 +286,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     //win.webContents.openDevTools()
 
-    // add sender to main window web contents
-    WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
-    //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
-
-    Object.keys(validChannels).forEach(channel => {
-        const event = validChannels[channel];
-        ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
-    })
-
-    WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
-        if (data.version_hash) {
-            const result = await launchMinecraft(data.version_hash, data.params = {});
-            return result;
-        }
-        return false;
-    });
-
-    WSSHost.addReducer(validChannels.setProgress, (data) => {
-        if (data.progress) {
-            win?.setProgressBar(data.progress);
-        }
-    });
-
-    WSSHost.addReducer(validChannels.fetchInstallations, async () => {
-        const installations = await InstallationsManager.getInstallations();
-        return { installations };
-    });
-
-    WSSHost.addReducer(validChannels.createInstallation, async (data) => {
-        const hash = await InstallationsManager.createInstallation(data);
-        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
-        return { hash };
-    });
-
-    WSSHost.addReducer(validChannels.fetchVersions, async () => {
-        const versions = await VersionManager.getGlobalVersions();
-        return { versions };
-    });
-
-    WSSHost.addReducer(validChannels.fetchConfiguration, async () => {
-        const configuration = await ConfigManager.getAllOptions();
-        return { configuration };
-    });
-
-    WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
-        const result = await ConfigManager.setOption(key, value);
-        ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
-        return result;
-    });
-
-    const setOSTheme = () => {
-        let source = nativeTheme.themeSource;
-        const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-        win.webContents.send('theme.update', {
-            source: source,
-            theme: theme
-        });
-    }
-    nativeTheme.on('updated', () => setOSTheme());
+    initHandlers();
 });
 
 async function launchMinecraft(version_hash, params = {}) {
@@ -458,8 +385,6 @@ async function launchMinecraft(version_hash, params = {}) {
 
 /* === TCHost init === */
 
-const TCHost = require('./libs/TCHost');
-
 const validChannels = {
     requestHostInfo: 'requestHostInfo',
     invokeLaunch: 'invokeLaunch',
@@ -492,48 +417,64 @@ const startSocketServer = () => {
     return new Promise((resolve, reject) => resolve(WSSHost));
 }
 
-const createTray = async () => {
-    tray = new Tray(process.platform != "win32" ? platformIcon.resize({ width: 16, height: 16 }) : platformIcon);
-    //tray.on('right-click', toggleWindow)
-    //tray.on('double-click', toggleWindow)
-    process.platform === "win32" && tray.on('click', function (event) {
-        restoreWindow();
-    })
-    const menu = Menu.buildFromTemplate([
-        {
-            label: 'TJMC-Launcher',
-            icon: platformIcon.resize({ width: 16, height: 16 }),
-            enabled: process.platform != "win32",
-            click: () => process.platform != "win32" && restoreWindow()
-        },
-        {
-            type: 'separator'
-        },
-        {
-            label: 'Settings',
-            click: () => {
-                restoreWindow();
-                win.webContents.send('open-settings');
-            }
-        },
-        {
-            label: 'Open Folder',
-            click: () => openMineDir()
-        },
-        {
-            type: 'separator'
-        },
-        {
-            label: 'Quit',
-            click: () => app.quit()
-        }
-    ]);
-    tray.setContextMenu(menu);
-    tray.setToolTip("TJMC-Launcher");
-}
+const initHandlers = async () => {
+    // add sender to main window web contents
+    WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
+    //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
 
-function openMineDir() {
-    const path = ConfigManager.getDataDirectory();
-    logger.debug("[Main]", "{OpenMineDir}", "Path:", path);
-    shell.openPath(path);
-}
+    Object.keys(validChannels).forEach(channel => {
+        const event = validChannels[channel];
+        ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
+    })
+
+    WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
+        if (data.version_hash) {
+            const result = await launchMinecraft(data.version_hash, data.params = {});
+            return result;
+        }
+        return false;
+    });
+
+    WSSHost.addReducer(validChannels.setProgress, (data) => {
+        if (data.progress) {
+            win?.setProgressBar(data.progress);
+        }
+    });
+
+    WSSHost.addReducer(validChannels.fetchInstallations, async () => {
+        const installations = await InstallationsManager.getInstallations();
+        return { installations };
+    });
+
+    WSSHost.addReducer(validChannels.createInstallation, async (data) => {
+        const hash = await InstallationsManager.createInstallation(data);
+        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
+        return { hash };
+    });
+
+    WSSHost.addReducer(validChannels.fetchVersions, async () => {
+        const versions = await VersionManager.getGlobalVersions();
+        return { versions };
+    });
+
+    WSSHost.addReducer(validChannels.fetchConfiguration, async () => {
+        const configuration = await ConfigManager.getAllOptions();
+        return { configuration };
+    });
+
+    WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
+        const result = await ConfigManager.setOption(key, value);
+        ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
+        return result;
+    });
+
+    const setOSTheme = () => {
+        let source = nativeTheme.themeSource;
+        const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+        win.webContents.send('theme.update', {
+            source: source,
+            theme: theme
+        });
+    }
+    nativeTheme.on('updated', () => setOSTheme());
+};

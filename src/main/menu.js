@@ -1,15 +1,7 @@
-const { Menu, app, BrowserWindow } = require("electron");
+const { Menu, app } = require("electron");
+const { windowSend, restoreWindow, openDir } = require("./helpers");
 
-function send(cmd) {
-  const windows = BrowserWindow.getAllWindows();
-
-  if (windows[0]) {
-    console.log(`Sending "${cmd}"`);
-    windows[0].webContents.send(cmd);
-  } else {
-    console.log(`Tried to send "${cmd}", but could not find window`);
-  }
-}
+const ConfigManager = require('./managers/ConfigManager');
 
 const createMenu = async () => {
   const isMac = (process.platform === 'darwin');
@@ -38,12 +30,15 @@ const createMenu = async () => {
           submenu: [{
                   label: 'Root Directory',
                   accelerator: isMac ? 'Cmd+Alt+D' : 'Ctrl+Shift+D',
-                  //click: () => openMineDir()
+                  click: () => openDir(ConfigManager.getDataDirectory())
               },
               {
                   label: 'Options',
                   accelerator: isMac ? 'Cmd+Alt+I' : 'Ctrl+Shift+I',
-                  click: () => send('open-settings')
+                  click: () => {
+                      restoreWindow();
+                      windowSend('open-settings');
+                  }
               }
           ]
       },
