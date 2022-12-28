@@ -6,6 +6,7 @@ const updateTypes = {
   RPC: "rpc",
   ACK: "ack",
   PONG: "pong",
+  PING: "ping", // only client side
 };
 
 const updateReducers = {};
@@ -75,7 +76,9 @@ const PongResponse = (pingId = 0) => {
  */
 async function handleTCUpdate(update) {
   let response;
-  if (updateReducers[update.type]) {
+  if (update.type == updateTypes.PING) {
+    response = PongResponse(update.data.pingId);
+  } else if (updateReducers[update.type]) {
     response = await updateReducers[update.type].reduce(async (acc, reducer, idx) => {
       const response = await reducer(update.data); // request update from reducer
       if (response) acc = Object.assign({}, acc, response); // assign current state with new state
@@ -368,8 +371,5 @@ class TCHost { // TCHost connector instance
   addReducer = addReducer;
   updateTypes = updateTypes;
 }
-
-// Initial reducer for Ping <-> Pong
-addReducer("ping", (update) => PongResponse(update.data.pingId));
 
 module.exports = TCHost;
