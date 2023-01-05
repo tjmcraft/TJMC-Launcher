@@ -392,6 +392,7 @@ const validChannels = {
     fetchInstallations: 'fetchInstallations',
     fetchVersions: 'fetchVersions',
     createInstallation: 'createInstallation',
+    deleteInstallation: 'deleteInstallation',
     fetchConfiguration: 'fetchConfiguration',
     setConfiguration: 'setConfiguration',
     fetchSystemMem: 'fetchSystemMem',
@@ -448,6 +449,12 @@ const initHandlers = async () => {
 
     WSSHost.addReducer(validChannels.createInstallation, async (data) => {
         const hash = await InstallationsManager.createInstallation(data);
+        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
+        return { hash };
+    });
+
+    WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
+        const hash = await InstallationsManager.removeInstallation(hash, forceDeps);
         InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
         return { hash };
     });
