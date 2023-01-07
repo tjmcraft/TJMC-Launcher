@@ -6,23 +6,23 @@ class LoggerUtil {
     }
 
     log(){
-        console.log.apply(null, [this.prefix, this.style, ...arguments])
+        console.log.apply(null, [this.prefix, this.style, ...arguments, "\r"])
     }
 
     info(){
-        console.info.apply(null, [this.prefix, this.style, ...arguments])
+        console.info.apply(null, [this.prefix, this.style, ...arguments, "\r"])
     }
 
     warn(){
-        console.warn.apply(null, [this.prefix, this.style, ...arguments])
+        console.warn.apply(null, [this.prefix, this.style, ...arguments, "\r"])
     }
 
     debug(){
-        console.debug.apply(null, [this.prefix, this.style, ...arguments])
+        console.debug.apply(null, [this.prefix, this.style, ...arguments, "\r"])
     }
 
     error(){
-        console.error.apply(null, [this.prefix, this.style, ...arguments])
+        console.error.apply(null, [this.prefix, this.style, ...arguments, "\r"])
     }
 
 }

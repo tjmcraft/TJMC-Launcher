@@ -16,8 +16,8 @@ const TCHost = require('./libs/TCHost');
 const { destroyTray, createTray } = require('./tray');
 const { restoreWindow } = require('./helpers');
 
-const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold');
-const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold');
+const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold;');
+const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold;');
 
 console.timeEnd("> require");
 
