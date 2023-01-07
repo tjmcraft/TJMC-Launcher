@@ -454,9 +454,9 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
-        const hash = await InstallationsManager.removeInstallation(hash, forceDeps);
+        const result = await InstallationsManager.removeInstallation(hash, forceDeps);
         InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
-        return { hash };
+        return result;
     });
 
     WSSHost.addReducer(validChannels.fetchVersions, async () => {
