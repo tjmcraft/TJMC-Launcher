@@ -291,11 +291,11 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
 async function launchMinecraft(version_hash, params = {}) {
 
-    if (!version_hash) return;
+    if (!version_hash) throw new Error("version_hash is required");
 
     const currentInstallation = InstallationsManager.getInstallationSync(version_hash);
 
-    if (!currentInstallation) return;
+    if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
     const GameLauncher = require('./game/launcher');
 
@@ -430,7 +430,12 @@ const initHandlers = async () => {
 
     WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
-            const result = await launchMinecraft(data.version_hash, data.params = {});
+            let result;
+            try {
+                result = await launchMinecraft(data.version_hash, data.params = {});
+            } catch (err) {
+                return false;
+            }
             return result;
         }
         return false;

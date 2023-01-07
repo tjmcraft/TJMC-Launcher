@@ -81,7 +81,7 @@ async function handleTCUpdate(update) {
   } else if (updateReducers[update.type]) {
     response = await updateReducers[update.type].reduce(async (acc, reducer, idx) => {
       const response = await reducer(update.data); // request update from reducer
-      if (response) acc = Object.assign({}, acc, response); // assign current state with new state
+      if (response != undefined) acc = Object.assign({}, acc, response); // assign current state with new state
       return acc; // return current state
     }, undefined);
     if (response != undefined) {
