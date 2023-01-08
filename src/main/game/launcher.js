@@ -5,9 +5,8 @@ const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./Minecraft')
 const logger                                 = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
-const InstallationsManager                   = require('../managers/InstallationsManager')
 const VersionManager                         = require('../managers/VersionManager')
-const ConfigManager                          = require('../managers/ConfigManager')
+const JavaManager                            = require('../managers/JavaManager')
 const md5                                    = require('md5');
 
 class launcher extends EventEmitter {
@@ -43,7 +42,7 @@ class launcher extends EventEmitter {
 
     async getJava() {
         const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw';
-        const java = await this.handler.checkJava(javaPath);
+        const java = await JavaManager.checkJava(javaPath);
         if (!java.run) {
             logger.error(`Couldn't start Minecraft due to: ${java.message}`);
             throw new Error(`Wrong java (${javaPath})`);

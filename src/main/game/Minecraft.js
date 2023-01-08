@@ -1,4 +1,3 @@
-const child                                  = require('child_process')
 const LoggerUtil                             = require('../util/loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
@@ -34,24 +33,6 @@ class Minecraft {
             },
             checkHash: this.options.overrides?.checkHash ?? true
         };
-    }
-
-    /**
-     * Function checks if current Java version works
-     * @param {string} java java executable or path to java
-     */
-    async checkJava (java) {
-        return new Promise(resolve => {
-            let cmd = `"${java}" -version`;
-            child.exec(cmd, {  }, (error, stdout, stderr) => {
-                if (error) {
-                    resolve({ run: false, message: error });
-                } else {
-                    logg.debug(`Using Java (${java}) version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`);
-                    resolve({ run: true });
-                }
-            })
-        })
     }
 
     /**
