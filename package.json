@@ -85,7 +85,7 @@
           ]
         }
       ],
-      "icon": "app/assets/images/icon.icns",
+      "icon": "build/icons/icon.icns",
       "category": "public.app-category.games"
     },
     "win": {
@@ -95,7 +95,7 @@
           "arch": "x64"
         }
       ],
-      "icon": "app/assets/images/icon.ico"
+      "icon": "build/icons/icon.ico"
     },
     "linux": {
       "target": [
