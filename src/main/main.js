@@ -336,8 +336,7 @@ async function launchMinecraft(version_hash, params = {}) {
         launcher.on('download-status', download_progress);
 
         const javaPath = await launcher.getJava();
-        const manifest = await launcher.loadManifest();
-        const minecraftArguments = await launcher.construct(manifest);
+        const minecraftArguments = await launcher.construct();
 
         logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
 
@@ -434,6 +433,7 @@ const initHandlers = async () => {
             try {
                 result = await launchMinecraft(data.version_hash, data.params = {});
             } catch (err) {
+                console.error(err);
                 return false;
             }
             return result;
