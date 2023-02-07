@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, shell, nativeTheme, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, Tray, nativeImage } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
@@ -266,7 +266,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     windowState.manage(win);
 
-    win.loadURL("https://app.tjmcraft.ga/");
+    win.loadURL("http://127.0.0.1:3333");
 
     logger.log("[Main]", "Created main window!");
 
@@ -480,13 +480,4 @@ const initHandlers = async () => {
         return result;
     });
 
-    const setOSTheme = () => {
-        let source = nativeTheme.themeSource;
-        const theme = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
-        win.webContents.send('theme.update', {
-            source: source,
-            theme: theme
-        });
-    }
-    nativeTheme.on('updated', () => setOSTheme());
 };
