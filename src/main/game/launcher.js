@@ -50,13 +50,10 @@ class launcher extends EventEmitter {
         return javaPath;
     }
 
-    async loadManifest() {
-        const manifest = await VersionManager.getVersionManifest(this.options.installation.lastVersionId);
-        this.options.manifest = manifest;
-        return this.options.manifest;
-    }
+    async construct() {
 
-    async construct(versionFile) {
+        const versionFile = await VersionManager.getVersionManifest(this.options.installation.lastVersionId);
+        this.options.manifest = versionFile;
 
         if (!fs.existsSync(this.options.overrides.path.root))
             fs.mkdirSync(this.options.overrides.path.root, { recursive: true });

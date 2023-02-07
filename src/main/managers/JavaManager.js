@@ -1,5 +1,6 @@
 const child = require('child_process');
 const { downloadFile } = require('../util/download');
+const LoggerUtil = require("../util/loggerutil");
 const logger = LoggerUtil('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
 const checkJava = function (java) {
