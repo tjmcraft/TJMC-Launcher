@@ -26,22 +26,6 @@ exports.keySort = function (array, key, order) {
     return array;
 }
 
-exports.randomInteger = function(max) {
-    let min = 0
-    let rand = min + Math.random() * (max + 1 - min)
-    return Math.floor(rand)
-}
-
-exports.randomString = function(length) {
-    var result           = ''
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    var charactersLength = characters.length
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength))
-    }
-    return result
-}
-
 /**
  * Clean object (remove null and undefined)
  */

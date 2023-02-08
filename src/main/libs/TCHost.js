@@ -345,11 +345,11 @@ class TCHost { // TCHost connector instance
    */
   handleIPCInvoke(channel) {
     return async (event, data) => {
-      console.debug(">> IPC INV RECV", channel, "->", data);
+      // console.debug(">> IPC INV RECV", channel, "->", data);
       data = senderUnpacker(channel, data);
       const update = await handleTCUpdate(data);
       if (update != undefined) {
-        console.debug(">> IPC INV SEND", channel, "->", update);
+        // console.debug(">> IPC INV SEND", channel, "->", update);
         return update;
       }
       return false;
