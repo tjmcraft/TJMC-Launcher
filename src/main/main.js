@@ -105,7 +105,6 @@ const createPreloadWindow = () => new Promise((resolve, reject) => {
     });
 
     window.loadFile(path.join(__dirname, '../..', 'app', 'index.html'));
-    //return resolve(window);
     logger.debug("[Preload]", "Created preload window!");
     window.once('show', () => resolve(window));
     window.once('ready-to-show', () => window.show());
@@ -164,13 +163,12 @@ if (!gotTheLock) {
                     VersionManager.load(ConfigManager.getVersionsDirectory());
                     VersionManager.updateGlobalVersionsConfig();
                     InstallationsManager.load(ConfigManager.getLauncherDirectory());
-                    startSocketServer().catch((e) => { throw e; });
+                    startSocketServer().catch(void 0); // похуй + поебать
                 } catch (e) {
                     logger.error("[Startup]", "Error:", e);
                     app.quit();
                 }
                 console.timeEnd("> init managers");
-                //return;
                 if (!handleArgsLink(process.argv)) {
                     try {
                         require('./menu').createMenu();
@@ -285,8 +283,6 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     });
 
     //win.webContents.openDevTools()
-
-    initHandlers();
 });
 
 async function launchMinecraft(version_hash, params = {}) {
@@ -404,19 +400,15 @@ const validChannels = {
  */
 var WSSHost = new TCHost();
 
-const startSocketServer = () => {
-
-    WSSHost.addReducer(validChannels.requestHostInfo, () => ({
-        hostVendor: 'TJMC-Launcher',
-        hostVersion: autoUpdater.currentVersion,
-        hostMemory: os.totalmem() / 1024 / 1024,
-    }));
-
+const startSocketServer = async () => {
     WSSHost.start();
-
-    return new Promise((resolve, reject) => resolve(WSSHost));
+    await initHandlers();
+    return WSSHost;
 }
 
+/**
+ * Init reducers for TCHost
+ */
 const initHandlers = async () => {
     // add sender to main window web contents
     WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
@@ -426,6 +418,12 @@ const initHandlers = async () => {
         const event = validChannels[channel];
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
+
+    WSSHost.addReducer(validChannels.requestHostInfo, () => ({
+        hostVendor: 'TJMC-Launcher',
+        hostVersion: autoUpdater.currentVersion,
+        hostMemory: os.totalmem() / 1024 / 1024,
+    }));
 
     WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
