@@ -125,12 +125,6 @@ exports.load = function (dir_path) {
  */
 exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
-    options = Object.assign(options, { // preassign
-        resolution: {
-            width: options.resolution?.width <= 0 ? 854 : options.resolution?.width,
-            height: options.resolution?.height <= 0 ? 480 : options.resolution?.height,
-        }
-    });
     options = Object.assign({}, { // reassign
         created: current_date,
         gameDir: undefined,
