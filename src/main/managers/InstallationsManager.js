@@ -1,7 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-const { randomString, cleanObject } = require('../util/Tools');
+const { cleanObject } = require('../util/Tools');
+const { generateIdFor } = require('../util/Random');
 
 const logger = require('../util/loggerutil')('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold')
 
@@ -17,7 +18,7 @@ class Installations {
     /**
      * Current manifest
      */
-    parsed_manifest = undefined;
+    parsed_manifest = {};
 
     constructor(params = {}) {
         this.params = params;
@@ -52,11 +53,12 @@ class Installations {
      * @returns {String | Boolean} - hash of the created installation or false if failed
      */
     add(profile, id = null) {
-        let version_id = id || randomString(32);
-        if (profile && !Object(this.parsed_manifest.profiles).hasOwnProperty(version_id)) {
-            this.parsed_manifest.profiles[version_id] = cleanObject(profile);
-        } else { throw new Error("RND Mismatch") }
-        ;
+        let version_id = id || generateIdFor(this.parsed_manifest.profiles);
+        if (profile) {
+            Object.assign(this.parsed_manifest.profiles, {
+                [version_id]: cleanObject(profile)
+            });
+        }
         return (this.params.auto_save && this.save()) && version_id;
     }
 
@@ -110,7 +112,6 @@ exports.load = function (dir_path) {
 
 /**
  * Create new installation
- * @param {String} version - Version identifier
  * @param {Object} options - Options for version
  * @param {Object} options.name - Name of the version
  * @param {Object} options.type - Type of the version
