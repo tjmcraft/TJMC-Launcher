@@ -135,11 +135,12 @@ exports.createInstallation = async function (options = {}) {
         lastVersionId: undefined,
         name: undefined,
         resolution: {
-            width: 0,
-            height: 0,
+            width: undefined,
+            height: undefined,
         },
         type: 'custom'
     }, options);
+    cleanObject(options);
     return installations.add(options); // returns hash (dont need)
 }
 
