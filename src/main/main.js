@@ -387,7 +387,7 @@ const validChannels = {
     fetchInstallations: 'fetchInstallations',
     fetchVersions: 'fetchVersions',
     createInstallation: 'createInstallation',
-    deleteInstallation: 'deleteInstallation',
+    removeInstallation: 'removeInstallation',
     fetchConfiguration: 'fetchConfiguration',
     setConfiguration: 'setConfiguration',
     fetchSystemMem: 'fetchSystemMem',
