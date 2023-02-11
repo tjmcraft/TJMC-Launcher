@@ -60,7 +60,7 @@ function naturalCompare(a, b) {
 
 function natsort(arr) {
     arr = arr || this;
-    if (arr.isArray) {
+    if (Array.isArray(arr)) {
         return arr.sort(naturalCompare);
     }
 }
@@ -74,26 +74,18 @@ exports.natsort = natsort;
  *
  * @return {Array} sorted array
  */
-function msort(arr, key) {
-    if (arr.isArray && arr.length > 0 && key != null) {
-        let mapping = [];
-        arr.forEach((v, k) => {
-            let sort_key = '';
-            if (!k.isArray) {
-                sort_key = v[key];
-            } else {
-                key.forEach((key_key) => {
-                    sort_key += v[key_key];
-                })
-            }
-            mapping[k] = sort_key;
-        })
-        natsort(mapping);
-        let sorted = [];
-        mapping.forEach((v, k) => {
-            sorted[k] = arr[k];
-        })
-        return sorted;
+function msort(arr, key = undefined) {
+    if (Array.isArray(arr) && arr.length > 0 && key != undefined) {
+        return [...arr].sort((a, b) => {
+            const a_value = a[key];
+            const b_value = b[key];
+            const compare = (a, b) => {
+                return /^\d/.test(a) - /^\d/.test(b) ||
+                a.localeCompare(b, undefined, { numeric: true });
+
+            };
+            return compare(a_value, b_value);
+        });
     }
     return arr;
 }
