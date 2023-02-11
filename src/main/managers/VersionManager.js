@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const { merge, cleanObject, natsort, msort, keySort } = require('../util/Tools')
+const { merge, cleanObject } = require('../util/Tools')
 const { downloadFile } = require('../util/download')
 
 const logger = require('../util/loggerutil')('%c[VersionManager]', 'color: #0016d6; font-weight: bold')
@@ -102,7 +102,8 @@ exports.getGlobalVersionsManifests = async function () {
     ]);
     mojang_versions = mojang_versions.versions || [];
     tlaunch_versions = tlaunch_versions.versions || [];
-    return merge(mojang_versions, tlaunch_versions);
+    const versions = merge(mojang_versions, tlaunch_versions);
+    return versions.sort((a,b) => new Date(b.releaseTime) - new Date(a.releaseTime));
 }
 
 exports.updateGlobalVersionsConfig = async function () {
