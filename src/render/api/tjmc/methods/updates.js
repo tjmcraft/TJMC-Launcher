@@ -9,8 +9,8 @@ export function init(_onUpdate) {
 export async function fetchReleases() {
 	let result;
 	try {
-		result = await fetchData(API_URL + "/api/releases");
-		if (!result || !result.response || result.error) {
+		result = await fetchData("https://api.github.com/repos/tjmcraft/TJMC-Launcher/releases");
+		if (!result || result.error) {
 			return false;
 		}
 	} catch (e) {
@@ -18,7 +18,7 @@ export async function fetchReleases() {
 	}
 	onUpdate({
 		type: "updateReleases",
-		releases: result.response
+		releases: result
 	});
 	return result;
 }

@@ -124,12 +124,11 @@ process.once('loaded', () => {
     ipcRenderer.on('focus', windowFocus)
 })
 
-/**
- * Open web links in the user's default browser.
- */
-document.addEventListener('click', (event) => {
-    if (event.target.tagName === 'A' && event.target.href.startsWith('http')) {
-        event.preventDefault()
-        shell.openExternal(event.target.href)
-    }
-})
+win.webContents.setWindowOpenHandler(({ url }) => {
+  if (url.startsWith("file://")) {
+    return { action: 'allow' };
+  }
+  // open url in a browser and prevent default
+  shell.openExternal(url);
+  return { action: 'deny' };
+});

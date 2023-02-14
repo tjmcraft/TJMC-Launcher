@@ -264,7 +264,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     windowState.manage(win);
 
-    win.loadFile(path.resolve(__dirname, '../render/dev_dist/index.html'));
+    win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
 
     logger.log("[Main]", "Created main window!");
 
