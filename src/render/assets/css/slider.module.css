@@ -1,0 +1,39 @@
+.slider {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    margin: 18px 0px;
+    border-radius: 3px;
+    transition: none;
+    background: var(--background-modifier-accent);
+}
+.slider > .bar {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    transition: inherit;
+    background: var(--brand-color);
+    border-radius: 3px 0px 0px 3px;
+}
+.slider > .track {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: inherit;
+}
+.slider > .track > .grabber {
+    position: absolute;
+    left: 50%;
+    width: 10px;
+    height: 24px;
+    top: 50%;
+    margin-top: -13px;
+    border-radius: 3px;
+    transition: inherit;
+    background-color: #fff;
+    border: 1px solid #dcddde;
+    box-shadow: 0 3px 1px 0 rgba(0, 0, 0, .05), 0 2px 2px 0 rgba(0, 0, 0, .1), 0 3px 3px 0 rgba(0, 0, 0, .05);
+    cursor: ew-resize;
+}

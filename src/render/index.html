@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- section:title -->
+        <title><%= htmlWebpackPlugin.options.title %></title>
+        <!-- endsection -->
+        <!-- section:seometa -->
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="TJMCRAFT">
+        <meta property="og:title" content="TJMCRAFT">
+        <meta property="og:description" content="">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:site" content="@tjmc">
+        <meta name="twitter:creator" content="@tjmc">
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' unsafe-inline">
+        <!-- endsection -->
+        <%= htmlWebpackPlugin.tags.headTags %>
+    </head>
+    <body>
+        <div id="app-mount"></div>
+    </body>
+</html>

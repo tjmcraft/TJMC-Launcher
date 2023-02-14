@@ -264,7 +264,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
 
     windowState.manage(win);
 
-    win.loadURL("http://127.0.0.1:3333");
+    win.loadFile(path.resolve(__dirname, '../render/dev_dist/index.html'));
 
     logger.log("[Main]", "Created main window!");
 
@@ -282,7 +282,9 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         }
     });
 
-    //win.webContents.openDevTools()
+    // win.show()
+
+    win.webContents.openDevTools()
 });
 
 async function launchMinecraft(version_hash, params = {}) {

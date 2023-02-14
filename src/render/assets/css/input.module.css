@@ -1,0 +1,125 @@
+
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+.inputGroup + .inputGroup {
+    margin-top: 1em;
+}
+.inputGroup .head {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+.inputGroup .bottom {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 5px;
+}
+.inputGroup label {
+    padding: 0 2px;
+    font-size: 14px;
+    line-height: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color-1);
+    width: 100%;
+}
+.inputGroup.error label {
+    color: var(--text-negative);
+}
+.inputGroup label.hidden {
+    display: none;
+}
+.inputGroup input, select {
+    width: 100%;
+    margin-top: 0.25rem;
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.inputWrapper .toggleIcon {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 3.375rem;
+    height: 3.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none !important;
+    color: var(--interactive-normal);
+    opacity: .7;
+    font-size: 1.5rem;
+}
+.inputWrapper .toggleIcon:hover {
+    color: var(--interactive-hover);
+}
+
+input, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: var(--background-secondary);
+    border-style: solid;
+    border-color: transparent;
+    border-width: 2px;
+    border-radius: 0.375rem;
+    padding-top: 0.5rem;
+    padding-right: 0.75rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--text-normal);
+    height: 44px;
+    opacity: 1;
+    outline: none;
+}
+
+input:focus, select:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    border-color: var(--brand-color);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input:disabled, select:disabled {
+    background-color: var(--background-secondary-alt);
+}
+
+.actionBlock {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-top: 2em;
+}
+
+.actionBlock button {
+    width: 100%;
+}

@@ -1,0 +1,40 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "preact"
+    ],
+    "overrides": [],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "indent": ["warn", "tab", { "SwitchCase": 1 }],
+        "semi": "warn",
+        "no-implicit-coercion": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "arrow-body-style": "off",
+        "no-else-return": "off",
+        "no-plusplus": "off",
+        "no-void": "off",
+        "no-continue": "off",
+        "no-undef": "off",
+        "no-unused-vars": "warn",
+        "default-case": "off",
+        "no-param-reassign": "off",
+        "no-prototype-builtins": "off",
+        "no-await-in-loop": "off",
+        "no-nested-ternary": "off",
+        "function-paren-newline": [
+            "warn", "consistent"
+        ],
+        "prefer-destructuring": "off"
+    }
+}

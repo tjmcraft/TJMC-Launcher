@@ -1,0 +1,87 @@
+.settingContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.3rem;
+}
+
+.settingGroupContainer {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.settingGroupContainer .labelRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settingGroupContainer .labelRow .control {
+    flex: 0 0 auto;
+}
+
+.settingGroupContainer .labelRow .title {
+    flex: 1;
+    display: block;
+    overflow: hidden;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--header-primary);
+}
+
+.settingGroupContainer .note {
+    margin-top: .5rem;
+}
+
+.settingGroupContainer .note .description {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--header-secondary);
+}
+
+.settingContainer > .description {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: var(--header-secondary);
+    margin-bottom: .5rem;
+}
+
+.divider {
+    border-top: thin solid var(--background-modifier-accent);
+    height: 1px;
+    width: 100%;
+}
+.divider.dividerDefault {
+    margin-top: 1.3rem;
+}
+
+.marginBottom40 {
+    margin-bottom: 2rem;
+}
+
+.sidebarInfo {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 10px;
+    text-transform: capitalize;
+    user-select: text;
+    color: var(--text-disabled);
+}
+.sidebarInfo .versionHash {
+    text-transform: none;
+}
+
+.line {
+    display: inline-block;
+    width: 100%;
+}
+
+.size12 {
+    font-size: 12px;
+    line-height: 16px;
+}

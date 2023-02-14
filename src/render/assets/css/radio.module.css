@@ -1,0 +1,62 @@
+.radioGroup {
+    display: flex;
+    flex-direction: column;
+    /*gap: .5em;*/
+}
+.radioGroup.vertical {
+    flex-direction: column;
+}
+.radioGroup.horizontal {
+    flex-direction: row;
+}
+.radioGroup.vertical > .item {
+    margin-bottom: .5rem;
+    flex: 1;
+}
+.radioGroup.horizontal > .item {
+    margin-right: .5rem;
+    flex: 1 1 auto;
+}
+.radioGroup.vertical > .item:last-child {
+    margin-bottom: 0;
+}
+.radioGroup.horizontal > .item:last-child {
+    margin-right: 0;
+}
+.radioGroup > .item {
+    position: relative;
+    color: var(--interactive-normal);
+    cursor: pointer;
+    border-radius: 3px;
+}
+.radioGroup > .item[aria-checked=true] {
+    color: var(--interactive-active) !important;
+}
+.radioGroup > .item:hover {
+    color: var(--interactive-hover);
+}
+.radioGroup > .item[aria-checked=true] > .radioBar {
+    background: var(--background-secondary-alt) !important;
+}
+.radioGroup > .item > .radioBar {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    background: var(--background-secondary);
+    padding: 10px;
+}
+.radioGroup > .item > .radioBar:hover {
+    background: var(--background-modifier-hover);
+}
+.radioGroup > .item > .radioBar > .radio {
+    display: flex;
+    width: 24px;
+    height: 24px;
+}
+.radioGroup > .item > .radioBar > .info {
+    width: 100%;
+    margin: 0 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
