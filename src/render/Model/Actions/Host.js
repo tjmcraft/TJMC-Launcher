@@ -52,11 +52,7 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	});
 });
 
-addReducer("selectFolder", async (global, actions, payload) => {
-	if (!payload) return;
-	const { title } = payload;
-
+export const selectFolder = async ({ title }) => {
 	const result = await callHost("selectFolder", { title });
-	console.debug(">>rs", result);
 	return result;
-});
+};

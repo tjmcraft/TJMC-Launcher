@@ -1,9 +1,10 @@
-import { createElement, useState } from "react";
+import { createElement, useState, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 
 import style from "CSS/input.module.css";
 import { getDispatch } from "Util/Store";
+import { selectFolder } from "Model/Actions/Host";
 
 
 export function InputText({
@@ -168,29 +169,22 @@ export function FileInput({
 export function PathInput({
 	placeholder = "path/to/file",
 	button_name = "Обзор",
-	onchange = () => { },
+	onChange = () => { },
 }) {
-	const { selectFolder } = getDispatch();
 	const [title, setTitle] = useState(placeholder);
-	const handleChange = (e) => {
-		let files = e.target.files;
-		let path = getPath(files[0].path || files[0].webkitRelativePath);
-		if (path) {
-			setTitle(path);
-			if (typeof onchange === 'function') onchange(e, path, files);
-		}
-	};
-	const handleSelect = async () => {
+	// useEffect(() => setTitle(placeholder), [placeholder]);
+	const handleSelect = async (e) => {
 		const result = await selectFolder({ title: "Select CWD" });
-		console.debug(">>fs", result);
+		if (result) {
+			if (typeof onChange === 'function') onChange(e, result[0]);
+		}
 	};
 	return (
 		createElement('div', { class: 'input-wrapper' },
 			createElement('label', { class: 'input' },
 				// createElement('input', { type: 'file', webkitdirectory: true, directory: true, onChange: handleChange }),
-				createElement('span', {onClick:handleSelect}, 'sel'),
 				createElement('span', { class: 'title' }, title || placeholder),
-				createElement('div', { class: 'small-button button' }, button_name),))
+				createElement('div', { class: 'small-button button', onClick:handleSelect }, button_name),))
 	);
 }
 
