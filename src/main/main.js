@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, shell, Tray, nativeImage } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, shell, Tray, nativeImage, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
@@ -394,6 +394,7 @@ const validChannels = {
     setConfiguration: 'setConfiguration',
     fetchSystemMem: 'fetchSystemMem',
     fetchHostVersion: 'fetchHostVersion',
+    selectFolder: 'selectFolder',
 };
 
 /**
@@ -478,6 +479,16 @@ const initHandlers = async () => {
         const result = await ConfigManager.setOption(key, value);
         ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
         return result;
+    });
+
+    WSSHost.addReducer(validChannels.selectFolder, async ({ title }) => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            title: title || 'Select a folder',
+            properties: ["openDirectory", "createDirectory", "promptToCreate"]
+        });
+        console.debug(">>fp", filePaths);
+        if (canceled) return undefined;
+        return filePaths;
     });
 
 };

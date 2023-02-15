@@ -68,3 +68,17 @@ export async function setConfiguration(key, value) {
 	if (!result) return undefined;
 	return result.payload;
 }
+
+export async function selectFolder({ title }) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "selectFolder",
+			data: { title }
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}

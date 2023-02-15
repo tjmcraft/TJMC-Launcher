@@ -1,2 +1,2 @@
-export { fetchHostInfo, invokeLaunch, fetchConfiguration, setConfiguration } from './host';
+export { fetchHostInfo, invokeLaunch, fetchConfiguration, setConfiguration, selectFolder } from './host';
 export { fetchInstallations, fetchVersions, createInstallation, removeInstallation } from './installation';
