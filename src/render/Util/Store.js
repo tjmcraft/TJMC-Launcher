@@ -49,7 +49,7 @@ function StateStore() {
 			reducers[name].forEach((reducer) => {
 				const response = reducer(currentState, actions, payload);
 				if (!response || typeof response.then === "function") {
-					return;
+					return response;
 				}
 				this.setState(response, options);
 			});
@@ -59,9 +59,8 @@ function StateStore() {
 	this.addReducer = (name, reducer) => {
 		if (!reducers[name]) { // if no reducers for this name
 			reducers[name] = []; // create empty
-			actions[name] = (payload = null, options = null) => { // add dispatch action
+			actions[name] = (payload = null, options = null) => // add dispatch action
 				onDispatch(name, payload, options);
-			};
 		}
 		reducers[name].push(reducer);
 	};
