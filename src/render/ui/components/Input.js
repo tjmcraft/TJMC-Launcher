@@ -3,6 +3,7 @@ import { createElement, useState } from "react";
 import buildClassName from "Util/buildClassName";
 
 import style from "CSS/input.module.css";
+import { getDispatch } from "Util/Store";
 
 
 export function InputText({
@@ -169,6 +170,7 @@ export function PathInput({
 	button_name = "Обзор",
 	onchange = () => { },
 }) {
+	const { selectFolder } = getDispatch();
 	const [title, setTitle] = useState(placeholder);
 	const handleChange = (e) => {
 		let files = e.target.files;
@@ -178,10 +180,15 @@ export function PathInput({
 			if (typeof onchange === 'function') onchange(e, path, files);
 		}
 	};
+	const handleSelect = async () => {
+		const result = await selectFolder({ title: "Select CWD" });
+		console.debug(">>fs", result);
+	};
 	return (
 		createElement('div', { class: 'input-wrapper' },
 			createElement('label', { class: 'input' },
-				createElement('input', { type: 'file', webkitdirectory: true, directory: true, onChange: handleChange }),
+				// createElement('input', { type: 'file', webkitdirectory: true, directory: true, onChange: handleChange }),
+				createElement('span', {onClick:handleSelect}, 'sel'),
 				createElement('span', { class: 'title' }, title || placeholder),
 				createElement('div', { class: 'small-button button' }, button_name),))
 	);

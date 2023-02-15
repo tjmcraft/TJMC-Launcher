@@ -51,3 +51,12 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 		isProcessing: true
 	});
 });
+
+addReducer("selectFolder", async (global, actions, payload) => {
+	if (!payload) return;
+	const { title } = payload;
+
+	const result = await callHost("selectFolder", { title });
+	console.debug(">>rs", result);
+	return result;
+});
