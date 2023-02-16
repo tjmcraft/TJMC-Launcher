@@ -1268,10 +1268,9 @@ body {
     top: 3px;
     opacity: .8;
     -webkit-transition: stroke-dasharray .2s ease-out, -webkit-transform .2s ease-out !important;
-    transition: stroke-dasharray .2s ease-out, -webkit-transform .2s ease-out !important;
     transition: transform .2s ease-out, stroke-dasharray .2s ease-out !important;
-    transition: transform .2s ease-out, stroke-dasharray .2s ease-out, -webkit-transform .2s ease-out !important;
-    margin-left: 4px;
+    -webkit-transform: translate3d(0, 0, 0) rotate(0deg);
+    transform: translate3d(0, 0, 0) rotate(0deg);
 }
 .button-1w5pas.open {
     -webkit-transform: translate3d(0, -3px, 0) rotate(-90deg);
