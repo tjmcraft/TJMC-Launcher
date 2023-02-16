@@ -28,6 +28,13 @@ export function SVG(name) {
 		get success_circle() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 96, height: 96, viewBox: '0 0 512 512', 'data-icon': 'success-circle' }, <path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z" />);
 		},
+		get progress_circle() {
+			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, viewBox: '0 0 48 48', 'data-icon': 'progress-circle' },
+				<g>
+					<circle r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="100" stroke-dashoffset="0" />
+					<circle id="bar" r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" style="stroke-dashoffset: 30px;" />
+				</g>);
+		},
 		get cross() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 18, height: 18, viewBox: '0 0 24 24', 'data-icon': 'cross-icon' }, <path fill="currentColor" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z" />);
 		},
@@ -101,6 +108,8 @@ export function SVG(name) {
 			return SVGS.success_circle;
 		case 'cross':
 			return SVGS.cross;
+		case 'progress-circle':
+			return SVGS.progress_circle;
 		case 'compass':
 			return SVGS.compass;
 		case 'play-circle':
