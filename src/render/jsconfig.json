@@ -2,26 +2,26 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es6",
+        "sourceMap": true,
+        "noImplicitAny": false,
         "experimentalDecorators": true,
         "allowSyntheticDefaultImports": true,
-        "checkJs": false,
-        "baseUrl": "./",
+        "checkJs": true,
+        "jsx": "react-jsx",
+        "baseUrl": ".",
         "skipLibCheck": true,
         "paths": {
             "Libs/*": ["Libs/*"],
             "Util/*": ["Util/*"],
             "SVG/*": ["assets/svg/*"],
             "IMG/*": ["assets/images/*"],
-            "CSS/*": ["assets/css/*"],
+            "CSS/*": ["./assets/css/*"],
             "UI/*": ["ui/*"],
             "Model/*": ["Model/*"],
             "Hooks/*": ["hooks/*"],
             "react": ["preact/compat"],
-            "react-dom/test-utils": ["preact/test-utils"],
-            "react-dom": ["preact/compat"],
-            "react/jsx-runtime": ["preact/jsx-runtime"]
+            "react-dom": ["preact/compat"]
         }
     },
     "exclude": ["node_modules", "dist", "build", ".vscode"],
-    // "include": ["./"]
 }
