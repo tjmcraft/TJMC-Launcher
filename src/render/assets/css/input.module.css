@@ -1,3 +1,6 @@
+:root {
+    --input-height: 42px;
+}
 
 .inputGroup {
     display: flex;
@@ -39,7 +42,7 @@
 }
 .inputGroup input, select {
     width: 100%;
-    margin-top: 0.25rem;
+    margin: 0.125rem 0;
 }
 
 .inputWrapper {
@@ -53,9 +56,11 @@
 .inputWrapper .toggleIcon {
     position: absolute;
     top: 0;
+    bottom: 0;
+    margin: auto 0;
     right: 0;
-    width: 3.125rem;
-    height: 3.125rem;
+    width: calc(var(--input-height) + 5%);
+    height: calc(var(--input-height) + 5%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,7 +90,7 @@ input, select {
     font-size: 1rem;
     line-height: 3rem;
     color: var(--text-normal);
-    height: 42px;
+    height: var(--input-height);
     opacity: 1;
     outline: none;
 }
