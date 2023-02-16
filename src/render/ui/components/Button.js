@@ -6,7 +6,7 @@ const CLICKED_TIMEOUT = 400;
 
 const Button = ({
 	id,
-	type = 'button',
+	type = "button",
 	className,
 	onClick,
 	disabled,
@@ -49,7 +49,7 @@ const Button = ({
 					<span>Please wait...</span>
 					<Spinner color={isText ? 'blue' : 'white'} />
 				</div>
-			) : <div class="content">{children}</div>}
+			) : <div className="content">{children}</div>}
 
 		</button>
 	);

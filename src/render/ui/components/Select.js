@@ -70,7 +70,7 @@ const Select = ({
 					tabIndex={0}
 					onClick={toggleIsOpen}
 				>
-					<svg xmls="http://www.w3.org/2000/svg" width="18" height="18" class={buildClassName("button-1w5pas", isOpen && "open")}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
 						<g fill="none" fill-rule="evenodd">
 							<path d="M0 0h18v18H0" />
 							<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />

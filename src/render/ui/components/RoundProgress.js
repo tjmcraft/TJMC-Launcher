@@ -3,7 +3,7 @@ import { createElement } from "react";
 const RoundProgress = ({ progress = 0 }) => {
 	const radius = 14;
 	let dashOffset = 0;
-	progress = parseInt(progress);
+	progress = parseInt(progress, 10);
 	if (isNaN(progress)) {
 		progress = 100;
 	} else {
@@ -13,7 +13,7 @@ const RoundProgress = ({ progress = 0 }) => {
 		dashOffset = ((100 - progress) / 100) * c;
 	}
 	return (
-		<div class='progress-container'>
+		<div className='progress-container'>
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox='0 0 48 48' data-icon='progress-circle'>
 				<g>
 					<circle r={radius} cx="24" cy="24" fill="transparent" stroke-dasharray="100" stroke-dashoffset="0" />

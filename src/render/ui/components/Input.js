@@ -1,8 +1,7 @@
-import { createElement, useState, useEffect, useRef } from "react";
+import { createElement, useState, useRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 
-import { getDispatch } from "Util/Store";
 import { randomString } from "Util/Random";
 import { selectFolder } from "Model/Actions/Host";
 
@@ -26,12 +25,12 @@ export function InputText({
 	);
 
 	return (
-		<div class={fullClassName}>
+		<div className={fullClassName}>
 			<label htmlFor={id}>
 				{label}
 				{error && <span> - {error}</span>}
 			</label>
-			<span class={style.inputWrapper}>
+			<span className={style.inputWrapper}>
 				<input
 					ref={ref}
 					id={id}
@@ -75,12 +74,12 @@ export function InputPassword({
 	}
 
 	return (
-		<div class={fullClassName}>
+		<div className={fullClassName}>
 			<label htmlFor={id}>
 				{label}
 				{error && <span> - {error}</span>}
 			</label>
-			<span class={style.inputWrapper}>
+			<span className={style.inputWrapper}>
 				<input
 					ref={ref}
 					id={id}
@@ -125,20 +124,20 @@ export function InputPassword({
 	);
 }
 
-export function InputGroup({ htmlFor, title, children, inRef }) {
+export function InputGroup({ htmlFor, title, children, inRef = undefined }) {
 	return (
-		<div class={style.inputGroup}>
-			<span class={style.head}>
+		<div className={style.inputGroup}>
+			<span className={style.head}>
 				<label htmlFor={htmlFor}>{title}</label>
 			</span>
-			<span class={style.inputWrapper} ref={inRef}>{children}</span>
+			<span className={style.inputWrapper} ref={inRef}>{children}</span>
 		</div>
 	);
 }
 
 export function ActionBlock(props) {
 	return (
-		<div class={style.actionBlock}>
+		<div className={style.actionBlock}>
 			{props.children}
 		</div>
 	);
@@ -148,7 +147,7 @@ export function FileInput({
 	multiple = false,
 	placeholder = "path/to/file",
 	button_name = "Обзор",
-	onchange = () => { },
+	onchange = void 0,
 }) {
 	const [title, setTitle] = useState(placeholder);
 	const handleChange = (e) => {
@@ -169,8 +168,8 @@ export function FileInput({
 }
 
 export function PathInput({
-	onChange = () => { },
-	onInput = () => { },
+	onChange = (folder) => folder,
+	onInput = (e) => e,
 	id = undefined,
 	value,
 	title,
@@ -191,8 +190,8 @@ export function PathInput({
 		});
 	};
 
-	const handleInput = (e) => {
-		onInput(e);
+	const handleInput = () => {
+		onInput();
 	};
 
 	return (
@@ -213,7 +212,7 @@ export function PathInput({
 					tabIndex={0}
 					onClick={handleSelect}
 				>
-					<svg xmls="http://www.w3.org/2000/svg" width="18" height="18" class={buildClassName("button-1w5pas")}>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas")}>
 						<g fill="none" fill-rule="evenodd">
 							<path d="M0 0h18v18H0" />
 							<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
@@ -225,9 +224,4 @@ export function PathInput({
 		</div>
 	);
 
-}
-
-function getPath(path) {
-	path = path.match(/(^.*[\\\/]|^[^\\\/].*)/i);
-	return path != null ? path[0] : false;
 }

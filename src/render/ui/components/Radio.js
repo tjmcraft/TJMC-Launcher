@@ -1,4 +1,4 @@
-import { createElement, useState, useCallback } from "react";
+import { createElement } from "react";
 
 import buildClassName from "Util/buildClassName.js";
 import { randomString } from "Util/Random.js";
@@ -38,10 +38,10 @@ const RadioGroup = ({ id, options, direction, checked, action }) => {
 const RadioItem = ({ id, checked, onClick, children }) => {
 	id = id || randomString(5);
 	return (
-		<div class={style.item} data-id={id} aria-checked={checked} onclick={onClick}>
-			<div class={style.radioBar}>
-				<div class={style.radio}>{ checked ? SVG('radio-checked') : SVG('radio') }</div>
-				<div class={style.info}>{children}</div>
+		<div className={style.item} data-id={id} aria-checked={checked} onClick={onClick}>
+			<div className={style.radioBar}>
+				<div className={style.radio}>{ checked ? SVG('radio-checked') : SVG('radio') }</div>
+				<div className={style.info}>{children}</div>
 			</div>
 		</div>
 	);

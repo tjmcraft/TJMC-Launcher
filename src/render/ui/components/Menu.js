@@ -33,9 +33,9 @@ const Menu = ({
 	const handleClose = (e) => { e.stopPropagation(); onClose(); };
 
 	return (
-		<div class={buildClassName("menu")} style={style}>
+		<div className={buildClassName("menu")} style={style}>
 			<div ref={menuRef}
-				class={buildClassName(
+				className={buildClassName(
 					positionX, positionY,
 					"bubble",
 					"menu-container",

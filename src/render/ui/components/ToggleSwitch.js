@@ -1,7 +1,9 @@
 import { createElement, memo } from "react";
+
 import style from "CSS/toggleswitch.module.css";
 
-const ToggleSwitch = memo(({id, checked, onChange}) => {
+
+const ToggleSwitch = ({ id, checked, onChange }) => {
 	const handleChange = function (e) {
 		e.preventDefault();
 		if (e.target) {
@@ -10,11 +12,11 @@ const ToggleSwitch = memo(({id, checked, onChange}) => {
 		}
 	};
 	return (
-		<label class={style.toggleSwitch}>
+		<label className={style.toggleSwitch}>
 			<input type="checkbox" id={id} checked={checked} onClick={handleChange} />
-			<span class={style.slider} />
+			<span className={style.slider} />
 		</label>
 	);
-});
+};
 
-export default ToggleSwitch;
+export default memo(ToggleSwitch);
