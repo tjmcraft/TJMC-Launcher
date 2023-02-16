@@ -190,8 +190,8 @@ export function PathInput({
 		});
 	};
 
-	const handleInput = () => {
-		onInput();
+	const handleInput = (e) => {
+		onInput(e.target.value);
 	};
 
 	return (

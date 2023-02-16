@@ -216,6 +216,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 						placeholder="<папка по умолчанию>"
 						title="Game Folder"
 						onChange={setGameDir}
+						onInput={setGameDir}
 						value={gameDir}
 					/>
 				</div>
