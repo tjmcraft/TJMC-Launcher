@@ -10,7 +10,14 @@ export const Guilds = ({children}) => {
 			}, children)));
 };
 
-export const Guild = ({id, type, onClick, image = null, svg = null, selected = false}) => {
+export const Guild = ({
+	id = undefined,
+	type,
+	onClick = void 0,
+	image = null,
+	svg = null,
+	selected = false
+}) => {
 	id = id || randomString(3);
 	const onclick = (e) => {
 		// console.debug("sel", id)

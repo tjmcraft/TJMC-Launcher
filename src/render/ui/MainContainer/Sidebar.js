@@ -1,4 +1,4 @@
-import { createElement, memo, useMemo, useCallback } from "react";
+import { createElement, memo, useCallback } from "react";
 import buildClassName from "Util/buildClassName";
 import { SVG } from "../svg";
 
@@ -25,7 +25,7 @@ const items = [
 	},
 ];
 
-const SidebarItem = memo(({ id, onClick, selected, icon, title }) => {
+const SidebarItem = ({ id, onClick, selected, icon, title }) => {
 	const handleClick = useCallback(() => {
 		onClick(id);
 	}, [onClick, id]);
@@ -37,9 +37,9 @@ const SidebarItem = memo(({ id, onClick, selected, icon, title }) => {
 			</div>
 		</div>
 	);
-});
+};
 
-const Sidebar = memo(({
+const Sidebar = ({
 	currentScreen,
 	onScreenSelect,
 }) => {
@@ -63,6 +63,6 @@ const Sidebar = memo(({
 			))}
 		</div>
 	);
-});
+};
 
-export default Sidebar;
+export default memo(Sidebar);

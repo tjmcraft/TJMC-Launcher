@@ -16,7 +16,7 @@ const Main = memo(() => {
 	const currentScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
-		<div class="container">
+		<div className="container">
 			<Guilds>
 				<Guild type="item" svg={SVG('home')} onClick={() => selectMainScreen('home')} selected={currentScreen == 'home'} />
 				<Guild type="separator" />

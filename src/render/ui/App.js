@@ -14,13 +14,14 @@ const AppContainer = memo(() => {
 	useConstructor(() => initHost());
 
 	useEffect(() => {
+		// @ts-ignore
 		electron.on('open-settings', (e, data) => openSettingsModal()); // Send global event to open settings [electron]
 	}, [openSettingsModal]);
 
 	return (
 		<div className="app-container">
 			<Main />
-			<div class="uploadArea" />
+			<div className="uploadArea" />
 		</div>
 	);
 });
@@ -33,7 +34,7 @@ const App = memo(() => {
 	const isAuthReady = useGlobal(global => global.auth_state) == "ready";
 
 	return (
-		<div class="app">
+		<div className="app">
 			{isAuthReady ? <AppContainer /> : <Auth />}
 			<Preloader />
 		</div>

@@ -4,7 +4,8 @@ import MainSidebar from "UI/MainSidebar";
 import MainContent from "./MainContent";
 import Sidebar from "./Sidebar";
 
-const MainContainer = memo(() => {
+
+const MainContainer = () => {
 
 	const [activeScreen, setScreen] = useState("main");
 
@@ -27,6 +28,6 @@ const MainContainer = memo(() => {
 			</div>
 		</div>
 	);
-});
+};
 
-export default MainContainer;
+export default memo(MainContainer);
