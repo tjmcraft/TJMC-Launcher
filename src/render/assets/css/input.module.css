@@ -74,6 +74,36 @@
     color: var(--interactive-hover);
 }
 
+.inputWrapper .actionButton {
+    position: relative;
+    margin-left: 8px;
+    padding: 0.5rem 0.75rem;
+    height: var(--input-height);
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    text-align: center;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 2px;
+    border-radius: 0.375rem;
+    color: var(--interactive-normal);
+    background: var(--background-secondary);
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.inputWrapper .actionButton:hover {
+    color: var(--interactive-hover);
+    background-color: var(--background-secondary-alt);
+}
+.inputWrapper .actionButton:active {
+    color: var(--interactive-hover);
+    background-color: var(--background-tertiary);
+}
+
 input, select {
     -webkit-appearance: none;
     -moz-appearance: none;
