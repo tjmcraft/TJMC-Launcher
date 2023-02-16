@@ -52,10 +52,10 @@
 
 .inputWrapper .toggleIcon {
     position: absolute;
-    top: -1px;
-    right: -1px;
-    width: 3.375rem;
-    height: 3.375rem;
+    top: 0;
+    right: 0;
+    width: 3.125rem;
+    height: 3.125rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -83,9 +83,9 @@ input, select {
     padding-bottom: 0.5rem;
     padding-left: 0.75rem;
     font-size: 1rem;
-    line-height: 1;
+    line-height: 3rem;
     color: var(--text-normal);
-    height: 44px;
+    height: 42px;
     opacity: 1;
     outline: none;
 }
