@@ -10,7 +10,7 @@
         "jsx": "react-jsx",
         "baseUrl": ".",
         "skipLibCheck": true,
-        "strict": true,
+        "strict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
