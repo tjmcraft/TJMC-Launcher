@@ -6,6 +6,7 @@
     "extends": [
         "eslint:recommended",
         "preact"
+        // "plugin:react/recommended"
     ],
     "overrides": [],
     "parserOptions": {
@@ -35,6 +36,8 @@
         "function-paren-newline": [
             "warn", "consistent"
         ],
-        "prefer-destructuring": "off"
+        "prefer-destructuring": "off",
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
     }
 }
