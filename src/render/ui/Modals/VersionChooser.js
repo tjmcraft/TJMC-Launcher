@@ -80,7 +80,7 @@ const DropdownSelector = ({ title, items = [], onSelect = () => {} }) => {
 		<div className="container-f" onClick={handleClick} ref={menuRef}>
 			<div className="header">
 				<h1>{selected ? selected.name : (title || 'Версии')}</h1>
-				<svg xmls="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
+				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
 					<g fill="none" fill-rule="evenodd">
 						<path d="M0 0h18v18H0" />
 						<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
@@ -188,7 +188,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			<div className="middleHeader">
 				<div className="backButton">
 					<button onClick={onBack}>
-						<svg xmls="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" className={buildClassName("button-4fai7c", isLeftOpen && "open")}>
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" className={buildClassName("button-4fai7c", isLeftOpen && "open")}>
 							<g fill="none" fill-rule="evenodd">
 								<path d="M0 0h18v18H0" />
 								<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
@@ -200,18 +200,18 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 				<h2>{version.id ? `Создание установки версии ${version.id}` : 'Создание установки'}</h2>
 			</div>
 			<div className={buildClassName("VT-flex-box", "thin-s")}>
-				<div class="children-zx1">
+				<div className="children-zx1">
 					<InputGroup title="Название установки" htmlFor="installation.name.input">
 						<input
 							id="installation.name.input"
 							type="text"
 							name="installation-name"
 							value={name}
-							oninput={(e) => setName(e.target.value)}
+							onInput={(e) => setName(e.target.value)}
 							placeholder={version_opts_default.name} />
 					</InputGroup>
 				</div>
-				<div class="children-zx1">
+				<div className="children-zx1">
 					<PathInput
 						placeholder="<папка по умолчанию>"
 						title="Game Folder"
@@ -219,26 +219,26 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 						value={gameDir}
 					/>
 				</div>
-				<div class="children-zx1">
-					<InputGroup title="Resolution">
-						<div class="resolution" id="installation.resolution.wrap">
+				<div className="children-zx1">
+					<InputGroup title="Resolution" htmlFor="installation.resolution.wrap">
+						<div className="resolution" id="installation.resolution.wrap">
 							<input
 								type="number"
 								name="installation-resolution-width"
 								value={width}
-								oninput={(e) => setWidth(e.target.value)}
+								onInput={(e) => setWidth(e.target.value)}
 								placeholder={config?.minecraft?.launch?.width || "<auto>"} />
-							<span class="resolutionCross">✖</span>
+							<span className="resolutionCross">✖</span>
 							<input
 								type="text"
 								name="installation-resolution-height"
 								value={height}
-								oninput={(e) => setHeight(e.target.value)}
+								onInput={(e) => setHeight(e.target.value)}
 								placeholder={config?.minecraft?.launch?.height || "<auto>"} />
 						</div>
 					</InputGroup>
 				</div>
-				<div class="children-zx1">
+				<div className="children-zx1">
 					<JavaSelector
 						title="Путь к java"
 						items={fakeJavas}
@@ -249,13 +249,13 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 						}}
 					/>
 				</div>
-				<div class="children-zx1">
+				<div className="children-zx1">
 					<InputGroup title="Java Arguments" htmlFor="installation.java.args.input">
 						<input id="installation.java.args.input"
 							type="text"
 							name="installation-java-args"
 							value={javaArgs}
-							oninput={(e) => setJavaArgs(e.target.value)}
+							onInput={(e) => setJavaArgs(e.target.value)}
 							placeholder="Java Arguments" />
 					</InputGroup>
 				</div>
