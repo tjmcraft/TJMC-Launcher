@@ -1569,6 +1569,7 @@ a.anchor:hover {
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: baseline;
+    width: 100%;
 }
 
 .resolution>input {
