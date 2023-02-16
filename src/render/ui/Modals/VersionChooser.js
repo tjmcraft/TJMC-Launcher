@@ -212,8 +212,12 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 					</InputGroup>
 				</div>
 				<div class="children-zx1">
-					<label for="dir">{"Папка игры"}</label>
-					<PathInput placeholder='<папка по умолчанию>' button_name='Обзор' />
+					<PathInput
+						placeholder="<папка по умолчанию>"
+						title="Game Folder"
+						onChange={setGameDir}
+						value={gameDir}
+					/>
 				</div>
 				<div class="children-zx1">
 					<InputGroup title="Resolution">

@@ -1,10 +1,12 @@
-import { createElement, useState, useEffect } from "react";
+import { createElement, useState, useEffect, useRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 
-import style from "CSS/input.module.css";
 import { getDispatch } from "Util/Store";
+import { randomString } from "Util/Random";
 import { selectFolder } from "Model/Actions/Host";
+
+import style from "CSS/input.module.css";
 
 
 export function InputText({
@@ -109,7 +111,7 @@ export function InputPassword({
 								<path d="M2 12C3.60014 7.90264 7.33603 5 12 5C16.664 5 20.3999 7.90264 22 12C20.3999 16.0974 16.664 19 12 19C7.33603 19 3.60014 16.0974 2 12Z" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 							</g>
 						</svg>
-					): (
+					) : (
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<g>
 								<path d="M10.7302 5.07319C11.1448 5.02485 11.5684 5 11.9999 5C16.6639 5 20.3998 7.90264 21.9999 12C21.6053 13.0104 21.0809 13.9482 20.4446 14.7877M6.51956 6.51944C4.47949 7.76406 2.90105 9.69259 1.99994 12C3.60008 16.0974 7.33597 19 11.9999 19C14.0375 19 15.8979 18.446 17.4805 17.4804M9.87871 9.87859C9.33576 10.4215 8.99994 11.1715 8.99994 12C8.99994 13.6569 10.3431 15 11.9999 15C12.8284 15 13.5785 14.6642 14.1214 14.1212" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -167,25 +169,62 @@ export function FileInput({
 }
 
 export function PathInput({
-	placeholder = "path/to/file",
-	button_name = "Обзор",
 	onChange = () => { },
+	onInput = () => { },
+	id = undefined,
+	value,
+	title,
+	placeholder,
 }) {
-	const [title, setTitle] = useState(placeholder);
-	// useEffect(() => setTitle(placeholder), [placeholder]);
-	const handleSelect = async (e) => {
-		const result = await selectFolder({ title: "Select CWD" });
-		if (result) {
-			if (typeof onChange === 'function') onChange(e, result[0]);
-		}
+	id = id || randomString(5);
+	const dropdownRef = useRef(null);
+	const inputRef = useRef(null);
+
+	// useEffect(() => setPlaceholder(placeholder), [placeholder]);
+
+	const handleSelect = () => {
+		selectFolder({ title: "Select CWD" }).then((result) => {
+			if (result) {
+				const folder = result[0];
+				if (typeof onChange === 'function') onChange(folder);
+			}
+		});
 	};
+
+	const handleInput = (e) => {
+		onInput(e);
+	};
+
 	return (
-		createElement('div', { class: 'input-wrapper' },
-			createElement('label', { class: 'input' },
-				// createElement('input', { type: 'file', webkitdirectory: true, directory: true, onChange: handleChange }),
-				createElement('span', { class: 'title' }, title || placeholder),
-				createElement('div', { class: 'small-button button', onClick:handleSelect }, button_name),))
+		<div className="InputPath" ref={dropdownRef}>
+			<InputGroup title={title} htmlFor={id}>
+				<input
+					ref={inputRef}
+					id={id}
+					type="text"
+					autoComplete="off"
+					onInput={handleInput}
+					value={value}
+					placeholder={placeholder}
+				/>
+				<div
+					className={style.toggleIcon}
+					role="button"
+					tabIndex={0}
+					onClick={handleSelect}
+				>
+					<svg xmls="http://www.w3.org/2000/svg" width="18" height="18" class={buildClassName("button-1w5pas")}>
+						<g fill="none" fill-rule="evenodd">
+							<path d="M0 0h18v18H0" />
+							<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
+							<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+						</g>
+					</svg>
+				</div>
+			</InputGroup>
+		</div>
 	);
+
 }
 
 function getPath(path) {
