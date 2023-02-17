@@ -18,7 +18,7 @@ import MenuItem from "UI/components/MenuItem";
 import "./VersionChooser.css";
 
 
-const Sidebar = ({ type = undefined, onSelect = () => { }, selected = undefined }) => {
+const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
 
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
@@ -49,7 +49,7 @@ const Sidebar = ({ type = undefined, onSelect = () => { }, selected = undefined 
 	);
 };
 
-const DropdownSelector = ({ title, items = [], onSelect = () => {} }) => {
+const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 0 }) => {
 
 	const [isOpen, setOpen] = useState(false);
 	const [selected, select] = useState(undefined);
@@ -79,7 +79,7 @@ const DropdownSelector = ({ title, items = [], onSelect = () => {} }) => {
 	return (
 		<div className="container-f" onClick={handleClick} ref={menuRef}>
 			<div className="header">
-				<h1>{selected ? selected.name : (title || 'Версии')}</h1>
+				<h1>{selected ? selected.name : title}</h1>
 				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
 					<g fill="none" fill-rule="evenodd">
 						<path d="M0 0h18v18H0" />
@@ -144,7 +144,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	if (!version) return null;
 
 	const handleSubmit = () => {
-		let data = Object.assign(version_opts_default, {
+		let data = cleanObject(Object.assign(version_opts_default, {
 			name: name || version_opts_default.name,
 			type: version.type,
 			resolution: {
@@ -154,8 +154,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			gameDir: gameDir || undefined,
 			javaPath: javaPath || undefined,
 			javaArgs: javaArgs || undefined,
-		});
-		data = cleanObject(data);
+		}));
 		console.debug(">> createVersion", version.id, data);
 		hostOnline && createInstallation({ version: version.id, options: data });
 	};
@@ -239,7 +238,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 						</div>
 					</InputGroup>
 				</div>
-				<div className="children-zx1">
+				<div className="children-zx1" style={{display: "none"}}>
 					<JavaSelector
 						title="Путь к java"
 						items={fakeJavas}
@@ -269,7 +268,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	);
 };
 
-const VersionChooser = memo((props) => {
+const VersionChooser = (props) => {
 
 	const { getGlobalVersions } = getDispatch();
 
@@ -290,7 +289,6 @@ const VersionChooser = memo((props) => {
 		selectType(item.type);
 	}, [selectType]);
 	const handleVersionSelect = useCallback((item) => {
-		console.debug("Version select:", item);
 		selectVersion(item);
 	}, [selectVersion]);
 	const handleCancel = useCallback(() => {
@@ -309,7 +307,7 @@ const VersionChooser = memo((props) => {
 	}, [selectedVersion]);
 
 	return (
-		<Modal {...props} full={shouldFull}>
+		<Modal mini={props.mini} small={props.small} full={shouldFull}>
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector items={versionTypes} onSelect={handleTypeSelect} />
@@ -328,6 +326,6 @@ const VersionChooser = memo((props) => {
 			</div>
 		</Modal>
 	);
-});
+};
 
-export default VersionChooser;
+export default memo(VersionChooser);
