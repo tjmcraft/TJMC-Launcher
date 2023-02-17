@@ -285,7 +285,6 @@ const INITIAL_STATE = {
 	modals: [],
 	configuration: undefined,
 	releases: [],
-	tcount: 0,
 	currentMainScreen: "home",
 };
 
@@ -306,18 +305,6 @@ stateStore.addReducer("reset", resetCache);
 
 window.resetCache = stateStore.getDispatch().reset;
 window._gstore = stateStore;
-
-stateStore.addReducer("increase", (global) => {
-	return {
-		...global,
-		tcount: global.tcount += 1,
-	};
-});
-
-setTimeout(() => {
-	// const { increase } = stateStore.getDispatch();
-	// setInterval(() => increase(), 1);
-}, 1000);
 
 export const getDispatch = stateStore.getDispatch;
 export const getState = stateStore.getState;
