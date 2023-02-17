@@ -125,12 +125,13 @@ exports.load = function (dir_path) {
  */
 exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
-    options = Object.assign({}, { // reassign
+    options = Object.assign({ // reassign
         created: current_date,
-        gameDir: undefined,
         icon: undefined,
-        javaArgs: undefined,
+        type: 'custom',
+        gameDir: undefined,
         javaPath: undefined,
+        javaArgs: undefined,
         lastUsed: undefined,
         lastVersionId: undefined,
         name: undefined,
@@ -138,7 +139,7 @@ exports.createInstallation = async function (options = {}) {
             width: undefined,
             height: undefined,
         },
-        type: 'custom'
+        checkHash: true,
     }, options);
     cleanObject(options);
     return installations.add(options); // returns hash (dont need)

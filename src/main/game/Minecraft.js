@@ -31,7 +31,7 @@ class Minecraft {
                 id: this.options.installation.lastVersionId,
                 type: this.options.installation.type
             },
-            checkHash: this.options.overrides?.checkHash ?? true
+            checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true
         };
     }
 
