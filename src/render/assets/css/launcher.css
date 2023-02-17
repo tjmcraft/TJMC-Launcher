@@ -485,7 +485,7 @@ p {
     white-space: nowrap;
     text-overflow: ellipsis;
     /* overflow: hidden; */
-    border-radius: 8px;
+    border-radius: 5px;
     flex-shrink: 0;
     font-weight: 500;
     text-align: start;
@@ -605,10 +605,28 @@ h5 {
     margin-bottom: 20px;
     color: var(--header-primary);
 }
+:root.alt-settings .content-region .content h2 {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 15;
+    /* text-align: center; */
+    margin-bottom: 20px;
+    line-height: 1;
+    color: var(--header-primary);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--background-modifier-accent);
+    background: var(--background-tertiary);
+    border-radius: 8px;
+    box-shadow: 1px 2px 5px var(--color-shadow);
+}
 
 .content-region .content h5 {
     margin-bottom: 8px;
     color: var(--header-secondary);
+}
+:root.alt-settings .content-region .content h5 {
+    margin-left: 12px;
 }
 
 

@@ -89,7 +89,7 @@ const SettingContainer = ({id, action, header, note, checked}) => {
 			<div className={style.note}>
 				<div className={style.description}>{note || ""}</div>
 			</div>
-			<div className={buildClassName(style.divider, style.dividerDefault)} />
+			{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 		</div>
 	);
 };
@@ -151,7 +151,7 @@ const MyAccountTab = memo(() => {
 					<h5>Дополнительно</h5>
 					<div className={style.settingContainer}>
 						<div className={style.description}>{"no content here"}</div>
-						<div className={buildClassName(style.divider, style.dividerDefault)} />
+						{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 					</div>
 					{APP_ENV == "development" && (
 						<div className={style.settingContainer}>
@@ -171,7 +171,7 @@ const MyAccountTab = memo(() => {
 									<MenuItem compact>Item 11</MenuItem>
 								</Select>
 							</div>
-							<div className={buildClassName(style.divider, style.dividerDefault)} />
+							{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 						</div>
 					)}
 				</div>
@@ -475,6 +475,15 @@ const LauncherAppearanceTab = memo(() => {
 						}}
 						action={(theme) => {
 							setTheme(theme);
+						}}
+					/>
+					<SettingContainer
+						id="exp.settings.blocky"
+						header="Режим блочных настроек"
+						note="Включение этого параметра позволяет использовать экспрементальный блочный режим настроек."
+						checked={settings.exp_settings_blocks}
+						action={(s) => {
+							setSettings({ exp_settings_blocks: Boolean(s) });
 						}}
 					/>
 				</div>

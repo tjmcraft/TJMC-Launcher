@@ -281,6 +281,7 @@ const INITIAL_STATE = {
 		enable_preloader: true,
 		full_settings: false,
 		full_chooser: false,
+		exp_settings_blocks: false,
 	},
 	users: {},
 	installations: {},

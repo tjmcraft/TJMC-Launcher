@@ -40,7 +40,6 @@ const switchColorScheme = (colorScheme = null) => {
 
 /**
  * Update current color scheme
- * @param {String} system - preferred system color scheme
  */
 const updateTheme = async () => {
 	const userTheme = getState(global => global.theme);
@@ -48,6 +47,12 @@ const updateTheme = async () => {
 	switchColorScheme(theme);
 };
 addCallback(updateTheme);
+
+const updateThemeExperiments = async () => {
+	const settings = getState(global => global.settings);
+	document.documentElement.classList.toggle("alt-settings", settings.exp_settings_blocks);
+};
+addCallback(updateThemeExperiments);
 
 const handleResize = () => {
 	const token = "disable-animation";
