@@ -6,7 +6,13 @@ import { SVG } from "../svg.js";
 
 import style from "CSS/radio.module.css";
 
-const RadioGroup = ({ id, options, direction, checked, action }) => {
+const RadioGroup = ({
+	id = undefined,
+	options,
+	direction,
+	checked,
+	action = void 0
+}) => {
 
 	id = id || randomString(5);
 

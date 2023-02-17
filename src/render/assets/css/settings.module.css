@@ -8,6 +8,7 @@
 :global(:root.alt-settings) .settingContainer {
     display: flex;
     flex-direction: column;
+    border: unset;
     margin-top: 12px;
     background: var(--background-secondary);
     padding: 12px 16px;

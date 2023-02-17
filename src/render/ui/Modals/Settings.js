@@ -214,6 +214,8 @@ const MinecraftSettingsTab = memo(() => {
 								setConfig({ key: "overrides.checkHash", value: s });
 							}}
 						/>
+					</div>
+					<div className={style.settingGroupContainer}>
 						<h5>Параметры запуска</h5>
 						<SettingContainer id="minecraft.launch.fullscreen"
 							header="Запускать в режиме Fullscreen"
@@ -477,6 +479,9 @@ const LauncherAppearanceTab = memo(() => {
 							setTheme(theme);
 						}}
 					/>
+				</div>
+				<div className={style.settingGroupContainer}>
+					<h5>Общие</h5>
 					<SettingContainer
 						id="exp.settings.blocky"
 						header="Режим блочных настроек"
@@ -484,18 +489,6 @@ const LauncherAppearanceTab = memo(() => {
 						checked={settings.exp_settings_blocks}
 						action={(s) => {
 							setSettings({ exp_settings_blocks: Boolean(s) });
-						}}
-					/>
-				</div>
-				<div className={style.settingGroupContainer}>
-					<h5>Дополнительно</h5>
-					<SettingContainer
-						id="app.preloader.mode"
-						header="Использовать прелоадер"
-						note="Выключение этого параметра позволяет принудительно отключать анимацию первоначальной загрузки приложения"
-						checked={settings.enable_preloader}
-						action={(s) => {
-							setSettings({ enable_preloader: Boolean(s) });
 						}}
 					/>
 					<SettingContainer
@@ -516,6 +509,19 @@ const LauncherAppearanceTab = memo(() => {
 							setSettings({ full_chooser: Boolean(s) });
 						}}
 					/>
+				</div>
+				<div className={style.settingGroupContainer}>
+					<h5>Дополнительно</h5>
+					<SettingContainer
+						id="app.preloader.mode"
+						header="Использовать прелоадер"
+						note="Выключение этого параметра позволяет принудительно отключать анимацию первоначальной загрузки приложения"
+						checked={settings.enable_preloader}
+						action={(s) => {
+							setSettings({ enable_preloader: Boolean(s) });
+						}}
+					/>
+
 				</div>
 			</div>
 		</TabItem>
