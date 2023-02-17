@@ -243,14 +243,16 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 		const reducedGlobal = {
 			...INITIAL_STATE,
 			...pick(global, [
-				"theme",
+				"currentUserId",
 				"version_hash",
+				"theme",
 				"auth_state",
 				"settings",
-				"currentUserId",
 				"users",
 				"installations",
 				"versions",
+				"releases",
+				"currentMainScreen"
 			])
 		};
 		const json = JSON.stringify(reducedGlobal);
@@ -280,6 +282,7 @@ const INITIAL_STATE = {
 		full_settings: false,
 		full_chooser: false,
 	},
+	users: {},
 	installations: {},
 	versions: [],
 	modals: [],
