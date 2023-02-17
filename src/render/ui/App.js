@@ -26,7 +26,7 @@ const AppContainer = memo(() => {
 	);
 });
 
-const App = memo(() => {
+const App = () => {
 
 	const { initApi } = getDispatch();
 	useConstructor(() => initApi());
@@ -39,6 +39,6 @@ const App = memo(() => {
 			<Preloader />
 		</div>
 	);
-});
+};
 
-export default App;
+export default memo(App);
