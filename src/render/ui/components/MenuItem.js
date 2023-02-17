@@ -1,9 +1,18 @@
-import { createElement, useCallback } from "react";
+import { createElement, memo, useCallback } from "react";
 
 import buildClassName from "Util/buildClassName";
 
 
-const MenuItem = ({ children, onClick, disabled, className, compact, destructive, withWrap, selected }) => {
+const MenuItem = ({
+	children,
+	onClick = void 0,
+	disabled = false,
+	className = undefined,
+	compact = false,
+	destructive = false,
+	withWrap = false,
+	selected = false,
+}) => {
 
 	const handleClick = useCallback((e) => {
 		if (disabled || !onClick) {
@@ -37,4 +46,4 @@ const MenuItem = ({ children, onClick, disabled, className, compact, destructive
 
 };
 
-export default MenuItem;
+export default memo(MenuItem);

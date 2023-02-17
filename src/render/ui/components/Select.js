@@ -10,11 +10,11 @@ import inputStyle from "CSS/input.module.css";
 
 
 const Select = ({
-	id,
+	id = undefined,
 	children,
-	onInput,
-	onOpen,
-	onClose,
+	onInput = void 0,
+	onOpen = void 0,
+	onClose = void 0,
 	title,
 	value,
 }) => {
