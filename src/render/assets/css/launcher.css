@@ -793,6 +793,7 @@ body {
 .sidebar-main > .container-3Wc7 > .scroller {
     padding-right: 0;
     padding-top: 4px;
+    padding-bottom: 4px;
     overflow: hidden scroll;
     background: var(--background-secondary);
 }
