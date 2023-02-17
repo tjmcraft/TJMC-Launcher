@@ -123,7 +123,7 @@ code {
     text-rendering: optimizeLegibility;
 }
 
-[disabled] {
+[disabled], .disabled, :disabled {
     pointer-events: none !important;
     opacity: 0.7;
 }

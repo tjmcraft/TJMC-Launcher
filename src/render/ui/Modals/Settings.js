@@ -21,7 +21,7 @@ import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
 
 
-const SideBarItems = memo(({ currentScreen, onScreenSelect }) => {
+const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 
 	const hostOnline = useHostOnline();
 
@@ -47,61 +47,59 @@ const SideBarItems = memo(({ currentScreen, onScreenSelect }) => {
 	} : undefined;
 
 	return (
-		<div class="sidebar-items">
+		<div className="sidebar-items">
 			{items.map((e, i) => (
 				<div key={i}
-					className={buildClassName("item", e.type, e.tab == currentScreen && "selected")}
-					onClick={handleSelect(e.tab)}
-					tab={e.tab}
-					disabled={e.disabled}>
+					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
+					onClick={handleSelect(e.tab)}>
 					{e.content || ''}
 				</div>
 			))}
 		</div>
 	);
-});
+};
 
 const InfoBox = memo(() => {
 	const os = platform.os;
 	const host = useGlobal(global => global.hostInfo);
 	return (
-		<div class={style.sidebarInfo}>
-			<span class={buildClassName(style.line, style.size12)}>
-				{APP_ENV == "production" ? "Stable" : "Development"} {APP_VERSION} <span class={style.versionHash}>({window.buildInfo.gitHashShort})</span>
+		<div className={style.sidebarInfo}>
+			<span className={buildClassName(style.line, style.size12)}>
+				{APP_ENV == "production" ? "Stable" : "Development"} {APP_VERSION} <span className={style.versionHash}>({window.buildInfo.gitHashShort})</span>
 			</span>
-			<span class={buildClassName(style.line, style.size12)}>{host.hostVersion ? `${host.hostVendor} ${host.hostVersion.version}` : "Web Host"}</span>
-			<span class={buildClassName(style.line, style.size12)}>{os ? `${os.family} ${os.version} x${os.architecture}` : "Unknown OS"}</span>
+			<span className={buildClassName(style.line, style.size12)}>{host.hostVersion ? `${host.hostVendor} ${host.hostVersion.version}` : "Web Host"}</span>
+			<span className={buildClassName(style.line, style.size12)}>{os ? `${os.family} ${os.version} x${os.architecture}` : "Unknown OS"}</span>
 		</div>
 	);
 });
 
-const SettingContainer = memo(({id, action, header, note, checked}) => {
+const SettingContainer = ({id, action, header, note, checked}) => {
 	id = id || randomString(5);
 	const onCheck = useCallback((checked) => {
 		if (typeof action === "function") action.call(this, checked, id);
 	}, [id, action]);
 	return (
-		<div class={style.settingContainer}>
-			<div class={style.labelRow}>
-				<label for={id} class={style.title}>{header || ""}</label>
-				<div class={style.control}>
+		<div className={style.settingContainer}>
+			<div className={style.labelRow}>
+				<label for={id} className={style.title}>{header || ""}</label>
+				<div className={style.control}>
 					<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} />
 				</div>
 			</div>
-			<div class={style.note}>
-				<div class={style.description}>{note || ""}</div>
+			<div className={style.note}>
+				<div className={style.description}>{note || ""}</div>
 			</div>
-			<div class={buildClassName(style.divider, style.dividerDefault)} />
+			<div className={buildClassName(style.divider, style.dividerDefault)} />
 		</div>
 	);
-});
+};
 
 const TabItem = ({ id, children }) => {
 	return (<div className="tab" id={id}>{children}</div>);
 };
 
 
-const MyAccountTab = memo(({ isActive }) => {
+const MyAccountTab = memo(() => {
 
 	const { logout } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
@@ -110,56 +108,56 @@ const MyAccountTab = memo(({ isActive }) => {
 		logout();
 	}, [logout]);
 
-	return isActive && user && (
+	return user && (
 		<TabItem id="my-account-tab">
 			<h2>Моя учётная запись</h2>
-			<div class="children">
-				<div class={style.settingGroupContainer}>
-					<div class="bxcF1-box">
-						<div class="ictx-flex">
-							<div class="icon">
+			<div className="children">
+				<div className={style.settingGroupContainer}>
+					<div className="bxcF1-box">
+						<div className="ictx-flex">
+							<div className="icon">
 								<img src={`https://cdn.tjmcraft.ga/avatars/${user.id}/${user.avatar}.png?size=128`} />
 							</div>
-							<div class={buildClassName("flex-group", "vertical")}>
-								<span class={buildClassName("vbx", "cu")}>
-									<div class={buildClassName("text", "name")}>{`${user.realname || user.username}`}</div>
-									<div class={buildClassName("text", "id")}>{`#${user.discriminator}`}</div>
+							<div className={buildClassName("flex-group", "vertical")}>
+								<span className={buildClassName("vbx", "cu")}>
+									<div className={buildClassName("text", "name")}>{`${user.realname || user.username}`}</div>
+									<div className={buildClassName("text", "id")}>{`#${user.discriminator}`}</div>
 								</span>
 								{user.permission_display_name && (
-									<div class={buildClassName("sizeW", "colorStandart", "subtitle-p")}>{user.permission_display_name}</div>
+									<div className={buildClassName("sizeW", "colorStandart", "subtitle-p")}>{user.permission_display_name}</div>
 								)}
 							</div>
-							<button class={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button>
+							<button className={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button>
 						</div>
-						<div class="separator" />
-						<div class="fieldList">
-							<div class="field" data-type="email">
-								<div class="containedRow">
+						<div className="separator" />
+						<div className="fieldList">
+							<div className="field" data-type="email">
+								<div className="containedRow">
 									<div>
 										<h5>{"Email"}</h5>
 										<div>
-											<span class="colorHeaderPrimary">{user.email}</span>
+											<span className="colorHeaderPrimary">{user.email}</span>
 										</div>
 									</div>
 								</div>
-								<button class="filled">{"Изменить"}</button>
+								<button className="filled">{"Изменить"}</button>
 							</div>
 						</div>
-						<button class={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
+						<button className={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
 					</div>
-					<div class={buildClassName(style.divider, style.dividerDefault)} />
+					<div className={buildClassName(style.divider, style.dividerDefault)} />
 				</div>
-				<div class={style.settingGroupContainer}>
+				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
-					<div class={style.settingContainer}>
-						<div class={style.description}>{"no content here"}</div>
-						<div class={buildClassName(style.divider, style.dividerDefault)} />
+					<div className={style.settingContainer}>
+						<div className={style.description}>{"no content here"}</div>
+						<div className={buildClassName(style.divider, style.dividerDefault)} />
 					</div>
 					{APP_ENV == "development" && (
-						<div class={style.settingContainer}>
-							<div class={style.description}>{"UI Test"}</div>
-							<div class={"test"}>
-								<Select title="Params select">
+						<div className={style.settingContainer}>
+							<div className={style.description}>{"UI Test"}</div>
+							<div className={"test"}>
+								<Select title="Params select" value="Item 0">
 									<MenuItem compact>Item 1</MenuItem>
 									<MenuItem compact>Item 2</MenuItem>
 									<MenuItem compact>Item 3</MenuItem>
@@ -173,7 +171,7 @@ const MyAccountTab = memo(({ isActive }) => {
 									<MenuItem compact>Item 11</MenuItem>
 								</Select>
 							</div>
-							<div class={buildClassName(style.divider, style.dividerDefault)} />
+							<div className={buildClassName(style.divider, style.dividerDefault)} />
 						</div>
 					)}
 				</div>
@@ -182,13 +180,13 @@ const MyAccountTab = memo(({ isActive }) => {
 	);
 });
 
-const SkinTab = memo(({ isActive }) => {
+const SkinTab = memo(() => {
 
-	return isActive && (
+	return (
 		<TabItem id="skin-tab">
 			<h2>Конфигурация скина</h2>
-			<div class="children">
-				<div class={style.settingGroupContainer}>
+			<div className="children">
+				<div className={style.settingGroupContainer}>
 					<h5>skin</h5>
 				</div>
 			</div>
@@ -196,17 +194,17 @@ const SkinTab = memo(({ isActive }) => {
 	);
 });
 
-const MinecraftSettingsTab = memo(({ isActive }) => {
+const MinecraftSettingsTab = memo(() => {
 
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
-	return isActive && (
+	return (
 		<TabItem id="minecraft-settings-tab">
 			<h2>Настройки Minecraft</h2>
 			{config ? (
-				<div class="children">
-					<div class={style.settingGroupContainer}>
+				<div className="children">
+					<div className={style.settingGroupContainer}>
 						<h5>Параметры загрузки</h5>
 						<SettingContainer id="overrides.checkHash"
 							header="Проверять Hash файлов"
@@ -236,7 +234,7 @@ const MinecraftSettingsTab = memo(({ isActive }) => {
 					</div>
 				</div>
 			) : (
-				<div class="children">
+				<div className="children">
 					<h5>No config loaded!</h5>
 				</div>
 			)}
@@ -244,19 +242,19 @@ const MinecraftSettingsTab = memo(({ isActive }) => {
 	);
 });
 
-const JavaSettingsTab = memo(({ isActive }) => {
+const JavaSettingsTab = memo(() => {
 
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
-	return isActive && (
+	return (
 		<TabItem id="java-settings-tab">
 			<h2>Настройки Java</h2>
 			{config ? (
-				<div class="children">
-					<div class={style.settingGroupContainer}>
-						<div class={buildClassName("flex-group", "horizontal")}>
-							<div class="flex-child">
+				<div className="children">
+					<div className={style.settingGroupContainer}>
+						<div className={buildClassName("flex-group", "horizontal")}>
+							<div className="flex-child">
 								<h5>Максимальное использование памяти</h5>
 								<RangeSlider id="java-memory-max"
 									value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
@@ -269,7 +267,7 @@ const JavaSettingsTab = memo(({ isActive }) => {
 									}}
 								/>
 							</div>
-							<div class="flex-child">
+							<div className="flex-child">
 								<h5>Минимальное использование памяти</h5>
 								<RangeSlider id="java-memory-min"
 									value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
@@ -283,9 +281,9 @@ const JavaSettingsTab = memo(({ isActive }) => {
 								/>
 							</div>
 						</div>
-						<div class={buildClassName(style.divider, style.dividerDefault)} />
+						<div className={buildClassName(style.divider, style.dividerDefault)} />
 					</div>
-					<div class={style.settingGroupContainer}>
+					<div className={style.settingGroupContainer}>
 						<h5>Дополнительно</h5>
 						<SettingContainer id="java.detached"
 							header="Независимый процесс"
@@ -298,7 +296,7 @@ const JavaSettingsTab = memo(({ isActive }) => {
 					</div>
 				</div>
 			) : (
-				<div class="children">
+				<div className="children">
 					<h5>No config loaded!</h5>
 				</div>
 			)}
@@ -306,19 +304,19 @@ const JavaSettingsTab = memo(({ isActive }) => {
 	);
 });
 
-const LauncherSettingsTab = memo(({ isActive }) => {
+const LauncherSettingsTab = memo(() => {
 
 	const { setSettings, setConfig, alert } = getDispatch();
 	const settings = useGlobal(selectSettings);
 	const config = useGlobal(global => global.configuration);
 	const hostOnline = useHostOnline();
 
-	return isActive && (
+	return (
 		<TabItem id="launcher-settings-tab">
 			<h2>Настройки Лаунчера</h2>
-			<div class="children">
+			<div className="children">
 				{hostOnline && config && (
-					<div class={style.settingGroupContainer}>
+					<div className={style.settingGroupContainer}>
 						<h5>Настройки клиента</h5>
 						<SettingContainer
 							id="launcher.hideOnClose"
@@ -360,7 +358,7 @@ const LauncherSettingsTab = memo(({ isActive }) => {
 						/>
 					</div>
 				)}
-				<div class={style.settingGroupContainer}>
+				<div className={style.settingGroupContainer}>
 					<h5>Базовая Отладка</h5>
 					<SettingContainer
 						id="app.debug.mode"
@@ -391,7 +389,7 @@ const LauncherSettingsTab = memo(({ isActive }) => {
 						}}
 					/>
 				</div>
-				<div class={style.settingGroupContainer}>
+				<div className={style.settingGroupContainer}>
 					<h5>Отладка сетевых данных</h5>
 					<SettingContainer
 						id="app.debug.host"
@@ -455,17 +453,17 @@ const LauncherSettingsTab = memo(({ isActive }) => {
 	);
 });
 
-const LauncherAppearanceTab = memo(({ isActive }) => {
+const LauncherAppearanceTab = memo(() => {
 
 	const { setSettings, setTheme } = getDispatch();
 	const settings = useGlobal(selectSettings);
 	const theme = useGlobal(selectCurrentTheme);
 
-	return isActive && (
+	return (
 		<TabItem id="launcher-appearance-tab">
 			<h2>Внешний вид</h2>
-			<div class="children">
-				<div class={style.settingGroupContainer}>
+			<div className="children">
+				<div className={style.settingGroupContainer}>
 					<h5>Тема</h5>
 					<RadioGroup
 						direction="vertical"
@@ -480,7 +478,7 @@ const LauncherAppearanceTab = memo(({ isActive }) => {
 						}}
 					/>
 				</div>
-				<div class={style.settingGroupContainer}>
+				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
 					<SettingContainer
 						id="app.preloader.mode"
@@ -515,7 +513,7 @@ const LauncherAppearanceTab = memo(({ isActive }) => {
 	);
 });
 
-const AboutTab = memo(({ isActive }) => {
+const AboutTab = memo(() => {
 
 	const { openWhatsNewModal } = getDispatch();
 	const releases = useGlobal(global => global.releases);
@@ -528,52 +526,52 @@ const AboutTab = memo(({ isActive }) => {
 		return () => window.open(url, "_blank");
 	}, []);
 
-	return isActive && (
+	return (
 		<TabItem id="launcher-about-tab">
 			<h2>О программе</h2>
-			<div class="children">
-				<div class={style.settingGroupContainer}>
-					<div class="bxcF1-box">
-						<div class="ictx-flex">
-							<div class="icon"><img src={iconImage} /></div>
-							<div class={buildClassName("flex-group", "vertical")}>
-								<span class="vbx">
-									<div class={buildClassName("text", "name")}>{APP_NAME}</div>
-									<div class={buildClassName("text", "version")}>v{APP_VERSION}</div>
+			<div className="children">
+				<div className={style.settingGroupContainer}>
+					<div className="bxcF1-box">
+						<div className="ictx-flex">
+							<div className="icon"><img src={iconImage} /></div>
+							<div className={buildClassName("flex-group", "vertical")}>
+								<span className="vbx">
+									<div className={buildClassName("text", "name")}>{APP_NAME}</div>
+									<div className={buildClassName("text", "version")}>v{APP_VERSION}</div>
 								</span>
-								<div class={buildClassName("sizeW", "colorStandart", "subtitle-p")}>
+								<div className={buildClassName("sizeW", "colorStandart", "subtitle-p")}>
 									<span>Играйте, не обляпайтесь!</span>
 								</div>
 							</div>
-							<button class={buildClassName("r", "filled", "colorBrand")} onclick={whats_new_click}>
+							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click}>
 								<span>Подробнее</span>
 							</button>
 						</div>
-						<div class="separator" />
-						<div class={buildClassName("note", "flex-group")}>
-							<div class="description">{APP_COPYRIGHT}</div>
-							<a href="https://github.com/tjmcraft/TJMC-Launcher" class="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
-							<a href="https://www.tjmcraft.ga/help" class="anchor" target="_blank" rel="noreferrer">Поддержка</a>
-							<a href="https://www.tjmcraft.ga/launcher" class="anchor" target="_blank" rel="noreferrer">Сайт</a>
+						<div className="separator" />
+						<div className={buildClassName("note", "flex-group")}>
+							<div className="description">{APP_COPYRIGHT}</div>
+							<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
+							<a href="https://www.tjmcraft.ga/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
+							<a href="https://www.tjmcraft.ga/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
 						</div>
 					</div>
-					<div class="bxcF1-box">
+					<div className="bxcF1-box">
 						<h5>Просмотр информации о предыдущих релизах</h5>
-						<div class="separator" />
-						<div class="flex-group vertical">
+						<div className="separator" />
+						<div className="flex-group vertical">
 							{releases && releases.map((release, i) => (
 								<div key={i} className={buildClassName("release", "w100")}>
 									<div className={buildClassName("ictx-flex", "align-top")}>
-										<div class="icon">
+										<div className="icon">
 											<img src={release.author.avatar_url} />
 											<span>{release.author.login}</span>
 										</div>
-										<div class={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
-											<span class="vbx">
-												<div class={buildClassName("text", "name", "sizeE")}>{release.name}</div>
-												<div class={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
+										<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
+											<span className="vbx">
+												<div className={buildClassName("text", "name", "sizeE")}>{release.name}</div>
+												<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
 											</span>
-											<div class={buildClassName("colorStandart", "size14")}>
+											<div className={buildClassName("colorStandart", "size14")}>
 												<span>{release.body}</span>
 											</div>
 										</div>
@@ -581,7 +579,7 @@ const AboutTab = memo(({ isActive }) => {
 											<span>Подробнее</span>
 										</button>
 									</div>
-									{releases.length-1 != i && <div class="separator" />}
+									{releases.length-1 != i && <div className="separator" />}
 								</div>
 							))}
 						</div>
@@ -592,7 +590,28 @@ const AboutTab = memo(({ isActive }) => {
 	);
 });
 
-const Settings = memo((props) => {
+const ActiveTab = ({ current }) => {
+	switch (current) {
+		case "my-account-tab":
+			return (<MyAccountTab />);
+		case "skin-tab":
+			return (<SkinTab />);
+		case "minecraft-settings-tab":
+			return (<MinecraftSettingsTab />);
+		case "java-settings-tab":
+			return (<JavaSettingsTab />);
+		case "launcher-settings-tab":
+			return (<LauncherSettingsTab />);
+		case "launcher-appearance-tab":
+			return (<LauncherAppearanceTab />);
+		case "launcher-about-tab":
+			return (<AboutTab />);
+		default:
+			return (<h5>Loading...</h5>);
+	}
+};
+
+const Settings = (props) => {
 
 	const [activeTab, setTab] = useState(props.tab || "my-account-tab");
 
@@ -604,9 +623,9 @@ const Settings = memo((props) => {
 
 	return (
 		<Modal {...props} full={shouldFull}>
-			<div class="sidebarView" id="user-settings">
-				<div class="sidebar-region">
-					<div class="sidebar">
+			<div className="sidebarView" id="user-settings">
+				<div className="sidebar-region">
+					<div className="sidebar">
 						<SideBarItems
 							currentScreen={activeTab}
 							onScreenSelect={handleScreenSelect}
@@ -614,23 +633,16 @@ const Settings = memo((props) => {
 						<InfoBox />
 					</div>
 				</div>
-				<div class="content-region">
-					<div class="transitionWrap">
-						<div class={buildClassName("content", "auto-s", !shouldFull && "centred")}>
-							{!activeTab && <h5>Loading...</h5>}
-							<MyAccountTab isActive={activeTab == "my-account-tab"} />
-							<SkinTab isActive={activeTab == "skin-tab"} />
-							<MinecraftSettingsTab isActive={activeTab == "minecraft-settings-tab"} />
-							<JavaSettingsTab isActive={activeTab == "java-settings-tab"} />
-							<LauncherSettingsTab isActive={activeTab == "launcher-settings-tab"} />
-							<LauncherAppearanceTab isActive={activeTab == "launcher-appearance-tab"} />
-							<AboutTab isActive={activeTab == "launcher-about-tab"} />
+				<div className="content-region">
+					<div className="transitionWrap">
+						<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
+							<ActiveTab current={activeTab} />
 						</div>
 					</div>
 				</div>
 			</div>
 		</Modal>
 	);
-});
+};
 
-export default Settings;
+export default memo(Settings);
