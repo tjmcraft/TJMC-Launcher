@@ -26,7 +26,7 @@ class launcher extends EventEmitter {
         super();
 
         this.options = Object.assign({}, options);
-        this.options.overrides.path.gameDirectory = path.resolve(this.options.overrides.path?.gameDirectory || this.options.installation?.gameDir || this.options.overrides.path?.root || undefined);
+        this.options.overrides.path.gameDirectory = path.resolve(this.options.installation?.gameDir || this.options.overrides.path?.gameDirectory || this.options.overrides.path?.root || undefined);
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId);
         this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
         this.options.auth = Object.assign({}, this.options.auth, {
