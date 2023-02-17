@@ -98,8 +98,8 @@ function StateStore() {
 		}
 	}
 
-	this.withState = (selector = () => { }, debug = undefined) => {
-		return (callback = () => { }) => {
+	this.withState = (selector = void 0, debug = undefined) => {
+		return (callback = void 0) => {
 			const id = generateIdFor(containers);
 			let container = containers.get(id);
 			if (!container) {
@@ -129,7 +129,7 @@ function StateStore() {
 		};
 	};
 
-	this.stateComponent = (selector = () => { }, debug = undefined) => {
+	this.stateComponent = (selector = void 0, debug = undefined) => {
 		return (Component) => {
 			return function TCContainer(props) {
 
@@ -322,7 +322,6 @@ setTimeout(() => {
 export const getDispatch = stateStore.getDispatch;
 export const getState = stateStore.getState;
 export const withState = stateStore.withState;
-export const useGlobal = stateStore.useGlobal;
 export const stateComponent = stateStore.stateComponent;
 export const addReducer = stateStore.addReducer;
 export const addCallback = stateStore.addCallback;
