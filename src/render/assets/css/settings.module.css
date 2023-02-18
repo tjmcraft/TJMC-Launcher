@@ -1,18 +1,44 @@
 .settingContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
     padding-bottom: 1.3rem;
     border-bottom: thin solid var(--background-modifier-accent);
 }
 
+:global(:root.alt-settings) .settingContainer:first-of-type {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+:global(:root.alt-settings) .settingContainer:last-child {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+:global(:root.alt-settings) .settingContainer ~ .settingContainer {
+    margin-top: 0;
+}
+:global(:root.alt-settings) .settingContainer ~ .settingContainer:after {
+    content: "";
+    background: var(--background-modifier-accent);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 12px;
+    height: 1px;
+}
+
 :global(:root.alt-settings) .settingContainer {
     display: flex;
     flex-direction: column;
     border: unset;
-    margin-top: 12px;
     background: var(--background-secondary);
     padding: 12px 16px;
-    border-radius: 8px;
+}
+
+:global(:root.alt-settings) .settingGroupContainer > h5 {
+    margin-left: 12px;
 }
 
 .settingGroupContainer {
@@ -42,6 +68,7 @@
     line-height: 24px;
     font-size: 16px;
     font-weight: 600;
+    padding-bottom: 3px; /* fix line height */
     cursor: pointer;
     color: var(--header-primary);
 }
