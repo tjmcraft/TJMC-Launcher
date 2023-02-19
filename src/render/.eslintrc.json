@@ -8,6 +8,9 @@
         "preact"
         // "plugin:react/recommended"
     ],
+    "globals": {
+        "window": true
+    },
     "overrides": [],
     "parserOptions": {
         "ecmaVersion": "latest",
