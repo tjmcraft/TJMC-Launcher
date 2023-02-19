@@ -625,9 +625,6 @@ h5 {
     margin-bottom: 8px;
     color: var(--header-secondary);
 }
-:root.alt-settings .content-region .content h5 {
-    margin-left: 12px;
-}
 
 
 .content-region .content .tab {
