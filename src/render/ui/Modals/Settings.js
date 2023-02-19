@@ -479,9 +479,6 @@ const LauncherAppearanceTab = memo(() => {
 							setTheme(theme);
 						}}
 					/>
-				</div>
-				<div className={style.settingGroupContainer}>
-					<h5>Общие</h5>
 					<SettingContainer
 						id="exp.settings.blocky"
 						header="Режим блочных настроек"
@@ -491,6 +488,9 @@ const LauncherAppearanceTab = memo(() => {
 							setSettings({ exp_settings_blocks: Boolean(s) });
 						}}
 					/>
+				</div>
+				<div className={style.settingGroupContainer}>
+					<h5>Общие</h5>
 					<SettingContainer
 						id="app.settings.fullmode"
 						header="Использовать настройки в полноэкранном режиме"
