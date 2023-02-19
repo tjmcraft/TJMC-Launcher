@@ -6,9 +6,12 @@
     border-bottom: thin solid var(--background-modifier-accent);
 }
 
-:global(:root.alt-settings) .settingContainer:first-of-type {
+:global(:root.alt-settings) .settingContainer {
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+}
+:global(:root.alt-settings) .settingContainer ~ .settingContainer {
+    border-radius: 0;
 }
 :global(:root.alt-settings) .settingContainer:last-child {
     border-bottom-left-radius: 8px;
