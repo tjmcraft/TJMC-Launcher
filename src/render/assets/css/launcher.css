@@ -568,7 +568,7 @@ p {
 
 .content-region .content {
     height: 100%;
-    overflow: hidden overlay;
+    overflow: hidden scroll;
 }
 
 [data-type=async-component] {
@@ -630,7 +630,7 @@ h5 {
 
 .content-region .content .tab {
     position: relative;
-    padding: 60px 30px 70px;
+    padding: 60px 24px 40px 40px;
     flex: 1 1 auto;
     max-width: 740px;
     min-width: 460px;

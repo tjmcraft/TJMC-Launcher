@@ -11,7 +11,7 @@ import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations.js";
 
 import { Modal, ModalFooter } from "UI/Modals";
-import { FileInput, InputGroup, PathInput } from "UI/components/Input.js";
+import { InputGroup, PathInput } from "UI/components/Input.js";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 
