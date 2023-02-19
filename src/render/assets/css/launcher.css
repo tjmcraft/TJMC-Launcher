@@ -448,16 +448,17 @@ p {
     left: 0;
 }
 
-:root.alt-settings .sidebar-region {
-    background-color: var(--background-secondary-alt);
-}
-
 .sidebar-region {
     background-color: var(--background-secondary);
     display: flex;
     flex-direction: row;
     user-select: none;
     overflow: hidden scroll;
+}
+
+
+:root.alt-settings .sidebarView .sidebar-region {
+    background-color: var(--sbw-background-side);
 }
 
 .sidebarView .sidebar-region {
@@ -548,7 +549,7 @@ p {
 }
 
 :root.alt-settings .sidebarView .content-region {
-    background: var(--background-tertiary);
+    background: var(--sbw-background-main);
 }
 
 .sidebarView .content-region {
