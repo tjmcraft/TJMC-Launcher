@@ -9,6 +9,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import { selectCurrentUser } from "Model/Selectors/user.js";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
+import platform from "platform";
 
 import { RadioGroup } from "UI/components/Radio.js";
 import ToggleSwitch from "UI/components/ToggleSwitch.js";
@@ -73,7 +74,7 @@ const InfoBox = memo(() => {
 	);
 });
 
-const SettingContainer = ({id, action, header, note, checked}) => {
+const SettingContainer = ({ id, action, header, note, checked }) => {
 	id = id || randomString(5);
 	const onCheck = useCallback((checked) => {
 		if (typeof action === "function") action.call(this, checked, id);
@@ -81,7 +82,7 @@ const SettingContainer = ({id, action, header, note, checked}) => {
 	return (
 		<div className={style.settingContainer}>
 			<div className={style.labelRow}>
-				<label for={id} className={style.title}>{header || ""}</label>
+				<label htmlFor={id} className={style.title}>{header || ""}</label>
 				<div className={style.control}>
 					<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} />
 				</div>
@@ -521,7 +522,17 @@ const LauncherAppearanceTab = memo(() => {
 							setSettings({ enable_preloader: Boolean(s) });
 						}}
 					/>
-
+					{APP_ENV == "development" && (
+						<SettingContainer
+							id="app.dev.faloc_disable"
+							header="Отключить сообщение о предварительной версии"
+							note="Включение этого параметра отключает появление сообщение о предварительной версии при запуске UI"
+							checked={settings.dev_disable_faloc}
+							action={(s) => {
+								setSettings({ dev_disable_faloc: Boolean(s) });
+							}}
+						/>
+					)}
 				</div>
 			</div>
 		</TabItem>
@@ -594,7 +605,7 @@ const AboutTab = memo(() => {
 											<span>Подробнее</span>
 										</button>
 									</div>
-									{releases.length-1 != i && <div className="separator" />}
+									{releases.length - 1 != i && <div className="separator" />}
 								</div>
 							))}
 						</div>

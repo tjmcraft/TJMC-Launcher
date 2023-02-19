@@ -3,7 +3,7 @@ import { createElement, memo, useEffect, useState } from "react";
 import useShowTransition from "Hooks/useShowTransition";
 import captureKeyboardListeners from "Util/captureKeyboard";
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch, getState } from "Util/Store";
 import { SVG } from "./svg";
 
 import Settings from "./Modals/Settings";
@@ -76,19 +76,20 @@ const Modals = memo(() => {
 
 	useEffect(() => (isOpen ? captureKeyboardListeners({ onEsc: closeModal }) : undefined), [isOpen, closeModal]);
 
-	return isOpen && (
-		modals.map((modal, i) =>
-			createElement(ModalLayer, {
-				isShown: modal.isShown, key: modal.label
-			}, createElement(MODAL_STORE[modal.layer], modal.props)))
-	);
+	return isOpen &&
+		modals.map((modal) =>
+			<ModalLayer isShown={modal.isShown} key={modal.label}>
+				{createElement(MODAL_STORE[modal.layer], modal.props)}
+			</ModalLayer>
+		);
 });
 
 const LayerContainer = memo(() => {
 
 	useEffect(() => {
 		const { alert } = getDispatch();
-		APP_ENV == "development" && alert({
+		const { dev_disable_faloc } = getState(global => global.settings);
+		APP_ENV == "development" && !dev_disable_faloc && alert({
 			title: `Development Build ${APP_VERSION} (${window.buildInfo.gitHashShort})`,
 			content: createElement("span", null, "Welcome to development build of TJMC-Launcher! This is the earliest beta version of UI, that maybe never goes to production builds. If you want to use stable build\xa0", createElement("a", { href: "https://app.tjmcraft.ga/" }, "click here"), "\xa0please."),
 			type: "warn",

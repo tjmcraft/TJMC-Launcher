@@ -282,6 +282,7 @@ const INITIAL_STATE = {
 		full_settings: false,
 		full_chooser: false,
 		exp_settings_blocks: false,
+		dev_disable_faloc: false,
 	},
 	users: {},
 	installations: {},
