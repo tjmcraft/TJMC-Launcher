@@ -1,5 +1,6 @@
 :root {
     --input-height: 42px;
+    --toggle-icon-size: 18px;
 }
 
 .inputGroup {
@@ -58,10 +59,8 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    margin: auto 0;
+    padding: calc((var(--input-height) - var(--toggle-icon-size)) / 2);
     right: 0;
-    width: calc(var(--input-height) + 5%);
-    height: calc(var(--input-height) + 5%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,6 +72,10 @@
 }
 .inputWrapper .toggleIcon:hover {
     color: var(--interactive-hover);
+}
+.inputWrapper .toggleIcon > svg {
+    width: var(--toggle-icon-size);
+    height: var(--toggle-icon-size);
 }
 
 .inputWrapper .actionButton {
@@ -109,7 +112,7 @@ input, select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-color: var(--background-secondary);
+    background-color: var(--inp-background-normal);
     border-style: solid;
     border-color: transparent;
     border-width: 2px;
@@ -145,7 +148,7 @@ input[type=number] {
 }
 
 input:disabled, select:disabled {
-    background-color: var(--background-secondary-alt);
+    background-color: var(--inp-background-disabled);
 }
 
 .actionBlock {
