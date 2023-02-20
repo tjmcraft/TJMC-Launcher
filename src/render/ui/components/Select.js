@@ -52,7 +52,7 @@ const Select = ({
 
 
 	return (
-		<div className="Select" ref={dropdownRef}>
+		<div className={inputStyle.select} ref={dropdownRef}>
 			<InputGroup title={title} htmlFor={id}>
 				<input
 					ref={inputRef}

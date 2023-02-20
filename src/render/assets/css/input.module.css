@@ -162,3 +162,7 @@ input:disabled, select:disabled {
 .actionBlock button {
     width: 100%;
 }
+
+.select {
+    position: relative;
+}
