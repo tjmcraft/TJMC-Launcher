@@ -146,7 +146,7 @@ const MyAccountTab = memo(() => {
 						</div>
 						<button className={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
 					</div>
-					<div className={buildClassName(style.divider, style.dividerDefault)} />
+					{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 				</div>
 				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
