@@ -252,7 +252,8 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 				"installations",
 				"versions",
 				"releases",
-				"currentMainScreen"
+				"currentMainScreen",
+				"modals"
 			])
 		};
 		const json = JSON.stringify(reducedGlobal);
