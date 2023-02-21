@@ -1426,15 +1426,26 @@ a.anchor:hover {
 
 .flex-group>.flex-child {
     position: relative;
+}
+.flex-group.horizontal>.flex-child {
     flex: 1 1 50%;
 }
-
-.flex-group>.flex-child:first-child {
-    margin-right: 10px;
+.flex-group.vertical>.flex-child {
+    flex: 1;
+    width: 100%;
 }
 
-.flex-group>.flex-child:last-child {
-    margin-left: 10px;
+.flex-group.horizontal>.flex-child:first-child {
+    margin-right: 8px;
+}
+.flex-group.horizontal>.flex-child + .flex-child {
+    margin-left: 8px;
+}
+.flex-group.vertical>.flex-child:first-child {
+    margin-bottom: 8px;
+}
+.flex-group.vertical>.flex-child + .flex-child {
+    margin-top: 8px;
 }
 
 .VT-flex-box {
