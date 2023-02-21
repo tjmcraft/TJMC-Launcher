@@ -1,7 +1,8 @@
 // Modules import
 declare module '*.module.css';
-declare module "*.png"
-declare module "*.jpeg"
+declare module "*.png";
+declare module "*.jpeg";
+declare module "*.svg";
 // Webpack Define
 declare const APP_NAME: string;
 declare const APP_ENV: "development" | "production";
