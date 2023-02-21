@@ -258,31 +258,33 @@ const JavaSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
 						<div className={style.settingContainer}>
-							<div className="flex-child">
-								<h5>Максимальное использование памяти</h5>
-								<RangeSlider id="java-memory-max"
-									value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
-									min={0.5}
-									max={8}
-									step={0.1}
-									unit="Gb"
-									onChange={(s) => {
-										setConfig({ key: "java.memory.max", value: Math.floor(s * 1024) });
-									}}
-								/>
-							</div>
-							<div className="flex-child">
-								<h5>Минимальное использование памяти</h5>
-								<RangeSlider id="java-memory-min"
-									value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
-									min={0.5}
-									max={5}
-									step={0.1}
-									unit="Gb"
-									onChange={(s) => {
-										setConfig({ key: "java.memory.min", value: Math.floor(s * 1024) });
-									}}
-								/>
+							<div className={buildClassName("flex-group", "horizontal")}>
+								<div className="flex-child">
+									<h5>Максимальное использование памяти</h5>
+									<RangeSlider id="java-memory-max"
+										value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
+										min={0.5}
+										max={8}
+										step={0.1}
+										unit="Gb"
+										onChange={(s) => {
+											setConfig({ key: "java.memory.max", value: Math.floor(s * 1024) });
+										}}
+									/>
+								</div>
+								<div className="flex-child">
+									<h5>Минимальное использование памяти</h5>
+									<RangeSlider id="java-memory-min"
+										value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
+										min={0.5}
+										max={5}
+										step={0.1}
+										unit="Gb"
+										onChange={(s) => {
+											setConfig({ key: "java.memory.min", value: Math.floor(s * 1024) });
+										}}
+									/>
+								</div>
 							</div>
 						</div>
 						{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
