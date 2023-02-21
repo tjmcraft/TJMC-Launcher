@@ -1591,6 +1591,7 @@ a.anchor:hover {
 
 .resolution>input {
     text-align: center;
+    flex: 1;
 }
 
 .resolution>.resolutionCross {

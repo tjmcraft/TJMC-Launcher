@@ -200,11 +200,58 @@ const MinecraftSettingsTab = memo(() => {
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
+	const [width, setWidth] = useState(config?.minecraft?.launch?.width);
+	const [height, setHeight] = useState(config?.minecraft?.launch?.height);
+
+	const handleSaveConfig = useCallback(() => {
+		setConfig({ key: "minecraft.launch.width", value: width });
+		setConfig({ key: "minecraft.launch.height", value: height });
+	}, [setConfig, width, height]);
+
 	return (
 		<TabItem id="minecraft-settings-tab">
 			<h2>Настройки Minecraft</h2>
 			{config ? (
 				<div className="children">
+					<div className={style.settingGroupContainer}>
+						<h5>Параметры окна</h5>
+						<div className="resolution" id="settings.resolution.wrap">
+							<input
+								type="number"
+								name="settings-resolution-width"
+								value={width}
+								onChange={(e) => setWidth(e.target.value)}
+								onBlur={handleSaveConfig}
+								placeholder={"<auto>"} />
+							<span className="resolutionCross">✖</span>
+							<input
+								type="number"
+								name="settings-resolution-height"
+								value={height}
+								onChange={(e) => setHeight(e.target.value)}
+								onBlur={handleSaveConfig}
+								placeholder={"<auto>"} />
+						</div>
+						<SettingContainer id="minecraft.launch.fullscreen"
+							header="Запускать в полноэкранном режиме"
+							note="Принудительно использовать режим fullscreen для нового окна"
+							checked={config.minecraft.launch.fullscreen}
+							action={(s) => {
+								setConfig({ key: "minecraft.launch.fullscreen", value: s });
+							}}
+						/>
+					</div>
+					<div className={style.settingGroupContainer}>
+						<h5>Параметры запуска</h5>
+						<SettingContainer id="overrides.autoConnect"
+							header="Автоматически подключаться к серверу ТюменьCraft"
+							note="Подключаться к серверу автоматически, при запуске игры"
+							checked={false}
+							action={(s, n) => {
+								console.debug(n, "=>", s);
+							}}
+						/>
+					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Параметры загрузки</h5>
 						<SettingContainer id="overrides.checkHash"
@@ -213,25 +260,6 @@ const MinecraftSettingsTab = memo(() => {
 							checked={config.overrides.checkHash}
 							action={(s) => {
 								setConfig({ key: "overrides.checkHash", value: s });
-							}}
-						/>
-					</div>
-					<div className={style.settingGroupContainer}>
-						<h5>Параметры запуска</h5>
-						<SettingContainer id="minecraft.launch.fullscreen"
-							header="Запускать в режиме Fullscreen"
-							note="Запускать игру, принудительно в полноэкранном режиме"
-							checked={config.minecraft.launch.fullscreen}
-							action={(s) => {
-								setConfig({ key: "minecraft.launch.fullscreen", value: s });
-							}}
-						/>
-						<SettingContainer id="overrides.autoConnect"
-							header="Автоматически подключаться к серверу"
-							note="Подключаться к серверу автоматически, при запуске игры"
-							checked={false}
-							action={(s, n) => {
-								console.debug(n, "=>", s);
 							}}
 						/>
 					</div>
