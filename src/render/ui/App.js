@@ -4,9 +4,9 @@ import { getDispatch } from "Util/Store.js";
 import useGlobal from "Hooks/useGlobal.js";
 import useConstructor from "Hooks/useConstructor.js";
 
-import Preloader from "./Preloader.js";
-import Auth from "./Auth/Auth.js";
-import Main from "./Main.js";
+import Preloader from "UI/Preloader.js";
+import Auth from "UI/Auth/Auth.js";
+import Main from "UI/Main.js";
 
 const AppContainer = memo(() => {
 

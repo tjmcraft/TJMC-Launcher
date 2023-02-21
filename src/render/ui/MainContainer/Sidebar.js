@@ -14,11 +14,6 @@ const items = [
 		title: "Новости",
 	},
 	{
-		id: "virus",
-		icon: "virus",
-		title: "COVID-19",
-	},
-	{
 		id: "map",
 		icon: "map",
 		title: "Карта",
