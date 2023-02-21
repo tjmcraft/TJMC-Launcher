@@ -37,6 +37,10 @@
     background: var(--background-secondary);
     padding: 12px 16px;
 }
+:global(:root.alt-settings) .settingContainer.transparent {
+    border: unset;
+    background: transparent;
+}
 
 :global(:root.alt-settings) .settingGroupContainer > h5 {
     margin-left: 12px;

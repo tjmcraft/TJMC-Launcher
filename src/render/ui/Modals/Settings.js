@@ -285,9 +285,9 @@ const JavaSettingsTab = memo(() => {
 				<div className="children">
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
-						<div className={style.settingContainer}>
-							<div className={buildClassName("flex-group", "horizontal")}>
-								<div className="flex-child">
+						<div className={buildClassName(style.settingContainer)}>
+							<div className={buildClassName("flex-group", "vertical")}>
+								<div className={buildClassName("flex-child", "flex-group", "vertical")}>
 									<h5>Максимальное использование памяти</h5>
 									<RangeSlider id="java-memory-max"
 										value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
@@ -300,7 +300,7 @@ const JavaSettingsTab = memo(() => {
 										}}
 									/>
 								</div>
-								<div className="flex-child">
+								<div className={buildClassName("flex-child", "flex-group", "vertical")}>
 									<h5>Минимальное использование памяти</h5>
 									<RangeSlider id="java-memory-min"
 										value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
@@ -315,7 +315,6 @@ const JavaSettingsTab = memo(() => {
 								</div>
 							</div>
 						</div>
-						{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Дополнительно</h5>
