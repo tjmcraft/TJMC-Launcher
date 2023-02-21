@@ -16,6 +16,7 @@
     --background-modifier-active: rgba(79,84,92,0.24);
     --background-modifier-selected: rgba(79,84,92,0.32);
     --background-modifier-accent: hsla(0,0%,100%,0.06);
+    --border-color-1: rgba(79,84,92,0.16);
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -61,6 +62,7 @@
     --background-modifier-active: rgba(116,127,141,0.16);
     --background-modifier-selected: rgba(116,127,141,0.24);
     --background-modifier-accent: rgba(6,6,7,0.08);
+    --border-color-1: rgba(116,127,141,0.08);
     --background-floating: #fff;
     --header-primary: #060607;
     --header-secondary: #4f5660;
