@@ -37,10 +37,6 @@
 }
 
 #version-selector .main-content {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  line-height: normal;
   background: var(--background-primary);
 }
 

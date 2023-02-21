@@ -1016,9 +1016,10 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden overlay;
-    /* background: url(https://picsum.photos/1920/1080); */
-    background-position: center;
-    background-size: cover;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    line-height: normal;
 }
 
 .main-content > .top {
@@ -1958,7 +1959,8 @@ a:hover {
     color: var(--text-normal);
     background: var(--background-primary);
     padding: 16px;
-    flex: 1 1 auto;
+    flex: 1;
+    overflow: hidden overlay;
 }
 .viewWrapper {
     position: relative;
