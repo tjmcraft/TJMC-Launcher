@@ -41,6 +41,10 @@
     border: unset;
     background: transparent;
 }
+:global(:root.alt-settings) .settingContainer input {
+    --inp-background-normal: var(--background-secondary-alt);
+    --inp-background-disabled: var(--background-tertiary);
+}
 
 :global(:root.alt-settings) .settingGroupContainer > h5 {
     margin-left: 12px;
