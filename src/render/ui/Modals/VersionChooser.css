@@ -63,6 +63,7 @@
 }
 
 .middleHeader .backButton {
+  display: none;
 	margin-left: -0.5rem;
   margin-right: 0.5rem;
   position: relative;
@@ -103,5 +104,8 @@
   .container:not(.left-closed) > .leftColumn {
     transform: translate3d(0, 0, 0);
     -webkit-transform: translate3d(0, 0, 0);
+  }
+  .middleHeader .backButton {
+    display: flex;
   }
 }
