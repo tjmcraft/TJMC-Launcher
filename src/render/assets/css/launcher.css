@@ -1205,6 +1205,11 @@ body {
     line-height: normal;
 }
 
+.main-content iframe {
+    width: 100%;
+    height: 100%;
+}
+
 .container-f {
     cursor: pointer;
     position: relative;
@@ -1952,13 +1957,8 @@ a:hover {
     width: 100%;
     color: var(--text-normal);
     background: var(--background-primary);
-}
-.scroller-qw {
     padding: 16px;
-    height: 100%;
-    overflow: hidden scroll;
     flex: 1 1 auto;
-    padding-right: 0;
 }
 .viewWrapper {
     position: relative;
