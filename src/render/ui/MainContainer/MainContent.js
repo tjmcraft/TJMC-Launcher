@@ -8,70 +8,57 @@ import SecondSVG from 'SVG/second.svg';
 import appStyle from "CSS/app.module.css";
 
 
-const MainScreen = memo(() => {
-	return (
-		<div className={buildClassName("main-content")}>
-			{createElement('div', { class: buildClassName('pageWrapper', 'auto-s') },
-
-				createElement('div', { class: 'viewWrapper' },
-					createElement('div', { class: 'header-q' },
-						createElement('img', {
-							class: 'headerImage',
-							src: MainSVG
-						}),
-						createElement('div', { class: 'headerContentWrapper' },
-							createElement('div', { class: 'headerContent' },
-								createElement('h2', { class: buildClassName('title', 'sizeZ', appStyle.base) }, 'ТюменьCraft'),
-								createElement('h3', { class: buildClassName('subtitle', 'sizeQ', appStyle.base) }, 'Любите девушки, простых романтиков, отважных лётчиков и моряков...')
-							)
-						)
-					),
-					createElement('div', { class: 'main-q' },
-						createElement('div', { class: 'section' },
-							createElement('div', { class: 'grid-q' },
-								createElement('div', { class: buildClassName('row-q', 'imageLeft', 'container-z') },
-									createElement('img', {
-										class: buildClassName('featureImage', 'lim'),
-										src: FirstSVG
-									}),
-									createElement('div', { class: 'description' },
-										createElement('h2', null, 'This is image left box'),
-										createElement('div', { class: buildClassName('subtitle', 'sizeQ') }, 'Subtitle text for grid box. It can be longer and longer... But now it`s not'),
-									)
-								)
-							),
-							createElement('div', { class: buildClassName('grid-q', 'grayBackground') },
-								createElement('div', { class: buildClassName('row-q', 'imageRight', 'container-z') },
-									createElement('img', {
-										class: buildClassName('featureImage', 'lim'),
-										src: FirstSVG
-									}),
-									createElement('div', { class: ['description'] },
-										createElement('h2', null, 'This is image right box'),
-										createElement('div', { class: ['subtitle', 'sizeQ'] }, 'Subtitle text for grid box. It can be longer and longer... But now it`s not'),
-									)
-								)
-							),
-							createElement('div', { class: 'grid-q' },
-								createElement('div', { class: buildClassName('row-q', 'imageBottom', 'container-z') },
-									createElement('div', { class: 'description' },
-										createElement('h2', null, 'This is image bottom box'),
-										createElement('div', { class: buildClassName('subtitle', 'sizeQ') }, 'Subtitle text for grid box. It can be longer and longer... But now it`s not'),
-									),
-									createElement('img', {
-										class: 'featureImage',
-										src: SecondSVG
-									})
-								)
-							)
-						)
-					),
-					createElement('div', { class: 'footer-q' }, "footer\nfooter?\nа нахуй он вообще нужен?"),
-				)
-
-			)}
-		</div>);
-});
+const MainScreen = memo(() => (
+	<div className={buildClassName("main-content")}>
+		<div className={buildClassName("pageWrapper", "auto-s")}>
+			<div className="viewWrapper">
+				<div className="header-q">
+					<img className="headerImage" src={MainSVG} />
+					<div className="headerContentWrapper">
+						<div className="headerContent">
+							<h2 className={buildClassName('title', 'sizeZ', appStyle.base)}>{"ТюменьCraft"}</h2>
+							<h3 className={buildClassName('subtitle', 'sizeQ', appStyle.base)}>{"Любите девушки, простых романтиков, отважных лётчиков и моряков..."}</h3>
+						</div>
+					</div>
+				</div>
+				<div className="main-q">
+					<div className="section">
+						<div className={buildClassName("grid-q")}>
+							<div className={buildClassName('row-q', 'imageLeft', 'container-z')}>
+								<img className={buildClassName('featureImage', 'lim')} src={FirstSVG} />
+								<div className="description">
+									<h2>{"This is image left box"}</h2>
+									<div className={buildClassName('subtitle', 'sizeQ')}>{"Subtitle text for grid box. It can be longer and longer... But now it`s not"}</div>
+								</div>
+							</div>
+						</div>
+						<div className={buildClassName("grid-q", "grayBackground")}>
+							<div className={buildClassName('row-q', 'imageRight', 'container-z')}>
+								<img className={buildClassName('featureImage', 'lim')} src={FirstSVG} />
+								<div className="description">
+									<h2>{"This is image right box"}</h2>
+									<div className={buildClassName('subtitle', 'sizeQ')}>{"Subtitle text for grid box. It can be longer and longer... But now it`s not"}</div>
+								</div>
+							</div>
+						</div>
+						<div className={buildClassName("grid-q")}>
+							<div className={buildClassName('row-q', 'imageBottom', 'container-z')}>
+								<img className={buildClassName('featureImage', 'lim')} src={SecondSVG} />
+								<div className="description">
+									<h2>{"This is image bottom box"}</h2>
+									<div className={buildClassName('subtitle', 'sizeQ')}>{"Subtitle text for grid box. It can be longer and longer... But now it`s not"}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="footer-q">
+					{"footer\nfooter?\nа нахуй он вообще нужен?"}
+				</div>
+			</div>
+		</div>
+	</div>
+));
 
 const NewsScreen = memo(() => (
 	<div className={buildClassName("main-content", "d-flex", "centred", "auto-s")}>
@@ -86,7 +73,7 @@ const MapScreen = memo(() => (
 	</div>
 ));
 
-const ActiveScreen = ({ currentScreen }) => {
+const MainContent = ({ currentScreen }) => {
 	switch (currentScreen) {
 		case "main":
 			return <MainScreen />;
@@ -97,12 +84,6 @@ const ActiveScreen = ({ currentScreen }) => {
 		default:
 			return <h5>Loading...</h5>;
 	}
-};
-
-const MainContent = ({ currentScreen }) => {
-	return (
-		<ActiveScreen currentScreen={currentScreen} />
-	);
 };
 
 export default memo(MainContent);
