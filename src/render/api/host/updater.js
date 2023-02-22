@@ -7,7 +7,7 @@ export function init(_onUpdate) {
 }
 
 export function updater(update) {
-	// console.debug("-> API UPDATER", update);
+	window.__debug_host__ && console.debug("-> API UPDATER", update);
 	if (update instanceof TJMCConnectionState) {
 		let connectionState;
 		switch (update.state) {
