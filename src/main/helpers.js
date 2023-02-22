@@ -41,7 +41,7 @@ exports.platformIcon = ((platform) => {
           ext = "png";
           filename = "icon";
   }
-  const iconPath = path.join(__dirname, '../..', 'app', 'assets', 'images', `${filename}.${ext}`);
+  const iconPath = path.join(__dirname, '../..', 'build', 'icons', `${filename}.${ext}`);
   const image = nativeImage.createFromPath(iconPath);
   image.setTemplateImage(true);
   return image;
