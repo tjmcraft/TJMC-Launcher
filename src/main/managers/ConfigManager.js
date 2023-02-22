@@ -91,10 +91,10 @@ const readConfig = (configPath) => {
     let config, forceSave = false;
     if (!fs.existsSync(configPath)) {
         logger.debug('Generating a new configuration file...');
-        config = DEFAULT_CONFIG;
+        if (config == undefined) config = DEFAULT_CONFIG;
         forceSave = true;
     }
-    if (!this.isLoaded() || !forceSave) {
+    if (!forceSave) {
         try {
             config = fs.readFileSync(configPath, "utf-8");
             config = JSON.parse(config);
