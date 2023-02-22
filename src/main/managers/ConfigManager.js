@@ -87,14 +87,14 @@ function validateKeySet(srcObj, destObj) {
 
 exports.isLoaded = () => config != undefined;
 
-const readConfig = (configPath, forceRead) => {
+const readConfig = (configPath) => {
     let config, forceSave = false;
     if (!fs.existsSync(configPath)) {
         logger.debug('Generating a new configuration file...');
         config = DEFAULT_CONFIG;
         forceSave = true;
     }
-    if (!this.isLoaded() || (forceRead && !forceSave)) {
+    if (!this.isLoaded() || !forceSave) {
         try {
             config = fs.readFileSync(configPath, "utf-8");
             config = JSON.parse(config);
@@ -120,7 +120,7 @@ exports.load = () => {
 const watchCallback = (event, filename) => {
     if (filename == configName) {
         logger.log("[W]", `${filename} file`, "->", event);
-        config = readConfig(configPath, true);
+        config = readConfig(configPath);
         if (event == "change") {
             if (!silentMode) {
                 runCallbacks();
