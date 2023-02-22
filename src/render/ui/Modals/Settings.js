@@ -146,15 +146,13 @@ const MyAccountTab = memo(() => {
 						</div>
 						<button className={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
 					</div>
-					{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 				</div>
-				<div className={style.settingGroupContainer}>
-					<h5>Дополнительно</h5>
-					<div className={style.settingContainer}>
-						<div className={style.description}>{"no content here"}</div>
-						{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
-					</div>
-					{APP_ENV == "development" && (
+				{APP_ENV == "development" && (
+					<div className={style.settingGroupContainer}>
+						<h5>Дополнительно</h5>
+						<div className={style.settingContainer}>
+							<div className={style.description}>{"no content here"}</div>
+						</div>
 						<div className={style.settingContainer}>
 							<div className={style.description}>{"UI Test"}</div>
 							<div className={"test"}>
@@ -172,10 +170,9 @@ const MyAccountTab = memo(() => {
 									<MenuItem compact>Item 11</MenuItem>
 								</Select>
 							</div>
-							{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
 		</TabItem>
 	);
