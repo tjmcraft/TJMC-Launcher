@@ -1,11 +1,15 @@
 const fs = require('fs');
 const path = require('path');
+const { debounce } = require('../util/Shedulers');
+const { shallowEqual } = require('../util/Iterates');
 
 const logger = require('../util/loggerutil')('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
 
 const rootPath = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME);
 const launcherDir = path.normalize((process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : process.env.HOME + "/.local/share")) + '/.tjmc') || require('electron').remote.app.getPath('userData');
-const configPath = path.join(launcherDir, 'launcher-config.json');
+
+const configName = 'launcher-config.json';
+const configPath = path.join(launcherDir, configName);
 
 logger.debug("Config Path:", configPath);
 
@@ -15,8 +19,7 @@ logger.debug("Config Path:", configPath);
  */
 var config = undefined;
 
-const DEFAULT_CONFIG =
-{
+const DEFAULT_CONFIG = Object.seal({
     java: {
         javaPath: 'javaw',
         memory: {
@@ -49,67 +52,107 @@ const DEFAULT_CONFIG =
             height: 720
         }
     },
-}
+});
 
-const createDefaultConfig = () => {
-    logger.debug('Generating a new configuration file.');
-    fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
-    config = DEFAULT_CONFIG;
-    exports.save("Create New Default");
-}
+const callbacks = [void 0];
+let silentMode = false;
 
-exports.load = () => {
-    if (!fs.existsSync(configPath)) createDefaultConfig();
-    if (!this.isLoaded()) {
-        try {
-            config = JSON.parse(fs.readFileSync(configPath, 'UTF-8'));
-        } catch (err){
-            logger.warn('Configuration file contains malformed JSON or is corrupt!');
-            createDefaultConfig();
-        }
-        config = validateKeySet(DEFAULT_CONFIG, config);
-        exports.save('VALIDATE');
+exports.addCallback = (cb = (config) => void 0) => {
+    if (typeof cb === "function") {
+        callbacks.push(cb);
     }
-    logger.debug("Load launcher config", "=>", (this.isLoaded() ? 'success' : 'failure'));
-}
-
-exports.save = (reason = "") => {
-    try {
-        fs.writeFileSync(configPath, JSON.stringify(config, null, 4), 'UTF-8');
-    } catch (e) {
-        logger.error('Config save error:', e)
+};
+exports.removeCallback = (cb = (config) => void 0) => {
+    const index = callbacks.indexOf(cb);
+    if (index !== -1) {
+        callbacks.splice(index, 1);
     }
-    logger.debug('Config saved!', (reason ? `(${reason})` : null));
-    return config;
-}
+};
+const runCallbacks = () => {
+    callbacks.forEach((cb) => typeof cb === "function" ? cb({ ...config }) : null);
+};
 
-function validateKeySet(srcObj, destObj){
+function validateKeySet(srcObj, destObj) {
     if (srcObj == null) srcObj = {};
     const keys = Object.keys(srcObj);
-    for(let i=0; i<keys.length; i++){
-        if(typeof destObj[keys[i]] === 'undefined'){
+    for (let i = 0; i < keys.length; i++) {
+        if (typeof destObj[keys[i]] === 'undefined') {
             destObj[keys[i]] = srcObj[keys[i]];
-        } else if(typeof srcObj[keys[i]] === 'object' && srcObj[keys[i]] != null && !(srcObj[keys[i]] instanceof Array)){
+        } else if (typeof srcObj[keys[i]] === 'object' && srcObj[keys[i]] != null && !(srcObj[keys[i]] instanceof Array)) {
             destObj[keys[i]] = validateKeySet(srcObj[keys[i]], destObj[keys[i]]);
         }
     }
     return destObj;
 }
 
-const boolHandler = (value, default_value) => typeof value === 'boolean' ? value : default_value;
-const stringHandler = (value, default_value) => typeof value === 'string' ? value : default_value;
-const objectHandler = (value, default_value) => typeof value === 'object' ? value : default_value;
-
 exports.isLoaded = () => config != undefined;
+
+const readConfig = (configPath) => {
+    let config, force = false;
+    if (!fs.existsSync(configPath)) {
+        logger.debug('Generating a new configuration file...');
+        config = DEFAULT_CONFIG;
+        force = true;
+    }
+    if (!this.isLoaded()) {
+        try {
+            config = fs.readFileSync(configPath, "utf-8");
+            config = JSON.parse(config);
+        } catch (err) {
+            logger.warn('Configuration file contains malformed JSON or is corrupted!');
+            config = DEFAULT_CONFIG;
+            force = true;
+        }
+    }
+    const validatedConfig = validateKeySet(DEFAULT_CONFIG, config);
+    if (!shallowEqual(config, validatedConfig) || force) // prevent unnecessary writings
+        exports.save(true, "read -> validate" + (force && "\xa0-> force"));
+    return validatedConfig;
+}
+
+exports.load = () => {
+    config = readConfig(configPath);
+    logger.debug("Load launcher config", "=>", (this.isLoaded() ? 'success' : 'failure'));
+    if (this.isLoaded()) fs.watch(configPath, watchDebounce);
+    return config;
+}
+
+const watchCallback = (event, filename) => {
+    if (filename == configName) {
+        logger.log("[W]", `${filename} file`, "->", event);
+        config = readConfig(configPath);
+        if (event == "change") {
+            if (!silentMode) {
+                runCallbacks();
+            } else {
+                logger.warn("> silent push");
+            }
+        }
+    }
+}
+const watchDebounce = debounce(watchCallback, 100, true, false);
+
+exports.save = (silent = false, reason = "") => {
+    silentMode = silent;
+    if (!fs.existsSync(configPath))
+        fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
+    try {
+        const content = JSON.stringify(config, null, 4);
+        fs.writeFileSync(configPath, content, "utf-8");
+    } catch (e) {
+        logger.error('Config save error:', e)
+    }
+    logger.debug("Config saved!", "Silent:", silent, "Reason:", reason);
+    silentMode = false;
+}
 
 exports.getAllOptionsSync = () => config;
 exports.getAllOptions = async () => config;
-exports.setOptions = async (options) => { config = Object.assign({}, config, objectHandler(options, DEFAULT_CONFIG)); exports.save(); return true; }
 exports.setOption = async (key, value) => {
     let valuePath = key.split('.');
     let last = valuePath.pop();
     valuePath.reduce((o, k) => o[k] = o[k] || {}, config)[last] = value;
-    exports.save();
+    exports.save(false, "set option");
     return true;
 }
 
@@ -118,13 +161,6 @@ exports.getDataDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.
 exports.getVersionsDirectory = (def = false) => def ? DEFAULT_CONFIG.overrides.path.directory : config.overrides.path.directory;
 
 exports.getLaunchFullscreen = () => Boolean(config.minecraft.launch.fullscreen);
-exports.setLaunchFullscreen = (value) => { config.minecraft.launch.fullscreen = boolHandler(value, DEFAULT_CONFIG.minecraft.launch.fullscreen); exports.save(); }
-
 exports.getCheckUpdates = () => Boolean(config.launcher.checkUpdates);
-exports.setCheckUpdates = (value) => { config.launcher.checkUpdates = boolHandler(value, DEFAULT_CONFIG.launcher.checkUpdates); exports.save(); }
-
 exports.getDisableHardwareAcceleration = () => Boolean(config.launcher.disableHardwareAcceleration);
-exports.setDisableHardwareAcceleration = (value) => { config.launcher.disableHardwareAcceleration = boolHandler(value, DEFAULT_CONFIG.launcher.disableHardwareAcceleration); exports.save(); }
-
 exports.getHideOnClose = () => Boolean(config.launcher.hideOnClose);
-exports.setHideOnClose = (value) => { config.launcher.hideOnClose = boolHandler(value, DEFAULT_CONFIG.launcher.hideOnClose); exports.save(); }

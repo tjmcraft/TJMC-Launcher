@@ -422,6 +422,11 @@ const initHandlers = async () => {
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
 
+    ConfigManager.addCallback(config => {
+        console.debug("Update Config:", config);
+        WSSHost.emit("updateConfiguration", { configuration: config });
+    });
+
     WSSHost.addReducer(validChannels.requestHostInfo, () => ({
         hostVendor: 'TJMC-Launcher',
         hostVersion: autoUpdater.currentVersion,
@@ -477,7 +482,6 @@ const initHandlers = async () => {
 
     WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
         const result = await ConfigManager.setOption(key, value);
-        ConfigManager.getAllOptions().then(configuration => WSSHost.emit("updateConfiguration", { configuration }));
         return result;
     });
 
