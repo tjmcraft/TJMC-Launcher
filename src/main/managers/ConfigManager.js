@@ -87,26 +87,26 @@ function validateKeySet(srcObj, destObj) {
 
 exports.isLoaded = () => config != undefined;
 
-const readConfig = (configPath) => {
-    let config, force = false;
+const readConfig = (configPath, forceRead) => {
+    let config, forceSave = false;
     if (!fs.existsSync(configPath)) {
         logger.debug('Generating a new configuration file...');
         config = DEFAULT_CONFIG;
-        force = true;
+        forceSave = true;
     }
-    if (!this.isLoaded()) {
+    if (!this.isLoaded() || (forceRead && !forceSave)) {
         try {
             config = fs.readFileSync(configPath, "utf-8");
             config = JSON.parse(config);
         } catch (err) {
             logger.warn('Configuration file contains malformed JSON or is corrupted!');
             config = DEFAULT_CONFIG;
-            force = true;
+            forceSave = true;
         }
     }
     const validatedConfig = validateKeySet(DEFAULT_CONFIG, config);
-    if (!shallowEqual(config, validatedConfig) || force) // prevent unnecessary writings
-        exports.save(true, "read -> validate" + (force && "\xa0-> force"));
+    if (!shallowEqual(config, validatedConfig) || forceSave) // prevent unnecessary writings
+        exports.save(true, "read -> validate" + (forceSave && "\xa0-> force"));
     return validatedConfig;
 }
 
@@ -120,7 +120,7 @@ exports.load = () => {
 const watchCallback = (event, filename) => {
     if (filename == configName) {
         logger.log("[W]", `${filename} file`, "->", event);
-        config = readConfig(configPath);
+        config = readConfig(configPath, true);
         if (event == "change") {
             if (!silentMode) {
                 runCallbacks();
