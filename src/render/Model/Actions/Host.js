@@ -24,10 +24,17 @@ addReducer("hostUpdate", (global, actions, update) => {
 	}
 });
 
-addReducer("setConfig", (global, actions, payload) => {
+addReducer("relaunchHost", () => {
+	void callHost("relaunchHost");
+});
+
+addReducer("setConfig", async (global, actions, payload) => {
 	if (!payload) return;
 	const { key, value } = payload;
-	void callHost("setConfiguration", key, value);
+	await callHost("setConfiguration", key, value);
+	if (["launcher.disableHardwareAcceleration"].includes(key)) {
+		actions.relaunchHost();
+	}
 });
 
 addReducer("invokeLaunch", (global, actions, payload) => {

@@ -23,6 +23,19 @@ export async function fetchHostInfo() {
 	return result.payload;
 }
 
+export async function relaunchHost() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "relaunchHost"
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
+
 export async function invokeLaunch(version_hash, params = {}) {
 	let result;
 	try {
@@ -57,6 +70,7 @@ export async function fetchConfiguration() {
 }
 
 export async function setConfiguration(key, value) {
+	let result;
 	try {
 		result = await invokeRequest({
 			type: "setConfiguration",

@@ -381,7 +381,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
 /* === TCHost init === */
 
-const validChannels = {
+const validChannels = Object.seal({
     requestHostInfo: 'requestHostInfo',
     invokeLaunch: 'invokeLaunch',
     setProgress: 'setProgress',
@@ -394,7 +394,8 @@ const validChannels = {
     fetchSystemMem: 'fetchSystemMem',
     fetchHostVersion: 'fetchHostVersion',
     selectFolder: 'selectFolder',
-};
+    relaunchHost: 'relaunchHost',
+});
 
 /**
  * TCHost instance
@@ -436,6 +437,10 @@ const initHandlers = async () => {
         hostVersion: autoUpdater.currentVersion,
         hostMemory: os.totalmem() / 1024 / 1024,
     }));
+
+    WSSHost.addReducer(validChannels.relaunchHost, () => {
+        app.relaunch();
+    });
 
     WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {

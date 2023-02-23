@@ -376,8 +376,8 @@ const LauncherSettingsTab = memo(() => {
 											closeOverlay: true,
 										},
 										{
-											name: "Ок",
-											class: ["filled", "colorBrand"],
+											name: `${s ? "Отключить" : "Включить"}`,
+											class: ["filled", "colorRed"],
 											closeOverlay: true,
 											callback: () => {
 												setConfig({ key: "launcher.disableHardwareAcceleration", value: Boolean(s) });
