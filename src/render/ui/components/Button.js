@@ -1,19 +1,22 @@
 import { createElement, useCallback, useState } from "react";
 import buildClassName from "Util/buildClassName";
 import Spinner from "./Spinner";
+import { randomString } from "Util/Random";
 
 const CLICKED_TIMEOUT = 400;
 
 const Button = ({
-	id,
+	id = undefined,
 	type = "button",
-	className,
-	onClick,
-	disabled,
+	className = undefined,
+	onClick = void 0,
+	disabled = false,
 	children,
-	isText,
-	isLoading,
+	isText = false,
+	isLoading = false,
 }) => {
+
+	id = id || `btn-${randomString(5)}`;
 
 	const [isClicked, setIsClicked] = useState(false);
 
