@@ -132,6 +132,12 @@ if (!gotTheLock) {
         if (!protoHandler(data)) restoreWindow();
     });
 
+    // Entry point -->
+    ConfigManager.load(); // Load config
+
+    // Hardware acceleration.
+    if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
+
     app.once('ready', () => {
         console.time("> init ready");
         setInstanceProtocolHandler();
@@ -187,13 +193,6 @@ if (!gotTheLock) {
                 ipcMain.off('update.install', action_updateInstall);
                 window.close();
             });
-
-            // Entry point -->
-
-            ConfigManager.load(); // Load config
-
-            // Hardware acceleration.
-            if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
 
             createTray();
 
