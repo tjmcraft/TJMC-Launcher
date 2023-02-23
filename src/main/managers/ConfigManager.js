@@ -26,6 +26,7 @@ const DEFAULT_CONFIG = Object.seal({
         checkUpdates: true,
         disableHardwareAcceleration: false,
         hideOnClose: true,
+        openDevTools: false,
     },
     overrides: {
         request: {
@@ -70,3 +71,4 @@ exports.getVersionsDirectory = (def = false) => config.getOption(config => confi
 exports.getCheckUpdates = () => Boolean(config.getOption(config => config.launcher.checkUpdates));
 exports.getDisableHardwareAcceleration = () => Boolean(config.getOption(config => config.launcher.disableHardwareAcceleration));
 exports.getHideOnClose = () => Boolean(config.getOption(config => config.launcher.hideOnClose));
+exports.getOpenDevTools = () => Boolean(config.getOption(config => config.launcher.openDevTools));

@@ -281,9 +281,10 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         }
     });
 
-    // win.show()
+    if (ConfigManager.getOpenDevTools()) {
+        win.webContents.openDevTools();
+    }
 
-    win.webContents.openDevTools()
 });
 
 async function launchMinecraft(version_hash, params = {}) {
