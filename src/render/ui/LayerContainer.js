@@ -96,10 +96,8 @@ const LayerContainer = memo(() => {
 			buttons: [
 				{
 					name: "Cancel",
-					closeOverlay: true,
-					callback: () => {
-						location.href = "https://app.tjmcraft.ga/";
-					}
+					closeOverlay: false,
+					callback: () => void 0
 				},
 				{
 					name: "Ок",
