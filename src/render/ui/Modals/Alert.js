@@ -11,7 +11,7 @@ import appStyle from 'CSS/app.module.css';
 import style from 'CSS/modal.module.css';
 
 
-const AlertContent = memo(({ title, content, type, multiline, buttons }) => {
+const AlertContent = ({ title, content, type, multiline, buttons }) => {
 	const { closeModal } = getDispatch();
 	buttons = buttons || [
 		{
@@ -20,46 +20,47 @@ const AlertContent = memo(({ title, content, type, multiline, buttons }) => {
 			closeOverlay: true
 		}
 	];
+	const handleClick = (button) => (e) => {
+		if (button.callback && typeof button.callback === 'function') button.callback.call(this);
+		if (button.closeOverlay) closeModal();
+	};
 	return (
 		<>
 			{title && (
-				<div class={buildClassName('flex-group', 'horizontal', style.header)}>
+				<div className={buildClassName('flex-group', 'horizontal', style.header)}>
 					{type && (
-						createElement("div", { class: style.icon },
-							{
+						<div className={style.icon}>
+							{{
 								info: SVG('info-circle'),
 								error: SVG('error-circle'),
 								warn: SVG('warn-circle'),
 								success: SVG('success-circle'),
-							}[type] || null)
+							}[type] || null}
+						</div>
 					)}
-					<h1 class={buildClassName('wrapper', 'size20', appStyle.base)}>{ title }</h1>
+					<h1 className={buildClassName('wrapper', 'size20', appStyle.base)}>{ title }</h1>
 				</div>
 			)}
 			{content && (
-				<div class={buildClassName(style.content, 'thin-s', multiline && style.log)}>
-					<span class={buildClassName('colorStandart', 'size14')}>{ content }</span>
+				<div className={buildClassName(style.content, 'thin-s', multiline && style.log)}>
+					<span className={buildClassName('colorStandart', 'size14')}>{ content }</span>
 				</div>
 			)}
 			<ModalFooter>
-				{buttons.map(button => {
-					const onClick = () => {
-						if (button.callback && typeof button.callback === 'function') button.callback.call(this);
-						if (button.closeOverlay) closeModal();
-					};
-					return createElement(Button, {
-						className: buildClassName('grow', style.button, button.class),
-						onClick,
-					}, button.name);
-				})}
+				{buttons.map((button, i) => (
+					<Button key={i}
+						className={buildClassName('grow', style.button, button.class)}
+						onClick={handleClick(button)}
+					>{button.name}</Button>
+				))}
 			</ModalFooter>
 		</>
 	);
-});
+};
 
-const Alert = memo(({ title, content, type, multiline, buttons }) => {
+const Alert = ({ title, content, type, multiline, buttons }) => {
 	return createElement(Modal, { mini: true },
 		createElement(AlertContent, { title, content, type, multiline, buttons }));
-});
+};
 
-export default Alert;
+export default memo(Alert);
