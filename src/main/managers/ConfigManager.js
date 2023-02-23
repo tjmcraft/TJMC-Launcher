@@ -88,13 +88,12 @@ function validateKeySet(srcObj, destObj) {
 exports.isLoaded = () => config != undefined;
 
 const readConfig = (configPath) => {
-    let config, forceSave = false;
+    let forceSave = false;
     if (!fs.existsSync(configPath)) {
         logger.debug('Generating a new configuration file...');
         if (config == undefined) config = DEFAULT_CONFIG;
         forceSave = true;
-    }
-    if (!forceSave) {
+    } else {
         try {
             config = fs.readFileSync(configPath, "utf-8");
             config = JSON.parse(config);
@@ -104,10 +103,8 @@ const readConfig = (configPath) => {
             forceSave = true;
         }
     }
-    const validatedConfig = validateKeySet(DEFAULT_CONFIG, config);
-    if (!shallowEqual(config, validatedConfig) || forceSave) // prevent unnecessary writings
-        exports.save(true, "read -> validate" + (forceSave && "\xa0-> force"));
-    return validatedConfig;
+    exports.save(true, forceSave, "read -> save");
+    return config;
 }
 
 exports.load = () => {
@@ -132,17 +129,19 @@ const watchCallback = (event, filename) => {
 }
 const watchDebounce = debounce(watchCallback, 100, true, false);
 
-exports.save = (silent = false, reason = "") => {
+exports.save = (silent = false, forceSave = true, reason = "") => {
     silentMode = silent;
-    if (!fs.existsSync(configPath))
-        fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
-    try {
-        const content = JSON.stringify(config, null, 4);
-        fs.writeFileSync(configPath, content, "utf-8");
-    } catch (e) {
-        logger.error('Config save error:', e)
+    if (!fs.existsSync(configPath)) fs.mkdirSync(path.join(configPath, '..'), { recursive: true });
+    const validatedConfig = validateKeySet(DEFAULT_CONFIG, config);
+    if (!shallowEqual(config, validatedConfig) || forceSave) { // prevent unnecessary writings
+        try {
+            const content = JSON.stringify(config, null, 4);
+            fs.writeFileSync(configPath, content, "utf-8");
+        } catch (e) {
+            logger.error('Config save error:', e)
+        }
+        logger.debug("Config saved!", "Silent:", silent, "Reason:", reason);
     }
-    logger.debug("Config saved!", "Silent:", silent, "Reason:", reason);
     silentMode = false;
 }
 
@@ -152,7 +151,7 @@ exports.setOption = async (key, value) => {
     let valuePath = key.split('.');
     let last = valuePath.pop();
     valuePath.reduce((o, k) => o[k] = o[k] || {}, config)[last] = value;
-    exports.save(false, "set option");
+    exports.save(false, true, "set option");
     return true;
 }
 
