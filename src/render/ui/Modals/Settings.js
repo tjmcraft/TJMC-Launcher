@@ -28,18 +28,18 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 
 	const items = useMemo(() => [
 		{ type: "header", content: "Настройки пользователя" },
-		{ type: "navItem", content: "Моя учётная запись", tab: "my-account-tab", disabled: false },
-		{ type: "navItem", content: "Сменить скин", tab: "skin-tab", disabled: false },
+		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", disabled: false },
+		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false },
 		{ type: "separator" },
 		{ type: "header", content: "Настроки Игры" },
-		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings-tab", disabled: !hostOnline },
-		{ type: "navItem", content: "Настройки Java", tab: "java-settings-tab", disabled: !hostOnline },
+		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline },
+		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline },
 		{ type: "separator" },
 		{ type: "header", content: "Настроки Приложения" },
-		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance-tab", disabled: false },
-		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings-tab", disabled: false },
+		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false },
+		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false },
 		{ type: "separator" },
-		{ type: "navItem", content: "О программе", tab: "launcher-about-tab", disabled: false },
+		{ type: "navItem", content: "О программе", tab: "launcher-about", disabled: false },
 		{ type: "separator" },
 	], [hostOnline]);
 
@@ -110,7 +110,7 @@ const MyAccountTab = memo(() => {
 	}, [logout]);
 
 	return user && (
-		<TabItem id="my-account-tab">
+		<TabItem id="my-account">
 			<h2>Моя учётная запись</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
@@ -181,7 +181,7 @@ const MyAccountTab = memo(() => {
 const SkinTab = memo(() => {
 
 	return (
-		<TabItem id="skin-tab">
+		<TabItem id="skin">
 			<h2>Конфигурация скина</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
@@ -206,7 +206,7 @@ const MinecraftSettingsTab = memo(() => {
 	}, [setConfig, width, height]);
 
 	return (
-		<TabItem id="minecraft-settings-tab">
+		<TabItem id="minecraft-settings">
 			<h2>Настройки Minecraft</h2>
 			{config ? (
 				<div className="children">
@@ -276,7 +276,7 @@ const JavaSettingsTab = memo(() => {
 	const config = useGlobal(global => global.configuration);
 
 	return (
-		<TabItem id="java-settings-tab">
+		<TabItem id="java-settings">
 			<h2>Настройки Java</h2>
 			{config ? (
 				<div className="children">
@@ -342,7 +342,7 @@ const LauncherSettingsTab = memo(() => {
 	const hostOnline = useHostOnline();
 
 	return (
-		<TabItem id="launcher-settings-tab">
+		<TabItem id="launcher-settings">
 			<h2>Настройки Лаунчера</h2>
 			<div className="children">
 				{hostOnline && config && (
@@ -490,7 +490,7 @@ const LauncherAppearanceTab = memo(() => {
 	const theme = useGlobal(selectCurrentTheme);
 
 	return (
-		<TabItem id="launcher-appearance-tab">
+		<TabItem id="launcher-appearance">
 			<h2>Внешний вид</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
@@ -580,7 +580,7 @@ const AboutTab = memo(() => {
 	}, []);
 
 	return (
-		<TabItem id="launcher-about-tab">
+		<TabItem id="launcher-about">
 			<h2>О программе</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
@@ -666,11 +666,12 @@ const ActiveTab = ({ current }) => {
 
 const Settings = (props) => {
 
-	const [activeTab, setTab] = useState(props.tab || "my-account-tab");
+	const { selectSettingsScreen } = getDispatch();
+	const currentSettingsScreen = useGlobal(global => global.currentSettingsScreen);
 
 	const handleScreenSelect = useCallback((screen) => {
-		setTab(screen);
-	}, [setTab]);
+		selectSettingsScreen(screen);
+	}, [selectSettingsScreen]);
 
 	const { full_settings: shouldFull } = useGlobal(global => global.settings);
 
@@ -680,7 +681,7 @@ const Settings = (props) => {
 				<div className="sidebar-region">
 					<div className="sidebar">
 						<SideBarItems
-							currentScreen={activeTab}
+							currentScreen={currentSettingsScreen}
 							onScreenSelect={handleScreenSelect}
 						/>
 						<InfoBox />
@@ -689,7 +690,7 @@ const Settings = (props) => {
 				<div className="content-region">
 					<div className="transitionWrap">
 						<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
-							<ActiveTab current={activeTab} />
+							<ActiveTab current={currentSettingsScreen} />
 						</div>
 					</div>
 				</div>

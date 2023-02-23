@@ -137,3 +137,9 @@ addReducer("selectMainScreen", (global, actions, payload) => {
 		currentMainScreen: payload
 	};
 });
+addReducer("selectSettingsScreen", (global, actions, payload) => {
+	return {
+		...global,
+		currentSettingsScreen: payload
+	};
+});

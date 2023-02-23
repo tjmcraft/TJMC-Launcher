@@ -253,6 +253,7 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 				"versions",
 				"releases",
 				"currentMainScreen",
+				"currentSettingsScreen",
 				"modals"
 			])
 		};
@@ -292,6 +293,7 @@ const INITIAL_STATE = {
 	configuration: undefined,
 	releases: [],
 	currentMainScreen: "home",
+	currentSettingsScreen: "my-account"
 };
 
 const stateStore = new StateStore();
