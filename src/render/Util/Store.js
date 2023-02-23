@@ -253,8 +253,9 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 				"versions",
 				"releases",
 				"currentMainScreen",
-				"currentSettingsScreen",
-				"modals"
+				...(APP_ENV == "development" ? [
+					"currentSettingsScreen", "modals"
+				] : [])
 			])
 		};
 		const json = JSON.stringify(reducedGlobal);
