@@ -14,9 +14,9 @@ const config = new Config({
     })
 });
 
-exports.load = function (dir_path) {
-    return config.load(dir_path);
-}
+module.exports.load = (dir_path) => config.load(dir_path);
+module.exports.addCallback = config.addCallback;
+module.exports.removeCallback = config.removeCallback;
 
 /**
  * Create new installation
@@ -53,11 +53,12 @@ exports.createInstallation = async function (options = {}) {
 
     const installations = config.getOption("profiles");
     if (profile) {
-        const version_id = generateIdFor(installations);
+        const hash = generateIdFor(installations);
         Object.assign(installations, {
-            [version_id]: cleanObject(profile)
+            [hash]: cleanObject(profile)
         });
-        return config.setOption("profiles", installations);
+        config.setOption("profiles", installations);
+        return hash;
     }
     return undefined;
 }
@@ -90,13 +91,15 @@ exports.getInstallationSync = function (hash) {
 /**
  * Delete the installation with given hash
  * @param {String} hash - The hash of the installation
+ * @param {Boolean} forceDeps - Should we delete all dependences
  * @returns {Boolean} - Whether the deletion is success
  */
-exports.removeInstallation = async function (hash) {
+exports.removeInstallation = async function (hash, forceDeps = false) {
     const installations = config.getOption("profiles");
     if (hash && Object(installations).hasOwnProperty(hash)) {
         delete installations[hash];
-        return config.setOption("profiles", installations);
+        config.setOption("profiles", installations);
+        return hash;
     }
     return undefined;
 }

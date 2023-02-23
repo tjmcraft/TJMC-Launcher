@@ -427,6 +427,11 @@ const initHandlers = async () => {
         WSSHost.emit("updateConfiguration", { configuration: config });
     });
 
+    InstallationsManager.addCallback(config => {
+        console.debug("Update Installations:", config);
+        config?.profiles && WSSHost.emit("updateInstallations", { installations: config.profiles });
+    })
+
     WSSHost.addReducer(validChannels.requestHostInfo, () => ({
         hostVendor: 'TJMC-Launcher',
         hostVersion: autoUpdater.currentVersion,
@@ -459,14 +464,12 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(validChannels.createInstallation, async (data) => {
-        const hash = await InstallationsManager.createInstallation(data);
-        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
-        return { hash };
+        const result = await InstallationsManager.createInstallation(data);
+        return result;
     });
 
     WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
         const result = await InstallationsManager.removeInstallation(hash, forceDeps);
-        InstallationsManager.getInstallations().then(installations => WSSHost.emit("updateInstallations", { installations }));
         return result;
     });
 
