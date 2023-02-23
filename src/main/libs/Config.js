@@ -30,18 +30,14 @@ const Config = function ({
 	prefix = "ConfigManager",
 	color = "#1052a5",
 	configName,
-	configDir,
+	configDir = undefined,
 	defaultConfig,
 }) {
-
-	if (!configDir) throw new Error("No config directory specified!");
 
 	const logger = LoggerUtil(`%c[${prefix}]`, `color: ${color}; font-weight: bold`);
 
 	configName = configName || "config.json";
-	const configPath = path.join(configDir, configName);
-	logger.debug("Config Path:", configPath);
-
+	let configPath = undefined;
 	const DEFAULT_CONFIG = Object.seal(defaultConfig || {});
 	var config = undefined;
 
@@ -110,7 +106,9 @@ const Config = function ({
 	 * Load configuration and start watching
 	 * @returns {object}
 	*/
-	this.load = () => {
+	this.load = (config_dir = undefined) => {
+		config_dir = config_dir || configDir;
+		configPath = path.join(config_dir, configName);
 		config = readConfig(configPath);
 		logger.debug("[load]", `${configName} file`, "->", (this.isLoaded() ? 'success' : 'failure'));
 		if (this.isLoaded())
