@@ -91,7 +91,7 @@ const Config = function ({
 	const watchCallback = (event, filename) => {
 		if (filename == configName) {
 			logger.log("[watch]", `${filename} file`, "->", event);
-			config = readConfig(configPath);
+			readConfig(configPath);
 			if (event == "change") {
 				if (!silentMode) {
 					runCallbacks();
@@ -109,7 +109,7 @@ const Config = function ({
 	this.load = (config_dir = undefined) => {
 		config_dir = config_dir || configDir;
 		configPath = path.join(config_dir, configName);
-		config = readConfig(configPath);
+		readConfig(configPath);
 		logger.debug("[load]", `${configName} file`, "->", (this.isLoaded() ? 'success' : 'failure'));
 		if (this.isLoaded())
 			fs.watch(configPath, debounce(watchCallback, 100, true, false));
