@@ -2,7 +2,10 @@
     "compile-hero.disable-compile-files-on-did-save-code": true,
     "rpc.enabled": false,
     "cSpell.words": [
+        "поебать",
+        "похуй",
         "asar",
+        "loggerutil",
         "nsis"
     ]
 }
