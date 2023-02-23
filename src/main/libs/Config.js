@@ -138,7 +138,7 @@ const Config = function ({
 			logger.debug("[save]", "Config saved!", "\nSilent:", silent, "\nReason:", reason);
 		}
 		silentMode = false;
-		return config;
+		return Boolean(config);
 	}
 
 	/**

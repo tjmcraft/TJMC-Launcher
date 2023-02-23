@@ -464,13 +464,11 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(validChannels.createInstallation, async (data) => {
-        const result = await InstallationsManager.createInstallation(data);
-        return result;
+        return await InstallationsManager.createInstallation(data);
     });
 
     WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
-        const result = await InstallationsManager.removeInstallation(hash, forceDeps);
-        return result;
+        return await InstallationsManager.removeInstallation(hash, forceDeps);
     });
 
     WSSHost.addReducer(validChannels.fetchVersions, async () => {
@@ -484,8 +482,7 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
-        const result = await ConfigManager.setOption(key, value);
-        return result;
+        return await ConfigManager.setOption(key, value);
     });
 
     WSSHost.addReducer(validChannels.selectFolder, async ({ title }) => {
