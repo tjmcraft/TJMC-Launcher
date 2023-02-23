@@ -1,4 +1,4 @@
-import { memo, createElement, useCallback, useMemo, useState } from "react";
+import { memo, createElement, useCallback, useMemo, useState, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName.js";
 import { getDispatch } from "Util/Store";
@@ -197,8 +197,11 @@ const MinecraftSettingsTab = memo(() => {
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
-	const [width, setWidth] = useState(config?.minecraft?.launch?.width);
-	const [height, setHeight] = useState(config?.minecraft?.launch?.height);
+	const [width, setWidth] = useState("0");
+	const [height, setHeight] = useState("0");
+
+	useEffect(() => setWidth(config?.minecraft?.launch?.width), [config?.minecraft?.launch?.width]);
+	useEffect(() => setHeight(config?.minecraft?.launch?.height), [config?.minecraft?.launch?.height]);
 
 	const handleSaveConfig = useCallback(() => {
 		setConfig({ key: "minecraft.launch.width", value: width });
