@@ -1,5 +1,5 @@
-const path = require('path');
 const Config = require('../libs/Config');
+const path = require('path');
 
 const launcherDir = path.normalize(
     (
