@@ -645,19 +645,19 @@ const AboutTab = memo(() => {
 
 const ActiveTab = ({ current }) => {
 	switch (current) {
-		case "my-account-tab":
+		case "my-account":
 			return (<MyAccountTab />);
-		case "skin-tab":
+		case "skin":
 			return (<SkinTab />);
-		case "minecraft-settings-tab":
+		case "minecraft-settings":
 			return (<MinecraftSettingsTab />);
-		case "java-settings-tab":
+		case "java-settings":
 			return (<JavaSettingsTab />);
-		case "launcher-settings-tab":
+		case "launcher-settings":
 			return (<LauncherSettingsTab />);
-		case "launcher-appearance-tab":
+		case "launcher-appearance":
 			return (<LauncherAppearanceTab />);
-		case "launcher-about-tab":
+		case "launcher-about":
 			return (<AboutTab />);
 		default:
 			return (<h5>Loading...</h5>);
