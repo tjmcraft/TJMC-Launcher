@@ -165,9 +165,13 @@ const Config = function ({
 	 */
 	this.setOption = async (key, value) => {
 		let valuePath = key.split('.');
-		let firstKey = valuePath.shift();
-		let lastKey = valuePath.pop();
-		valuePath.reduce((o, k) => o[k] = o[k] || {}, config[firstKey])[lastKey] = value;
+		if (valuePath.length >= 2) {
+			let firstKey = valuePath.shift();
+			let lastKey = valuePath.pop();
+			valuePath.reduce((o, k) => o[k] = o[k] || {}, config[firstKey])[lastKey] = value;
+		} else {
+			config[key] = value;
+		}
 		return this.save(false, true, "set option");
 	}
 
