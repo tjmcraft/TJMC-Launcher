@@ -2,6 +2,7 @@ import { createElement, memo, useCallback, useEffect, useState } from "react";
 
 import { getDispatch, stateComponent } from "Util/Store";
 import buildClassName from "Util/buildClassName";
+import useGlobal from "Hooks/useGlobal";
 import { pick } from "Util/Iterates";
 
 import { InputPassword, InputText } from "UI/components/Input";
@@ -12,9 +13,11 @@ import style from "CSS/auth.module.css";
 // TODO: Implement multiscreen authState support
 // Need to implement multiAuthState support under API Requests and API itself
 
-const Authentication = ({
-	authIsLoading, authError
-}) => {
+const Authentication = () => {
+
+	const { authIsLoading, authError } = useGlobal(global => pick(global, [
+		'authState', 'authIsLoading', 'authError'
+	]));
 
 	const { requestAuth } = getDispatch();
 
@@ -58,17 +61,17 @@ const Authentication = ({
 	}, [authError]);
 
 	return (
-		<div class={style.container}>
-			<a class={style.floatingLogo} href="/" target="_blank" rel="noopener" />
+		<div className={style.container}>
+			<a className={style.floatingLogo} href="/" target="_blank" rel="noopener" />
 
-			<div class={style.wrapper}>
-				<form class={style.authBox} onsubmit={onSubmit}>
-					<div class={style.mainLoginContainer}>
-						<div class={style.header}>
-							<p class={buildClassName(style.title, 'size24')}>{"Добро пожаловать!"}</p>
-							<p class={buildClassName(style.subtitle, 'size16')}>{"Войдите в свой аккаунт"}</p>
+			<div className={style.wrapper}>
+				<form className={style.authBox} onSubmit={onSubmit}>
+					<div className={style.mainLoginContainer}>
+						<div className={style.header}>
+							<p className={buildClassName(style.title)}>{"Добро пожаловать!"}</p>
+							<p className={buildClassName(style.subtitle)}>{"Войдите в свой аккаунт"}</p>
 						</div>
-						<div class={style.block}>
+						<div className={style.block}>
 
 							<InputText id="email"
 								name="email"
@@ -106,9 +109,4 @@ const Authentication = ({
 
 };
 
-export default memo(stateComponent((global) =>
-	pick(global, [
-		'authState',
-		'authIsLoading',
-		'authError',
-	]))(Authentication));
+export default memo(Authentication);

@@ -9,7 +9,7 @@ import style from "CSS/input.module.css";
 
 
 export function InputText({
-	ref, id, className,
+	ref, id, className, name,
 	value, label, error,
 	disabled, readOnly,
 	placeholder, autoComplete, maxLength, autoFocus, required,
@@ -26,14 +26,17 @@ export function InputText({
 
 	return (
 		<div className={fullClassName}>
-			<label htmlFor={id}>
-				{label}
-				{error && <span> - {error}</span>}
-			</label>
+			{(label || error) && (
+				<label htmlFor={id}>
+					{label}
+					{error && <span> - {error}</span>}
+				</label>
+			)}
 			<span className={style.inputWrapper}>
 				<input
 					ref={ref}
 					id={id}
+					name={name}
 					className={""}
 					type="text"
 					value={value || ''}
@@ -53,7 +56,7 @@ export function InputText({
 }
 
 export function InputPassword({
-	ref, id, className,
+	ref, id, className, name,
 	value, label, error,
 	disabled, readOnly,
 	placeholder, autoComplete, maxLength, autoFocus, required,
@@ -75,15 +78,18 @@ export function InputPassword({
 
 	return (
 		<div className={fullClassName}>
-			<label htmlFor={id}>
-				{label}
-				{error && <span> - {error}</span>}
-			</label>
+			{(label || error) && (
+				<label htmlFor={id}>
+					{label}
+					{error && <span> - {error}</span>}
+				</label>
+			)}
 			<span className={style.inputWrapper}>
 				<input
 					ref={ref}
 					id={id}
 					className={""}
+					name={name}
 					type={isPasswordVisible ? 'text' : 'password'}
 					value={value || ''}
 					autoFocus={autoFocus}

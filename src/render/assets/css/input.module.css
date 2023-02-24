@@ -12,7 +12,7 @@
     width: 100%;
 }
 .inputGroup + .inputGroup {
-    margin-top: 1em;
+    margin-top: 1rem;
 }
 .inputGroup .head {
     display: flex;
@@ -158,7 +158,7 @@ input:disabled, select:disabled {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    margin-top: 2em;
+    margin-top: 2rem;
 }
 
 .actionBlock button {
