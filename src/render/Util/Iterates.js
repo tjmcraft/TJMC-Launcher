@@ -50,7 +50,7 @@ export function getUnequalProps(currentProps, newProps) {
 		}
 
 		return res;
-	});
+	}, []);
 }
 
 

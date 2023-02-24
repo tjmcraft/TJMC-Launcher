@@ -1,5 +1,5 @@
 import { createElement, useState, useEffect } from "react";
-import { pick, shallowEqual } from "./Iterates";
+import { getUnequalProps, pick, shallowEqual } from "./Iterates";
 import { generateIdFor } from "./Random";
 import { onBeforeUnload, throttle } from "./Shedulers";
 import useForceUpdate from "Hooks/useForceUpdate";
@@ -88,10 +88,11 @@ function StateStore() {
 				return;
 			}
 
-			debug_picker && console.debug("[pick]", "->", container.debug, "=>\n", mappedProps, "->", newMappedProps);
+			debug_picker && console.debug("[pick]", "->", container.debug, "=>\n", { ...mappedProps }, "->", { ...newMappedProps });
 
 			if (Object.keys(newMappedProps).length && !shallowEqual(mappedProps, newMappedProps)) {
-				debug_picker && console.debug("[picked]", "->", container.debug, "=>\n", mappedProps, "->", newMappedProps);
+				// debug_picker && console.debug("[picked]", "->", container.debug, "=>\n", { ...mappedProps }, "->", { ...newMappedProps });
+				debug_picker && console.debug("[picked]", "->", container.debug, "=>\n", getUnequalProps(mappedProps, newMappedProps).join(";\n"));
 				container.mappedProps = newMappedProps;
 				callback(container.mappedProps);
 			}
