@@ -31,7 +31,7 @@ const App = () => {
 	const { initApi } = getDispatch();
 	useConstructor(() => initApi());
 
-	const isAuthReady = useGlobal(global => global.auth_state) == "ready";
+	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 
 	return (
 		<div className="app">

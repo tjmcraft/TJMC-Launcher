@@ -11,8 +11,9 @@ const updateContainer = (propsRef, selector, callback) => {
 		} catch (err) {
 			return;
 		}
-		if (nextState && Object.keys(nextState).length && !shallowEqual(propsRef.current, nextState)) {
-			// console.debug("[picker]", "=>\n", propsRef.current, "->", nextState);
+		// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
+		if (nextState != undefined && !shallowEqual(propsRef.current, nextState)) {
+			// console.debug("[picker]", "->", selector, "\n=>", "picked!");
 			propsRef.current = nextState;
 			callback(nextState);
 		}
