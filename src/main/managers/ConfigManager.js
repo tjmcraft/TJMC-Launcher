@@ -59,6 +59,7 @@ const config = new Config({
 module.exports.load = () => config.load();
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
+module.exports.watchOption = config.watchOption;
 
 exports.getAllOptionsSync = () => config.getOption();
 exports.getAllOptions = async () => config.getOption();

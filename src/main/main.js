@@ -281,9 +281,9 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         }
     });
 
-    if (ConfigManager.getOpenDevTools()) {
-        win.webContents.openDevTools();
-    }
+    ConfigManager.watchOption("launcher.openDevTools")(state =>
+        state ? win.webContents.openDevTools() : win.webContents.closeDevTools()
+    )
 
 });
 
