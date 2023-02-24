@@ -135,7 +135,7 @@ const Config = function ({
 			} catch (e) {
 				logger.error("[save]", 'Config save error:', e)
 			}
-			logger.debug("[save]", "Config saved!", "\nSilent:", silent, "\nReason:", reason);
+			logger.debug("[save]", "Config saved!", "Silent:", silent, "Reason:", reason);
 		}
 		silentMode = false;
 		return Boolean(config);
@@ -149,8 +149,9 @@ const Config = function ({
 	 */
 	this.setOption = async (key, value) => {
 		let valuePath = key.split('.');
+		let firstKey = valuePath.shift();
 		let lastKey = valuePath.pop();
-		valuePath.reduce((o, k) => o[k] = o[k] || {}, config)[lastKey] = value;
+		valuePath.reduce((o, k) => o[k] = o[k] || {}, config[firstKey])[lastKey] = value;
 		return this.save(false, true, "set option");
 	}
 
@@ -168,7 +169,8 @@ const Config = function ({
 			} catch (e) { } // тут похуй + поебать
 		} else if (typeof selector === "string") {
 			let valuePath = selector.split('.');
-			state = valuePath.reduce((o, k) => o[k] = o[k] || {}, state);
+			let firstKey = valuePath.shift();
+			state = valuePath.reduce((o, k) => o[k] = o[k] ?? {}, state[firstKey]);
 		}
 		return state;
 	}
