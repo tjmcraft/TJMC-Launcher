@@ -389,17 +389,15 @@ const LauncherSettingsTab = memo(() => {
 
 							}}
 						/>
-						{APP_ENV == "development" && (
-							<SettingContainer
-								id="launcher.openDevTools"
-								header="Открывать средства разработчика"
-								note="Включение этого параметра позволяет скрывать и показывать средства разработчика"
-								checked={config.launcher.openDevTools}
-								action={(s) => {
-									setConfig({ key: "launcher.openDevTools", value: s });
-								}}
-							/>
-						)}
+						<SettingContainer
+							id="launcher.openDevTools"
+							header="Открывать средства разработчика"
+							note="Включение этого параметра позволяет скрывать и показывать средства разработчика"
+							checked={config.launcher.openDevTools}
+							action={(s) => {
+								setConfig({ key: "launcher.openDevTools", value: s });
+							}}
+						/>
 					</div>
 				)}
 				<div className={style.settingGroupContainer}>
