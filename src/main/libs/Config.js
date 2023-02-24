@@ -55,6 +55,22 @@ const Config = function ({
 		if (index !== -1) callbacks.splice(index, 1);
 	};
 
+	this.watchOption = (selector = void 0) => {
+		return (callback = () => void 0) => {
+			let mappedProps = undefined;
+			const update = () => {
+				let newMappedProps = this.getOption(selector);
+				// console.debug("[wo]\n<-", mappedProps, "\n->", newMappedProps);
+				if (newMappedProps != undefined && !shallowEqual(mappedProps, newMappedProps)) {
+					mappedProps = newMappedProps;
+					callback(mappedProps);
+				}
+			};
+			update();
+			this.addCallback(update);
+		};
+	}
+
 	const runCallbacks = () => {
 		callbacks.forEach((callback) => typeof callback === "function" ? callback({ ...config }) : null);
 	};
