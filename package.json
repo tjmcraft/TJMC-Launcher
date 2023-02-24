@@ -120,7 +120,7 @@
     ],
     "asar": true,
     "compression": "maximum",
-    "icon": "app/assets/images/icon.png",
+    "icon": "icons/icon.png",
     "mac": {
       "target": [
         {
@@ -131,7 +131,7 @@
           ]
         }
       ],
-      "icon": "build/icons/icon.icns",
+      "icon": "icons/icon.icns",
       "category": "public.app-category.games"
     },
     "win": {
@@ -141,7 +141,7 @@
           "arch": "x64"
         }
       ],
-      "icon": "build/icons/icon.ico"
+      "icon": "icons/icon.ico"
     },
     "linux": {
       "target": [
