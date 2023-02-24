@@ -42,6 +42,7 @@ const Menu = ({
 					"thin-s",
 					transitionClassNames,
 				)}
+				style={{ transformOrigin: `${transformOriginX || positionX} ${transformOriginY || positionY}` }}
 				onClick={handleClose}>
 				{children}
 			</div>

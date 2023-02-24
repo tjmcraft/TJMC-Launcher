@@ -83,6 +83,8 @@ const Select = ({
 				isOpen={isOpen}
 				containerRef={dropdownRef}
 				onClose={handleClose}
+				transformOriginX="50%"
+				transformOriginY="0px"
 			>
 				{children}
 			</Menu>
