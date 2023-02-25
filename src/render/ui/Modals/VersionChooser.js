@@ -206,7 +206,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 							type="text"
 							name="installation-name"
 							value={name}
-							onInput={(e) => setName(e.target.value)}
+							onChange={(e) => setName(e.target.value)}
 							placeholder={version_opts_default.name} />
 					</InputGroup>
 				</div>
@@ -219,7 +219,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 					/>
 				</div>
 				<div className="children-zx1">
-					<InputGroup title="Resolution" htmlFor="installation.resolution.wrap">
+					<InputGroup title="Разрешение" htmlFor="installation.resolution.wrap">
 						<div className="resolution" id="installation.resolution.wrap">
 							<input
 								type="number"
@@ -249,12 +249,21 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 					/>
 				</div>
 				<div className="children-zx1">
-					<InputGroup title="Java Arguments" htmlFor="installation.java.args.input">
+					<PathInput
+						type="file"
+						title="Путь к Java"
+						placeholder="<java по умолчанию>"
+						onChange={setJavaPath}
+						value={javaPath}
+					/>
+				</div>
+				<div className="children-zx1">
+					<InputGroup title="Аргументы Java" htmlFor="installation.java.args.input">
 						<input id="installation.java.args.input"
 							type="text"
 							name="installation-java-args"
 							value={javaArgs}
-							onInput={(e) => setJavaArgs(e.target.value)}
+							onChange={(e) => setJavaArgs(e.target.value)}
 							placeholder="Java Arguments" />
 					</InputGroup>
 				</div>
