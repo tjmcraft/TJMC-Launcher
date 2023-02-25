@@ -17,6 +17,7 @@ import RangeSlider from "UI/components/Slider.js";
 import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
+import { PathInput } from "UI/components/Input";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
@@ -286,11 +287,26 @@ const JavaSettingsTab = memo(() => {
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
+	const handleChangeJavaPath = useCallback((javaPath) => {
+		setConfig({ key: "java.javaPath", value: javaPath });
+	}, [setConfig]);
+
 	return (
 		<TabItem id="java-settings">
 			<h2>Настройки Java</h2>
 			{config ? (
 				<div className="children">
+					<div className={style.settingGroupContainer}>
+						<h5>Исполняемый файл</h5>
+						<div className={""}>
+							<PathInput
+								type="file"
+								placeholder="<java>"
+								onChange={handleChangeJavaPath}
+								value={config?.java?.javaPath}
+							/>
+						</div>
+					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
 						<div className={style.settingGroup}>
