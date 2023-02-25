@@ -6,19 +6,6 @@
     border-bottom: thin solid var(--background-modifier-accent);
 }
 
-:global(:root.alt-settings) .settingContainer {
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-}
-:global(:root.alt-settings) .settingContainer ~ .settingContainer {
-    border-radius: 0;
-    margin-top: 0;
-}
-:global(:root.alt-settings) .settingContainer:last-child {
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-}
-
 :global(:root.alt-settings) .settingContainer ~ .settingContainer:after {
     content: "";
     background: var(--background-modifier-accent);
@@ -34,7 +21,6 @@
     display: flex;
     flex-direction: column;
     border: unset;
-    background: var(--background-secondary);
     padding: 12px 16px;
 }
 :global(:root.alt-settings) .settingContainer.transparent {
@@ -56,6 +42,20 @@
 }
 .settingGroupContainer > div + div {
     margin-top: 1rem;
+}
+:global(:root:not(.alt-settings)) .settingGroupContainer > .settingGroup > div + div {
+    margin-top: 1rem;
+}
+
+:global(:root.alt-settings) .settingGroupContainer > .settingGroup {
+    position: relative;
+    background: var(--background-secondary);
+    border-radius: 8px;
+
+}
+
+:global(:root.alt-settings.more-border) .settingGroupContainer > .settingGroup {
+    border: 1px solid var(--border-color-1);
 }
 
 .settingGroupContainer .labelRow {

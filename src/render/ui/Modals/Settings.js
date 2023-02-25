@@ -150,25 +150,27 @@ const MyAccountTab = memo(() => {
 				{APP_ENV == "development" && (
 					<div className={style.settingGroupContainer}>
 						<h5>Дополнительно</h5>
-						<div className={style.settingContainer}>
-							<div className={style.description}>{"no content here"}</div>
-						</div>
-						<div className={style.settingContainer}>
-							<div className={style.description}>{"UI Test"}</div>
-							<div className={"test"}>
-								<Select title="Params select" value="Item 0">
-									<MenuItem compact>Item 1</MenuItem>
-									<MenuItem compact>Item 2</MenuItem>
-									<MenuItem compact>Item 3</MenuItem>
-									<MenuItem compact>Item 4</MenuItem>
-									<MenuItem compact>Item 5</MenuItem>
-									<MenuItem compact>Item 6</MenuItem>
-									<MenuItem compact>Item 7</MenuItem>
-									<MenuItem compact>Item 8</MenuItem>
-									<MenuItem compact>Item 9</MenuItem>
-									<MenuItem compact>Item 10</MenuItem>
-									<MenuItem compact>Item 11</MenuItem>
-								</Select>
+						<div className={style.settingGroup}>
+							<div className={style.settingContainer}>
+								<div className={style.description}>{"no content here"}</div>
+							</div>
+							<div className={style.settingContainer}>
+								<div className={style.description}>{"UI Test"}</div>
+								<div className={"test"}>
+									<Select title="Params select" value="Item 0">
+										<MenuItem compact>Item 1</MenuItem>
+										<MenuItem compact>Item 2</MenuItem>
+										<MenuItem compact>Item 3</MenuItem>
+										<MenuItem compact>Item 4</MenuItem>
+										<MenuItem compact>Item 5</MenuItem>
+										<MenuItem compact>Item 6</MenuItem>
+										<MenuItem compact>Item 7</MenuItem>
+										<MenuItem compact>Item 8</MenuItem>
+										<MenuItem compact>Item 9</MenuItem>
+										<MenuItem compact>Item 10</MenuItem>
+										<MenuItem compact>Item 11</MenuItem>
+									</Select>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -232,36 +234,42 @@ const MinecraftSettingsTab = memo(() => {
 								onBlur={handleSaveConfig}
 								placeholder={"<auto>"} />
 						</div>
-						<SettingContainer id="minecraft.launch.fullscreen"
-							header="Запускать в полноэкранном режиме"
-							note="Принудительно использовать режим fullscreen для нового окна"
-							checked={config.minecraft.launch.fullscreen}
-							action={(s) => {
-								setConfig({ key: "minecraft.launch.fullscreen", value: s });
-							}}
-						/>
+						<div className={style.settingGroup}>
+							<SettingContainer id="minecraft.launch.fullscreen"
+								header="Запускать в полноэкранном режиме"
+								note="Принудительно использовать режим fullscreen для нового окна"
+								checked={config.minecraft.launch.fullscreen}
+								action={(s) => {
+									setConfig({ key: "minecraft.launch.fullscreen", value: s });
+								}}
+							/>
+						</div>
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Параметры запуска</h5>
-						<SettingContainer id="overrides.autoConnect"
-							header="Автоматически подключаться к серверу ТюменьCraft"
-							note="Подключаться к серверу автоматически, при запуске игры"
-							checked={false}
-							action={(s, n) => {
-								console.debug(n, "=>", s);
-							}}
-						/>
+						<div className={style.settingGroup}>
+							<SettingContainer id="overrides.autoConnect"
+								header="Автоматически подключаться к серверу ТюменьCraft"
+								note="Подключаться к серверу автоматически, при запуске игры"
+								checked={false}
+								action={(s, n) => {
+									console.debug(n, "=>", s);
+								}}
+							/>
+						</div>
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Параметры загрузки</h5>
-						<SettingContainer id="overrides.checkHash"
-							header="Проверять Hash файлов"
-							note={"Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!"}
-							checked={config.overrides.checkHash}
-							action={(s) => {
-								setConfig({ key: "overrides.checkHash", value: s });
-							}}
-						/>
+						<div className={style.settingGroup}>
+							<SettingContainer id="overrides.checkHash"
+								header="Проверять Hash файлов"
+								note={"Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!"}
+								checked={config.overrides.checkHash}
+								action={(s) => {
+									setConfig({ key: "overrides.checkHash", value: s });
+								}}
+							/>
+						</div>
 					</div>
 				</div>
 			) : (
@@ -285,47 +293,51 @@ const JavaSettingsTab = memo(() => {
 				<div className="children">
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
-						<div className={buildClassName(style.settingContainer)}>
-							<div className={buildClassName("flex-group", "vertical")}>
-								<div className={buildClassName("flex-child", "flex-group", "vertical")}>
-									<h5>Максимальное использование памяти</h5>
-									<RangeSlider id="java-memory-max"
-										value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
-										min={0.5}
-										max={8}
-										step={0.1}
-										unit="Gb"
-										onChange={(s) => {
-											setConfig({ key: "java.memory.max", value: Math.floor(s * 1024) });
-										}}
-									/>
-								</div>
-								<div className={buildClassName("flex-child", "flex-group", "vertical")}>
-									<h5>Минимальное использование памяти</h5>
-									<RangeSlider id="java-memory-min"
-										value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
-										min={0.5}
-										max={5}
-										step={0.1}
-										unit="Gb"
-										onChange={(s) => {
-											setConfig({ key: "java.memory.min", value: Math.floor(s * 1024) });
-										}}
-									/>
+						<div className={style.settingGroup}>
+							<div className={buildClassName(style.settingContainer)}>
+								<div className={buildClassName("flex-group", "vertical")}>
+									<div className={buildClassName("flex-child", "flex-group", "vertical")}>
+										<h5>Максимальное использование памяти</h5>
+										<RangeSlider id="java-memory-max"
+											value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
+											min={0.5}
+											max={8}
+											step={0.1}
+											unit="Gb"
+											onChange={(s) => {
+												setConfig({ key: "java.memory.max", value: Math.floor(s * 1024) });
+											}}
+										/>
+									</div>
+									<div className={buildClassName("flex-child", "flex-group", "vertical")}>
+										<h5>Минимальное использование памяти</h5>
+										<RangeSlider id="java-memory-min"
+											value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
+											min={0.5}
+											max={5}
+											step={0.1}
+											unit="Gb"
+											onChange={(s) => {
+												setConfig({ key: "java.memory.min", value: Math.floor(s * 1024) });
+											}}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Дополнительно</h5>
-						<SettingContainer id="java.detached"
-							header="Независимый процесс"
-							note="Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры"
-							checked={config.java.detached}
-							action={(s) => {
-								setConfig({ key: "java.detached", value: s });
-							}}
-						/>
+						<div className={style.settingGroup}>
+							<SettingContainer id="java.detached"
+								header="Независимый процесс"
+								note="Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры"
+								checked={config.java.detached}
+								action={(s) => {
+									setConfig({ key: "java.detached", value: s });
+								}}
+							/>
+						</div>
 					</div>
 				</div>
 			) : (
@@ -351,24 +363,69 @@ const LauncherSettingsTab = memo(() => {
 				{hostOnline && config && (
 					<div className={style.settingGroupContainer}>
 						<h5>Настройки клиента</h5>
+						<div className={style.settingGroup}>
+							<SettingContainer
+								id="launcher.hideOnClose"
+								header="Скрывать при закрытии"
+								note="Включение этого параметра позволяет скрывать лаунчер в трей при нажатии на кнопку закрыть."
+								checked={config.launcher.hideOnClose}
+								action={(s) => {
+									setConfig({ key: "launcher.hideOnClose", value: s });
+								}}
+							/>
+							<SettingContainer
+								id="launcher.disableHardwareAcceleration"
+								header="Отключить программную акселерацию"
+								note="Включение этого параметра позволяет отключить програмное ускорение. Может вызвать проблемы на некоторых системах!"
+								checked={config.launcher.disableHardwareAcceleration}
+								action={(s) => {
+									alert({
+										title: `${s ? "Отключение" : "Включение"} программного ускорения`,
+										content: `Изменение этого параметра может вызвать подвисания или полный отказ приложения. Используйте эту опцию, только если уверенны в том что делаете! Вы дествительно хотите ${s ? "включить" : "выключить"} этот параметр?`,
+										type: "warn",
+										buttons: [
+											{
+												name: "Отмена",
+												closeOverlay: true,
+											},
+											{
+												name: `${s ? "Отключить" : "Включить"}`,
+												class: ["filled", "colorRed"],
+												closeOverlay: true,
+												callback: () => {
+													setConfig({ key: "launcher.disableHardwareAcceleration", value: Boolean(s) });
+												}
+											}
+										],
+										mini: true,
+									});
+
+								}}
+							/>
+							<SettingContainer
+								id="launcher.openDevTools"
+								header="Открывать средства разработчика"
+								note="Включение этого параметра позволяет скрывать и показывать средства разработчика"
+								checked={config.launcher.openDevTools}
+								action={(s) => {
+									setConfig({ key: "launcher.openDevTools", value: s });
+								}}
+							/>
+						</div>
+					</div>
+				)}
+				<div className={style.settingGroupContainer}>
+					<h5>Базовая Отладка</h5>
+					<div className={style.settingGroup}>
 						<SettingContainer
-							id="launcher.hideOnClose"
-							header="Скрывать при закрытии"
-							note="Включение этого параметра позволяет скрывать лаунчер в трей при нажатии на кнопку закрыть."
-							checked={config.launcher.hideOnClose}
-							action={(s) => {
-								setConfig({ key: "launcher.hideOnClose", value: s });
-							}}
-						/>
-						<SettingContainer
-							id="launcher.disableHardwareAcceleration"
-							header="Отключить программную акселерацию"
-							note="Включение этого параметра позволяет отключить програмное ускорение. Может вызвать проблемы на некоторых системах!"
-							checked={config.launcher.disableHardwareAcceleration}
+							id="app.debug.mode"
+							header="Использование режима отладки"
+							note="Включение этого параметра позволяет разработчикам получать больше данных об ошибках в консоли приложения."
+							checked={settings.debug_mode}
 							action={(s) => {
 								alert({
-									title: `${s ? "Отключение" : "Включение"} программного ускорения`,
-									content: `Изменение этого параметра может вызвать подвисания или полный отказ приложения. Используйте эту опцию, только если уверенны в том что делаете! Вы дествительно хотите ${s ? "включить" : "выключить"} этот параметр?`,
+									title: "Изменение режима отладки",
+									content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
 									type: "warn",
 									buttons: [
 										{
@@ -376,119 +433,80 @@ const LauncherSettingsTab = memo(() => {
 											closeOverlay: true,
 										},
 										{
-											name: `${s ? "Отключить" : "Включить"}`,
-											class: ["filled", "colorRed"],
+											name: "Ок",
+											class: ["filled", "colorBrand"],
 											closeOverlay: true,
 											callback: () => {
-												setConfig({ key: "launcher.disableHardwareAcceleration", value: Boolean(s) });
+												setSettings({ debug_mode: Boolean(s) });
 											}
 										}
 									],
 									mini: true,
 								});
-
-							}}
-						/>
-						<SettingContainer
-							id="launcher.openDevTools"
-							header="Открывать средства разработчика"
-							note="Включение этого параметра позволяет скрывать и показывать средства разработчика"
-							checked={config.launcher.openDevTools}
-							action={(s) => {
-								setConfig({ key: "launcher.openDevTools", value: s });
 							}}
 						/>
 					</div>
-				)}
-				<div className={style.settingGroupContainer}>
-					<h5>Базовая Отладка</h5>
-					<SettingContainer
-						id="app.debug.mode"
-						header="Использование режима отладки"
-						note="Включение этого параметра позволяет разработчикам получать больше данных об ошибках в консоли приложения."
-						checked={settings.debug_mode}
-						action={(s) => {
-							alert({
-								title: "Изменение режима отладки",
-								content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
-								type: "warn",
-								buttons: [
-									{
-										name: "Отмена",
-										closeOverlay: true,
-									},
-									{
-										name: "Ок",
-										class: ["filled", "colorBrand"],
-										closeOverlay: true,
-										callback: () => {
-											setSettings({ debug_mode: Boolean(s) });
-										}
-									}
-								],
-								mini: true,
-							});
-						}}
-					/>
 				</div>
 				<div className={style.settingGroupContainer}>
 					<h5>Отладка сетевых данных</h5>
-					<SettingContainer
-						id="app.debug.host"
-						header="Высерание данных для отладки хоста"
-						note="Эта настройка позволяет разработчикам получать дополнительную информацию о взаимодействии клиента с хостом через IPC или TCHost соединение"
-						checked={settings.debug_host}
-						action={(s) => {
-							alert({
-								title: "Изменение режима отладки",
-								content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
-								type: "warn",
-								buttons: [
-									{
-										name: "Отмена",
-										closeOverlay: true,
-									},
-									{
-										name: "Ок",
-										class: ["filled", "colorBrand"],
-										closeOverlay: true,
-										callback: () => {
-											setSettings({ debug_host: Boolean(s) });
+					<div className={style.settingGroup}>
+						<SettingContainer
+							id="app.debug.host"
+							header="Высерание данных для отладки хоста"
+							note="Эта настройка позволяет разработчикам получать дополнительную информацию о взаимодействии клиента с хостом через IPC или TCHost соединение"
+							checked={settings.debug_host}
+							action={(s) => {
+								alert({
+									title: "Изменение режима отладки",
+									content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
+									type: "warn",
+									buttons: [
+										{
+											name: "Отмена",
+											closeOverlay: true,
+										},
+										{
+											name: "Ок",
+											class: ["filled", "colorBrand"],
+											closeOverlay: true,
+											callback: () => {
+												setSettings({ debug_host: Boolean(s) });
+											}
 										}
-									}
-								],
-								mini: true,
-							});
-						}}
-					/>
-					<SettingContainer
-						id="app.debug.api"
-						header="Высерание данных для отладки API"
-						note="Этот параметр позволяет разработчикам получать необязательную информацию о запросах происходящих между клиентом и TJMC API"
-						checked={settings.debug_api}
-						action={(s) => {
-							alert({
-								title: "Изменение режима отладки",
-								content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
-								type: "warn",
-								buttons: [
-									{
-										name: "Отмена",
-										closeOverlay: true,
-									},
-									{
-										name: "Ок",
-										class: ["filled", "colorBrand"],
-										closeOverlay: true,
-										callback: () => {
-											setSettings({ debug_api: Boolean(s) });
+									],
+									mini: true,
+								});
+							}}
+						/>
+						<SettingContainer
+							id="app.debug.api"
+							header="Высерание данных для отладки API"
+							note="Этот параметр позволяет разработчикам получать необязательную информацию о запросах происходящих между клиентом и TJMC API"
+							checked={settings.debug_api}
+							action={(s) => {
+								alert({
+									title: "Изменение режима отладки",
+									content: "Изменение параметра режима отладки требует перезапуска приложения. Вы уверенны что хотите это сделать?",
+									type: "warn",
+									buttons: [
+										{
+											name: "Отмена",
+											closeOverlay: true,
+										},
+										{
+											name: "Ок",
+											class: ["filled", "colorBrand"],
+											closeOverlay: true,
+											callback: () => {
+												setSettings({ debug_api: Boolean(s) });
+											}
 										}
-									}
-								],
-								mini: true,
-							});
-						}}
-					/>
+									],
+									mini: true,
+								});
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 		</TabItem>
@@ -519,59 +537,74 @@ const LauncherAppearanceTab = memo(() => {
 							setTheme(theme);
 						}}
 					/>
-					<SettingContainer
-						id="exp.settings.blocky"
-						header="Режим блочных настроек"
-						note="Включение этого параметра позволяет использовать экспрементальный блочный режим настроек."
-						checked={settings.exp_settings_blocks}
-						action={(s) => {
-							setSettings({ exp_settings_blocks: Boolean(s) });
-						}}
-					/>
+					<div className={style.settingGroup}>
+						<SettingContainer
+							id="exp.settings.blocky"
+							header="Режим блочных настроек"
+							note="Включение этого параметра позволяет использовать экспрементальный блочный режим настроек."
+							checked={settings.exp_settings_blocks}
+							action={(s) => {
+								setSettings({ exp_settings_blocks: Boolean(s) });
+							}}
+						/>
+						<SettingContainer
+							id="exp.settings.more_border"
+							header="Режим чётких границ"
+							note="Включение этого параметра позволяет использовать экспрементальный режим повышенной чёткости границ."
+							checked={settings.exp_more_border}
+							action={(s) => {
+								setSettings({ exp_more_border: Boolean(s) });
+							}}
+						/>
+					</div>
 				</div>
 				<div className={style.settingGroupContainer}>
 					<h5>Общие</h5>
-					<SettingContainer
-						id="app.settings.fullmode"
-						header="Использовать настройки в полноэкранном режиме"
-						note="Включение этого параметра позволяет использовать настройки в полноэкранном режиме"
-						checked={settings.full_settings}
-						action={(s) => {
-							setSettings({ full_settings: Boolean(s) });
-						}}
-					/>
-					<SettingContainer
-						id="app.chooser.fullmode"
-						header="Использовать установщик версии в полноэкранном режиме"
-						note="Включение этого параметра позволяет использовать установщик версии в полноэкранном режиме"
-						checked={settings.full_chooser}
-						action={(s) => {
-							setSettings({ full_chooser: Boolean(s) });
-						}}
-					/>
+					<div className={style.settingGroup}>
+						<SettingContainer
+							id="app.settings.fullmode"
+							header="Использовать настройки в полноэкранном режиме"
+							note="Включение этого параметра позволяет использовать настройки в полноэкранном режиме"
+							checked={settings.full_settings}
+							action={(s) => {
+								setSettings({ full_settings: Boolean(s) });
+							}}
+						/>
+						<SettingContainer
+							id="app.chooser.fullmode"
+							header="Использовать установщик версии в полноэкранном режиме"
+							note="Включение этого параметра позволяет использовать установщик версии в полноэкранном режиме"
+							checked={settings.full_chooser}
+							action={(s) => {
+								setSettings({ full_chooser: Boolean(s) });
+							}}
+						/>
+					</div>
 				</div>
 				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
-					<SettingContainer
-						id="app.preloader.mode"
-						header="Использовать прелоадер"
-						note="Выключение этого параметра позволяет принудительно отключать анимацию первоначальной загрузки приложения"
-						checked={settings.enable_preloader}
-						action={(s) => {
-							setSettings({ enable_preloader: Boolean(s) });
-						}}
-					/>
-					{APP_ENV == "development" && (
+					<div className={style.settingGroup}>
 						<SettingContainer
-							id="app.dev.faloc_disable"
-							header="Отключить сообщение о предварительной версии"
-							note="Включение этого параметра отключает появление сообщение о предварительной версии при запуске UI"
-							checked={settings.dev_disable_faloc}
+							id="app.preloader.mode"
+							header="Использовать прелоадер"
+							note="Выключение этого параметра позволяет принудительно отключать анимацию первоначальной загрузки приложения"
+							checked={settings.enable_preloader}
 							action={(s) => {
-								setSettings({ dev_disable_faloc: Boolean(s) });
+								setSettings({ enable_preloader: Boolean(s) });
 							}}
 						/>
-					)}
+						{APP_ENV == "development" && (
+							<SettingContainer
+								id="app.dev.faloc_disable"
+								header="Отключить сообщение о предварительной версии"
+								note="Включение этого параметра отключает появление сообщение о предварительной версии при запуске UI"
+								checked={settings.dev_disable_faloc}
+								action={(s) => {
+									setSettings({ dev_disable_faloc: Boolean(s) });
+								}}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
 		</TabItem>

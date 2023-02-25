@@ -456,6 +456,9 @@ p {
     overflow: hidden scroll;
 }
 
+:root.more-border .sidebarView .sidebar-region {
+    border-right: 1px solid var(--border-color-1);
+}
 
 :root.alt-settings .sidebarView .sidebar-region {
     background-color: var(--sbw-background-side);
