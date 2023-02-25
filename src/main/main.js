@@ -395,6 +395,7 @@ const validChannels = Object.seal({
     fetchSystemMem: 'fetchSystemMem',
     fetchHostVersion: 'fetchHostVersion',
     selectFolder: 'selectFolder',
+    selectFile: 'selectFile',
     relaunchHost: 'relaunchHost',
 });
 
@@ -495,7 +496,16 @@ const initHandlers = async () => {
             title: title || 'Select a folder',
             properties: ["openDirectory", "createDirectory", "promptToCreate"]
         });
-        console.debug(">>fp", filePaths);
+        console.debug("[selectFolder]", filePaths);
+        if (canceled) return undefined;
+        return filePaths;
+    });
+    WSSHost.addReducer(validChannels.selectFile, async ({ title }) => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            title: title || 'Select a file',
+            properties: ["openFile"]
+        });
+        console.debug("[selectFile]", filePaths);
         if (canceled) return undefined;
         return filePaths;
     });

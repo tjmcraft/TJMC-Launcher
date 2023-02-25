@@ -96,3 +96,16 @@ export async function selectFolder({ title }) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function selectFile({ title }) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "selectFile",
+			data: { title }
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}

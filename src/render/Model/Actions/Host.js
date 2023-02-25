@@ -59,7 +59,5 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	});
 });
 
-export const selectFolder = async ({ title }) => {
-	const result = await callHost("selectFolder", { title });
-	return result;
-};
+export const selectFolder = ({ title }) => callHost("selectFolder", { title });
+export const selectFile = ({ title }) => callHost("selectFile", { title });
