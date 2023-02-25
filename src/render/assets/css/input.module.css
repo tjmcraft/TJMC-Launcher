@@ -101,6 +101,10 @@
     transition: all .2s;
 }
 
+:global(:root.more-border) .inputWrapper .actionButton {
+    border: 2px solid var(--border-color-1);
+}
+
 .inputWrapper .actionButton:hover {
     color: var(--interactive-hover);
     background-color: var(--inp-background-disabled);
@@ -132,13 +136,13 @@ input, select {
 }
 
 :global(:root.more-border) input, select {
-    border: 1px solid var(--border-color-1);
+    border-color: var(--border-color-1);
 }
 
 input:focus, select:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
-    border-color: var(--brand-color);
+    border-color: var(--brand-color) !important;
 }
 
 /* Chrome, Safari, Edge, Opera */
