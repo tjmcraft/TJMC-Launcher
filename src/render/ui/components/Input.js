@@ -1,9 +1,9 @@
-import { createElement, useState, useRef } from "react";
+import { createElement, useState, useRef, useCallback, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 
 import { randomString } from "Util/Random";
-import { selectFolder } from "Model/Actions/Host";
+import { selectFile, selectFolder } from "Model/Actions/Host";
 
 import style from "CSS/input.module.css";
 
@@ -130,12 +130,14 @@ export function InputPassword({
 	);
 }
 
-export function InputGroup({ htmlFor, title, children, inRef = undefined }) {
+export function InputGroup({ htmlFor, title = undefined, children, inRef = undefined }) {
 	return (
 		<div className={style.inputGroup}>
-			<span className={style.head}>
-				<label htmlFor={htmlFor}>{title}</label>
-			</span>
+			{title && (
+				<span className={style.head}>
+					<label htmlFor={htmlFor}>{title}</label>
+				</span>
+			)}
 			<span className={style.inputWrapper} ref={inRef}>{children}</span>
 		</div>
 	);
@@ -149,56 +151,58 @@ export function ActionBlock(props) {
 	);
 }
 
-export function FileInput({
-	multiple = false,
-	placeholder = "path/to/file",
-	button_name = "Обзор",
-	onchange = void 0,
-}) {
-	const [title, setTitle] = useState(placeholder);
-	const handleChange = (e) => {
-		let files = e.target.files;
-		let path = files[0].path || files[0].webkitRelativePath;
-		if (path) {
-			setTitle(path);
-			if (typeof onchange === 'function') onchange(e, path, files);
-		}
-	};
-	return (
-		createElement('div', { class: 'input-wrapper' },
-			createElement('label', { class: 'input' },
-				createElement('input', { type: 'file', multiple, onChange: handleChange }),
-				createElement('span', { class: 'title' }, title || placeholder),
-				createElement('div', { class: 'small-button button' }, button_name),))
-	);
-}
 
+/**
+ *
+ * @param {object} params
+ * @param {'path'|'file'} [params.type='path']
+ * @param {Function} [params.onChange]
+ * @param {string} [params.id]
+ * @param {string} [params.value]
+ * @param {string} [params.title]
+ * @param {string} [params.placeholder]
+ * @returns
+ */
 export function PathInput({
+	type = "path",
 	onChange = (folder) => folder,
-	onInput = (e) => e,
 	id = undefined,
-	value,
-	title,
-	placeholder,
+	value = undefined,
+	title = undefined,
+	placeholder = undefined,
 }) {
 	id = id || randomString(5);
 	const dropdownRef = useRef(null);
 	const inputRef = useRef(null);
 
-	// useEffect(() => setPlaceholder(placeholder), [placeholder]);
+	const handleChangeSelect = useCallback((result) => {
+		if (result) {
+			const path = result[0];
+			// setPath(path);
+			if (typeof onChange === 'function') onChange(path);
+		}
+	}, [onChange]);
 
-	const handleSelect = () => {
-		selectFolder({ title: "Select CWD" }).then((result) => {
-			if (result) {
-				const folder = result[0];
-				if (typeof onChange === 'function') onChange(folder);
-			}
-		});
-	};
+	const handleSelect = useCallback(() => {
+		if (type == "path") {
+			selectFolder({ title: "Select CWD" }).then(handleChangeSelect);
+		} else if (type == "file") {
+			selectFile({ title: "Select File" }).then(handleChangeSelect);
+		}
+	}, [type, handleChangeSelect]);
+
+	const [path, setPath] = useState(value);
+	useEffect(() => setPath(value), [value]);
+	// useEffect(() => typeof onChange === 'function' && onChange(path), [onChange, path]);
 
 	const handleInput = (e) => {
-		onInput(e.target.value);
+		// onInput(e.target.value);
+		setPath(e.target.value);
 	};
+
+	const handleBlur = (e) => {
+		if (typeof onChange === 'function') onChange(path);
+	}
 
 	return (
 		<div className="InputPath" ref={dropdownRef}>
@@ -209,7 +213,8 @@ export function PathInput({
 					type="text"
 					autoComplete="off"
 					onInput={handleInput}
-					value={value}
+					onBlur={handleBlur}
+					value={path}
 					placeholder={placeholder}
 				/>
 				<div

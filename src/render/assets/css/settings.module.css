@@ -41,7 +41,7 @@
     border: unset;
     background: transparent;
 }
-:global(:root.alt-settings) .settingContainer input {
+:global(:root.alt-settings) .settingContainer {
     --inp-background-normal: var(--background-secondary-alt);
     --inp-background-disabled: var(--background-tertiary);
 }

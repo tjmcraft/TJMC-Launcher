@@ -96,18 +96,18 @@
     border-width: 2px;
     border-radius: 0.375rem;
     color: var(--interactive-normal);
-    background: var(--background-secondary);
+    background-color: var(--inp-background-normal);
     cursor: pointer;
     transition: all .2s;
 }
 
 .inputWrapper .actionButton:hover {
     color: var(--interactive-hover);
-    background-color: var(--background-secondary-alt);
+    background-color: var(--inp-background-disabled);
 }
 .inputWrapper .actionButton:active {
     color: var(--interactive-hover);
-    background-color: var(--background-tertiary);
+    background-color: var(--inp-background-disabled);
 }
 
 input, select {
@@ -129,6 +129,10 @@ input, select {
     height: var(--input-height);
     opacity: 1;
     outline: none;
+}
+
+:global(:root.more-border) input, select {
+    border: 1px solid var(--border-color-1);
 }
 
 input:focus, select:focus {

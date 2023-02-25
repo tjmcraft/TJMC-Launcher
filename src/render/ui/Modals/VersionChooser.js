@@ -213,9 +213,8 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 				<div className="children-zx1">
 					<PathInput
 						placeholder="<папка по умолчанию>"
-						title="Game Folder"
+						title="Папка игры"
 						onChange={setGameDir}
-						onInput={setGameDir}
 						value={gameDir}
 					/>
 				</div>
