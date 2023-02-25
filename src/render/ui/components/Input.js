@@ -153,24 +153,26 @@ export function ActionBlock(props) {
 
 
 /**
- *
+ * PathInput Component
  * @param {object} params
- * @param {'path'|'file'} [params.type='path']
- * @param {Function} [params.onChange]
- * @param {string} [params.id]
- * @param {string} [params.value]
- * @param {string} [params.title]
- * @param {string} [params.placeholder]
- * @returns
+ * @param {'path'|'file'} [params.type='path'] type of input
+ * @param {Function} [params.onChange] onChange handler
+ * @param {string} [params.id] id of element
+ * @param {string} [params.value] value
+ * @param {string} [params.title] title for label
+ * @param {string} [params.placeholder] placeholder for input
+ * @param {string} [params.buttonTitle] button title for select
+ * @returns {JSX.Element}
  */
-export function PathInput({
+export const PathInput = ({
 	type = "path",
 	onChange = (folder) => folder,
 	id = undefined,
 	value = undefined,
 	title = undefined,
 	placeholder = undefined,
-}) {
+	buttonTitle = "Обзор"
+}) => {
 	id = id || randomString(5);
 	const dropdownRef = useRef(null);
 	const inputRef = useRef(null);
@@ -223,7 +225,7 @@ export function PathInput({
 					tabIndex={0}
 					onClick={handleSelect}
 				>
-					{"Обзор"}
+					{buttonTitle}
 				</div>
 			</InputGroup>
 		</div>
