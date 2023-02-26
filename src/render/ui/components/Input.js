@@ -4,6 +4,7 @@ import buildClassName from "Util/buildClassName";
 
 import { randomString } from "Util/Random";
 import { selectFile, selectFolder } from "Model/Actions/Host";
+import captureEscKeyListener from "Util/captureEscKeyListener";
 
 import style from "CSS/input.module.css";
 
@@ -177,15 +178,21 @@ export const PathInput = ({
 	const dropdownRef = useRef(null);
 	const inputRef = useRef(null);
 
+	const [isSelecting, setIsSelecting] = useState(false);
+	const [isPromptOpen, setIsPromptOpen] = useState(false);
+	const [path, setPath] = useState(value);
+	useEffect(() => setPath(value), [value]);
+
 	const handleChangeSelect = useCallback((result) => {
+		setIsPromptOpen(false);
 		if (result) {
 			const path = result[0];
-			// setPath(path);
 			if (typeof onChange === 'function') onChange(path);
 		}
 	}, [onChange]);
 
 	const handleSelect = useCallback(() => {
+		setIsPromptOpen(true);
 		if (type == "path") {
 			selectFolder({ title: "Select CWD" }).then(handleChangeSelect);
 		} else if (type == "file") {
@@ -193,18 +200,35 @@ export const PathInput = ({
 		}
 	}, [type, handleChangeSelect]);
 
-	const [path, setPath] = useState(value);
-	useEffect(() => setPath(value), [value]);
-	// useEffect(() => typeof onChange === 'function' && onChange(path), [onChange, path]);
+	useEffect(() => {
+		setIsSelecting(isPromptOpen);
+	}, [isPromptOpen]);
+
+	useEffect(() => {
+		if (isSelecting) {
+			inputRef.current.focus();
+			captureEscKeyListener(() => {
+				setIsSelecting(false);
+			});
+		}
+	}, [isSelecting]);
 
 	const handleInput = (e) => {
 		// onInput(e.target.value);
 		setPath(e.target.value);
 	};
 
+	const handleFocus = (e) => {
+		setIsSelecting(true);
+	};
+
 	const handleBlur = (e) => {
-		if (typeof onChange === 'function') onChange(path);
-	}
+		e.preventDefault();
+		if (!isPromptOpen) {
+			setIsSelecting(false);
+			if (typeof onChange === 'function') onChange(path);
+		}
+	};
 
 	return (
 		<div className="InputPath" ref={dropdownRef}>
@@ -215,6 +239,7 @@ export const PathInput = ({
 					type="text"
 					autoComplete="off"
 					onInput={handleInput}
+					onFocus={handleFocus}
 					onBlur={handleBlur}
 					value={path}
 					placeholder={placeholder}
