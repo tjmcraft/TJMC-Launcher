@@ -11,13 +11,10 @@ declare const APP_COPYRIGHT: string;
 declare const AUTHOR: string;
 declare const HTML_TIMESTAMP: string;
 declare const API_URL: string;
-
-declare global {
-	interface Window {
-		GLOBAL_ENV: any;
-		buildInfo: any;
-		__debug__: boolean;
-		__debug_host__: boolean;
-		__debug_api__: boolean;
-	}
+interface Window {
+	GLOBAL_ENV: any;
+	buildInfo: any;
+	__debug__: boolean;
+	__debug_host__: boolean;
+	__debug_api__: boolean;
 }
