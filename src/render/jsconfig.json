@@ -13,6 +13,7 @@
         "strict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "allowJs": true,
         "paths": {
             "Libs/*": ["Libs/*"],
             "Util/*": ["Util/*"],

@@ -12,7 +12,7 @@ declare const AUTHOR: string;
 declare const HTML_TIMESTAMP: string;
 declare const API_URL: string;
 
-export declare global {
+declare global {
 	interface Window {
 		GLOBAL_ENV: any;
 		buildInfo: any;
