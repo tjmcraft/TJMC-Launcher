@@ -206,10 +206,12 @@ const MinecraftSettingsTab = memo(() => {
 	useEffect(() => setWidth(config?.minecraft?.launch?.width), [config?.minecraft?.launch?.width]);
 	useEffect(() => setHeight(config?.minecraft?.launch?.height), [config?.minecraft?.launch?.height]);
 
-	const handleSaveConfig = useCallback(() => {
+	const handleSaveConfigWidth = useCallback(() => {
 		setConfig({ key: "minecraft.launch.width", value: width });
+	}, [setConfig, width]);
+	const handleSaveConfigHeight = useCallback(() => {
 		setConfig({ key: "minecraft.launch.height", value: height });
-	}, [setConfig, width, height]);
+	}, [setConfig, height]);
 
 	return (
 		<TabItem id="minecraft-settings">
@@ -224,7 +226,7 @@ const MinecraftSettingsTab = memo(() => {
 								name="settings-resolution-width"
 								value={width}
 								onChange={(e) => setWidth(e.target.value)}
-								onBlur={handleSaveConfig}
+								onBlur={handleSaveConfigWidth}
 								placeholder={"<auto>"} />
 							<span className="resolutionCross">✖</span>
 							<input
@@ -232,7 +234,7 @@ const MinecraftSettingsTab = memo(() => {
 								name="settings-resolution-height"
 								value={height}
 								onChange={(e) => setHeight(e.target.value)}
-								onBlur={handleSaveConfig}
+								onBlur={handleSaveConfigHeight}
 								placeholder={"<auto>"} />
 						</div>
 						<div className={style.settingGroup}>
