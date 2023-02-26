@@ -2,25 +2,24 @@ const { shell, ipcRenderer, contextBridge } = require('electron');
 const remote = require('@electron/remote')
 const os = require('os');
 
+const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold');
 
-const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold')
-
-logger.debug("[Preload]", "Application loading...")
+logger.debug("Application loading...");
 
 //Set Current Window as win
-const win = remote.getCurrentWindow()
+const win = remote.getCurrentWindow();
 
 /**
  * Function returns current platform
  * @returns os
  */
 function getOS() {
-    switch (process.platform) {
-        case 'win32': return 'windows'
-        case 'darwin': return 'osx'
-        case 'linux': return 'linux'
-        default: return 'web'
-    }
+  switch (process.platform) {
+    case 'win32': return 'windows';
+    case 'darwin': return 'osx';
+    case 'linux': return 'linux';
+    default: return 'web';
+  }
 }
 
 const windowEvents = {
@@ -36,26 +35,26 @@ const windowEvents = {
 };
 
 document.addEventListener('readystatechange', function () {
-    if (document.readyState === 'interactive'){
-      logger.debug("[Preload]", "Initializing...");
-      if (win.isFullScreen()) enterFullScreen();
-    } else if (document.readyState === 'complete') {
-      logger.debug("[Preload]", "Init complete!")
-    }
-    win.setProgressBar(-1)
+  if (document.readyState === 'interactive'){
+    logger.debug("Initializing...");
+    if (win.isFullScreen()) enterFullScreen();
+  } else if (document.readyState === 'complete') {
+    logger.debug("Init complete!");
+  }
+  win.setProgressBar(-1);
 })
 
 function enterFullScreen () {
-    document.documentElement.classList.add('fullscreen')
+  document.documentElement.classList.add('fullscreen');
 }
 function leaveFullScreen () {
-    document.documentElement.classList.remove('fullscreen')
+  document.documentElement.classList.remove('fullscreen');
 }
 function windowBlur () {
-    document.documentElement.classList.add('blur')
+  document.documentElement.classList.add('blur');
 }
 function windowFocus () {
-    document.documentElement.classList.remove('blur')
+  document.documentElement.classList.remove('blur');
 }
 
 process.once('loaded', () => {
@@ -118,10 +117,10 @@ contextBridge.exposeInMainWorld('tjmcNative', {
 
 // Init global instances
 process.once('loaded', () => {
-    ipcRenderer.on('enter-full-screen', enterFullScreen)
-    ipcRenderer.on('leave-full-screen', leaveFullScreen)
-    ipcRenderer.on('blur', windowBlur)
-    ipcRenderer.on('focus', windowFocus)
+  ipcRenderer.on('enter-full-screen', enterFullScreen);
+  ipcRenderer.on('leave-full-screen', leaveFullScreen);
+  ipcRenderer.on('blur', windowBlur);
+  ipcRenderer.on('focus', windowFocus);
 })
 
 win.webContents.setWindowOpenHandler(({ url }) => {
