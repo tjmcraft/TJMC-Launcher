@@ -1,11 +1,22 @@
 {
     "compile-hero.disable-compile-files-on-did-save-code": true,
-    "rpc.enabled": false,
     "cSpell.words": [
+        "Высерание",
         "поебать",
         "похуй",
+        "прелоадер",
         "asar",
         "loggerutil",
-        "nsis"
+        "nsis",
+        "realname"
+    ],
+    "cSpell.language": "en,ru",
+    "cSpell.ignoreWords": [
+        "compat",
+        "faloc",
+        "fullmode",
+        "ictx",
+        "noreferrer",
+        "preact"
     ]
 }

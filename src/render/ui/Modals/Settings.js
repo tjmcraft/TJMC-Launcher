@@ -32,11 +32,11 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", disabled: false },
 		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false },
 		{ type: "separator" },
-		{ type: "header", content: "Настроки Игры" },
+		{ type: "header", content: "Настройки Игры" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline },
 		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline },
 		{ type: "separator" },
-		{ type: "header", content: "Настроки Приложения" },
+		{ type: "header", content: "Настройки Приложения" },
 		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false },
 		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false },
 		{ type: "separator" },
@@ -266,7 +266,7 @@ const MinecraftSettingsTab = memo(() => {
 						<div className={style.settingGroup}>
 							<SettingContainer id="overrides.checkHash"
 								header="Проверять Hash файлов"
-								note={"Эта опция позволяет вам отлючать проверку хэша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачанны автоматически!"}
+								note={"Эта опция позволяет вам отключать проверку хеша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачаны автоматически!"}
 								checked={config.overrides.checkHash}
 								action={(s) => {
 									setConfig({ key: "overrides.checkHash", value: s });
@@ -394,12 +394,12 @@ const LauncherSettingsTab = memo(() => {
 							<SettingContainer
 								id="launcher.disableHardwareAcceleration"
 								header="Отключить программную акселерацию"
-								note="Включение этого параметра позволяет отключить програмное ускорение. Может вызвать проблемы на некоторых системах!"
+								note="Включение этого параметра позволяет отключить программное ускорение. Может вызвать проблемы на некоторых системах!"
 								checked={config.launcher.disableHardwareAcceleration}
 								action={(s) => {
 									alert({
 										title: `${s ? "Отключение" : "Включение"} программного ускорения`,
-										content: `Изменение этого параметра может вызвать подвисания или полный отказ приложения. Используйте эту опцию, только если уверенны в том что делаете! Вы дествительно хотите ${s ? "включить" : "выключить"} этот параметр?`,
+										content: `Изменение этого параметра может вызвать подвисания или полный отказ приложения. Используйте эту опцию, только если уверенны в том что делаете! Вы действительно хотите ${s ? "включить" : "выключить"} этот параметр?`,
 										type: "warn",
 										buttons: [
 											{
@@ -549,7 +549,7 @@ const LauncherAppearanceTab = memo(() => {
 						options={{
 							dark: (<span>Тёмная</span>),
 							light: (<span>Светлая</span>),
-							system: (<span>Сонхронизация с ПК</span>),
+							system: (<span>Синхронизация с ПК</span>),
 						}}
 						action={(theme) => {
 							setTheme(theme);
@@ -559,7 +559,7 @@ const LauncherAppearanceTab = memo(() => {
 						<SettingContainer
 							id="exp.settings.blocky"
 							header="Режим блочных настроек"
-							note="Включение этого параметра позволяет использовать экспрементальный блочный режим настроек."
+							note="Включение этого параметра позволяет использовать экспериментальный блочный режим настроек."
 							checked={settings.exp_settings_blocks}
 							action={(s) => {
 								setSettings({ exp_settings_blocks: Boolean(s) });
@@ -568,7 +568,7 @@ const LauncherAppearanceTab = memo(() => {
 						<SettingContainer
 							id="exp.settings.more_border"
 							header="Режим чётких границ"
-							note="Включение этого параметра позволяет использовать экспрементальный режим повышенной чёткости границ."
+							note="Включение этого параметра позволяет использовать экспериментальный режим повышенной чёткости границ."
 							checked={settings.exp_more_border}
 							action={(s) => {
 								setSettings({ exp_more_border: Boolean(s) });
