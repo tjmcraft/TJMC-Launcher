@@ -2,11 +2,19 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    padding-bottom: 1.3rem;
-    border-bottom: thin solid var(--background-modifier-accent);
+    border: unset;
+    padding: 12px 16px;
+}
+.settingContainer.transparent {
+    border: unset;
+    background: transparent;
+}
+.settingContainer {
+    --inp-background-normal: var(--background-secondary-alt);
+    --inp-background-disabled: var(--background-tertiary);
 }
 
-:global(:root.alt-settings) .settingContainer ~ .settingContainer:after {
+.settingContainer ~ .settingContainer:after {
     content: "";
     background: var(--background-modifier-accent);
     position: absolute;
@@ -17,22 +25,7 @@
     height: 1px;
 }
 
-:global(:root.alt-settings) .settingContainer {
-    display: flex;
-    flex-direction: column;
-    border: unset;
-    padding: 12px 16px;
-}
-:global(:root.alt-settings) .settingContainer.transparent {
-    border: unset;
-    background: transparent;
-}
-:global(:root.alt-settings) .settingContainer {
-    --inp-background-normal: var(--background-secondary-alt);
-    --inp-background-disabled: var(--background-tertiary);
-}
-
-:global(:root.alt-settings) .settingGroupContainer > h5 {
+.settingGroupContainer > h5 {
     margin-left: 12px;
 }
 
@@ -43,18 +36,14 @@
 .settingGroupContainer > div + div {
     margin-top: 1rem;
 }
-:global(:root:not(.alt-settings)) .settingGroupContainer > .settingGroup > div + div {
-    margin-top: 1rem;
-}
 
-:global(:root.alt-settings) .settingGroupContainer > .settingGroup {
+.settingGroupContainer > .settingGroup {
     position: relative;
     background: var(--background-secondary);
     border-radius: 8px;
-
 }
 
-:global(:root.alt-settings.more-border) .settingGroupContainer > .settingGroup {
+:global(:root.more-border) .settingGroupContainer > .settingGroup {
     border: 1px solid var(--border-color-1);
 }
 

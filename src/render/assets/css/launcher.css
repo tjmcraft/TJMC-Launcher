@@ -449,26 +449,21 @@ p {
 }
 
 .sidebar-region {
-    background-color: var(--background-secondary);
+    background-color: var(--sbw-background-side);
     display: flex;
     flex-direction: row;
     user-select: none;
     overflow: hidden scroll;
 }
 
-:root.more-border .sidebarView .sidebar-region {
-    border-right: 1px solid var(--border-color-1);
-}
-
-:root.alt-settings .sidebarView .sidebar-region {
-    background-color: var(--sbw-background-side);
-}
-
 .sidebarView .sidebar-region {
     flex: 1 0 220px;
     justify-content: flex-end;
+    background-color: var(--sbw-background-side);
 }
-
+:root.more-border .sidebarView .sidebar-region {
+    border-right: 1px solid var(--border-color-1);
+}
 .sidebar-region::-webkit-scrollbar {
     width: 4px;
 }
@@ -551,12 +546,8 @@ p {
     background-color: var(--background-modifier-accent);
 }
 
-:root.alt-settings .sidebarView .content-region {
-    background: var(--sbw-background-main);
-}
-
 .sidebarView .content-region {
-    background: var(--background-primary);
+    background: var(--sbw-background-main);
     flex: 1 1 800px;
     display: flex;
     align-items: flex-start;
@@ -614,10 +605,6 @@ h5 {
 }
 
 .content-region .content h2 {
-    margin-bottom: 20px;
-    color: var(--header-primary);
-}
-:root.alt-settings .content-region .content h2 {
     font-size: 1.5em;
     margin-bottom: 20px;
     line-height: 1;

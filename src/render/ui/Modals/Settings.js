@@ -557,15 +557,6 @@ const LauncherAppearanceTab = memo(() => {
 					/>
 					<div className={style.settingGroup}>
 						<SettingContainer
-							id="exp.settings.blocky"
-							header="Режим блочных настроек"
-							note="Включение этого параметра позволяет использовать экспериментальный блочный режим настроек."
-							checked={settings.exp_settings_blocks}
-							action={(s) => {
-								setSettings({ exp_settings_blocks: Boolean(s) });
-							}}
-						/>
-						<SettingContainer
 							id="exp.settings.more_border"
 							header="Режим чётких границ"
 							note="Включение этого параметра позволяет использовать экспериментальный режим повышенной чёткости границ."

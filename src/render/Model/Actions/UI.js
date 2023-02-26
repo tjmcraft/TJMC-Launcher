@@ -50,7 +50,6 @@ addCallback(updateTheme);
 
 const updateThemeExperiments = async () => {
 	const settings = getState(global => global.settings);
-	document.documentElement.classList.toggle("alt-settings", settings.exp_settings_blocks);
 	document.documentElement.classList.toggle("more-border", settings.exp_more_border);
 };
 addCallback(updateThemeExperiments);
