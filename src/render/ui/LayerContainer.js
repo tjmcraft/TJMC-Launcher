@@ -1,7 +1,7 @@
 import { createElement, memo, useEffect, useState } from "react";
 
 import useShowTransition from "Hooks/useShowTransition";
-import captureKeyboardListeners from "Util/captureKeyboard";
+import captureEscKeyListener from "Util/captureEscKeyListener";
 import buildClassName from "Util/buildClassName";
 import { getDispatch, getState } from "Util/Store";
 import { SVG } from "./svg";
@@ -74,7 +74,7 @@ const Modals = memo(() => {
 
 	const isOpen = modals.length > 0;
 
-	useEffect(() => (isOpen ? captureKeyboardListeners({ onEsc: closeModal }) : undefined), [isOpen, closeModal]);
+	useEffect(() => (isOpen ? captureEscKeyListener(closeModal) : undefined), [isOpen, closeModal]);
 
 	return isOpen &&
 		modals.map((modal) =>
