@@ -51,7 +51,7 @@ const ModalLayer = ({ isShown, children }) => {
 	const createToolsContainer = (closeModal = () => { }) => {
 		return (
 			<div className={buildClassName(style.tools, "frame-fix")}>
-				<div className={style.closeButton} onclick={closeModal}>{SVG("cross")}</div>
+				<div className={style.closeButton} onClick={closeModal}>{SVG("cross")}</div>
 				<div className={style.keyCode}>{"ESC"}</div>
 			</div>
 		);
@@ -77,11 +77,11 @@ const Modals = memo(() => {
 	useEffect(() => (isOpen ? captureEscKeyListener(closeModal) : undefined), [isOpen, closeModal]);
 
 	return isOpen &&
-		modals.map((modal) =>
+		modals.map((modal) => (
 			<ModalLayer isShown={modal.isShown} key={modal.label}>
 				{createElement(MODAL_STORE[modal.layer], modal.props)}
 			</ModalLayer>
-		);
+		));
 });
 
 const LayerContainer = memo(() => {
