@@ -31,6 +31,7 @@ addReducer("relaunchHost", () => {
 addReducer("setConfig", async (global, actions, payload) => {
 	if (!payload) return;
 	const { key, value } = payload;
+	window.__debug__ && console.debug(">>", "[setConfig]", key, "=>", value);
 	await callHost("setConfiguration", key, value);
 	if (["launcher.disableHardwareAcceleration"].includes(key)) {
 		actions.relaunchHost();
