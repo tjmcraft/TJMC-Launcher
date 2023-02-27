@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, Menu, ipcMain, shell, Tray, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
@@ -492,22 +492,22 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(validChannels.selectFolder, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog({
+        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+
             title: title || 'Select a folder',
             properties: ["openDirectory", "createDirectory", "promptToCreate"]
         });
         console.debug("[selectFolder]", filePaths);
-        if (canceled) return undefined;
-        return filePaths;
+        return { canceled, filePaths };
     });
     WSSHost.addReducer(validChannels.selectFile, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog({
+        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+
             title: title || 'Select a file',
             properties: ["openFile"]
         });
         console.debug("[selectFile]", filePaths);
-        if (canceled) return undefined;
-        return filePaths;
+        return { canceled, filePaths };
     });
 
 };

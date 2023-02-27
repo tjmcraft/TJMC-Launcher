@@ -90,11 +90,14 @@ export async function selectFolder({ title }) {
 			type: "selectFolder",
 			data: { title }
 		}, false, true, true);
+		if (!result?.payload) return undefined;
+		result = result.payload;
 	} catch (e) {
 		return;
 	}
-	if (!result) return undefined;
-	return result.payload;
+	if (result.canceled) return undefined;
+	console.debug("selectFolder", result);
+	return result.filePaths;
 }
 export async function selectFile({ title }) {
 	let result;
@@ -103,9 +106,12 @@ export async function selectFile({ title }) {
 			type: "selectFile",
 			data: { title }
 		}, false, true, true);
+		if (!result?.payload) return undefined;
+		result = result.payload;
 	} catch (e) {
 		return;
 	}
-	if (!result) return undefined;
-	return result.payload;
+	if (result.canceled) return undefined;
+	console.debug("selectFile", result);
+	return result.filePaths;
 }
