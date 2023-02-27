@@ -25,7 +25,7 @@ const handlers = {
 
 export default function captureKeyboardListeners(options) {
 	if (!hasActiveHandlers()) {
-		document.addEventListener('keyup', handleKeyDown, true);
+		document.addEventListener('keydown', handleKeyDown, true);
 	}
 
 	(Object.keys(options)).forEach((handlerName) => {
@@ -78,6 +78,6 @@ function releaseKeyboardListener(options) {
 	});
 
 	if (!hasActiveHandlers()) {
-		document.removeEventListener('keyup', handleKeyDown, false);
+		document.removeEventListener('keydown', handleKeyDown, false);
 	}
 }
