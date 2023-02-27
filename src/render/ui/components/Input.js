@@ -200,17 +200,15 @@ export const PathInput = ({
 		}
 	}, [type, handleChangeSelect]);
 
-	useEffect(() => {
-		setIsSelecting(isPromptOpen);
-	}, [isPromptOpen]);
+	useEffect(() => isPromptOpen && setIsSelecting(isPromptOpen), [isPromptOpen]);
 
 	useEffect(() => {
 		if (isSelecting) {
 			inputRef.current.focus();
-			captureEscKeyListener(() => {
+			return captureEscKeyListener(() => {
 				setIsSelecting(false);
 			});
-		}
+		} else inputRef.current.blur();
 	}, [isSelecting]);
 
 	const handleInput = (e) => {
