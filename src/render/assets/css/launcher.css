@@ -1632,6 +1632,21 @@ a.anchor:hover {
     margin-top: 16px !important;
 }
 
+.bxcF1-box .note {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    row-gap: 1em;
+    column-gap: 1em;
+    width: 100%;
+    overflow-x: overlay;
+    overflow-y: hidden;
+}
+.bxcF1-box .note > span > * {
+    margin-right: 8px;
+}
+
 .release {
     position: relative;
 }
@@ -1645,6 +1660,26 @@ a.anchor:hover {
 .release .icon > img {
     max-width: 52px !important;
     max-height: 52px !important;
+}
+
+.pctx-flex {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    row-gap: 1em;
+}
+.pctx-flex.alt {
+    align-items: flex-start;
+}
+.pctx-flex > .ictx-flex {
+    flex: 1 1 80%;
+}
+.pctx-flex > :not(.ictx-flex) {
+    flex: 1;
 }
 
 .ictx-flex {
@@ -1665,8 +1700,8 @@ a.anchor:hover {
 }
 
 .ictx-flex>.icon {
-    max-width: 64px;
-    max-height: 64px;
+    max-width: 75px;
+    /* max-height: 64px; */
     margin: 0 16px 0 0;
     display: flex;
     flex-direction: column;
@@ -1685,6 +1720,10 @@ a.anchor:hover {
     font-size: 14px;
     font-weight: 500;
     padding: 0;
+}
+
+.ictx-flex .vbx + :not(.subtitle-p) {
+    margin-top: 8px;
 }
 
 .ictx-flex .vbx {
@@ -1720,11 +1759,11 @@ a.anchor:hover {
     color: var(--header-secondary);
 }
 
-.ictx-flex>button.r {
+.ictx-flex>button.r, .pctx-flex>button.r {
     border: 1px solid var(--background-modifier-accent);
     font-size: 14px;
     line-height: inherit;
-    margin-left: auto;
+    margin: 0 4px;
 }
 
 a {
@@ -1735,8 +1774,8 @@ a:hover {
     color: var(--interactive-hover);
 }
 
-.note.flex-group>* {
-    margin: 0 8px 0 0;
+.nowrap {
+    white-space: nowrap;
 }
 
 .size12 {
@@ -1875,10 +1914,6 @@ a:hover {
     background-color: var(--scrollbar-auto-track);
 }
 
-
-/* ======================== */
-
-
 /* ==== thin scrollbar ==== */
 
 .thin-s::-webkit-scrollbar {
@@ -1903,6 +1938,11 @@ a:hover {
     border-color: var(--scrollbar-thin-track);
     background-color: var(--scrollbar-thin-track);
     border: 2px solid var(--scrollbar-thin-track);
+}
+
+.tran-s::-webkit-scrollbar {
+    width: 0;
+    height: 0;
 }
 
 

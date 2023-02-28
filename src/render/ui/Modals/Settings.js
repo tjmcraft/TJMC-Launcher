@@ -129,7 +129,7 @@ const MyAccountTab = memo(() => {
 									<div className={buildClassName("sizeW", "colorStandart", "subtitle-p")}>{user.permission_display_name}</div>
 								)}
 							</div>
-							<button className={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button>
+							{/* <button className={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button> */}
 						</div>
 						<div className="separator" />
 						<div className="fieldList">
@@ -639,15 +639,17 @@ const AboutTab = memo(() => {
 			<div className="children">
 				<div className={style.settingGroupContainer}>
 					<div className="bxcF1-box">
-						<div className="ictx-flex">
-							<div className="icon"><img src={iconImage} /></div>
-							<div className={buildClassName("flex-group", "vertical")}>
-								<span className="vbx">
-									<div className={buildClassName("text", "name")}>{APP_NAME}</div>
-									<div className={buildClassName("text", "version")}>v{APP_VERSION}</div>
-								</span>
-								<div className={buildClassName("sizeW", "colorStandart", "subtitle-p")}>
-									<span>Играйте, не обляпайтесь!</span>
+						<div className={buildClassName("pctx-flex")}>
+							<div className="ictx-flex">
+								<div className="icon"><img src={iconImage} /></div>
+								<div className={buildClassName("flex-group", "vertical")}>
+									<span className="vbx">
+										<div className={buildClassName("text", "name")}>{APP_NAME}</div>
+										<div className={buildClassName("text", "version")}>v{APP_VERSION}</div>
+									</span>
+									<div className={buildClassName("sizeW", "colorStandart", "subtitle-p")}>
+										<span>Играйте, не обляпайтесь!</span>
+									</div>
 								</div>
 							</div>
 							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click}>
@@ -655,11 +657,13 @@ const AboutTab = memo(() => {
 							</button>
 						</div>
 						<div className="separator" />
-						<div className={buildClassName("note", "flex-group")}>
+						<div className={buildClassName("note", "nowrap", "tran-s")}>
 							<div className="description">{APP_COPYRIGHT}</div>
-							<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
-							<a href="https://www.tjmcraft.ga/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
-							<a href="https://www.tjmcraft.ga/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
+							<span className={buildClassName("flex-group", "horizontal")}>
+								<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
+								<a href="https://www.tjmcraft.ga/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
+								<a href="https://www.tjmcraft.ga/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
+							</span>
 						</div>
 					</div>
 					<div className="bxcF1-box">
@@ -668,21 +672,23 @@ const AboutTab = memo(() => {
 						<div className="flex-group vertical">
 							{releases && releases.map((release, i) => (
 								<div key={i} className={buildClassName("release", "w100")}>
-									<div className={buildClassName("ictx-flex", "align-top")}>
-										<div className="icon">
-											<img src={release.author.avatar_url} />
-											<span>{release.author.login}</span>
-										</div>
-										<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
-											<span className="vbx">
-												<div className={buildClassName("text", "name", "sizeE")}>{release.name}</div>
-												<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
-											</span>
-											<div className={buildClassName("colorStandart", "size14")}>
-												<span>{release.body}</span>
+									<div className={buildClassName("pctx-flex", "alt")}>
+										<div className={buildClassName("ictx-flex", "align-top")}>
+											<div className="icon">
+												<img src={release.author.avatar_url} />
+												<span>{release.author.login}</span>
+											</div>
+											<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
+												<span className="vbx">
+													<div className={buildClassName("text", "name", "sizeE")}>{release.name}</div>
+													<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
+												</span>
+												<div className={buildClassName("colorStandart", "size14")}>
+													<span>{release.body}</span>
+												</div>
 											</div>
 										</div>
-										<button className={buildClassName("r")} onClick={handleReleaseMoreClick(release.html_url)}>
+										<button className={buildClassName("r", "filled")} onClick={handleReleaseMoreClick(release.html_url)}>
 											<span>Подробнее</span>
 										</button>
 									</div>
