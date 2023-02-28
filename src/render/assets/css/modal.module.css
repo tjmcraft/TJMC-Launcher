@@ -115,36 +115,6 @@
     max-height: 40em;
 }
 
-@media (max-width: 75em) {
-    .layer > .modal {
-        width: 80vw;
-        max-width: none;
-    }
-}
-@media (max-width: 65em) {
-    .layer > .modal {
-        width: 90vw;
-    }
-}
-@media (max-width: 55em) {
-    .layer > .modal {
-        width: 95vw;
-    }
-}
-
-@media (max-height: 50em) {
-    .layer > .modal {
-        height: 85vh;
-        max-height: none;
-    }
-}
-
-@media (max-height: 40em) {
-    .layer > .modal {
-        height: 90vh;
-    }
-}
-
 .layer > .modal.mini {
     max-width: 30em;
     max-height: 80vh;
@@ -422,4 +392,42 @@
 }
 .layer .verticalButtonContainer button + button {
     margin-left: 10px;
+}
+
+/* === MEDIA QUERIES === */
+
+@media (max-width: 75em) {
+    .layer > .modal {
+        width: 80vw;
+        max-width: none;
+    }
+}
+@media (max-width: 65em) {
+    .layer > .modal {
+        width: 90vw;
+    }
+}
+@media (max-width: 55em) {
+    .layer > .modal {
+        width: 95vw;
+    }
+}
+
+@media (max-height: 50em) {
+    .layer > .modal {
+        height: 85vh;
+        max-height: none;
+    }
+    .layer > .modal .content img {
+        max-height: 25em;
+    }
+}
+
+@media (max-height: 40em) {
+    .layer > .modal {
+        height: 90vh;
+    }
+    .layer > .modal .content img {
+        max-height: 20em;
+    }
 }
