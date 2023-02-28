@@ -241,7 +241,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         y: windowState.y,
         width: windowState.width,
         height: windowState.height,
-        minWidth: 950,
+        minWidth: 720,
         minHeight: 480,
         show: false,
         resizable: true,
