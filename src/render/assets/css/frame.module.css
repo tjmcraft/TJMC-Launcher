@@ -1,5 +1,9 @@
 /* ================ Frame Bar ================ */
 
+:global(:root.fullscreen) .frame {
+    display: none;
+}
+
 .frame {
     z-index: 3001;
     display: flex;

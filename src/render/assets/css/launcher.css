@@ -709,9 +709,16 @@ body {
     top: -22px;
 }
 
+:root.fullscreen .preloader {
+    top: 0;
+}
+
 :root.platform-win .frame-fix,
 :root.platform-linux .frame-fix {
     top: 22px;
+}
+:root.fullscreen .frame-fix {
+    top: 0;
 }
 
 .connectionStateHeader {
