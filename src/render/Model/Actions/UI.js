@@ -11,7 +11,7 @@ const switchPlatform = (platform) => {
 		linux: "platform-linux"
 	});
 	const token = platforms[platform] || "platform-web";
-	return document.documentElement.classList.toggle(token, true);
+	return (document.documentElement.classList.add(token), true);
 };
 
 const matchColorScheme = (callback = () => { }) => {
@@ -33,7 +33,7 @@ const switchColorScheme = (colorScheme = null) => {
 			light: "light-theme",
 			dark: "dark-theme",
 		}).forEach(([key, value]) => {
-			document.documentElement.classList.toggle(value, key == colorScheme);
+			document.documentElement.classList[key == colorScheme ? "add" : "remove"](value);
 		});
 	}
 };
@@ -44,13 +44,13 @@ const switchColorScheme = (colorScheme = null) => {
 const updateTheme = async () => {
 	const userTheme = getState(global => global.theme);
 	const theme = (userTheme == "system" ? getPreferredColorScheme() : userTheme);
-	switchColorScheme(theme);
+	return (switchColorScheme(theme), true);
 };
 addCallback(updateTheme);
 
 const updateThemeExperiments = async () => {
 	const settings = getState(global => global.settings);
-	document.documentElement.classList.toggle("more-border", settings.exp_more_border);
+	document.documentElement.classList[settings.exp_more_border ? "add" : "remove"]("more-border");
 };
 addCallback(updateThemeExperiments);
 
