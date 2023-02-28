@@ -1679,7 +1679,7 @@ a.anchor:hover {
     flex: 1 1 80%;
 }
 .pctx-flex > :not(.ictx-flex) {
-    flex: 1;
+    flex: 1 1 auto;
 }
 
 .ictx-flex {
