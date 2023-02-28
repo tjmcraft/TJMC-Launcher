@@ -84,14 +84,15 @@ addReducer("onHideModal", (global, actions, payload) => {
 
 addReducer("alert", (global, actions, update) => {
 	if (!update) return;
-	let { title, content, type, buttons, multiline } = update;
+	let { title, content, type, buttons, multiline, label } = update;
 	actions.openModal({
 		layer: "alert",
 		title,
 		content,
 		type,
 		buttons,
-		multiline
+		multiline,
+		label
 	});
 });
 

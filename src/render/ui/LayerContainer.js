@@ -90,6 +90,7 @@ const LayerContainer = memo(() => {
 		const { alert } = getDispatch();
 		const { dev_disable_faloc } = getState(global => global.settings);
 		APP_ENV == "development" && !dev_disable_faloc && alert({
+			label: "faloc",
 			title: `Development Build ${APP_VERSION} (${window.buildInfo.gitHashShort})`,
 			content: "Welcome to development build of TJMC-Launcher! This is the earliest beta version of UI, that maybe never goes to production builds.",
 			type: "warn",
