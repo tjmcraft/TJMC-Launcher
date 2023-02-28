@@ -259,8 +259,12 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 				] : [])
 			])
 		};
-		const json = JSON.stringify(reducedGlobal);
-		localStorage.setItem(STATE_CACHE_KEY, json);
+		try {
+			const json = JSON.stringify(reducedGlobal);
+			localStorage.setItem(STATE_CACHE_KEY, json);
+		} catch (e) {
+			console.warn(e, reducedGlobal);
+		}
 	};
 
 	return { loadCache, resetCache };

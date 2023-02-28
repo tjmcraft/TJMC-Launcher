@@ -91,7 +91,7 @@ const LayerContainer = memo(() => {
 		const { dev_disable_faloc } = getState(global => global.settings);
 		APP_ENV == "development" && !dev_disable_faloc && alert({
 			title: `Development Build ${APP_VERSION} (${window.buildInfo.gitHashShort})`,
-			content: createElement("span", null, "Welcome to development build of TJMC-Launcher! This is the earliest beta version of UI, that maybe never goes to production builds. If you want to use stable build\xa0", createElement("a", { href: "https://app.tjmcraft.ga/" }, "click here"), "\xa0please."),
+			content: "Welcome to development build of TJMC-Launcher! This is the earliest beta version of UI, that maybe never goes to production builds.",
 			type: "warn",
 			buttons: [
 				{
