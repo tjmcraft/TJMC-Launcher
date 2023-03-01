@@ -96,9 +96,9 @@ const SettingContainer = ({ id, action, header, note, checked }) => {
 	);
 };
 
-const TabItem = ({ id, children }) => {
-	return (<div className="tab" id={id}>{children}</div>);
-};
+const TabItem = (({ id, children }) => {
+	return <div className="tab" id={id}>{children}</div>;
+});
 
 
 const MyAccountTab = memo(() => {
@@ -382,6 +382,15 @@ const LauncherSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Настройки клиента</h5>
 						<div className={style.settingGroup}>
+							<SettingContainer
+								id="launcher.checkUpdates"
+								header="Проверять обновления"
+								note="Отключение этого параметра позволяет пропускать проверку обновлений при холодном запуске."
+								checked={config.launcher.checkUpdates}
+								action={(s) => {
+									setConfig({ key: "launcher.checkUpdates", value: s });
+								}}
+							/>
 							<SettingContainer
 								id="launcher.hideOnClose"
 								header="Скрывать при закрытии"
