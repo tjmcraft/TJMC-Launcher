@@ -1668,6 +1668,7 @@ a.anchor:hover {
     justify-content: flex-start;
     width: 100%;
     row-gap: 1em;
+    column-gap: 8px;
 }
 .pctx-flex.alt {
     align-items: flex-start;
@@ -1760,7 +1761,7 @@ a.anchor:hover {
     border: 1px solid var(--background-modifier-accent);
     font-size: 14px;
     line-height: inherit;
-    margin: 0 4px;
+    margin: 0;
 }
 
 a {
