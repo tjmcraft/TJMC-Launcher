@@ -3,7 +3,12 @@ import { createElement } from "react";
 import style from 'CSS/modal.module.css';
 import buildClassName from "Util/buildClassName";
 
-export const Modal = ({ children, mini, small, full }) => {
+export const Modal = ({
+	children,
+	mini = false,
+	small = false,
+	full = false,
+}) => {
 
 	const classNames = buildClassName(
 		style.modal,
@@ -12,11 +17,9 @@ export const Modal = ({ children, mini, small, full }) => {
 		full && style.full,
 	);
 
-	return (
-		createElement("div", { class: classNames }, children)
-	);
+	return <div className={classNames}>{children}</div>;
 };
 
 export const ModalFooter = ({ children }) => {
-	return createElement('div', { class: style.verticalButtonContainer }, children);
+	return <div className={style.verticalButtonContainer}>{children}</div>;
 };
