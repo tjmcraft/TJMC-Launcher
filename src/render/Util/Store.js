@@ -321,6 +321,7 @@ window._gstore = stateStore;
 
 export const getDispatch = stateStore.getDispatch;
 export const getState = stateStore.getState;
+export const setState = stateStore.setState;
 export const withState = stateStore.withState;
 export const stateComponent = stateStore.stateComponent;
 export const addReducer = stateStore.addReducer;
