@@ -58,9 +58,18 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 	);
 };
 
-const Alert = ({ title, content, type, multiline, buttons }) => {
-	return createElement(Modal, { mini: true },
-		createElement(AlertContent, { title, content, type, multiline, buttons }));
+const Alert = ({ title, content, type, multiline = false, buttons }) => {
+	return (
+		<Modal small={multiline} mini={!multiline}>
+			<AlertContent
+				title={title}
+				content={content}
+				type={type}
+				multiline={multiline}
+				buttons={buttons}
+			/>
+		</Modal>
+	);
 };
 
 export default memo(Alert);

@@ -122,6 +122,7 @@
     height: auto;
 }
 .layer > .modal.small {
+    max-width: 90vw;
     max-height: 90vh;
     width: 35em;
     height: auto;
@@ -182,6 +183,7 @@
 }
 
 .layer > .modal .content.log {
+    user-select: text;
     text-align: initial;
     white-space: pre;
     word-break: break-word;
