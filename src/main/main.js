@@ -282,19 +282,16 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     });
 
     // handler for blank target
-    win.webContents.setWindowOpenHandler(({ url }) => {
-        if (url.startsWith("file://")) return { action: 'allow' };
-        shell.openExternal(url);
-        return { action: 'deny' };
-    });
+    win.webContents.setWindowOpenHandler(({ url }) =>
+        url.startsWith("file://") ? { action: 'allow' } :
+        (shell.openExternal(url), { action: 'deny' })
+    );
 
     // handler for self target
-    win.webContents.on('will-navigate', function (e, url) {
-        if (url != win.webContents.getURL()) {
-            e.preventDefault();
-            shell.openExternal(url);
-        }
-    });
+    win.webContents.on('will-navigate', (e, url) =>
+        url != win.webContents.getURL() &&
+        (e.preventDefault(), shell.openExternal(url))
+    );
 
     ConfigManager.watchOption("launcher.openDevTools")(state =>
         state ? win.webContents.openDevTools() : win.webContents.closeDevTools()
