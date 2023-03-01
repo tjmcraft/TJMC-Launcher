@@ -38,6 +38,12 @@ export function updater(update) {
 			hash: update.payload.version_hash,
 			progress: update.payload.progress,
 		});
+	} else if (update.type == "game.startup.error") {
+		update.payload?.version_hash && onUpdate({
+			type: "updateGameStartupError",
+			hash: update.payload.version_hash,
+			error: update.payload.error,
+		});
 	} else if (update.type == "game.startup.success") {
 		update.payload?.version_hash && onUpdate({
 			type: "updateGameStartupSuccess",
@@ -54,7 +60,7 @@ export function updater(update) {
 			configuration: update.payload.configuration,
 		});
 	} else if (update.type == "game.error") {
-		update.payload?.error && onUpdate({
+		update.payload?.version_hash && onUpdate({
 			type: "updateGameError",
 			hash: update.payload.version_hash,
 			error: update.payload.error,

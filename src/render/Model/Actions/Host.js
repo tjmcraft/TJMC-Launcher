@@ -1,6 +1,6 @@
 
 import { updateConfiguration } from "Model/Reducers/configuration";
-import { updateGameError, updateGameStartupSuccess, updateHostInfo } from "Model/Reducers/host";
+import { updateGameError, updateGameStartupError, updateGameStartupSuccess, updateHostInfo } from "Model/Reducers/host";
 import { updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
@@ -18,6 +18,7 @@ addReducer("hostUpdate", (global, actions, update) => {
 		case "updateConnectionState": return updateConnectionState(global, update);
 		case "updateHostInfo": return updateHostInfo(global, update);
 		case "updateConfiguration": return updateConfiguration(global, update);
+		case "updateGameStartupError": return updateGameStartupError(global, actions, update);
 		case "updateGameStartupSuccess": return updateGameStartupSuccess(global, update);
 		case "updateGameError": return updateGameError(global, actions, update);
 		default: return undefined;

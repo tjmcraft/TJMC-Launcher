@@ -13,6 +13,10 @@ export function updateHostInfo(global, update) {
 
 export function updateGameError(global, actions, update) {
 	const { hash, error } = update;
+	setState(updateInstallation(global, hash, {
+		progress: 0,
+		isProcessing: false,
+	}));
 
 	actions.openModal({
 		layer: "alert",
@@ -23,21 +27,30 @@ export function updateGameError(global, actions, update) {
 		multiline: true,
 		label: "game.error"
 	});
+}
 
-	global = getState();
-
-	global = updateInstallation(global, hash, {
+export function updateGameStartupError(global, actions, update) {
+	const { hash, error } = update;
+	setState(updateInstallation(global, hash, {
 		progress: 0,
 		isProcessing: false,
-	});
+	}));
 
-	setState(global);
+	actions.openModal({
+		layer: "alert",
+		title: "Startup error",
+		content: error,
+		type: "error",
+		// buttons,
+		multiline: true,
+		label: "game.error"
+	});
 }
 
 export function updateGameStartupSuccess(global, update) {
 	const { hash } = update;
-	return updateInstallation(global, hash, {
+	setState(updateInstallation(global, hash, {
 		progress: 0,
 		isProcessing: false,
-	});
+	}));
 }
