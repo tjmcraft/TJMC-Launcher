@@ -301,7 +301,7 @@ async function launchMinecraft(version_hash, params = {}) {
         const progress = (e.task / e.total);
         WSSHost.emit('game.progress.load', {
             progress: progress,
-            version_hash: e.version_hash
+            version_hash: version_hash
         });
     }
 
@@ -310,7 +310,7 @@ async function launchMinecraft(version_hash, params = {}) {
         if (e.type != 'version-jar') return;
         WSSHost.emit('game.progress.download', {
             progress: progress,
-            version_hash: e.version_hash
+            version_hash: version_hash
         });
     }
 
@@ -373,7 +373,7 @@ async function launchMinecraft(version_hash, params = {}) {
         logger.error(error);
         win?.setProgressBar(-1);
         WSSHost.emit('game.error', {
-            error: error,
+            error: error.message,
             version_hash: version_hash
         });
     }

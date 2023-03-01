@@ -100,7 +100,6 @@ class Minecraft {
                 type: 'natives',
                 task: 0,
                 total: stat.length,
-                version_hash: this.options.installation.hash
             })
             let promise_counter = 0;
             await Promise.all(stat.map(async (native) => {
@@ -120,7 +119,6 @@ class Minecraft {
                     type: 'natives',
                     task: count,
                     total: stat.length,
-                    version_hash: this.options.installation.hash
                 });
             }))
             logg.debug(`Downloaded and extracted natives! ${stat.length}`);
@@ -129,7 +127,6 @@ class Minecraft {
                 type: 'natives',
                 task: count,
                 total: stat.length,
-                version_hash: this.options.installation.hash
             });
         }
         logg.debug(`Natives Collected!`);
@@ -153,7 +150,6 @@ class Minecraft {
             type: 'assets',
             task: 0,
             total: Object.keys(index.objects).length,
-            version_hash: this.options.installation.hash
         })
         let promise_counter = 0;
         await Promise.all(Object.keys(index.objects).map(async (asset, number) => {
@@ -170,7 +166,6 @@ class Minecraft {
                 type: 'assets',
                 task: count,
                 total: Object.keys(index.objects).length,
-                version_hash: this.options.installation.hash
             })
         }))
         count = 0
@@ -178,7 +173,6 @@ class Minecraft {
             type: 'assets',
             task: count,
             total: Object.keys(index.objects).length,
-            version_hash: this.options.installation.hash
         })
         logg.debug('Collected assets')
         return assets_pathes
@@ -226,7 +220,6 @@ class Minecraft {
                 type: type,
                 task: count,
                 total: libraries.length,
-                version_hash: this.options.installation.hash
             });
 
             if (library.mod || library.downloadOnly) return false;
@@ -240,7 +233,6 @@ class Minecraft {
             type: type,
             task: count,
             total: libraries.length,
-            version_hash: this.options.installation.hash
         });
 
         return libs.filter(lib => Boolean(lib));
@@ -298,7 +290,6 @@ class Minecraft {
                         type: type,
                         current: 0,
                         total: totalBytes,
-                        version_hash: this.options.installation.hash
                     });
                     resolve(true);
                 })
@@ -316,7 +307,6 @@ class Minecraft {
                     type: type,
                     current: receivedBytes,
                     total: totalBytes,
-                    version_hash: this.options.installation.hash
                 })
             });
 
