@@ -1,0 +1,47 @@
+.markdown {
+	position: relative;
+	line-height: normal;
+	/* font-size: 1em; */
+	font-size: 16px;
+}
+
+.markdown > * {
+	margin-bottom: 16px;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown h1 {
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+
+.markdown h3 {
+	font-size: 1.2rem;
+	font-weight: 500;
+}
+
+.markdown ul,ol {
+	list-style: initial;
+	padding-left: 2em;
+	line-height: 1;
+}
+
+.markdown code, .markdown tt {
+	padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  white-space: break-spaces;
+  background-color: var(--background-modifier-accent);
+  border-radius: 6px;
+}

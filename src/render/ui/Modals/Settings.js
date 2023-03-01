@@ -1,4 +1,5 @@
 import { memo, createElement, useCallback, useMemo, useState, useEffect } from "react";
+import Markdown from "react-markdown";
 
 import buildClassName from "Util/buildClassName.js";
 import { getDispatch } from "Util/Store";
@@ -693,7 +694,8 @@ const AboutTab = memo(() => {
 													<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
 												</span>
 												<div className={buildClassName("colorStandart", "size14")}>
-													<span>{release.body}</span>
+													<span className="markdown"><Markdown>{release.body}</Markdown></span>
+													{/* <span>{release.body}</span> */}
 												</div>
 											</div>
 										</div>
