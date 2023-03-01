@@ -338,21 +338,21 @@ async function launchMinecraft(version_hash, params = {}) {
 
         logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
 
-        const JVM = await launcher.createJVM(javaPath, minecraftArguments);
+        const jvm = await launcher.createJVM(javaPath, minecraftArguments);
 
         let error_out = null,
             std_out = null,
             logg_out = null;
 
-        JVM.stderr.on('data', (data) => {
+        jvm.stderr.on('data', (data) => {
             logg_out = error_out = data.toString('utf-8');
         });
 
-        JVM.stdout.on('data', (data) => {
+        jvm.stdout.on('data', (data) => {
             logg_out = std_out = data.toString('utf-8');
         });
 
-        JVM.on('close', (code) => {
+        jvm.on('close', (code) => {
             if (code != 0) {
                 win?.setProgressBar(-1);
                 WSSHost.emit('game.startup.error', {

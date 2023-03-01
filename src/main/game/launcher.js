@@ -4,7 +4,6 @@ const LoggerUtil                             = require('../util/loggerutil')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./Minecraft')
-const logger                                 = LoggerUtil('%c[Launcher]', 'color: #16be00; font-weight: bold')
 const VersionManager                         = require('../managers/VersionManager')
 const JavaManager                            = require('../managers/JavaManager')
 const md5                                    = require('md5');
@@ -25,6 +24,8 @@ class launcher extends EventEmitter {
     constructor(options = {}) {
         super();
 
+        this.logger = LoggerUtil('%c[Launcher]', `[${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+
         this.options = Object.assign({}, options);
         this.options.overrides.path.gameDirectory = path.resolve(this.options.installation?.gameDir || this.options.overrides.path?.gameDirectory || this.options.overrides.path?.root || undefined);
         this.options.overrides.path.version = path.join(this.options.overrides.path.root, 'versions', this.options.installation.lastVersionId);
@@ -35,8 +36,8 @@ class launcher extends EventEmitter {
 
         this.handler = new Minecraft(this);
 
-        logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
-        logger.debug("Launcher compiled options:", this.options);
+        this.logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
+        this.logger.debug("Launcher compiled options:", this.options);
 
     }
 
@@ -44,7 +45,7 @@ class launcher extends EventEmitter {
         const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw';
         const java = await JavaManager.checkJava(javaPath);
         if (!java.run) {
-            logger.error(`Couldn't start Minecraft due to: ${java.message}`);
+            this.logger.error(`Couldn't start Minecraft due to: ${java.message}`);
             throw new Error(`Wrong java (${javaPath})`);
         }
         return javaPath;
@@ -62,13 +63,13 @@ class launcher extends EventEmitter {
         if (!fs.existsSync(this.options.mcPath))
             await this.handler.loadClient(versionFile);
 
-        logger.log('Attempting to load natives');
+        this.logger.log('Attempting to load natives');
         const nativePath = await this.handler.getNatives(versionFile);
 
-        logger.log('Attempting to load classes');
+        this.logger.log('Attempting to load classes');
         const classes = await this.handler.getClasses(versionFile);
 
-        logger.log('Attempting to load assets');
+        this.logger.log('Attempting to load assets');
         const assets = await this.handler.getAssets(versionFile);
 
         const args = this.handler.constructJVMArguments(versionFile, nativePath, classes);
@@ -78,9 +79,9 @@ class launcher extends EventEmitter {
 
     async createJVM(java, launchArguments) {
 
-        logger.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`);
+        this.logger.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`);
 
-        const minecraft = child.spawn(
+        const jvm = child.spawn(
             java,
             launchArguments,
             {
@@ -90,19 +91,19 @@ class launcher extends EventEmitter {
             }
         );
 
-        minecraft.stdout.on('data', (data) => {
-            logger.log(data.toString('utf-8'));
+        jvm.stdout.on('data', (data) => {
+            this.logger.log(data.toString('utf-8'));
         });
 
-        minecraft.stderr.on('data', (data) => {
-            logger.error(data.toString('utf-8'));
+        jvm.stderr.on('data', (data) => {
+            this.logger.error(data.toString('utf-8'));
         });
 
-        minecraft.on('close', (code) => {
-            logger.warn('ExitCode: ' + code);
+        jvm.on('close', (code) => {
+            this.logger.warn('ExitCode: ' + code);
         });
 
-        return minecraft;
+        return jvm;
     }
 }
 
