@@ -28,13 +28,13 @@ export function updater(update) {
 		});
 	} else if (update.type == "game.progress.load") {
 		update.payload?.version_hash && onUpdate({
-			type: "updateInstallationsProgress",
+			type: "updateInstallationsProgressLoad",
 			hash: update.payload.version_hash,
 			progress: update.payload.progress,
 		});
 	} else if (update.type == "game.progress.download") {
 		update.payload?.version_hash && onUpdate({
-			type: "updateInstallationsProgress",
+			type: "updateInstallationsProgressDownload",
 			hash: update.payload.version_hash,
 			progress: update.payload.progress,
 		});
@@ -56,6 +56,7 @@ export function updater(update) {
 	} else if (update.type == "game.error") {
 		update.payload?.error && onUpdate({
 			type: "updateGameError",
+			hash: update.payload.version_hash,
 			error: update.payload.error,
 		});
 	} else {
