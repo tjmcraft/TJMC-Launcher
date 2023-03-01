@@ -122,12 +122,3 @@ process.once('loaded', () => {
   ipcRenderer.on('blur', windowBlur);
   ipcRenderer.on('focus', windowFocus);
 })
-
-win.webContents.setWindowOpenHandler(({ url }) => {
-  if (url.startsWith("file://")) {
-    return { action: 'allow' };
-  }
-  // open url in a browser and prevent default
-  shell.openExternal(url);
-  return { action: 'deny' };
-});

@@ -1,5 +1,5 @@
 'use strict';
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
@@ -278,6 +278,21 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         if (ConfigManager.getHideOnClose()) {
             event.preventDefault();
             win.hide();
+        }
+    });
+
+    // handler for blank target
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith("file://")) return { action: 'allow' };
+        shell.openExternal(url);
+        return { action: 'deny' };
+    });
+
+    // handler for self target
+    win.webContents.on('will-navigate', function (e, url) {
+        if (url != win.webContents.getURL()) {
+            e.preventDefault();
+            shell.openExternal(url);
         }
     });
 
