@@ -1013,9 +1013,6 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden overlay;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
     line-height: normal;
 }
 
