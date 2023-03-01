@@ -24,7 +24,7 @@ class launcher extends EventEmitter {
     constructor(options = {}) {
         super();
 
-        this.logger = LoggerUtil('%c[Launcher]', `[${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+        this.logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
         this.options = Object.assign({}, options);
         this.options.overrides.path.gameDirectory = path.resolve(this.options.installation?.gameDir || this.options.overrides.path?.gameDirectory || this.options.overrides.path?.root || undefined);
@@ -79,7 +79,7 @@ class launcher extends EventEmitter {
 
     async createJVM(java, launchArguments) {
 
-        this.logger.debug(`Launching with arguments ${java} ${launchArguments.join(' ')}`);
+        this.logger.debug(`Launching with arguments:\n${java}\xa0${launchArguments.join(' ')}`);
 
         const jvm = child.spawn(
             java,
