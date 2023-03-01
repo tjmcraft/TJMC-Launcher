@@ -1,12 +1,15 @@
 .markdown {
 	position: relative;
-	line-height: normal;
+	line-height: 1.5;
 	/* font-size: 1em; */
 	font-size: 16px;
 }
 
 .markdown > * {
 	margin-bottom: 16px;
+}
+.markdown > *:first-child {
+	margin-top: 0;
 }
 
 .markdown h1,
@@ -22,19 +25,18 @@
 }
 
 .markdown h1 {
-	font-size: 1.5rem;
-	font-weight: 600;
+	padding-bottom: 0.3em;
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color-1);
 }
 
 .markdown h3 {
-	font-size: 1.2rem;
-	font-weight: 500;
+  font-size: 1.25em;
 }
 
 .markdown ul,ol {
 	list-style: initial;
 	padding-left: 2em;
-	line-height: 1;
 }
 
 .markdown code, .markdown tt {

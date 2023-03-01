@@ -67,7 +67,7 @@
     min-width: 340px;
     min-height: 180px;
     overflow: hidden;
-    white-space: pre-line;
+    white-space: normal;
     font-size: 16px;
     font-family: var(--font-primary);
     text-align: start;

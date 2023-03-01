@@ -320,6 +320,10 @@ svg[data-icon="progress-circle"] circle {
     stroke-width: 8px;
 }
 
+tt, code, samp {
+    font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+}
+
 .color-red {
     color: var(--text-negative);
 }

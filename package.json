@@ -84,6 +84,7 @@
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
     "react-markdown": "^8.0.5",
+    "remark-gfm": "^3.0.1",
     "source-map": "^0.7.4",
     "style-loader": "^3.3.0",
     "svg-inline-loader": "^0.8.2",

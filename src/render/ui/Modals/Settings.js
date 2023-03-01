@@ -1,5 +1,6 @@
 import { memo, createElement, useCallback, useMemo, useState, useEffect } from "react";
 import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import buildClassName from "Util/buildClassName.js";
 import { getDispatch } from "Util/Store";
@@ -694,7 +695,9 @@ const AboutTab = memo(() => {
 													<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
 												</span>
 												<div className={buildClassName("colorStandart", "size14")}>
-													<span className="markdown"><Markdown>{release.body}</Markdown></span>
+													<span className="markdown">
+														<Markdown remarkPlugins={[remarkGfm]} children={release.body} />
+													</span>
 													{/* <span>{release.body}</span> */}
 												</div>
 											</div>
