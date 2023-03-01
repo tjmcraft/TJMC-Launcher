@@ -303,8 +303,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
     if (!version_hash) throw new Error("version_hash is required");
 
-    const currentInstallation = InstallationsManager.getInstallationSync(version_hash);
-
+    const currentInstallation = await InstallationsManager.getInstallation(version_hash);
     if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
     const GameLauncher = require('./game/launcher');
@@ -337,20 +336,16 @@ async function launchMinecraft(version_hash, params = {}) {
                 uuid: undefined,
             }
         }, params);
-
         logger.debug('launcherOptions', launcherOptions);
 
         const launcher = new GameLauncher(launcherOptions);
-
         launcher.on('progress', progress);
         launcher.on('download-status', download_progress);
 
         const javaPath = await launcher.getJava();
         const minecraftArguments = await launcher.construct();
-
-        logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
-
         const jvm = await launcher.createJVM(javaPath, minecraftArguments);
+        logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
 
         let error_out = null,
             std_out = null,
