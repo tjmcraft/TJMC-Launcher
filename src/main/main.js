@@ -273,12 +273,12 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
     win.on('blur', () => win.webContents.send('blur'));
     win.on('focus', () => win.webContents.send('focus'));
-    win.on('closed', () => win = null);
+    win.on('closed', () => (win = null, app.quit()));
     win.on('close', (event) => {
         if (ConfigManager.getHideOnClose()) {
             event.preventDefault();
             win.hide();
-        }
+        };
     });
 
     // handler for blank target
