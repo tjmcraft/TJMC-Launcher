@@ -1,6 +1,7 @@
 const { shell, ipcRenderer, contextBridge } = require('electron');
 const remote = require('@electron/remote')
 const os = require('os');
+const { getOS } = require('./util/Tools');
 
 const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold');
 
@@ -8,19 +9,6 @@ logger.debug("Application loading...");
 
 //Set Current Window as win
 const win = remote.getCurrentWindow();
-
-/**
- * Function returns current platform
- * @returns os
- */
-function getOS() {
-  switch (process.platform) {
-    case 'win32': return 'windows';
-    case 'darwin': return 'osx';
-    case 'linux': return 'linux';
-    default: return 'web';
-  }
-}
 
 const windowEvents = {
   close: () => win.close(),

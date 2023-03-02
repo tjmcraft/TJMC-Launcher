@@ -91,3 +91,18 @@ function msort(arr, key = undefined) {
 }
 
 exports.msort = msort;
+
+/**
+ * Function returns current platform
+ * @returns os
+ */
+function getOS() {
+    switch (process.platform) {
+      case 'win32': return 'windows';
+      case 'darwin': return 'osx';
+      case 'linux': return 'linux';
+      default: return 'web';
+    }
+}
+
+exports.getOS = getOS;
