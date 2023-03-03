@@ -29,12 +29,12 @@ const createMenu = async () => {
           label: 'Minecraft',
           submenu: [{
                   label: 'Root Directory',
-                  accelerator: isMac ? 'Cmd+Alt+D' : 'Ctrl+Shift+D',
+                  accelerator: 'Ctrl+Shift+D',
                   click: () => openDir(ConfigManager.getDataDirectory())
               },
               {
                   label: 'Options',
-                  accelerator: isMac ? 'Cmd+Alt+I' : 'Ctrl+Shift+I',
+                  accelerator: 'Ctrl+Shift+I',
                   click: () => {
                       restoreWindow();
                       windowSend('open-settings');
@@ -118,18 +118,18 @@ const createMenu = async () => {
               },
               {
                   role: 'zoomIn',
-                  accelerator: 'Ctrl+='
+                  accelerator: isMac ? 'Cmd+=' : 'Ctrl+='
               },
               {
                   role: 'zoomOut',
-                  accelerator: 'Ctrl+-'
+                  accelerator: isMac ? 'Cmd+-' : 'Ctrl+-'
               },
               {
                   type: 'separator'
               },
               {
                   role: 'togglefullscreen',
-                  accelerator: 'F11'
+                  accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11'
               }
           ]
       },
