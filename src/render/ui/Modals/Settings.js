@@ -640,10 +640,6 @@ const AboutTab = memo(() => {
 		openWhatsNewModal();
 	}, [openWhatsNewModal]);
 
-	const handleReleaseMoreClick = useCallback((url) => {
-		return () => window.open(url, "_blank");
-	}, []);
-
 	return (
 		<TabItem id="launcher-about">
 			<h2>О программе</h2>
@@ -691,20 +687,16 @@ const AboutTab = memo(() => {
 											</div>
 											<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
 												<span className="vbx">
-													<div className={buildClassName("text", "name", "sizeE")}>{release.name}</div>
+													<a href={release.html_url} className={buildClassName("text", "name", "sizeE")}>{release.name}</a>
 													<div className={buildClassName("text", "version", "sizeQ")}>#{release.id}</div>
 												</span>
 												<div className={buildClassName("colorStandart", "size14")}>
 													<span className="markdown">
 														<Markdown remarkPlugins={[remarkGfm]} children={release.body} />
 													</span>
-													{/* <span>{release.body}</span> */}
 												</div>
 											</div>
 										</div>
-										<button className={buildClassName("r", "filled")} onClick={handleReleaseMoreClick(release.html_url)}>
-											<span>Подробнее</span>
-										</button>
 									</div>
 									{releases.length - 1 != i && <div className="separator" />}
 								</div>
