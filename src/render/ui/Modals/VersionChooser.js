@@ -183,7 +183,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	];
 
 	return (
-		<div className="main-content">
+		<div className={buildClassName("main-content", "d-flex")}>
 			<div className="middleHeader">
 				<div className="backButton">
 					<button onClick={onBack}>
@@ -325,7 +325,7 @@ const VersionChooser = (props) => {
 					{selectedVersion ? (
 						<VersionChooserContent version={selectedVersion} onCancel={handleCancel} onBack={handleBack} isLeftOpen={leftOpen} />
 					) : (
-						<div className={buildClassName("main-content", "d-flex", "centred")}>
+						<div className={buildClassName("main-content", "d-flex", "vertical", "centred")}>
 							<h1>{"Выберите версию"}</h1>
 							<h3>{"для установки"}</h3>
 						</div>
