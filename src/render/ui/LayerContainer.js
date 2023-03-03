@@ -86,10 +86,12 @@ const Modals = memo(() => {
 
 const LayerContainer = memo(() => {
 
-	useEffect(() => {
+	const isAuthReady = useGlobal(global => global.auth_state == "ready");
+
+	useEffect(() => APP_ENV == "development" ? () => {
 		const { alert } = getDispatch();
 		const { dev_disable_faloc } = getState(global => global.settings);
-		APP_ENV == "development" && !dev_disable_faloc && alert({
+		!dev_disable_faloc && alert({
 			label: "faloc",
 			title: `Development Build ${APP_VERSION} (${window.buildInfo.gitHashShort})`,
 			content: "Welcome to development build of TJMC-Launcher! This is the earliest beta version of UI, that maybe never goes to production builds.",
@@ -111,7 +113,14 @@ const LayerContainer = memo(() => {
 			],
 			mini: true
 		});
-	}, []);
+	} : undefined, []);
+
+	useEffect(() => {
+		const { openWhatsNewModal } = getDispatch();
+		const showWhatsNew = getState(global => global.lastAppVersionId != APP_VERSION);
+		showWhatsNew && isAuthReady && openWhatsNewModal();
+	}, [isAuthReady]);
+
 
 	return (
 		<div className={buildClassName("layerContainer")}>

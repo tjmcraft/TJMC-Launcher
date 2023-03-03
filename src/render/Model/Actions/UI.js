@@ -1,6 +1,6 @@
 import { addModal, closeModal, unloadModal } from "Model/Reducers/ui";
 import { debounce } from "Util/Shedulers";
-import { addCallback, addReducer, getState } from "Util/Store";
+import { addCallback, addReducer, getState, setState } from "Util/Store";
 import getPreferredColorScheme from "Util/getPreferredColorScheme";
 
 const switchPlatform = (platform) => {
@@ -123,6 +123,12 @@ addReducer("openWhatsNewModal", (global, actions, update) => {
 		small: true,
 		closeButton: false,
 	});
+	global = getState();
+	global = {
+		...global,
+		lastAppVersionId: APP_VERSION,
+	};
+	setState(global);
 });
 
 addReducer("setTheme", (global, actions, payload) => {
