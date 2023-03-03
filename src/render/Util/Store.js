@@ -4,12 +4,12 @@ import { generateIdFor } from "./Random";
 import { onBeforeUnload, throttle } from "./Shedulers";
 import useForceUpdate from "Hooks/useForceUpdate";
 
-function StateStore(cachedState) {
+function StateStore() {
 
 	const debug_picker = false;
 	const debug_container = false;
 
-	let currentState = cachedState || {};
+	let currentState = {};
 
 	this.setState = (state = null, options = null) => {
 		if (typeof state === "object" && state !== currentState) {
@@ -310,12 +310,11 @@ stateStore.addCallback(async (global) => {
 	window.__debug__ && console.debug("->", { ...global });
 });
 
-{
+stateStore.addReducer("init", () => {
 	const initial = Object.assign({}, INITIAL_STATE);
 	const state = loadCache(initial) || initial;
-	stateStore.setState(state);
-	// console.debug(">>", "stateStore", "[init]", state);
-}
+	return state;
+});
 
 stateStore.addReducer("reset", resetCache);
 
