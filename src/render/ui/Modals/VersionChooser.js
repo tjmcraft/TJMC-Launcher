@@ -89,7 +89,7 @@ const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 
 				</svg>
 			</div>
 			<div className={buildClassName('dropdown', !isOpen && "hidden")}>
-				{items && items.map(item => createElement('a', { onClick: handleSelect(item) }, item.name))}
+				{items && items.map(item => createElement('span', { onClick: handleSelect(item) }, item.name))}
 			</div>
 		</div>
 	);

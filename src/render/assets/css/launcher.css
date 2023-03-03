@@ -1277,7 +1277,7 @@ body {
     text-align: start;
 }
 
-.container-f .dropdown a {
+.container-f .dropdown span {
     cursor: pointer;
     color: var(--header-primary);
     padding: 12px 15px;
@@ -1289,7 +1289,7 @@ body {
     transition: none;
 }
 
-.container-f .dropdown a:hover {
+.container-f .dropdown span:hover {
     background-color: var(--brand-color-1);
     color: #eee;
 }
