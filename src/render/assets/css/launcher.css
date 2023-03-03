@@ -1689,7 +1689,7 @@ a.anchor:hover {
     align-items: flex-start;
 }
 .pctx-flex > .ictx-flex {
-    flex: 1 1 80%;
+    flex: 1 1 75%;
 }
 .pctx-flex > :not(.ictx-flex) {
     flex: 1 1 auto;
@@ -1774,7 +1774,6 @@ a.anchor:hover {
 
 .ictx-flex>button.r, .pctx-flex>button.r {
     border: 1px solid var(--background-modifier-accent);
-    font-size: 14px;
     line-height: inherit;
     margin: 0;
 }
