@@ -239,10 +239,17 @@ button {
     align-items: center;
     position: relative;
     padding: 8px 16px;
-    box-sizing: border-box;
     min-width: 96px;
     min-height: 38px;
     width: auto;
+    box-sizing: border-box;
+}
+
+button.small {
+    padding: 8px 16px;
+    min-width: 80px;
+    min-height: 28px;
+    font-size: 14px;
 }
 
 button.filled {

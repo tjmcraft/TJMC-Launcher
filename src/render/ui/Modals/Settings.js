@@ -99,8 +99,136 @@ const SettingContainer = ({ id, action, header, note, checked }) => {
 	);
 };
 
+const SettingContainerTwo = ({
+	note = undefined,
+	children,
+}) => {
+	return (
+		<div className={style.settingContainer}>
+			<div className={style.labelRow}>
+				{children}
+			</div>
+			{note && (
+				<div className={style.note}>
+					<div className={style.description}>{note}</div>
+				</div>
+			)}
+		</div>
+	);
+};
+
+const SettingSwitch = ({
+	id = undefined,
+	title,
+	note = undefined,
+	action = void 0,
+	checked = false,
+}) => {
+	id = id || randomString(5);
+	const onCheck = useCallback((checked) => {
+		if (typeof action === "function") action.call(this, checked, id);
+	}, [id, action]);
+	return (
+		<SettingContainerTwo note={note}>
+			<label htmlFor={id} className={style.title}>{title || ""}</label>
+			<div className={style.control}>
+				<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} />
+			</div>
+		</SettingContainerTwo>
+	);
+};
+
+const SettingButton = ({
+	id = undefined,
+	title,
+	note = undefined,
+	name,
+	action = void 0,
+}) => {
+	id = id || randomString(5);
+	const handleClick = useCallback(() => {
+		if (typeof action === "function") action.call(this, id);
+	}, [id, action]);
+	return (
+		<SettingContainerTwo note={note}>
+			<label htmlFor={id} className={style.title}>{title || ""}</label>
+			<div className={style.control}>
+				<button id={id} className={buildClassName("filled", "small")} onClick={handleClick}>{name || "click"}</button>
+			</div>
+		</SettingContainerTwo>
+	);
+}
+
 const TabItem = (({ id, children }) => {
 	return <div className="tab" id={id}>{children}</div>;
+});
+
+const TestContainer = memo(() => {
+	const [selectedIndex, selectIndex] = useState(0);
+	const [checked, setChecked] = useState(false);
+	const [count, setCount] = useState(0);
+	const items = [
+		"Item 0",
+		"Item 1",
+		"Item 2",
+		"Item 3",
+		"Item 4",
+		"Item 5",
+		"Item 6",
+		"Item 7",
+		"Item 8",
+		"Item 9",
+	];
+	return (
+		<div className={style.settingGroupContainer}>
+			<h5>Debug container</h5>
+			<div className={style.settingGroup}>
+				<div className={style.settingContainer}>
+					<div className={style.description}>{"You can use selectable menu"}</div>
+					<div className={"test"}>
+						<Select title="Select item" value={items[selectedIndex]}>
+							{items.map((e, i) => (
+								<MenuItem compact
+									key={i}
+									selected={selectedIndex == i}
+									onClick={() => selectIndex(i)}
+								>{e}</MenuItem>
+							))}
+						</Select>
+					</div>
+				</div>
+				<SettingSwitch
+					id={"tjmc.app.example.switch"}
+					checked={checked}
+					action={setChecked}
+					note={"Here is the example of setting container toggler. You can switch it!"}
+					title={"Toggle this switch"}
+				/>
+				<SettingButton
+					id={"tjmc.app.example.button"}
+					note={`Here is the example of setting container button. You can click on it!`}
+					title={`Click on button${count > 0 ? `\xa0-\xa0${count}` : ""}`}
+					name={"Click"}
+					action={() => setCount(s => s + 1)}
+				/>
+				<SettingSwitch
+					id={"tjmc.app.example.switch"}
+					checked={checked}
+					action={setChecked}
+					title={"Toggle this switch with long text inside title box"}
+				/>
+				<SettingButton
+					id={"tjmc.app.example.button"}
+					title={`Click on button with long text in title here${count > 0 ? `\xa0-\xa0${count}` : ""}`}
+					name={"Click"}
+					action={() => setCount(s => s + 1)}
+				/>
+				<div className={style.settingContainer}>
+					<div className={style.description}>{"You can easily write single description text"}</div>
+				</div>
+			</div>
+		</div>
+	);
 });
 
 
@@ -152,32 +280,7 @@ const MyAccountTab = memo(() => {
 					</div>
 				</div>
 				{APP_ENV == "development" && (
-					<div className={style.settingGroupContainer}>
-						<h5>Дополнительно</h5>
-						<div className={style.settingGroup}>
-							<div className={style.settingContainer}>
-								<div className={style.description}>{"no content here"}</div>
-							</div>
-							<div className={style.settingContainer}>
-								<div className={style.description}>{"UI Test"}</div>
-								<div className={"test"}>
-									<Select title="Params select" value="Item 0">
-										<MenuItem compact>Item 1</MenuItem>
-										<MenuItem compact>Item 2</MenuItem>
-										<MenuItem compact>Item 3</MenuItem>
-										<MenuItem compact>Item 4</MenuItem>
-										<MenuItem compact>Item 5</MenuItem>
-										<MenuItem compact>Item 6</MenuItem>
-										<MenuItem compact>Item 7</MenuItem>
-										<MenuItem compact>Item 8</MenuItem>
-										<MenuItem compact>Item 9</MenuItem>
-										<MenuItem compact>Item 10</MenuItem>
-										<MenuItem compact>Item 11</MenuItem>
-									</Select>
-								</div>
-							</div>
-						</div>
-					</div>
+					<TestContainer />
 				)}
 			</div>
 		</TabItem>

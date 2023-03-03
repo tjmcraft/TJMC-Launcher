@@ -67,6 +67,7 @@
     font-size: 16px;
     font-weight: 600;
     padding-bottom: 3px; /* fix line height */
+    padding-right: 8px; /* fix toggler sticking */
     cursor: pointer;
     color: var(--header-primary);
 }
@@ -87,6 +88,8 @@
     line-height: 20px;
     font-weight: 400;
     color: var(--header-secondary);
+}
+.settingContainer > .description:not(:only-child) {
     margin-bottom: .5rem;
 }
 
