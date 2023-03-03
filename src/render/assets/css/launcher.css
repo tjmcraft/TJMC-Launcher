@@ -26,8 +26,13 @@ div {
 
 a {
     color: var(--text-link);
-    /* text-decoration: none; */
-    cursor: pointer
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--text-link) !important;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 a img {
