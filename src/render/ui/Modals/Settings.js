@@ -23,6 +23,7 @@ import { PathInput } from "UI/components/Input";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
+import "CSS/markdown.css";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
@@ -677,7 +678,7 @@ const AboutTab = memo(() => {
 						<h5>Просмотр информации о предыдущих релизах</h5>
 						<div className="separator" />
 						<div className="flex-group vertical">
-							{releases && releases.map((release, i) => (
+							{releases && releases.map((release, i) => release.tag_name != `v${APP_VERSION}` && (
 								<div key={i} className={buildClassName("release", "w100")}>
 									<div className={buildClassName("pctx-flex", "alt")}>
 										<div className={buildClassName("ictx-flex", "align-top")}>

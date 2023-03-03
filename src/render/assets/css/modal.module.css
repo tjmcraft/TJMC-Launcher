@@ -198,80 +198,7 @@
     object-fit: cover;
     object-position: top;
     background-color: var(--background-secondary-alt);
-}
-
-.layer >  .modal .content h1 {
-    line-height: 20px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.layer> .modal .content p {
-    color: var(--interactive-normal);
-    font-weight: 400;
-}
-.layer > .modal .content ul {
-    margin: 20px 0 8px 20px;
-}
-.layer > .modal .content ul li {
-    position: relative;
-    list-style: none;
-    margin-bottom: 8px;
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-}
-.layer > .modal .content ul li:before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    left: -15px;
-    width: 6px;
-    height: 6px;
-    margin-top: -4px;
-    margin-left: -3px;
-    border-radius: 50%;
-    opacity: .3;
-}
-:global(.dark-theme) .content ul li:before {
-    background-color: #dcddde;
-}
-.content strong {
-    font-weight: 700;
-}
-
-.added, .fixed, .improved, .progress {
-    display: flex;
-    align-items: center;
-    margin-top: 40px;
-}
-
-.added {
-    color: var(--text-positive);
-}
-.fixed {
-    color: var(--text-negative);
-}
-.progress {
-    color: var(--text-warning);
-}
-
-.added::after, .fixed::after, .improved::after, .progress::after {
-    content: "";
-    height: 1px;
-    flex: 1 1 auto;
-    margin-left: 4px;
-    opacity: .6;
-}
-.added::after {
-    background-color: var(--text-positive);
-}
-.fixed::after {
-    background-color: var(--text-negative);
-}
-.progress::after {
-    background-color: var(--text-warning);
+    margin-bottom: 24px;
 }
 
 .layer > .modal .content .added.margin-top {
@@ -298,9 +225,21 @@
     display: flex;
 }
 
-.layer > .modal .footer > * {
+.layer > .modal .footer > *:last-child {
+    margin-left: auto;
+}
+
+.layer > .modal .footer > *:not(:last-child) {
     margin: 0 8px 0 0;
 }
+
+.layer >  .modal .content :global(.markdown) h1 {
+    /* color: var(--text-positive); */
+}
+.layer >  .modal .content :global(.markdown) h3 {
+    color: var(--text-warning);
+}
+
 
 /* ===== TOOLS ===== */
 
