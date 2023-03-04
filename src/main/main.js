@@ -81,7 +81,7 @@ const protoHandler = (link) => {
 
 const handleArgsLink = (args) => {
     if (process.platform === 'win32') {
-        const deepLink = args.find((arg) => arg.startsWith('tjmc://'));
+        const deepLink = args.find((arg) => arg.startsWith(DEFAULT_PROTOCOL_HANDLER + '://'));
         if (deepLink) return protoHandler(deepLink);
     }
     return false;
