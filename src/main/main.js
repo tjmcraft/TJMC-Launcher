@@ -31,8 +31,6 @@ autoUpdater.setFeedURL({
     repo: "TJMC-Launcher",
 });
 
-app.allowRendererProcessReuse = true;
-
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
 const setInstanceProtocolHandler = () => {
