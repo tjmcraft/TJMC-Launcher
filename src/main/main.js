@@ -215,10 +215,6 @@ const createMainWindow = () => new Promise((resolve, reject) => {
         };
     });
 
-    win.webContents.setFrameRate(60);
-
-
-
     // handler for blank target
     win.webContents.setWindowOpenHandler(({ url }) =>
         url.startsWith("file://") ? { action: 'allow' } :
