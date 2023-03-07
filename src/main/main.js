@@ -24,6 +24,7 @@ console.timeEnd("> require");
 autoUpdater.logger = updateLogger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.autoDownload = false;
 
 autoUpdater.setFeedURL({
     provider: "github",
@@ -140,37 +141,6 @@ if (!gotTheLock) {
                 logger.error("[MainWindow]", "Error:", e);
                 app.quit();
             };
-        }
-
-        // Handlers
-        const event_updateError = (e) => win?.webContents.send('update.error', e);
-        const event_updateChecking = (e) => win?.webContents.send('update.check', e);
-        const event_updateAvailable = (e) => win?.webContents.send('update.available', e);
-        const event_updateProgress = (e) => win?.webContents.send('update.progress', e);
-        const event_updateDownloaded = (e) => win?.webContents.send('update.downloaded', e);
-        const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
-
-        autoUpdater.on('error', event_updateError);
-        autoUpdater.on('checking-for-update', event_updateChecking);
-        autoUpdater.on('update-available', event_updateAvailable);
-        autoUpdater.on('download-progress', event_updateProgress);
-        autoUpdater.on('update-downloaded', event_updateDownloaded);
-        ipcMain.on('update.install', action_updateInstall);
-
-        autoUpdater.once('update-not-available', async () => {
-
-        });
-
-        if (ConfigManager.getCheckUpdates()) { // Check updates if need
-            autoUpdater.checkForUpdates().then(updates => {
-                updateLogger.debug("-> Updates:", updates);
-                if (!updates) autoUpdater.emit('update-not-available');
-            }).catch(err => {
-                updateLogger.error("-> Error:", err);
-                autoUpdater.emit('update-not-available');
-            });
-        } else {
-            autoUpdater.emit('update-not-available');
         }
 
         console.timeEnd("> init ready");
@@ -368,6 +338,7 @@ const requestChannels = Object.seal({
     selectFile: 'selectFile',
     relaunchHost: 'relaunchHost',
     updateCheck: 'updateCheck',
+    updateDownload: 'updateDownload',
     updateInstall: 'updateInstall',
 });
 
@@ -379,6 +350,8 @@ const ackChannels = Object.seal({
     gameStartupSuccess: 'game.startup.success',
     gameStartupError: 'game.startup.error',
     gameError: 'game.error',
+    updateStatus: 'update.status',
+    updateProgress: 'update.progress',
 });
 
 /**
@@ -413,7 +386,38 @@ const initHandlers = async () => {
     InstallationsManager.addCallback(config => {
         console.debug("Update Installations:", config);
         config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
-    })
+    });
+
+    // Handlers
+
+    autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "error" }));
+    autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "check" }));
+    autoUpdater.on('update-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "available" }));
+    autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "not-available" }));
+    autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
+    autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "loaded" }));
+
+    const checkForUpdates = () => {
+        if (ConfigManager.getCheckUpdates()) { // Check updates if need
+            autoUpdater.checkForUpdates().then(updates => {
+                updateLogger.debug("-> Updates:", updates);
+                if (!updates) autoUpdater.emit('update-not-available');
+            }).catch(err => {
+                updateLogger.error("-> Error:", err);
+                autoUpdater.emit('update-not-available');
+            });
+        } else {
+            autoUpdater.emit('update-not-available');
+        }
+    }
+
+    WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
+    WSSHost.addReducer(requestChannels.updateDownload, () => autoUpdater.downloadUpdate());
+    WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>
+        autoUpdater.quitAndInstall(isSilent, isForceRunAfter)
+    );
+
+    // Main
 
     WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
         hostVendor: 'TJMC-Launcher',
@@ -447,14 +451,12 @@ const initHandlers = async () => {
         const installations = await InstallationsManager.getInstallations();
         return { installations };
     });
-
-    WSSHost.addReducer(requestChannels.createInstallation, async (data) => {
-        return await InstallationsManager.createInstallation(data);
-    });
-
-    WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) => {
-        return await InstallationsManager.removeInstallation(hash, forceDeps);
-    });
+    WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
+        await InstallationsManager.createInstallation(data)
+    );
+    WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
+        await InstallationsManager.removeInstallation(hash, forceDeps)
+    );
 
     WSSHost.addReducer(requestChannels.fetchVersions, async () => {
         const versions = await VersionManager.getGlobalVersions();
@@ -465,10 +467,9 @@ const initHandlers = async () => {
         const configuration = await ConfigManager.getAllOptions();
         return { configuration };
     });
-
-    WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) => {
-        return await ConfigManager.setOption(key, value);
-    });
+    WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) =>
+        await ConfigManager.setOption(key, value)
+    );
 
     WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog(win, {
