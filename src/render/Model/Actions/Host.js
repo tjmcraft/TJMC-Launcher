@@ -65,3 +65,13 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 
 export const selectFolder = ({ title }) => callHost("selectFolder", { title });
 export const selectFile = ({ title }) => callHost("selectFile", { title });
+
+addReducer("updateCheck", () => {
+	void callHost("updateCheck");
+});
+addReducer("updateDownload", () => {
+	void callHost("updateDownload");
+});
+addReducer("updateInstall", () => {
+	void callHost("updateInstall");
+});
