@@ -161,6 +161,16 @@ if (!gotTheLock) {
     console.timeEnd("> init lock");
 }
 
+const checkForUpdates = () => {
+    autoUpdater.checkForUpdates().then(updates => {
+        updateLogger.debug("-> Updates:", updates);
+        if (!updates) autoUpdater.emit('update-not-available');
+    }).catch(err => {
+        updateLogger.error("-> Error:", err);
+        autoUpdater.emit('update-not-available');
+    });
+}
+
 const createMainWindow = () => new Promise((resolve, reject) => {
 
     require('./menu').createMenu();
@@ -213,6 +223,13 @@ const createMainWindow = () => new Promise((resolve, reject) => {
             event.preventDefault();
             win.hide();
         };
+    });
+
+    win.webContents.on("did-finish-load", () => {
+        console.debug("> finish load");
+        if (ConfigManager.getOption("launcher.checkUpdates")) {
+            checkForUpdates();
+        }
     });
 
     // handler for blank target
@@ -355,6 +372,14 @@ const ackChannels = Object.seal({
     updateProgress: 'update.progress',
 });
 
+const updateStatus = Object.seal({
+    error: 'error',
+    checking: 'checking',
+    available: 'available',
+    notAvailable: 'not-available',
+    downloaded: 'loaded',
+});
+
 /**
  * TCHost instance
  * @type {TCHost}
@@ -390,26 +415,12 @@ const initHandlers = async () => {
     });
 
     { // Updates
-        autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "error" }));
-        autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "checking" }));
-        autoUpdater.on('update-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "available" }));
-        autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "not-available" }));
+        autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
+        autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking }));
+        autoUpdater.on('update-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.available }));
+        autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.notAvailable }));
         autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
-        autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "loaded" }));
-
-        const checkForUpdates = () => {
-            if (ConfigManager.getOption("launcher.checkUpdates")) { // Check updates if need
-                autoUpdater.checkForUpdates().then(updates => {
-                    updateLogger.debug("-> Updates:", updates);
-                    if (!updates) autoUpdater.emit('update-not-available');
-                }).catch(err => {
-                    updateLogger.error("-> Error:", err);
-                    autoUpdater.emit('update-not-available');
-                });
-            } else {
-                autoUpdater.emit('update-not-available');
-            }
-        }
+        autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.downloaded }));
 
         WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
         WSSHost.addReducer(requestChannels.updateDownload, () => autoUpdater.downloadUpdate());
