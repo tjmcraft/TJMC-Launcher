@@ -54,3 +54,13 @@ export function updateGameStartupSuccess(global, update) {
 		isProcessing: false,
 	}));
 }
+
+export function updateStatus(global, actions, payload) {
+	const { status } = payload;
+	return { ...global, updateStatus: status };
+}
+
+export function updateProgress(global, actions, payload) {
+	const { progress } = payload;
+	return { ...global, updateProgress: progress };
+}
