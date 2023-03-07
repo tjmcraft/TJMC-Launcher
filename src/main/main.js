@@ -352,7 +352,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
 /* === TCHost init === */
 
-const validChannels = Object.seal({
+const requestChannels = Object.seal({
     requestHostInfo: 'requestHostInfo',
     invokeLaunch: 'invokeLaunch',
     setProgress: 'setProgress',
@@ -367,6 +367,8 @@ const validChannels = Object.seal({
     selectFolder: 'selectFolder',
     selectFile: 'selectFile',
     relaunchHost: 'relaunchHost',
+    updateCheck: 'updateCheck',
+    updateInstall: 'updateInstall',
 });
 
 /**
@@ -389,8 +391,8 @@ const initHandlers = async () => {
     WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
     //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
 
-    Object.keys(validChannels).forEach(channel => {
-        const event = validChannels[channel];
+    Object.keys(requestChannels).forEach(channel => {
+        const event = requestChannels[channel];
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
 
@@ -404,17 +406,17 @@ const initHandlers = async () => {
         config?.profiles && WSSHost.emit("updateInstallations", { installations: config.profiles });
     })
 
-    WSSHost.addReducer(validChannels.requestHostInfo, () => ({
+    WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
         hostVendor: 'TJMC-Launcher',
         hostVersion: autoUpdater.currentVersion,
         hostMemory: os.totalmem() / 1024 / 1024,
     }));
 
-    WSSHost.addReducer(validChannels.relaunchHost, () => {
+    WSSHost.addReducer(requestChannels.relaunchHost, () => {
         app.relaunch();
     });
 
-    WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
+    WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
             let result;
             try {
@@ -428,40 +430,40 @@ const initHandlers = async () => {
         return false;
     });
 
-    WSSHost.addReducer(validChannels.setProgress, (data) => {
+    WSSHost.addReducer(requestChannels.setProgress, (data) => {
         if (data.progress) {
             win?.setProgressBar(data.progress);
         }
     });
 
-    WSSHost.addReducer(validChannels.fetchInstallations, async () => {
+    WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
         const installations = await InstallationsManager.getInstallations();
         return { installations };
     });
 
-    WSSHost.addReducer(validChannels.createInstallation, async (data) => {
+    WSSHost.addReducer(requestChannels.createInstallation, async (data) => {
         return await InstallationsManager.createInstallation(data);
     });
 
-    WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
+    WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) => {
         return await InstallationsManager.removeInstallation(hash, forceDeps);
     });
 
-    WSSHost.addReducer(validChannels.fetchVersions, async () => {
+    WSSHost.addReducer(requestChannels.fetchVersions, async () => {
         const versions = await VersionManager.getGlobalVersions();
         return { versions };
     });
 
-    WSSHost.addReducer(validChannels.fetchConfiguration, async () => {
+    WSSHost.addReducer(requestChannels.fetchConfiguration, async () => {
         const configuration = await ConfigManager.getAllOptions();
         return { configuration };
     });
 
-    WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
+    WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) => {
         return await ConfigManager.setOption(key, value);
     });
 
-    WSSHost.addReducer(validChannels.selectFolder, async ({ title }) => {
+    WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog(win, {
 
             title: title || 'Select a folder',
@@ -470,7 +472,7 @@ const initHandlers = async () => {
         console.debug("[selectFolder]", filePaths);
         return { canceled, filePaths };
     });
-    WSSHost.addReducer(validChannels.selectFile, async ({ title }) => {
+    WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog(win, {
 
             title: title || 'Select a file',
