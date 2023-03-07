@@ -379,55 +379,61 @@ const initHandlers = async () => {
     })
 
     ConfigManager.addCallback(config => {
-        console.debug("Update Config:", config);
+        // console.debug("Update Config:", config);
         config && WSSHost.emit(ackChannels.updateConfiguration, { configuration: config });
     });
 
     InstallationsManager.addCallback(config => {
-        console.debug("Update Installations:", config);
+        // console.debug("Update Installations:", config);
         config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
     });
 
-    // Handlers
+    { // Updates
+        autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "error" }));
+        autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "checking" }));
+        autoUpdater.on('update-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "available" }));
+        autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "not-available" }));
+        autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
+        autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "loaded" }));
 
-    autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "error" }));
-    autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "check" }));
-    autoUpdater.on('update-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "available" }));
-    autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "not-available" }));
-    autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
-    autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "loaded" }));
-
-    const checkForUpdates = () => {
-        if (ConfigManager.getCheckUpdates()) { // Check updates if need
-            autoUpdater.checkForUpdates().then(updates => {
-                updateLogger.debug("-> Updates:", updates);
-                if (!updates) autoUpdater.emit('update-not-available');
-            }).catch(err => {
-                updateLogger.error("-> Error:", err);
+        const checkForUpdates = () => {
+            if (ConfigManager.getCheckUpdates()) { // Check updates if need
+                autoUpdater.checkForUpdates().then(updates => {
+                    updateLogger.debug("-> Updates:", updates);
+                    if (!updates) autoUpdater.emit('update-not-available');
+                }).catch(err => {
+                    updateLogger.error("-> Error:", err);
+                    autoUpdater.emit('update-not-available');
+                });
+            } else {
                 autoUpdater.emit('update-not-available');
-            });
-        } else {
-            autoUpdater.emit('update-not-available');
+            }
         }
-    }
 
-    WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
-    WSSHost.addReducer(requestChannels.updateDownload, () => autoUpdater.downloadUpdate());
-    WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>
-        autoUpdater.quitAndInstall(isSilent, isForceRunAfter)
-    );
+        WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
+        WSSHost.addReducer(requestChannels.updateDownload, () => autoUpdater.downloadUpdate());
+        WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>
+            autoUpdater.quitAndInstall(isSilent, isForceRunAfter)
+        );
+    }
 
     // Main
 
-    WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
-        hostVendor: 'TJMC-Launcher',
-        hostVersion: autoUpdater.currentVersion,
-        hostMemory: os.totalmem() / 1024 / 1024,
-    }));
+    { // Host
+        WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
+            hostVendor: 'TJMC-Launcher',
+            hostVersion: autoUpdater.currentVersion,
+            hostMemory: os.totalmem() / 1024 / 1024,
+        }));
 
-    WSSHost.addReducer(requestChannels.relaunchHost, () => {
-        app.relaunch();
-    });
+        WSSHost.addReducer(requestChannels.relaunchHost, () => {
+            app.relaunch();
+        });
+
+        WSSHost.addReducer(requestChannels.setProgress, (data) => {
+            if (data.progress) win?.setProgressBar(data.progress);
+        });
+    }
 
     WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
@@ -443,49 +449,51 @@ const initHandlers = async () => {
         return false;
     });
 
-    WSSHost.addReducer(requestChannels.setProgress, (data) => {
-        if (data.progress) win?.setProgressBar(data.progress);
-    });
-
-    WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
-        const installations = await InstallationsManager.getInstallations();
-        return { installations };
-    });
-    WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
-        await InstallationsManager.createInstallation(data)
-    );
-    WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
-        await InstallationsManager.removeInstallation(hash, forceDeps)
-    );
-
     WSSHost.addReducer(requestChannels.fetchVersions, async () => {
         const versions = await VersionManager.getGlobalVersions();
         return { versions };
     });
 
-    WSSHost.addReducer(requestChannels.fetchConfiguration, async () => {
-        const configuration = await ConfigManager.getAllOptions();
-        return { configuration };
-    });
-    WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) =>
-        await ConfigManager.setOption(key, value)
-    );
+    { // Installations
+        WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
+            const installations = await InstallationsManager.getInstallations();
+            return { installations };
+        });
+        WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
+            await InstallationsManager.createInstallation(data)
+        );
+        WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
+            await InstallationsManager.removeInstallation(hash, forceDeps)
+        );
+    }
 
-    WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-            title: title || 'Select a folder',
-            properties: ["openDirectory", "createDirectory", "promptToCreate"]
+    { // Configuration
+        WSSHost.addReducer(requestChannels.fetchConfiguration, async () => {
+            const configuration = await ConfigManager.getAllOptions();
+            return { configuration };
         });
-        console.debug("[selectFolder]", filePaths);
-        return { canceled, filePaths };
-    });
-    WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-            title: title || 'Select a file',
-            properties: ["openFile"]
+        WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) =>
+            await ConfigManager.setOption(key, value)
+        );
+    }
+
+    { // Dialogs
+        WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
+            const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+                title: title || 'Select a folder',
+                properties: ["openDirectory", "createDirectory", "promptToCreate"]
+            });
+            console.debug("[selectFolder]", filePaths);
+            return { canceled, filePaths };
         });
-        console.debug("[selectFile]", filePaths);
-        return { canceled, filePaths };
-    });
+        WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
+            const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+                title: title || 'Select a file',
+                properties: ["openFile"]
+            });
+            console.debug("[selectFile]", filePaths);
+            return { canceled, filePaths };
+        });
+    }
 
 };
