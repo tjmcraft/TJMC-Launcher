@@ -85,29 +85,6 @@ const handleArgsLink = (args) => {
     return false;
 }
 
-const createPreloadWindow = () => new Promise((resolve, reject) => {
-    const window = new BrowserWindow({
-        width: 300,
-        height: 300,
-        resizable: false,
-        show: false,
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            nativeWindowOpen: false,
-        },
-        titleBarStyle: 'default',
-        roundedCorners: true,
-        backgroundColor: '#171614'
-    });
-
-    window.loadFile(path.join(__dirname, '../..', 'app', 'index.html'));
-    logger.debug("[Preload]", "Created preload window!");
-    window.once('show', () => resolve(window));
-    window.once('ready-to-show', () => window.show());
-});
-
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -130,87 +107,75 @@ if (!gotTheLock) {
         if (!protoHandler(data)) restoreWindow();
     });
 
-    // Entry point -->
-    ConfigManager.load(); // Load config
 
     // Hardware acceleration.
     if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
 
-    app.once('ready', () => {
+    app.once('ready', async () => {
+        // Entry point -->
+        console.time("> init managers");
+        try {
+            ConfigManager.load(); // Load config
+            VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
+            VersionManager.updateGlobalVersionsConfig(); // update global versions manifest
+            InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+        } catch (e) {
+            logger.error("[Startup]", "Error:", e);
+            app.quit();
+        }
+        console.timeEnd("> init managers");
+
         console.time("> init ready");
         setInstanceProtocolHandler();
+        createTray();
+        startSocketServer().catch(void 0); // start socket and ipc servers
 
         require('@electron/remote/main').initialize();
 
-        createPreloadWindow().then(async (window) => {
+        if (!handleArgsLink(process.argv)) {
+            try {
+                require('./menu').createMenu();
+                await createMainWindow();
+            } catch (e) {
+                logger.error("[MainWindow]", "Error:", e);
+                app.quit();
+            };
+        }
 
-            console.time("> init preload");
+        // Handlers
+        const event_updateError = (e) => win?.webContents.send('update.error', e);
+        const event_updateChecking = (e) => win?.webContents.send('update.check', e);
+        const event_updateAvailable = (e) => win?.webContents.send('update.available', e);
+        const event_updateProgress = (e) => win?.webContents.send('update.progress', e);
+        const event_updateDownloaded = (e) => win?.webContents.send('update.downloaded', e);
+        const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
 
-            // Handlers
-            const event_updateError = (e) => window.webContents.send('update.error', e);
-            const event_updateChecking = (e) => window.webContents.send('update.check', e);
-            const event_updateAvailable = (e) => window.webContents.send('update.available', e);
-            const event_updateProgress = (e) => window.webContents.send('update.progress', e);
-            const event_updateDownloaded = (e) => window.webContents.send('update.downloaded', e);
-            const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
+        autoUpdater.on('error', event_updateError);
+        autoUpdater.on('checking-for-update', event_updateChecking);
+        autoUpdater.on('update-available', event_updateAvailable);
+        autoUpdater.on('download-progress', event_updateProgress);
+        autoUpdater.on('update-downloaded', event_updateDownloaded);
+        ipcMain.on('update.install', action_updateInstall);
 
-            autoUpdater.on('error', event_updateError);
-            autoUpdater.on('checking-for-update', event_updateChecking);
-            autoUpdater.on('update-available', event_updateAvailable);
-            autoUpdater.on('download-progress', event_updateProgress);
-            autoUpdater.on('update-downloaded', event_updateDownloaded);
-            ipcMain.on('update.install', action_updateInstall);
-
-            autoUpdater.once('update-not-available', async () => {
-                console.time("> init managers");
-                try {
-                    VersionManager.load(ConfigManager.getVersionsDirectory());
-                    VersionManager.updateGlobalVersionsConfig();
-                    InstallationsManager.load(ConfigManager.getLauncherDirectory());
-                    startSocketServer().catch(void 0); // похуй + поебать
-                } catch (e) {
-                    logger.error("[Startup]", "Error:", e);
-                    app.quit();
-                }
-                console.timeEnd("> init managers");
-                if (!handleArgsLink(process.argv)) {
-                    try {
-                        require('./menu').createMenu();
-                        await createMainWindow();
-                    } catch (e) {
-                        logger.error("[MainWindow]", "Error:", e);
-                        app.quit();
-                    };
-                }
-                // Disable handlers
-                autoUpdater.off('error', event_updateError);
-                autoUpdater.off('checking-for-update', event_updateChecking);
-                autoUpdater.off('update-available', event_updateAvailable);
-                autoUpdater.off('download-progress', event_updateProgress);
-                autoUpdater.off('update-downloaded', event_updateDownloaded);
-                ipcMain.off('update.install', action_updateInstall);
-                window.close();
-            });
-
-            createTray();
-
-            if (ConfigManager.getCheckUpdates()) { // Check updates if need
-                autoUpdater.checkForUpdates().then(updates => {
-                    updateLogger.debug("-> Updates:", updates);
-                    if (!updates) autoUpdater.emit('update-not-available');
-                }).catch(err => {
-                    updateLogger.error("-> Error:", err);
-                    autoUpdater.emit('update-not-available');
-                });
-            } else {
-                autoUpdater.emit('update-not-available');
-            }
-
-            console.timeEnd("> init preload");
+        autoUpdater.once('update-not-available', async () => {
 
         });
+
+        if (ConfigManager.getCheckUpdates()) { // Check updates if need
+            autoUpdater.checkForUpdates().then(updates => {
+                updateLogger.debug("-> Updates:", updates);
+                if (!updates) autoUpdater.emit('update-not-available');
+            }).catch(err => {
+                updateLogger.error("-> Error:", err);
+                autoUpdater.emit('update-not-available');
+            });
+        } else {
+            autoUpdater.emit('update-not-available');
+        }
+
         console.timeEnd("> init ready");
     });
+
 
     app.on("window-all-closed", () => { });
 
