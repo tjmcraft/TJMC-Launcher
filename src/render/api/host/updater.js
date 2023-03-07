@@ -65,6 +65,16 @@ export function updater(update) {
 			hash: update.payload.version_hash,
 			error: update.payload.error,
 		});
+	} else if (update.type == "update.status") {
+		update.payload?.status && onUpdate({
+			type: "updateStatus",
+			status: update.payload.status,
+		});
+	} else if (update.type == "update.progress") {
+		update.payload?.progress && onUpdate({
+			type: "updateProgress",
+			progress: update.payload.progress,
+		});
 	} else {
 		window.__debug_host__ && console.debug("-> HOST UNEXPECTED UPDATE", update);
 	}
