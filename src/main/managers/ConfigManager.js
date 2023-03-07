@@ -57,6 +57,7 @@ const config = new Config({
 });
 
 module.exports.load = () => config.load();
+module.exports.getOption = config.getOption;
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 module.exports.watchOption = config.watchOption;

@@ -108,15 +108,18 @@ if (!gotTheLock) {
         if (!protoHandler(data)) restoreWindow();
     });
 
+    ConfigManager.load(); // Load config
 
     // Hardware acceleration.
-    if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
+    if (ConfigManager.getDisableHardwareAcceleration()) {
+        app.disableHardwareAcceleration();
+    }
 
     app.once('ready', async () => {
+
         // Entry point -->
         console.time("> init managers");
         try {
-            ConfigManager.load(); // Load config
             VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
             VersionManager.updateGlobalVersionsConfig(); // update global versions manifest
             InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
@@ -213,6 +216,10 @@ const createMainWindow = () => new Promise((resolve, reject) => {
             win.hide();
         };
     });
+
+    win.webContents.setFrameRate(60);
+
+
 
     // handler for blank target
     win.webContents.setWindowOpenHandler(({ url }) =>
