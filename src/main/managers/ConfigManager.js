@@ -69,7 +69,3 @@ exports.setOption = (key, value) => config.setOption(key, value);
 exports.getLauncherDirectory = () => launcherDir;
 exports.getDataDirectory = (def = false) => config.getOption(config => config.overrides.path.root, def);
 exports.getVersionsDirectory = (def = false) => config.getOption(config => config.overrides.path.directory, def);
-
-exports.getCheckUpdates = () => Boolean(config.getOption(config => config.launcher.checkUpdates));
-exports.getHideOnClose = () => Boolean(config.getOption(config => config.launcher.hideOnClose));
-exports.getOpenDevTools = () => Boolean(config.getOption(config => config.launcher.openDevTools));

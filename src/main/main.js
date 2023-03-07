@@ -209,7 +209,7 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('focus', () => win.webContents.send('focus'));
     win.on('closed', () => (win = null, app.quit()));
     win.on('close', (event) => {
-        if (ConfigManager.getHideOnClose()) {
+        if (ConfigManager.getOption("launcher.hideOnClose")) {
             event.preventDefault();
             win.hide();
         };
@@ -402,7 +402,7 @@ const initHandlers = async () => {
         autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: "loaded" }));
 
         const checkForUpdates = () => {
-            if (ConfigManager.getCheckUpdates()) { // Check updates if need
+            if (ConfigManager.getOption("launcher.checkUpdates")) { // Check updates if need
                 autoUpdater.checkForUpdates().then(updates => {
                     updateLogger.debug("-> Updates:", updates);
                     if (!updates) autoUpdater.emit('update-not-available');
