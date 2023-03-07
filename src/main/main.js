@@ -273,7 +273,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
     function progress(e) {
         const progress = (e.task / e.total);
-        WSSHost.emit('game.progress.load', {
+        WSSHost.emit(ackChannels.gameProgressLoad, {
             progress: progress,
             version_hash: version_hash
         });
@@ -282,7 +282,7 @@ async function launchMinecraft(version_hash, params = {}) {
     function download_progress(e) {
         const progress = (e.current / e.total);
         if (e.type != 'version-jar') return;
-        WSSHost.emit('game.progress.download', {
+        WSSHost.emit(ackChannels.gameProgressDownload, {
             progress: progress,
             version_hash: version_hash
         });
@@ -325,7 +325,7 @@ async function launchMinecraft(version_hash, params = {}) {
         jvm.on('close', (code) => {
             if (code != 0) {
                 win?.setProgressBar(-1);
-                WSSHost.emit('game.startup.error', {
+                WSSHost.emit(ackChannels.gameStartupError, {
                     error: logg_out,
                     version_hash: version_hash
                 });
@@ -333,7 +333,7 @@ async function launchMinecraft(version_hash, params = {}) {
         });
 
         win?.setProgressBar(-1);
-        WSSHost.emit('game.startup.success', {
+        WSSHost.emit(ackChannels.gameStartupSuccess, {
             version_hash: version_hash
         });
 
@@ -342,7 +342,7 @@ async function launchMinecraft(version_hash, params = {}) {
     } catch (error) {
         logger.error(error);
         win?.setProgressBar(-1);
-        WSSHost.emit('game.error', {
+        WSSHost.emit(ackChannels.gameError, {
             error: error.message,
             version_hash: version_hash
         });
@@ -374,6 +374,11 @@ const requestChannels = Object.seal({
 const ackChannels = Object.seal({
     updateConfiguration: 'updateConfiguration',
     updateInstallations: 'updateInstallations',
+    gameProgressLoad: 'game.progress.load',
+    gameProgressDownload: 'game.progress.download',
+    gameStartupSuccess: 'game.startup.success',
+    gameStartupError: 'game.startup.error',
+    gameError: 'game.error',
 });
 
 /**
@@ -394,7 +399,6 @@ const startSocketServer = async () => {
 const initHandlers = async () => {
     // add sender to main window web contents
     WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
-    //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
 
     Object.keys(requestChannels).forEach(channel => {
         const event = requestChannels[channel];
@@ -436,9 +440,7 @@ const initHandlers = async () => {
     });
 
     WSSHost.addReducer(requestChannels.setProgress, (data) => {
-        if (data.progress) {
-            win?.setProgressBar(data.progress);
-        }
+        if (data.progress) win?.setProgressBar(data.progress);
     });
 
     WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
