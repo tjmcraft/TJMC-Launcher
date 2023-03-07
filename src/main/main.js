@@ -371,6 +371,11 @@ const requestChannels = Object.seal({
     updateInstall: 'updateInstall',
 });
 
+const ackChannels = Object.seal({
+    updateConfiguration: 'updateConfiguration',
+    updateInstallations: 'updateInstallations',
+});
+
 /**
  * TCHost instance
  * @type {TCHost}
@@ -398,12 +403,12 @@ const initHandlers = async () => {
 
     ConfigManager.addCallback(config => {
         console.debug("Update Config:", config);
-        WSSHost.emit("updateConfiguration", { configuration: config });
+        config && WSSHost.emit(ackChannels.updateConfiguration, { configuration: config });
     });
 
     InstallationsManager.addCallback(config => {
         console.debug("Update Installations:", config);
-        config?.profiles && WSSHost.emit("updateInstallations", { installations: config.profiles });
+        config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
     })
 
     WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
@@ -465,7 +470,6 @@ const initHandlers = async () => {
 
     WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-
             title: title || 'Select a folder',
             properties: ["openDirectory", "createDirectory", "promptToCreate"]
         });
@@ -474,7 +478,6 @@ const initHandlers = async () => {
     });
     WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-
             title: title || 'Select a file',
             properties: ["openFile"]
         });
