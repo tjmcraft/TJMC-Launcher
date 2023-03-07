@@ -111,11 +111,11 @@ if (!gotTheLock) {
     ConfigManager.load(); // Load config
 
     // Hardware acceleration.
-    if (ConfigManager.getDisableHardwareAcceleration()) {
+    if (ConfigManager.getOption("launcher.disableHardwareAcceleration")) {
         app.disableHardwareAcceleration();
     }
 
-    app.once('ready', async () => {
+    app.once('ready', () => {
 
         // Entry point -->
         console.time("> init managers");
@@ -131,24 +131,20 @@ if (!gotTheLock) {
 
         console.time("> init ready");
         setInstanceProtocolHandler();
-        createTray();
+        createTray().catch(void 0);
         startSocketServer().catch(void 0); // start socket and ipc servers
 
         require('@electron/remote/main').initialize();
 
         if (!handleArgsLink(process.argv)) {
-            try {
-                require('./menu').createMenu();
-                await createMainWindow();
-            } catch (e) {
+            createMainWindow().catch((e) => {
                 logger.error("[MainWindow]", "Error:", e);
                 app.quit();
-            };
+            });
         }
 
         console.timeEnd("> init ready");
     });
-
 
     app.on("window-all-closed", () => { });
 
@@ -166,6 +162,8 @@ if (!gotTheLock) {
 }
 
 const createMainWindow = () => new Promise((resolve, reject) => {
+
+    require('./menu').createMenu();
 
     let windowState = require('./libs/WindowState')({
         width: 1280,
