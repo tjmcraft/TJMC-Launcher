@@ -25,8 +25,3 @@ In the project directory, you can run:
 #### `npm dist:mac` - Builds the distro for Darwin based systems (MacOS)
 
 #### `npm dist:linux` - Builds the distro for Linux based systems
-
-
-### Available links:
- - Stable Build: **[app.tjmcraft.ga](https://app.tjmcraft.ga)**
- - Development Build: **[appdev.tjmcraft.ga](https://appdev.tjmcraft.ga)**
