@@ -157,7 +157,7 @@ const SettingButton = ({
 			</div>
 		</SettingContainerTwo>
 	);
-}
+};
 
 const TabItem = (({ id, children }) => {
 	return <div className="tab" id={id}>{children}</div>;
@@ -735,6 +735,47 @@ const LauncherAppearanceTab = memo(() => {
 	);
 });
 
+const UpdatesContainer = memo(() => {
+
+	const { updateCheck, updateDownload, updateInstall } = getDispatch();
+	const updateStatus = useGlobal(global => global.updateStatus);
+
+	const titleName = {
+		"not-available": "Нет обновлений",
+		available: "Доступно обновление",
+		checking: "Проверка обновлений...",
+		error: "Ошибка обновления",
+		loaded: "Загружено обновление",
+	}[updateStatus] || "Unknown update status";
+
+	const buttonName = {
+		"not-available": "Проверить",
+		available: "Скачать",
+		checking: "Подождите...",
+		error: "Ошибка",
+		loaded: "Перезапустить",
+	}[updateStatus] || "Action";
+
+	const updateAction = useCallback(() => {
+		return ({
+			"not-available": updateCheck,
+			available: updateDownload,
+			loaded: updateInstall,
+		})[updateStatus] || (() => {});
+	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
+
+	return (
+		<div className={style.settingGroup}>
+			<SettingContainerTwo>
+				<label className={style.title}>{titleName}</label>
+				<div className={style.control}>
+					<button id={"updates.check"} className={buildClassName("filled", "small", "colorBrand")} onClick={updateAction}>{buttonName}</button>
+				</div>
+			</SettingContainerTwo>
+		</div>
+	);
+});
+
 const AboutTab = memo(() => {
 
 	const { openWhatsNewModal } = getDispatch();
@@ -777,6 +818,7 @@ const AboutTab = memo(() => {
 							</span>
 						</div>
 					</div>
+					<UpdatesContainer />
 					<div className="bxcF1-box">
 						<h5>Просмотр информации о предыдущих релизах</h5>
 						<div className="separator" />
