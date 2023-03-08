@@ -13,6 +13,7 @@ const Button = ({
 	disabled = false,
 	children,
 	isPrimary = false,
+	isRed = false,
 	isLoading = false,
 }) => {
 
@@ -33,6 +34,7 @@ const Button = ({
 	const fullClassName = buildClassName(
 		className,
 		'Button',
+		isRed && 'colorRed',
 		isPrimary && 'colorBrand',
 		disabled && 'disabled',
 		isLoading && 'loading',
@@ -50,7 +52,7 @@ const Button = ({
 			{isLoading ? (
 				<div>
 					<span>{children}</span>
-					<Spinner color={isPrimary ? 'white' : 'blue'} />
+					<Spinner color={'white'} />
 				</div>
 			) : <div className="content">{children}</div>}
 
