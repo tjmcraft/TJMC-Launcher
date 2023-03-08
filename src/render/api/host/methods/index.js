@@ -7,6 +7,7 @@ export {
 	selectFolder,
 	selectFile,
 	updateCheck,
+	updateDownload,
 	updateInstall,
 } from './host';
 export {
