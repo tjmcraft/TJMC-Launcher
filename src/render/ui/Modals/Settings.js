@@ -765,7 +765,7 @@ const UpdatesContainer = memo(() => {
 	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
 
 	return (
-		<div className={style.settingGroup}>
+		<div className={buildClassName(style.settingGroup, style.withBorder)}>
 			<SettingContainerTwo>
 				<label className={style.title}>{titleName}</label>
 				<div className={style.control}>
