@@ -757,11 +757,11 @@ const UpdatesContainer = memo(() => {
 	}[updateStatus] || "Action";
 
 	const updateAction = useCallback(() => {
-		return ({
+		return (({
 			"not-available": updateCheck,
 			available: updateDownload,
 			loaded: updateInstall,
-		})[updateStatus] || (() => {});
+		})[updateStatus] || (() => {}))();
 	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
 
 	return (
