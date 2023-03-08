@@ -20,6 +20,7 @@ import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 import { PathInput } from "UI/components/Input";
+import Button from "UI/components/Button";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
@@ -739,12 +740,14 @@ const UpdatesContainer = memo(() => {
 
 	const { updateCheck, updateDownload, updateInstall } = getDispatch();
 	const updateStatus = useGlobal(global => global.updateStatus);
+	const updateProgress = useGlobal(global => global.updateProgress);
 
 	const titleName = {
 		"not-available": "Нет обновлений",
 		available: "Доступно обновление",
 		checking: "Проверка обновлений...",
 		error: "Ошибка обновления",
+		loading: "Загрузка обновления...",
 		loaded: "Загружено обновление",
 	}[updateStatus] || "Unknown update status";
 
@@ -754,6 +757,7 @@ const UpdatesContainer = memo(() => {
 		checking: "Подождите...",
 		error: "Ошибка",
 		loaded: "Перезапустить",
+		loading: "Загрузка...",
 	}[updateStatus] || "Action";
 
 	const updateAction = useCallback(() => {
@@ -764,12 +768,23 @@ const UpdatesContainer = memo(() => {
 		})[updateStatus] || (() => {}))();
 	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
 
+	function renderProgress(value) {
+		return updateStatus == "loading" && (<progress className="w100" max={100} value={value} />);
+	}
+
 	return (
 		<div className={buildClassName(style.settingGroup, style.withBorder)}>
-			<SettingContainerTwo>
+			<SettingContainerTwo note={renderProgress(updateProgress)}>
 				<label className={style.title}>{titleName}</label>
 				<div className={style.control}>
-					<button id={"updates.check"} className={buildClassName("filled", "small", "colorBrand")} onClick={updateAction}>{buttonName}</button>
+					<Button
+						onClick={updateAction}
+						className={buildClassName("filled", "small")}
+						isLoading={updateStatus == "loading" || updateStatus == "checking"}
+						isPrimary={true}
+						isRed={updateStatus == "loaded"}
+						disabled={updateStatus == "loading" || updateStatus == "checking"}
+					>{buttonName}</Button>
 				</div>
 			</SettingContainerTwo>
 		</div>
