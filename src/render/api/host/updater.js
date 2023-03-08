@@ -71,7 +71,7 @@ export function updater(update) {
 			status: update.payload.status,
 		});
 	} else if (update.type == "update.progress") {
-		update.payload?.progress && onUpdate({
+		update.payload?.progress != undefined && onUpdate({
 			type: "updateProgress",
 			progress: update.payload.progress,
 		});
