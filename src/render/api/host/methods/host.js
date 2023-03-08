@@ -147,6 +147,7 @@ export async function updateInstall() {
 	try {
 		result = await invokeRequest({
 			type: "updateInstall",
+			data: { isSilent: true, isForceRunAfter: true }
 		}, false, true, true);
 		if (!result?.payload) return undefined;
 		result = result.payload;
