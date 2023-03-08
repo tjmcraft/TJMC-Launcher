@@ -62,5 +62,5 @@ export function updateStatus(global, actions, payload) {
 
 export function updateProgress(global, actions, payload) {
 	const { progress } = payload;
-	return { ...global, updateProgress: progress };
+	return { ...global, updateStatus: "loading", updateProgress: progress };
 }
