@@ -68,11 +68,9 @@ export const selectFile = ({ title }) => callHost("selectFile", { title });
 
 addReducer("updateCheck", (global) => {
 	void callHost("updateCheck");
-	return { ...global, updateStatus: "checking", updateProgress: 0 };
 });
 addReducer("updateDownload", (global) => {
 	void callHost("updateDownload");
-	return { ...global, updateStatus: "loading", updateProgress: 0 };
 });
 addReducer("updateInstall", () => {
 	void callHost("updateInstall");
