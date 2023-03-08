@@ -423,7 +423,10 @@ const initHandlers = async () => {
         autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.downloaded }));
 
         WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
-        WSSHost.addReducer(requestChannels.updateDownload, () => autoUpdater.downloadUpdate());
+        WSSHost.addReducer(requestChannels.updateDownload, () => {
+            WSSHost.emit(ackChannels.updateProgress, { progress: 0 });
+            autoUpdater.downloadUpdate();
+        });
         WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>
             autoUpdater.quitAndInstall(isSilent, isForceRunAfter)
         );
