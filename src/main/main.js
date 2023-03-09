@@ -99,13 +99,19 @@ if (!gotTheLock) {
 
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         console.debug("Second instance call", commandLine);
-        if (!handleArgsLink(commandLine)) restoreWindow();
+        if (!handleArgsLink(commandLine)) {
+            if (win == void 0) createMainWindow();
+            else restoreWindow();
+        }
     });
 
     app.on('open-url', (event, data) => {
         event.preventDefault();
         console.debug("Open url call", data);
-        if (!protoHandler(data)) restoreWindow();
+        if (!protoHandler(data)) {
+            if (win == void 0) createMainWindow();
+            else restoreWindow();
+        }
     });
 
     ConfigManager.load(); // Load config
@@ -119,10 +125,12 @@ if (!gotTheLock) {
 
         // Entry point -->
         console.time("> init managers");
+        setInstanceProtocolHandler();
         try {
             VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
             VersionManager.updateGlobalVersionsConfig(); // update global versions manifest
             InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+            startSocketServer().catch(void 0); // start socket and ipc servers
         } catch (e) {
             logger.error("[Startup]", "Error:", e);
             app.quit();
@@ -130,10 +138,7 @@ if (!gotTheLock) {
         console.timeEnd("> init managers");
 
         console.time("> init ready");
-        setInstanceProtocolHandler();
         createTray().catch(void 0);
-        startSocketServer().catch(void 0); // start socket and ipc servers
-
         require('@electron/remote/main').initialize();
 
         if (!handleArgsLink(process.argv)) {
@@ -154,7 +159,7 @@ if (!gotTheLock) {
     });
 
     app.on('before-quit', () => {
-        win && win.destroy();
+        win != void 0 && win.destroy();
         destroyTray();
     });
 
@@ -398,7 +403,7 @@ const startSocketServer = async () => {
  */
 const initHandlers = async () => {
     // add sender to main window web contents
-    WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
+    WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win != void 0 && win.webContents.send(type, payload));
 
     Object.keys(requestChannels).forEach(channel => {
         const event = requestChannels[channel];
