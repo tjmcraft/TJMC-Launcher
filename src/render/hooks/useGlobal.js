@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { shallowEqual } from "Util/Iterates";
+import { shallowEqual, stacksEqual } from "Util/Iterates";
 import { addCallback, getState, removeCallback } from "Util/Store";
 import useForceUpdate from "./useForceUpdate";
 
@@ -12,11 +12,19 @@ const updateContainer = (propsRef, selector, callback) => {
 		} catch (err) {
 			return;
 		}
-		// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
-		if (nextState != undefined && !shallowEqual(propsRef.current, nextState)) {
-			// console.debug("[picker]", "->", selector, "\n=>", "picked!");
-			propsRef.current = nextState;
-			callback(nextState);
+		if (nextState != undefined) {
+			// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
+			if (
+				(
+					propsRef.current.internalArray != void 0 &&
+					nextState.internalArray != void 0 &&
+					!stacksEqual(propsRef.current.internalArray, nextState.internalArray)
+				) || !shallowEqual(propsRef.current, nextState)
+			) {
+				console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
+				propsRef.current = nextState;
+				callback(nextState);
+			}
 		}
 	};
 };
