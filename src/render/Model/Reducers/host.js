@@ -71,7 +71,6 @@ export function updateStatus(global, actions, payload) {
 	}));
 
 	if (status == "available" && update != void 0) {
-		console.debug(">> update", "available");
 		actions.alert({
 			title: `Доступно обновление до версии:\n${update.releaseName}`,
 			content: `Вы можете скачать обновление прямо сейчас!`,
@@ -85,17 +84,13 @@ export function updateStatus(global, actions, payload) {
 					name: "Загрузить",
 					class: ["filled", "colorBrand"],
 					closeOverlay: true,
-					callback: () => {
-						console.debug(">>act", "download");
-						actions.updateDownload();
-					}
+					callback: () => actions.updateDownload(),
 				}
 			],
 			mini: true
 		});
 	}
 	if (status == "loaded" && update != void 0) {
-		console.debug(">> update", "loaded");
 		actions.alert({
 			title: `Обновление до версии:\n${update.releaseName}`,
 			content: `Вам необходимо перезагрузить хост, чтобы установить обновление!`,
@@ -109,10 +104,7 @@ export function updateStatus(global, actions, payload) {
 					name: "Перезагрузить",
 					class: ["filled", "colorRed"],
 					closeOverlay: true,
-					callback: () => {
-						actions.updateInstall();
-						console.debug(">>act", "install");
-					}
+					callback: () => actions.updateInstall(),
 				}
 			],
 			mini: true
