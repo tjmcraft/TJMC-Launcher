@@ -21,7 +21,7 @@ const updateContainer = (propsRef, selector, callback) => {
 					!stacksEqual(propsRef.current.internalArray, nextState.internalArray)
 				) || !shallowEqual(propsRef.current, nextState)
 			) {
-				console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
+				// console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
 				propsRef.current = nextState;
 				callback(nextState);
 			}
