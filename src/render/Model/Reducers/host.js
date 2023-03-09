@@ -65,9 +65,12 @@ export function updateUpdate(global, update) {
 	};
 }
 
-export function updateStatus(global, _actions, payload) {
-	const { status } = payload;
-	return updateUpdate(global, { status: status });
+export function updateStatus(global, actions, payload) {
+	const { status, update } = payload;
+	setState(updateUpdate(global, {
+		status: status,
+		...(update != undefined ? { next: update } : {})
+	}));
 }
 
 export function updateProgress(global, _actions, payload) {
