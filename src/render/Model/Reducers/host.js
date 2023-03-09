@@ -113,6 +113,12 @@ export function updateStatus(global, actions, payload) {
 }
 
 export function updateProgress(global, _actions, payload) {
-	const { progress } = payload;
-	return updateUpdate(global, { status: "loading", progress: progress });
+	const { progress, total, transferred, bytesPerSecond } = payload;
+	return updateUpdate(global, {
+		status: "loading",
+		progress,
+		total,
+		transferred,
+		bytesPerSecond,
+	});
 }

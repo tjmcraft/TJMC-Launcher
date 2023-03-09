@@ -11,6 +11,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import { selectCurrentUser } from "Model/Selectors/user.js";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
+import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
 import { RadioGroup } from "UI/components/Radio.js";
@@ -739,14 +740,19 @@ const LauncherAppearanceTab = memo(() => {
 const UpdatesContainer = memo(() => {
 
 	const { updateCheck, updateDownload, updateInstall } = getDispatch();
-	const { status: updateStatus, progress: updateProgress, next: nextUpdate } = useGlobal(global => global.update);
+	const {
+		status: updateStatus,
+		progress: updateProgress,
+		next: nextUpdate,
+		total, transferred, bytesPerSecond
+	} = useGlobal(global => global.update);
 
 	const titleName = {
 		"not-available": "Нет обновлений",
 		available: `Доступно обновление${nextUpdate != void 0 ? `:\xa0${nextUpdate.releaseName}` : ""}`,
 		checking: "Проверка обновлений...",
 		error: "Ошибка обновления",
-		loading: "Загрузка обновления...",
+		loading: `Загрузка обновления...${total != void 0 ? `\xa0${bytesToSize(transferred)} из ${bytesToSize(total)}\xa0(${bytesToSize(bytesPerSecond, true)})\xa0` : ""}`,
 		loaded: `Загружено обновление${nextUpdate != void 0 ? `:\xa0${nextUpdate.releaseName}` : ""}`,
 	}[updateStatus] || "Unknown update status";
 
