@@ -1,5 +1,5 @@
 const { shell, ipcRenderer, contextBridge } = require('electron');
-const remote = require('@electron/remote')
+const remote = require('@electron/remote');
 const os = require('os');
 const { getOS } = require('./util/Tools');
 
@@ -23,14 +23,14 @@ const windowEvents = {
 };
 
 document.addEventListener('readystatechange', function () {
-  if (document.readyState === 'interactive'){
+  if (document.readyState === 'interactive') {
     logger.debug("Initializing...");
     if (win.isFullScreen()) enterFullScreen();
   } else if (document.readyState === 'complete') {
     logger.debug("Init complete!");
   }
   win.setProgressBar(-1);
-})
+});
 
 function enterFullScreen () {
   document.documentElement.classList.add('fullscreen');
@@ -50,25 +50,25 @@ process.once('loaded', () => {
     on(eventName, callback) {
       ipcRenderer.on(eventName, callback)
     },
-    async invoke (eventName, ...params) {
+    async invoke(eventName, ...params) {
       return await ipcRenderer.invoke(eventName, ...params)
     },
-    async shellOpenExternal (url) {
+    async shellOpenExternal(url) {
       await shell.openExternal(url)
     },
-    async shellOpenPath (file) {
+    async shellOpenPath(file) {
       await shell.openPath(file)
     },
-    async shellTrashItem (file) {
+    async shellTrashItem(file) {
       await shell.trashItem(file)
     }
-  })
-})
+  });
+});
 
-contextBridge.exposeInMainWorld('__STANDALONE__', true)
+contextBridge.exposeInMainWorld('__STANDALONE__', true);
 contextBridge.exposeInMainWorld('system', {
-    os: getOS()
-})
+  os: getOS()
+});
 contextBridge.exposeInMainWorld('tjmcNative', {
   window: {
     close: windowEvents.close,
@@ -101,7 +101,7 @@ contextBridge.exposeInMainWorld('tjmcNative', {
     on: ipcRenderer.on,
     invoke: ipcRenderer.invoke,
   }
-})
+});
 
 // Init global instances
 process.once('loaded', () => {
@@ -109,4 +109,4 @@ process.once('loaded', () => {
   ipcRenderer.on('leave-full-screen', leaveFullScreen);
   ipcRenderer.on('blur', windowBlur);
   ipcRenderer.on('focus', windowFocus);
-})
+});

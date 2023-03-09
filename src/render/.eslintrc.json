@@ -41,6 +41,8 @@
         ],
         "prefer-destructuring": "off",
         "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error"
+        "react/jsx-uses-vars": "error",
+        "quote-props": ["warn", "as-needed"],
+        "object-shorthand": ["warn", "methods"]
     }
 }

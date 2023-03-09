@@ -8,7 +8,7 @@ import { selectInstallation } from "Model/Selectors/installations";
 import Button from "UI/components/Button";
 
 
-const CubeTopToolbar = memo(({ hash }) => {
+const CubeTopToolbar = ({ hash }) => {
 
 	const { invokeLaunch } = getDispatch();
 
@@ -27,14 +27,19 @@ const CubeTopToolbar = memo(({ hash }) => {
 	}, [hash, invokeLaunch]);
 
 	return hash && (
-		<div class="top-toolbar">
-			<div class="title">
+		<div className="top-toolbar">
+			<div className="title">
 				<h2>{name || hash}</h2>
 				<h5>{type}</h5>
 			</div>
-			<Button id='playButton' onClick={handlePlayClick} isLoading={isLoading} disabled={!hostOnline}>Играть</Button>
+			<Button
+				id='playButton'
+				onClick={handlePlayClick}
+				isLoading={isLoading}
+				disabled={!hostOnline}
+			>Играть</Button>
 		</div>
 	);
-});
+};
 
-export default CubeTopToolbar;
+export default memo(CubeTopToolbar);

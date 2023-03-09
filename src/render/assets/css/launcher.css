@@ -568,13 +568,13 @@ p {
     overflow: hidden;
 }
 
-.content-region .transitionWrap {
+.content-region > .transitionWrap {
     flex: 1;
     height: 100%;
     width: 100%;
 }
 
-.content-region .content {
+.content-region > .transitionWrap > .content {
     height: 100%;
     overflow: hidden scroll;
 }

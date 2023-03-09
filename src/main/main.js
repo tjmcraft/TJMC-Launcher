@@ -24,6 +24,7 @@ console.timeEnd("> require");
 autoUpdater.logger = updateLogger;
 autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
+autoUpdater.autoDownload = false;
 
 autoUpdater.setFeedURL({
     provider: "github",
@@ -85,29 +86,6 @@ const handleArgsLink = (args) => {
     return false;
 }
 
-const createPreloadWindow = () => new Promise((resolve, reject) => {
-    const window = new BrowserWindow({
-        width: 300,
-        height: 300,
-        resizable: false,
-        show: false,
-        frame: false,
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            nativeWindowOpen: false,
-        },
-        titleBarStyle: 'default',
-        roundedCorners: true,
-        backgroundColor: '#171614'
-    });
-
-    window.loadFile(path.join(__dirname, '../..', 'app', 'index.html'));
-    logger.debug("[Preload]", "Created preload window!");
-    window.once('show', () => resolve(window));
-    window.once('ready-to-show', () => window.show());
-});
-
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
@@ -130,85 +108,41 @@ if (!gotTheLock) {
         if (!protoHandler(data)) restoreWindow();
     });
 
-    // Entry point -->
     ConfigManager.load(); // Load config
 
     // Hardware acceleration.
-    if (ConfigManager.getDisableHardwareAcceleration()) app.disableHardwareAcceleration();
+    if (ConfigManager.getOption("launcher.disableHardwareAcceleration")) {
+        app.disableHardwareAcceleration();
+    }
 
     app.once('ready', () => {
+
+        // Entry point -->
+        console.time("> init managers");
+        try {
+            VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
+            VersionManager.updateGlobalVersionsConfig(); // update global versions manifest
+            InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+        } catch (e) {
+            logger.error("[Startup]", "Error:", e);
+            app.quit();
+        }
+        console.timeEnd("> init managers");
+
         console.time("> init ready");
         setInstanceProtocolHandler();
+        createTray().catch(void 0);
+        startSocketServer().catch(void 0); // start socket and ipc servers
 
         require('@electron/remote/main').initialize();
 
-        createPreloadWindow().then(async (window) => {
-
-            console.time("> init preload");
-
-            // Handlers
-            const event_updateError = (e) => window.webContents.send('update.error', e);
-            const event_updateChecking = (e) => window.webContents.send('update.check', e);
-            const event_updateAvailable = (e) => window.webContents.send('update.available', e);
-            const event_updateProgress = (e) => window.webContents.send('update.progress', e);
-            const event_updateDownloaded = (e) => window.webContents.send('update.downloaded', e);
-            const action_updateInstall = (e, isSilent = true, isForceRunAfter = true) => autoUpdater.quitAndInstall(isSilent, isForceRunAfter);
-
-            autoUpdater.on('error', event_updateError);
-            autoUpdater.on('checking-for-update', event_updateChecking);
-            autoUpdater.on('update-available', event_updateAvailable);
-            autoUpdater.on('download-progress', event_updateProgress);
-            autoUpdater.on('update-downloaded', event_updateDownloaded);
-            ipcMain.on('update.install', action_updateInstall);
-
-            autoUpdater.once('update-not-available', async () => {
-                console.time("> init managers");
-                try {
-                    VersionManager.load(ConfigManager.getVersionsDirectory());
-                    VersionManager.updateGlobalVersionsConfig();
-                    InstallationsManager.load(ConfigManager.getLauncherDirectory());
-                    startSocketServer().catch(void 0); // похуй + поебать
-                } catch (e) {
-                    logger.error("[Startup]", "Error:", e);
-                    app.quit();
-                }
-                console.timeEnd("> init managers");
-                if (!handleArgsLink(process.argv)) {
-                    try {
-                        require('./menu').createMenu();
-                        await createMainWindow();
-                    } catch (e) {
-                        logger.error("[MainWindow]", "Error:", e);
-                        app.quit();
-                    };
-                }
-                // Disable handlers
-                autoUpdater.off('error', event_updateError);
-                autoUpdater.off('checking-for-update', event_updateChecking);
-                autoUpdater.off('update-available', event_updateAvailable);
-                autoUpdater.off('download-progress', event_updateProgress);
-                autoUpdater.off('update-downloaded', event_updateDownloaded);
-                ipcMain.off('update.install', action_updateInstall);
-                window.close();
+        if (!handleArgsLink(process.argv)) {
+            createMainWindow().catch((e) => {
+                logger.error("[MainWindow]", "Error:", e);
+                app.quit();
             });
+        }
 
-            createTray();
-
-            if (ConfigManager.getCheckUpdates()) { // Check updates if need
-                autoUpdater.checkForUpdates().then(updates => {
-                    updateLogger.debug("-> Updates:", updates);
-                    if (!updates) autoUpdater.emit('update-not-available');
-                }).catch(err => {
-                    updateLogger.error("-> Error:", err);
-                    autoUpdater.emit('update-not-available');
-                });
-            } else {
-                autoUpdater.emit('update-not-available');
-            }
-
-            console.timeEnd("> init preload");
-
-        });
         console.timeEnd("> init ready");
     });
 
@@ -227,7 +161,20 @@ if (!gotTheLock) {
     console.timeEnd("> init lock");
 }
 
+const checkForUpdates = () => {
+    autoUpdater.checkForUpdates().then(updates => {
+        updateLogger.debug("-> Updates:", updates);
+        if (!updates) autoUpdater.emit('update-not-available');
+    }).catch(err => {
+        updateLogger.error("-> Error:", err);
+        autoUpdater.emit('update-not-available');
+    });
+    WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking });
+}
+
 const createMainWindow = () => new Promise((resolve, reject) => {
+
+    require('./menu').createMenu();
 
     let windowState = require('./libs/WindowState')({
         width: 1280,
@@ -273,10 +220,17 @@ const createMainWindow = () => new Promise((resolve, reject) => {
     win.on('focus', () => win.webContents.send('focus'));
     win.on('closed', () => (win = null, app.quit()));
     win.on('close', (event) => {
-        if (ConfigManager.getHideOnClose()) {
+        if (ConfigManager.getOption("launcher.hideOnClose")) {
             event.preventDefault();
             win.hide();
         };
+    });
+
+    win.webContents.on("did-finish-load", () => {
+        console.debug("> finish load");
+        if (ConfigManager.getOption("launcher.checkUpdates")) {
+            checkForUpdates();
+        }
     });
 
     // handler for blank target
@@ -308,7 +262,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
     function progress(e) {
         const progress = (e.task / e.total);
-        WSSHost.emit('game.progress.load', {
+        WSSHost.emit(ackChannels.gameProgressLoad, {
             progress: progress,
             version_hash: version_hash
         });
@@ -317,7 +271,7 @@ async function launchMinecraft(version_hash, params = {}) {
     function download_progress(e) {
         const progress = (e.current / e.total);
         if (e.type != 'version-jar') return;
-        WSSHost.emit('game.progress.download', {
+        WSSHost.emit(ackChannels.gameProgressDownload, {
             progress: progress,
             version_hash: version_hash
         });
@@ -360,7 +314,7 @@ async function launchMinecraft(version_hash, params = {}) {
         jvm.on('close', (code) => {
             if (code != 0) {
                 win?.setProgressBar(-1);
-                WSSHost.emit('game.startup.error', {
+                WSSHost.emit(ackChannels.gameStartupError, {
                     error: logg_out,
                     version_hash: version_hash
                 });
@@ -368,7 +322,7 @@ async function launchMinecraft(version_hash, params = {}) {
         });
 
         win?.setProgressBar(-1);
-        WSSHost.emit('game.startup.success', {
+        WSSHost.emit(ackChannels.gameStartupSuccess, {
             version_hash: version_hash
         });
 
@@ -377,7 +331,7 @@ async function launchMinecraft(version_hash, params = {}) {
     } catch (error) {
         logger.error(error);
         win?.setProgressBar(-1);
-        WSSHost.emit('game.error', {
+        WSSHost.emit(ackChannels.gameError, {
             error: error.message,
             version_hash: version_hash
         });
@@ -387,7 +341,7 @@ async function launchMinecraft(version_hash, params = {}) {
 
 /* === TCHost init === */
 
-const validChannels = Object.seal({
+const requestChannels = Object.seal({
     requestHostInfo: 'requestHostInfo',
     invokeLaunch: 'invokeLaunch',
     setProgress: 'setProgress',
@@ -402,6 +356,29 @@ const validChannels = Object.seal({
     selectFolder: 'selectFolder',
     selectFile: 'selectFile',
     relaunchHost: 'relaunchHost',
+    updateCheck: 'updateCheck',
+    updateDownload: 'updateDownload',
+    updateInstall: 'updateInstall',
+});
+
+const ackChannels = Object.seal({
+    updateConfiguration: 'updateConfiguration',
+    updateInstallations: 'updateInstallations',
+    gameProgressLoad: 'game.progress.load',
+    gameProgressDownload: 'game.progress.download',
+    gameStartupSuccess: 'game.startup.success',
+    gameStartupError: 'game.startup.error',
+    gameError: 'game.error',
+    updateStatus: 'update.status',
+    updateProgress: 'update.progress',
+});
+
+const updateStatus = Object.seal({
+    error: 'error',
+    checking: 'checking',
+    available: 'available',
+    notAvailable: 'not-available',
+    downloaded: 'loaded',
 });
 
 /**
@@ -422,34 +399,89 @@ const startSocketServer = async () => {
 const initHandlers = async () => {
     // add sender to main window web contents
     WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => win.webContents.send(type, payload));
-    //WSSHost.addSender(WSSHost.updateTypes.RPC, win.webContents.send);
 
-    Object.keys(validChannels).forEach(channel => {
-        const event = validChannels[channel];
+    Object.keys(requestChannels).forEach(channel => {
+        const event = requestChannels[channel];
         ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
     })
 
     ConfigManager.addCallback(config => {
-        console.debug("Update Config:", config);
-        WSSHost.emit("updateConfiguration", { configuration: config });
+        // console.debug("Update Config:", config);
+        config && WSSHost.emit(ackChannels.updateConfiguration, { configuration: config });
     });
 
     InstallationsManager.addCallback(config => {
-        console.debug("Update Installations:", config);
-        config?.profiles && WSSHost.emit("updateInstallations", { installations: config.profiles });
-    })
-
-    WSSHost.addReducer(validChannels.requestHostInfo, () => ({
-        hostVendor: 'TJMC-Launcher',
-        hostVersion: autoUpdater.currentVersion,
-        hostMemory: os.totalmem() / 1024 / 1024,
-    }));
-
-    WSSHost.addReducer(validChannels.relaunchHost, () => {
-        app.relaunch();
+        // console.debug("Update Installations:", config);
+        config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
     });
 
-    WSSHost.addReducer(validChannels.invokeLaunch, async (data) => {
+    { // Updates
+        autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
+        autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking }));
+        autoUpdater.on('update-available', (e) => {
+            WSSHost.emit(ackChannels.updateStatus, {
+                status: updateStatus.available,
+                update: {
+                    tag: e.tag,
+                    version: e.version,
+                    releaseDate: e.releaseDate,
+                    releaseName: e.releaseName,
+                    // releaseNotes: e.releaseNotes,
+                }
+            });
+        });
+        autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.notAvailable }));
+        autoUpdater.on('download-progress', (e) => {
+            WSSHost.emit(ackChannels.updateProgress, {
+                total: e.total,
+                transferred: e.transferred,
+                delta: e.delta,
+                bytesPerSecond: e.bytesPerSecond,
+                percent: e.percent
+            });
+        });
+        autoUpdater.on('update-downloaded', (e) => {
+            WSSHost.emit(ackChannels.updateStatus, {
+                status: updateStatus.downloaded,
+                update: {
+                    tag: e.tag,
+                    version: e.version,
+                    releaseDate: e.releaseDate,
+                    releaseName: e.releaseName,
+                    // releaseNotes: e.releaseNotes,
+                }
+            });
+        });
+
+        WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
+        WSSHost.addReducer(requestChannels.updateDownload, () => {
+            WSSHost.emit(ackChannels.updateProgress, { percent: 0 });
+            autoUpdater.downloadUpdate();
+        });
+        WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>
+            autoUpdater.quitAndInstall(isSilent, isForceRunAfter)
+        );
+    }
+
+    // Main
+
+    { // Host
+        WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
+            hostVendor: 'TJMC-Launcher',
+            hostVersion: autoUpdater.currentVersion,
+            hostMemory: os.totalmem() / 1024 / 1024,
+        }));
+
+        WSSHost.addReducer(requestChannels.relaunchHost, () => {
+            app.relaunch();
+        });
+
+        WSSHost.addReducer(requestChannels.setProgress, (data) => {
+            if (data.progress) win?.setProgressBar(data.progress);
+        });
+    }
+
+    WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
         if (data.version_hash) {
             let result;
             try {
@@ -463,56 +495,51 @@ const initHandlers = async () => {
         return false;
     });
 
-    WSSHost.addReducer(validChannels.setProgress, (data) => {
-        if (data.progress) {
-            win?.setProgressBar(data.progress);
-        }
-    });
-
-    WSSHost.addReducer(validChannels.fetchInstallations, async () => {
-        const installations = await InstallationsManager.getInstallations();
-        return { installations };
-    });
-
-    WSSHost.addReducer(validChannels.createInstallation, async (data) => {
-        return await InstallationsManager.createInstallation(data);
-    });
-
-    WSSHost.addReducer(validChannels.removeInstallation, async ({ hash, forceDeps }) => {
-        return await InstallationsManager.removeInstallation(hash, forceDeps);
-    });
-
-    WSSHost.addReducer(validChannels.fetchVersions, async () => {
+    WSSHost.addReducer(requestChannels.fetchVersions, async () => {
         const versions = await VersionManager.getGlobalVersions();
         return { versions };
     });
 
-    WSSHost.addReducer(validChannels.fetchConfiguration, async () => {
-        const configuration = await ConfigManager.getAllOptions();
-        return { configuration };
-    });
-
-    WSSHost.addReducer(validChannels.setConfiguration, async ({ key, value }) => {
-        return await ConfigManager.setOption(key, value);
-    });
-
-    WSSHost.addReducer(validChannels.selectFolder, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-
-            title: title || 'Select a folder',
-            properties: ["openDirectory", "createDirectory", "promptToCreate"]
+    { // Installations
+        WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
+            const installations = await InstallationsManager.getInstallations();
+            return { installations };
         });
-        console.debug("[selectFolder]", filePaths);
-        return { canceled, filePaths };
-    });
-    WSSHost.addReducer(validChannels.selectFile, async ({ title }) => {
-        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+        WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
+            await InstallationsManager.createInstallation(data)
+        );
+        WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
+            await InstallationsManager.removeInstallation(hash, forceDeps)
+        );
+    }
 
-            title: title || 'Select a file',
-            properties: ["openFile"]
+    { // Configuration
+        WSSHost.addReducer(requestChannels.fetchConfiguration, async () => {
+            const configuration = await ConfigManager.getAllOptions();
+            return { configuration };
         });
-        console.debug("[selectFile]", filePaths);
-        return { canceled, filePaths };
-    });
+        WSSHost.addReducer(requestChannels.setConfiguration, async ({ key, value }) =>
+            await ConfigManager.setOption(key, value)
+        );
+    }
+
+    { // Dialogs
+        WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
+            const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+                title: title || 'Select a folder',
+                properties: ["openDirectory", "createDirectory", "promptToCreate"]
+            });
+            console.debug("[selectFolder]", filePaths);
+            return { canceled, filePaths };
+        });
+        WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
+            const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+                title: title || 'Select a file',
+                properties: ["openFile"]
+            });
+            console.debug("[selectFile]", filePaths);
+            return { canceled, filePaths };
+        });
+    }
 
 };

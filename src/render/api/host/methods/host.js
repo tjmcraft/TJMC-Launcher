@@ -115,3 +115,44 @@ export async function selectFile({ title }) {
 	console.debug("selectFile", result);
 	return result.filePaths;
 }
+
+export async function updateCheck() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "updateCheck",
+		}, false, true, true);
+		if (!result?.payload) return undefined;
+		result = result.payload;
+	} catch (e) {
+		return;
+	}
+	return result;
+}
+export async function updateDownload() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "updateDownload",
+		}, false, true, true);
+		if (!result?.payload) return undefined;
+		result = result.payload;
+	} catch (e) {
+		return;
+	}
+	return result;
+}
+export async function updateInstall() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "updateInstall",
+			data: { isSilent: true, isForceRunAfter: true }
+		}, false, true, true);
+		if (!result?.payload) return undefined;
+		result = result.payload;
+	} catch (e) {
+		return;
+	}
+	return result;
+}

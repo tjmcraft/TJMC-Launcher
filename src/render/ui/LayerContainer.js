@@ -70,7 +70,7 @@ const ModalLayer = ({ isShown, children }) => {
 const Modals = memo(() => {
 
 	const { closeModal } = getDispatch();
-	const { modals } = useGlobal(global => ({ modals: global.modals }));
+	const modals = useGlobal(global => global.modals);
 
 	const isOpen = modals.length > 0;
 
@@ -120,7 +120,6 @@ const LayerContainer = memo(() => {
 		const showWhatsNew = getState(global => global.lastAppVersionId != APP_VERSION);
 		showWhatsNew && isAuthReady && openWhatsNewModal();
 	}, [isAuthReady]);
-
 
 	return (
 		<div className={buildClassName("layerContainer")}>

@@ -1,6 +1,6 @@
 
 import { updateConfiguration } from "Model/Reducers/configuration";
-import { updateGameError, updateGameStartupError, updateGameStartupSuccess, updateHostInfo } from "Model/Reducers/host";
+import { updateGameError, updateGameStartupError, updateGameStartupSuccess, updateHostInfo, updateProgress, updateStatus } from "Model/Reducers/host";
 import { updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
@@ -21,6 +21,8 @@ addReducer("hostUpdate", (global, actions, update) => {
 		case "updateGameStartupError": return updateGameStartupError(global, actions, update);
 		case "updateGameStartupSuccess": return updateGameStartupSuccess(global, update);
 		case "updateGameError": return updateGameError(global, actions, update);
+		case "updateStatus": return updateStatus(global, actions, update);
+		case "updateProgress": return updateProgress(global, actions, update);
 		default: return undefined;
 	}
 });
@@ -63,3 +65,13 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 
 export const selectFolder = ({ title }) => callHost("selectFolder", { title });
 export const selectFile = ({ title }) => callHost("selectFile", { title });
+
+addReducer("updateCheck", () => {
+	void callHost("updateCheck");
+});
+addReducer("updateDownload", () => {
+	void callHost("updateDownload");
+});
+addReducer("updateInstall", () => {
+	void callHost("updateInstall");
+});

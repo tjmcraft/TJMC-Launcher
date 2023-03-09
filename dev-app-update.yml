@@ -1,0 +1,4 @@
+publish:
+  provider: "github"
+  releaseType: "draft"
+  channel: "latest"

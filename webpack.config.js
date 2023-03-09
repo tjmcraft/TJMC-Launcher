@@ -191,7 +191,7 @@ module.exports = {
 			inject: false,
 			meta: {
 				charset: { charset: 'UTF-8' },
-				viewport: 'width=device-width, initial-scale=1',
+				viewport: 'width=device-width, initial-scale=1, minimum-scale=1.0',
 			},
 			template: path.resolve(basePath, 'index.html'),
 			minify: {

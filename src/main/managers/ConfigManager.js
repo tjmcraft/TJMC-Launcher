@@ -57,6 +57,7 @@ const config = new Config({
 });
 
 module.exports.load = () => config.load();
+module.exports.getOption = config.getOption;
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 module.exports.watchOption = config.watchOption;
@@ -68,8 +69,3 @@ exports.setOption = (key, value) => config.setOption(key, value);
 exports.getLauncherDirectory = () => launcherDir;
 exports.getDataDirectory = (def = false) => config.getOption(config => config.overrides.path.root, def);
 exports.getVersionsDirectory = (def = false) => config.getOption(config => config.overrides.path.directory, def);
-
-exports.getCheckUpdates = () => Boolean(config.getOption(config => config.launcher.checkUpdates));
-exports.getDisableHardwareAcceleration = () => Boolean(config.getOption(config => config.launcher.disableHardwareAcceleration));
-exports.getHideOnClose = () => Boolean(config.getOption(config => config.launcher.hideOnClose));
-exports.getOpenDevTools = () => Boolean(config.getOption(config => config.launcher.openDevTools));

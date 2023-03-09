@@ -37,6 +37,9 @@
     margin-top: 1rem;
 }
 
+.settingGroupContainer > .settingGroup.withBorder {
+    border: 1px solid var(--border-color-1);
+}
 .settingGroupContainer > .settingGroup {
     position: relative;
     background: var(--background-secondary);

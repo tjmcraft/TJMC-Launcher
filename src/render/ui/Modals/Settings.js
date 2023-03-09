@@ -11,6 +11,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import { selectCurrentUser } from "Model/Selectors/user.js";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
+import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
 import { RadioGroup } from "UI/components/Radio.js";
@@ -20,6 +21,7 @@ import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 import { PathInput } from "UI/components/Input";
+import Button from "UI/components/Button";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
@@ -157,7 +159,7 @@ const SettingButton = ({
 			</div>
 		</SettingContainerTwo>
 	);
-}
+};
 
 const TabItem = (({ id, children }) => {
 	return <div className="tab" id={id}>{children}</div>;
@@ -735,6 +737,65 @@ const LauncherAppearanceTab = memo(() => {
 	);
 });
 
+const UpdatesContainer = memo(() => {
+
+	const { updateCheck, updateDownload, updateInstall } = getDispatch();
+	const {
+		status: updateStatus,
+		progress: updateProgress,
+		next: nextUpdate,
+		total, transferred, bytesPerSecond
+	} = useGlobal(global => global.update);
+
+	const titleName = {
+		"not-available": "Нет обновлений",
+		available: `Доступно обновление${nextUpdate != void 0 ? `:\xa0${nextUpdate.releaseName}` : ""}`,
+		checking: "Проверка обновлений...",
+		error: "Ошибка обновления",
+		loading: `Загрузка обновления...${total != void 0 ? `\xa0${bytesToSize(transferred)} из ${bytesToSize(total)}\xa0(${bytesToSize(bytesPerSecond, true)})\xa0` : ""}`,
+		loaded: `Загружено обновление${nextUpdate != void 0 ? `:\xa0${nextUpdate.releaseName}` : ""}`,
+	}[updateStatus] || "Unknown update status";
+
+	const buttonName = {
+		"not-available": "Проверить",
+		available: "Скачать",
+		checking: "Подождите...",
+		error: "Ошибка",
+		loaded: "Перезапустить",
+		loading: "Загрузка...",
+	}[updateStatus] || "Action";
+
+	const updateAction = useCallback(() => {
+		return (({
+			"not-available": updateCheck,
+			available: updateDownload,
+			loaded: updateInstall,
+		})[updateStatus] || (() => {}))();
+	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
+
+	function renderProgress(value) {
+		return updateStatus == "loading" && (<progress className="w100" max={100} value={value} />);
+	}
+
+	return (
+		<div className={buildClassName(style.settingGroup, style.withBorder)}>
+			<SettingContainerTwo note={renderProgress(updateProgress)}>
+				<label className={style.title}>{titleName}</label>
+				<div className={style.control}>
+					<Button
+						onClick={updateAction}
+						className={buildClassName("filled", "small")}
+						isLoading={updateStatus == "loading" || updateStatus == "checking"}
+						isPrimary={updateStatus == "available"}
+						isRed={updateStatus == "loaded"}
+						disabled={updateStatus == "loading" || updateStatus == "checking"}
+					>{buttonName}</Button>
+				</div>
+			</SettingContainerTwo>
+		</div>
+	);
+});
+
 const AboutTab = memo(() => {
 
 	const { openWhatsNewModal } = getDispatch();
@@ -777,6 +838,7 @@ const AboutTab = memo(() => {
 							</span>
 						</div>
 					</div>
+					<UpdatesContainer />
 					<div className="bxcF1-box">
 						<h5>Просмотр информации о предыдущих релизах</h5>
 						<div className="separator" />

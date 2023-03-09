@@ -301,6 +301,13 @@ const INITIAL_STATE = {
 	currentMainScreen: "home",
 	currentSettingsScreen: "my-account",
 	lastAppVersionId: undefined,
+	updateStatus: "not-available",
+	updateProgress: 0,
+	update: {
+		status: "not-available",
+		progress: 0,
+		next: undefined,
+	}
 };
 
 const stateStore = new StateStore();

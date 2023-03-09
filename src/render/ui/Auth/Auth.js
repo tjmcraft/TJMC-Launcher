@@ -63,7 +63,6 @@ const Authentication = () => {
 	return (
 		<div className={style.container}>
 			<a className={style.floatingLogo} href="/" target="_blank" rel="noopener" />
-
 			<div className={style.wrapper}>
 				<form className={style.authBox} onSubmit={onSubmit}>
 					<div className={style.mainLoginContainer}>
@@ -72,7 +71,6 @@ const Authentication = () => {
 							<p className={buildClassName(style.subtitle)}>{"Войдите в свой аккаунт"}</p>
 						</div>
 						<div className={style.block}>
-
 							<InputText id="email"
 								name="email"
 								required={true}
@@ -84,7 +82,6 @@ const Authentication = () => {
 								label="Email"
 								error={authError}
 							/>
-
 							<InputPassword id="password"
 								name="password"
 								required={true}
@@ -97,9 +94,12 @@ const Authentication = () => {
 								isPasswordVisible={showPassword}
 								onChangePasswordVisibility={handleChangePasswordVisibility}
 							/>
-
-							<Button type="submit" className={buildClassName("filled", "colorBrand")} isLoading={authIsLoading} disabled={!canSubmit}>{"Войти"}</Button>
-
+							<Button
+								type="submit"
+								className={buildClassName("filled", "colorBrand")}
+								isLoading={authIsLoading}
+								disabled={!canSubmit}
+							>{"Войти"}</Button>
 						</div>
 					</div>
 				</form>

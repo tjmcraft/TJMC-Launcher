@@ -5,7 +5,10 @@ export {
 	fetchConfiguration,
 	setConfiguration,
 	selectFolder,
-	selectFile
+	selectFile,
+	updateCheck,
+	updateDownload,
+	updateInstall,
 } from './host';
 export {
 	fetchInstallations,
