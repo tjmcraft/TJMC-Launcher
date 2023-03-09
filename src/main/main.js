@@ -431,7 +431,15 @@ const initHandlers = async () => {
             });
         });
         autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.notAvailable }));
-        autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
+        autoUpdater.on('download-progress', (e) => {
+            WSSHost.emit(ackChannels.updateProgress, {
+                total: e.total,
+                transferred: e.transferred,
+                delta: e.delta,
+                bytesPerSecond: e.bytesPerSecond,
+                percent: e.percent
+            });
+        });
         autoUpdater.on('update-downloaded', (e) => {
             WSSHost.emit(ackChannels.updateStatus, {
                 status: updateStatus.downloaded,
@@ -447,7 +455,7 @@ const initHandlers = async () => {
 
         WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
         WSSHost.addReducer(requestChannels.updateDownload, () => {
-            WSSHost.emit(ackChannels.updateProgress, { progress: 0 });
+            WSSHost.emit(ackChannels.updateProgress, { percent: 0 });
             autoUpdater.downloadUpdate();
         });
         WSSHost.addReducer(requestChannels.updateInstall, ({ isSilent = true, isForceRunAfter = true }) =>

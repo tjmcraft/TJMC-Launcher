@@ -8,6 +8,8 @@ export function init(_onUpdate) {
 
 export function updater(update) {
 	window.__debug_host__ && console.debug("-> HOST UPDATER", update);
+	const type = update.type;
+	const payload = update.payload;
 	if (update instanceof TJMCConnectionState) {
 		let connectionState;
 		switch (update.state) {
@@ -26,55 +28,58 @@ export function updater(update) {
 			type: "updateConnectionState",
 			connectionState,
 		});
-	} else if (update.type == "game.progress.load") {
-		update.payload?.version_hash && onUpdate({
+	} else if (type == "game.progress.load") {
+		payload?.version_hash && onUpdate({
 			type: "updateInstallationsProgressLoad",
-			hash: update.payload.version_hash,
-			progress: update.payload.progress,
+			hash: payload.version_hash,
+			progress: payload.progress,
 		});
-	} else if (update.type == "game.progress.download") {
-		update.payload?.version_hash && onUpdate({
+	} else if (type == "game.progress.download") {
+		payload?.version_hash && onUpdate({
 			type: "updateInstallationsProgressDownload",
-			hash: update.payload.version_hash,
-			progress: update.payload.progress,
+			hash: payload.version_hash,
+			progress: payload.progress,
 		});
-	} else if (update.type == "game.startup.error") {
-		update.payload?.version_hash && onUpdate({
+	} else if (type == "game.startup.error") {
+		payload?.version_hash && onUpdate({
 			type: "updateGameStartupError",
-			hash: update.payload.version_hash,
-			error: update.payload.error,
+			hash: payload.version_hash,
+			error: payload.error,
 		});
-	} else if (update.type == "game.startup.success") {
-		update.payload?.version_hash && onUpdate({
+	} else if (type == "game.startup.success") {
+		payload?.version_hash && onUpdate({
 			type: "updateGameStartupSuccess",
-			hash: update.payload.version_hash,
+			hash: payload.version_hash,
 		});
-	} else if (update.type == "updateInstallations") {
-		update.payload?.installations && onUpdate({
+	} else if (type == "updateInstallations") {
+		payload?.installations && onUpdate({
 			type: "updateInstallations",
-			installations: update.payload.installations,
+			installations: payload.installations,
 		});
-	} else if (update.type == "updateConfiguration") {
-		update.payload?.configuration && onUpdate({
+	} else if (type == "updateConfiguration") {
+		payload?.configuration && onUpdate({
 			type: "updateConfiguration",
-			configuration: update.payload.configuration,
+			configuration: payload.configuration,
 		});
-	} else if (update.type == "game.error") {
-		update.payload?.version_hash && onUpdate({
+	} else if (type == "game.error") {
+		payload?.version_hash && onUpdate({
 			type: "updateGameError",
-			hash: update.payload.version_hash,
-			error: update.payload.error,
+			hash: payload.version_hash,
+			error: payload.error,
 		});
-	} else if (update.type == "update.status") {
-		update.payload?.status && onUpdate({
+	} else if (type == "update.status") {
+		payload?.status && onUpdate({
 			type: "updateStatus",
-			status: update.payload.status,
-			update: update.payload?.update,
+			status: payload.status,
+			update: payload?.update,
 		});
-	} else if (update.type == "update.progress") {
-		update.payload?.progress != undefined && onUpdate({
+	} else if (type == "update.progress") {
+		payload?.percent != undefined && onUpdate({
 			type: "updateProgress",
-			progress: update.payload.progress,
+			progress: payload.percent,
+			total: payload.total,
+			transferred: payload.transferred,
+			bytesPerSecond: payload.bytesPerSecond,
 		});
 	} else {
 		window.__debug_host__ && console.debug("-> HOST UNEXPECTED UPDATE", update);
