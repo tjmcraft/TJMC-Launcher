@@ -5,7 +5,7 @@ export function addModal(payload) {
 	const global = getState();
 	const modals = [...global.modals];
 	if (payload.layer == undefined) return;
-	payload.label = payload.label == void 0 && `${payload.layer}-${randomString(5)}`;
+	payload.label = payload.label != void 0 ? payload.label : `${payload.layer}-${randomString(5)}`;
 	if (modals.filter(modal => modal.label == payload.label).length <= 0) {
 		if (modals.length > 0) { // hide latest if exists
 			const parent = modals[modals.length - 1];
