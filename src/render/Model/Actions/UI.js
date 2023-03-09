@@ -64,28 +64,28 @@ const handleResize = () => {
 	});
 };
 
-addReducer("init", (global) => {
+addReducer("init", () => {
 	switchPlatform(window.system?.os);
 	matchColorScheme(updateTheme);
 	handleResize();
 });
 
-addReducer("openModal", (global, actions, payload) => {
-	return addModal(global, payload);
+addReducer("openModal", (_global, _actions, payload) => {
+	void addModal(payload);
 });
 
-addReducer("closeModal", (global, actions, payload) => {
-	return closeModal(global, payload);
+addReducer("closeModal", (_global, _actions, payload) => {
+	void closeModal(payload);
 });
 
-addReducer("onHideModal", (global, actions, payload) => {
-	return unloadModal(global, payload);
+addReducer("onHideModal", (_global, _actions, payload) => {
+	void unloadModal(payload);
 });
 
-addReducer("alert", (global, actions, update) => {
+addReducer("alert", (_global, _actions, update) => {
 	if (!update) return;
 	let { title, content, type, buttons, multiline, label } = update;
-	actions.openModal({
+	void addModal({
 		layer: "alert",
 		title,
 		content,
@@ -96,9 +96,9 @@ addReducer("alert", (global, actions, update) => {
 	});
 });
 
-addReducer("openSettingsModal", (global, actions, update) => {
+addReducer("openSettingsModal", (_global, _actions, update) => {
 	const { tab } = update || {};
-	actions.openModal({
+	void addModal({
 		layer: "settings",
 		label: "settings",
 		closeButton: true,
@@ -107,8 +107,8 @@ addReducer("openSettingsModal", (global, actions, update) => {
 	});
 });
 
-addReducer("openVersionChooserModal", (global, actions, update) => {
-	actions.openModal({
+addReducer("openVersionChooserModal", (_global, _actions, _update) => {
+	void addModal({
 		layer: "versionChooser",
 		label: "version-chooser",
 		closeButton: true,
@@ -116,8 +116,8 @@ addReducer("openVersionChooserModal", (global, actions, update) => {
 	});
 });
 
-addReducer("openWhatsNewModal", (global, actions, update) => {
-	actions.openModal({
+addReducer("openWhatsNewModal", (global, _actions, _update) => {
+	void addModal({
 		layer: "whats-new",
 		label: "whats-new",
 		small: true,
@@ -131,20 +131,20 @@ addReducer("openWhatsNewModal", (global, actions, update) => {
 	setState(global);
 });
 
-addReducer("setTheme", (global, actions, payload) => {
+addReducer("setTheme", (global, _actions, payload) => {
 	return {
 		...global,
 		theme: payload
 	};
 });
 
-addReducer("selectMainScreen", (global, actions, payload) => {
+addReducer("selectMainScreen", (global, _actions, payload) => {
 	return {
 		...global,
 		currentMainScreen: payload
 	};
 });
-addReducer("selectSettingsScreen", (global, actions, payload) => {
+addReducer("selectSettingsScreen", (global, _actions, payload) => {
 	return {
 		...global,
 		currentSettingsScreen: payload
