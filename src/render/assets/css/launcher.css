@@ -1030,6 +1030,10 @@ body {
     line-height: normal;
 }
 
+.main-content.no-scroll {
+    overflow: hidden;
+}
+
 .main-content > .top {
     width: 100%;
     height: 100%;
