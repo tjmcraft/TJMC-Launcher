@@ -169,6 +169,7 @@ const checkForUpdates = () => {
         updateLogger.error("-> Error:", err);
         autoUpdater.emit('update-not-available');
     });
+    WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking });
 }
 
 const createMainWindow = () => new Promise((resolve, reject) => {
