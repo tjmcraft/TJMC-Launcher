@@ -113,7 +113,7 @@ const stacksNotEqual = (a1, a2) => (
 		(a1 == null || a2 == null) ||
 		(
 			a1.length !== a2.length ||
-			a1.map((val, idx) => arePropsShallowEqual(val, a2[idx])).some(e => !e)
+			a1.map((val, idx) => shallowEqual(val, a2[idx])).some(e => !e)
 		)
 	)
 ) || a1 !== a2;
@@ -122,7 +122,7 @@ export const stacksEqual = (a1, a2) => a1 === a2 || (
 	a1 !== null && a2 !== null &&
 	Array.isArray(a1) && Array.isArray(a2) &&
 	a1.length === a2.length &&
-	a1.map((val, idx) => arePropsShallowEqual(val, a2[idx])).every(e => e)
+	a1.map((val, idx) => shallowEqual(val, a2[idx])).every(e => e)
 );
 
 
