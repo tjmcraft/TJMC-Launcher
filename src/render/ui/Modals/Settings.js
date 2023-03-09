@@ -739,8 +739,7 @@ const LauncherAppearanceTab = memo(() => {
 const UpdatesContainer = memo(() => {
 
 	const { updateCheck, updateDownload, updateInstall } = getDispatch();
-	const updateStatus = useGlobal(global => global.updateStatus);
-	const updateProgress = useGlobal(global => global.updateProgress);
+	const { status: updateStatus, progress: updateProgress } = useGlobal(global => global.update);
 
 	const titleName = {
 		"not-available": "Нет обновлений",

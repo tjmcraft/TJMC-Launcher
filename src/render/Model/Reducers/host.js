@@ -1,4 +1,4 @@
-import { getState, setState } from "Util/Store";
+import { setState } from "Util/Store";
 import { updateInstallation } from "./installations";
 
 export function updateHostInfo(global, update) {
@@ -55,12 +55,22 @@ export function updateGameStartupSuccess(global, update) {
 	}));
 }
 
-export function updateStatus(global, actions, payload) {
-	const { status } = payload;
-	return { ...global, updateStatus: status };
+export function updateUpdate(global, update) {
+	return {
+		...global,
+		update: {
+			...global.update,
+			...update,
+		}
+	};
 }
 
-export function updateProgress(global, actions, payload) {
+export function updateStatus(global, _actions, payload) {
+	const { status } = payload;
+	return updateUpdate(global, { status: status });
+}
+
+export function updateProgress(global, _actions, payload) {
 	const { progress } = payload;
-	return { ...global, updateStatus: "loading", updateProgress: progress };
+	return updateUpdate(global, { status: "loading", progress: progress });
 }
