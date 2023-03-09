@@ -9,8 +9,8 @@ import appStyle from "CSS/app.module.css";
 
 
 const MainScreen = memo(() => (
-	<div className={buildClassName("main-content")}>
-		<div className={buildClassName("pageWrapper", "auto-s")}>
+	<div className={buildClassName("main-content", "auto-s")}>
+		<div className={buildClassName("pageWrapper")}>
 			<div className="viewWrapper">
 				<div className="header-q">
 					<img className="headerImage" src={MainSVG} />
