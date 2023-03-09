@@ -69,6 +69,55 @@ export function updateStatus(global, actions, payload) {
 		status: status,
 		...(update != undefined ? { next: update } : {})
 	}));
+
+	if (status == "available" && update != void 0) {
+		console.debug(">> update", "available");
+		actions.alert({
+			title: `Доступно обновление до версии:\n${update.releaseName}`,
+			content: `Вы можете скачать обновление прямо сейчас!`,
+			type: "info",
+			buttons: [
+				{
+					name: "Позже",
+					closeOverlay: true,
+				},
+				{
+					name: "Загрузить",
+					class: ["filled", "colorBrand"],
+					closeOverlay: true,
+					callback: () => {
+						console.debug(">>act", "download");
+						actions.updateDownload();
+					}
+				}
+			],
+			mini: true
+		});
+	}
+	if (status == "loaded" && update != void 0) {
+		console.debug(">> update", "loaded");
+		actions.alert({
+			title: `Обновление до версии:\n${update.releaseName}`,
+			content: `Вам необходимо перезагрузить хост, чтобы установить обновление!`,
+			type: "warn",
+			buttons: [
+				{
+					name: "Позже",
+					closeOverlay: true,
+				},
+				{
+					name: "Перезагрузить",
+					class: ["filled", "colorRed"],
+					closeOverlay: true,
+					callback: () => {
+						actions.updateInstall();
+						console.debug(">>act", "install");
+					}
+				}
+			],
+			mini: true
+		});
+	}
 }
 
 export function updateProgress(global, _actions, payload) {

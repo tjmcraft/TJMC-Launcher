@@ -432,7 +432,18 @@ const initHandlers = async () => {
         });
         autoUpdater.on('update-not-available', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.notAvailable }));
         autoUpdater.on('download-progress', (e) => WSSHost.emit(ackChannels.updateProgress, { progress: e.percent }));
-        autoUpdater.on('update-downloaded', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.downloaded }));
+        autoUpdater.on('update-downloaded', (e) => {
+            WSSHost.emit(ackChannels.updateStatus, {
+                status: updateStatus.downloaded,
+                update: {
+                    tag: e.tag,
+                    version: e.version,
+                    releaseDate: e.releaseDate,
+                    releaseName: e.releaseName,
+                    // releaseNotes: e.releaseNotes,
+                }
+            });
+        });
 
         WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
         WSSHost.addReducer(requestChannels.updateDownload, () => {
