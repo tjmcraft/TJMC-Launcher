@@ -8,6 +8,7 @@ const updateContainer = (propsRef, selector, callback) => {
 		let nextState;
 		try {
 			nextState = selector(global);
+			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
 		} catch (err) {
 			return;
 		}
@@ -28,8 +29,11 @@ const useGlobal = (selector = () => { }, inputs = []) => {
 	const picker = useCallback(selector, [selector, ...inputs]);
 
 	useMemo(() => {
+		let nextState;
 		try {
-			mappedProps.current = getState(picker);
+			nextState = getState(picker);
+			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
+			mappedProps.current = nextState;
 		} catch (e) {
 			return undefined;
 		}
@@ -41,7 +45,7 @@ const useGlobal = (selector = () => { }, inputs = []) => {
 		return () => removeCallback(callback);
 	}, [forceUpdate, picker]);
 
-	return mappedProps.current;
+	return mappedProps.current.internalArray || mappedProps.current;
 };
 
 export default useGlobal;
