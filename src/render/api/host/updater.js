@@ -69,6 +69,7 @@ export function updater(update) {
 		update.payload?.status && onUpdate({
 			type: "updateStatus",
 			status: update.payload.status,
+			update: update.payload?.update,
 		});
 	} else if (update.type == "update.progress") {
 		update.payload?.progress != undefined && onUpdate({
