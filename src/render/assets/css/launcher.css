@@ -2009,7 +2009,6 @@ a:hover {
     background: var(--background-primary);
     padding: 16px;
     flex: 1;
-    overflow: hidden overlay;
 }
 .viewWrapper {
     position: relative;
