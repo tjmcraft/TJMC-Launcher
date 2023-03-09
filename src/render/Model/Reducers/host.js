@@ -18,8 +18,7 @@ export function updateGameError(global, actions, update) {
 		isProcessing: false,
 	}));
 
-	actions.openModal({
-		layer: "alert",
+	actions.alert({
 		title: "Construct error",
 		content: error,
 		type: "error",
@@ -36,14 +35,13 @@ export function updateGameStartupError(global, actions, update) {
 		isProcessing: false,
 	}));
 
-	actions.openModal({
-		layer: "alert",
+	actions.alert({
 		title: "Startup error",
 		content: error,
 		type: "error",
 		// buttons,
 		multiline: true,
-		label: "game.error"
+		label: "game.startup.error"
 	});
 }
 
