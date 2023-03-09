@@ -786,7 +786,7 @@ const UpdatesContainer = memo(() => {
 						onClick={updateAction}
 						className={buildClassName("filled", "small")}
 						isLoading={updateStatus == "loading" || updateStatus == "checking"}
-						isPrimary={true}
+						isPrimary={updateStatus == "available"}
 						isRed={updateStatus == "loaded"}
 						disabled={updateStatus == "loading" || updateStatus == "checking"}
 					>{buttonName}</Button>
