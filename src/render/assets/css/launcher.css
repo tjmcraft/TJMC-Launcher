@@ -813,7 +813,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: var(--background-secondary);
-    overflow: hidden;
+    min-height: 0;
     flex: 1;
 }
 
@@ -928,7 +928,7 @@ body {
 }
 
 .scroller {
-    position: relative;
+    /* position: relative; */
     box-sizing: border-box;
     min-height: 0;
     flex: 1 1 auto;

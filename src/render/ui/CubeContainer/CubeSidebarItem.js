@@ -1,4 +1,4 @@
-import { createElement, useCallback, useRef, memo } from "react";
+import { createElement, useCallback, useRef, memo, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Util/Store";
@@ -31,6 +31,7 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 	}, [hash]);
 
 	const containerRef = useRef();
+	// const menuRef = useRef();
 
 	const {
 		isContextMenuOpen, contextMenuPosition,
@@ -38,20 +39,29 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
+	useEffect(() => {
+		console.debug(">>p", contextMenuPosition);
+	}, [contextMenuPosition]);
+
 	const getTriggerElement = useCallback(() => containerRef.current, []);
 
-	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'),
-		[]);
+	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'), []);
 
-	const getMenuElement = useCallback(() => undefined,
-		[]);
+	const getMenuElement = useCallback(() => undefined, []);
 
 	const {
-		positionX, positionY, style: menuStyle,
+		positionX, positionY, style: menuStyle, transformOriginX, transformOriginY,
 	} = useContextMenuPosition(contextMenuPosition,
 		getTriggerElement,
 		getRootElement,
 		getMenuElement,);
+
+	useEffect(() => {
+		console.debug(">>pos", positionX, positionY);
+	}, [positionX, positionY]);
+	useEffect(() => {
+		console.debug(">>ms", menuStyle);
+	}, [menuStyle]);
 
 	const handleClick = useCallback(() => {
 		setVersionHash(hash);
@@ -97,7 +107,6 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 				onClick: handleClick,
 				onContextMenu: handleContextMenu,
 			},
-
 			createElement('span', null, name || hash),
 			createElement('div', { class: 'status-container' },
 				isProcessing ? (
@@ -105,18 +114,19 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 						createElement(RoundProgress, { progress: progress * 100 }) :
 						createElement(PendingProgress)
 				) : null),
-			contextMenuPosition != undefined && createElement(
-				Menu, {
-					isOpen: isContextMenuOpen,
-					onClose: handleContextMenuClose,
-					onCloseEnd: handleContextMenuHide,
-					style: menuStyle,
-					positionX, positionY,
-
-				},
-				<MenuItem compact onClick={handleClick}>Select</MenuItem>,
-				<MenuItem compact onClick={handleLaunchClick}>Launch</MenuItem>,
-				<MenuItem compact onClick={handleRemoveClick}><span className="color-red">Remove</span></MenuItem>,
+			contextMenuPosition != undefined && (
+				<Menu
+					isOpen={isContextMenuOpen}
+					onClose={handleContextMenuClose}
+					onCloseEnd={handleContextMenuHide}
+					style={menuStyle}
+					positionX={positionX} positionY={positionY}
+					transformOriginX={transformOriginX} transformOriginY={transformOriginY}
+				>
+					<MenuItem compact onClick={handleClick}>Select</MenuItem>
+					<MenuItem compact onClick={handleLaunchClick}>Launch</MenuItem>
+					<MenuItem compact onClick={handleRemoveClick}><span className="color-red">Remove</span></MenuItem>
+				</Menu>
 			)
 		)
 	);
