@@ -44,13 +44,24 @@ const WhatsNewContainer = memo(() => {
 	const releases = useGlobal(global => global.releases);
 	if (releases) {
 		const latestRelease = releases.find(e => e.tag_name == `v${APP_VERSION}`);
-		return latestRelease && (
-			<Fragment>
-				<Header title={latestRelease.name} date={latestRelease.published_at} />
-				<Content latestRelease={latestRelease} />
-				<Footer />
-			</Fragment>
-		);
+		if (latestRelease) {
+			return (
+				<Fragment>
+					<Header title={latestRelease.name} date={latestRelease.published_at} />
+					<Content latestRelease={latestRelease} />
+					<Footer />
+				</Fragment>
+			);
+		} else {
+			return (
+
+				<div className={buildClassName("main-content", "d-flex", "vertical", "centred", "no-scroll")} style={{flex: 1}}>
+					<h1>{`Early build (v${APP_VERSION})`}</h1>
+					<h3>Cannot be found on GitHub</h3>
+				</div>
+
+			);
+		}
 	}
 	return undefined;
 });
