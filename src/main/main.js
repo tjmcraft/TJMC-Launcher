@@ -46,7 +46,7 @@ if (gotTheLock) {
         app.disableHardwareAcceleration();
     }
 
-    app.once('ready', () => {
+    app.once('ready', async () => {
 
         // Entry point -->
         console.time("> init managers");
