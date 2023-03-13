@@ -2,6 +2,7 @@ const { Tray, Menu, app } = require("electron");
 const { restoreWindow, openDir, platformIcon, windowSend } = require("./helpers");
 
 const ConfigManager = require('./managers/ConfigManager');
+const { restoreMainWindow } = require("./MainWindow");
 
 /**
  * @type {Tray} - Tray instance
@@ -13,14 +14,14 @@ const createTray = async () => {
   //tray.on('right-click', toggleWindow)
   //tray.on('double-click', toggleWindow)
   process.platform === "win32" && tray.on('click', function (event) {
-      restoreWindow();
+      restoreMainWindow();
   })
   const menu = Menu.buildFromTemplate([
       {
           label: 'TJMC-Launcher',
           icon: platformIcon.resize({ width: 16, height: 16 }),
           enabled: process.platform != "win32",
-          click: () => process.platform != "win32" && restoreWindow()
+          click: () => process.platform != "win32" && restoreMainWindow(),
       },
       {
           type: 'separator'
@@ -28,7 +29,7 @@ const createTray = async () => {
       {
           label: 'Settings',
           click: () => {
-              restoreWindow();
+              restoreMainWindow();
               windowSend('open-settings');
           }
       },

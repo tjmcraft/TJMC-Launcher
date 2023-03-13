@@ -4,7 +4,6 @@ const { autoUpdater } = require('electron-updater');
 
 console.time("> require");
 
-const path = require('path');
 const os = require('os');
 
 const ConfigManager = require('./managers/ConfigManager');
@@ -14,7 +13,7 @@ const InstallationsManager = require('./managers/InstallationsManager');
 const TCHost = require('./libs/TCHost');
 
 const { destroyTray, createTray } = require('./tray');
-const { restoreWindow } = require('./helpers');
+const { restoreMainWindow, createMainWindow, MainWindow: win } = require('./MainWindow');
 
 const logger = require('./util/loggerutil')('%c[MainThread]', 'color: #ff2119; font-weight: bold;');
 const updateLogger = require('./util/loggerutil')('%c[AutoUpdate]', 'color: #ffd119; font-weight: bold;');
@@ -51,11 +50,6 @@ const setInstanceProtocolHandler = () => {
         app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER)
     }
 }
-
-/**
- * @type {BrowserWindow} - The main window
- */
-var win = undefined;
 
 const protoHandler = (link) => {
     if (!link) return;
@@ -100,8 +94,7 @@ if (!gotTheLock) {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
         console.debug("Second instance call", commandLine);
         if (!handleArgsLink(commandLine)) {
-            if (win == void 0) createMainWindow();
-            else restoreWindow();
+            restoreMainWindow();
         }
     });
 
@@ -109,8 +102,7 @@ if (!gotTheLock) {
         event.preventDefault();
         console.debug("Open url call", data);
         if (!protoHandler(data)) {
-            if (win == void 0) createMainWindow();
-            else restoreWindow();
+            restoreMainWindow();
         }
     });
 
@@ -154,8 +146,7 @@ if (!gotTheLock) {
     app.on("window-all-closed", () => { });
 
     app.on('activate', () => {
-        if (win === null) createMainWindow();
-        else restoreWindow();
+        restoreMainWindow();
     });
 
     app.on('before-quit', () => {
@@ -177,84 +168,6 @@ const checkForUpdates = () => {
     WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking });
 }
 
-const createMainWindow = () => new Promise((resolve, reject) => {
-
-    require('./menu').createMenu();
-
-    let windowState = require('./libs/WindowState')({
-        width: 1280,
-        height: 720
-    });
-
-    win = new BrowserWindow({
-        x: windowState.x,
-        y: windowState.y,
-        width: windowState.width,
-        height: windowState.height,
-        minWidth: 720,
-        minHeight: 480,
-        show: false,
-        resizable: true,
-        frame: process.platform === 'darwin',
-        webPreferences: {
-            preload: path.join(__dirname, 'preloader.js'),
-            nodeIntegration: false,
-            contextIsolation: true,
-            worldSafeExecuteJavaScript: true,
-            spellcheck: true,
-            enableRemoteModule: true,
-        },
-        titleBarStyle: 'default',
-        roundedCorners: true,
-        backgroundColor: '#171614'
-    });
-
-    require('@electron/remote/main').enable(win.webContents);
-
-    windowState.manage(win);
-
-    win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
-
-    logger.log("[Main]", "Created main window!");
-
-    win.once('show', () => resolve(win));
-    win.once('ready-to-show', () => win.show());
-    win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
-    win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
-    win.on('blur', () => win.webContents.send('blur'));
-    win.on('focus', () => win.webContents.send('focus'));
-    win.on('closed', () => (win = null, app.quit()));
-    win.on('close', (event) => {
-        if (ConfigManager.getOption("launcher.hideOnClose")) {
-            event.preventDefault();
-            win.hide();
-        };
-    });
-
-    win.webContents.on("did-finish-load", () => {
-        console.debug("> finish load");
-        if (ConfigManager.getOption("launcher.checkUpdates")) {
-            checkForUpdates();
-        }
-    });
-
-    // handler for blank target
-    win.webContents.setWindowOpenHandler(({ url }) =>
-        url.startsWith("file://") ? { action: 'allow' } :
-        (shell.openExternal(url), { action: 'deny' })
-    );
-
-    // handler for self target
-    win.webContents.on('will-navigate', (e, url) =>
-        url != win.webContents.getURL() &&
-        (e.preventDefault(), shell.openExternal(url))
-    );
-
-    ConfigManager.watchOption("launcher.openDevTools")(state =>
-        state ? win.webContents.openDevTools() : win.webContents.closeDevTools()
-    )
-
-});
 
 async function launchMinecraft(version_hash, params = {}) {
 
