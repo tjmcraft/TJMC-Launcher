@@ -39,10 +39,6 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
-	useEffect(() => {
-		console.debug(">>p", contextMenuPosition);
-	}, [contextMenuPosition]);
-
 	const getTriggerElement = useCallback(() => containerRef.current, []);
 
 	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'), []);
@@ -55,13 +51,6 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 		getTriggerElement,
 		getRootElement,
 		getMenuElement,);
-
-	useEffect(() => {
-		console.debug(">>pos", positionX, positionY);
-	}, [positionX, positionY]);
-	useEffect(() => {
-		console.debug(">>ms", menuStyle);
-	}, [menuStyle]);
 
 	const handleClick = useCallback(() => {
 		setVersionHash(hash);

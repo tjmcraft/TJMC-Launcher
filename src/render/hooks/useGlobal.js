@@ -16,9 +16,9 @@ const updateContainer = (propsRef, selector, callback) => {
 			// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
 			if (
 				(
-					propsRef.current.internalArray != void 0 &&
+					propsRef.current?.internalArray != void 0 &&
 					nextState.internalArray != void 0 &&
-					!stacksEqual(propsRef.current.internalArray, nextState.internalArray)
+					!stacksEqual(propsRef.current?.internalArray, nextState?.internalArray)
 				) || !shallowEqual(propsRef.current, nextState)
 			) {
 				// console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
@@ -53,7 +53,7 @@ const useGlobal = (selector = () => { }, inputs = []) => {
 		return () => removeCallback(callback);
 	}, [forceUpdate, picker]);
 
-	return mappedProps.current.internalArray || mappedProps.current;
+	return mappedProps.current?.internalArray || mappedProps.current;
 };
 
 export default useGlobal;

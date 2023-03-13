@@ -1,5 +1,6 @@
 const { Menu, app } = require("electron");
-const { windowSend, restoreWindow, openDir } = require("./helpers");
+const { openDir } = require("./helpers");
+const MainWindow = require("./MainWindow");
 
 const ConfigManager = require('./managers/ConfigManager');
 
@@ -36,8 +37,8 @@ const createMenu = async () => {
                   label: 'Options',
                   accelerator: 'Ctrl+Shift+I',
                   click: () => {
-                      restoreWindow();
-                      windowSend('open-settings');
+                      MainWindow.restore();
+                      MainWindow.send('open-settings');
                   }
               }
           ]
