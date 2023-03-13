@@ -68,7 +68,7 @@ exports.start = async () => {
 const initHandlers = async () => {
 
 	const os = require('os');
-	const { ipcMain } = require('electron');
+	const { ipcMain, dialog } = require('electron');
 	const { autoUpdater } = require('electron-updater');
 	const { checkForUpdates } = require('./Updater');
 	const MainWindow = require('./MainWindow');
@@ -207,7 +207,7 @@ const initHandlers = async () => {
 
 	{ // Dialogs
 		WSSHost.addReducer(requestChannels.selectFolder, async ({ title }) => {
-			const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+			const { canceled, filePaths } = await dialog.showOpenDialog(MainWindow.window, {
 				title: title || 'Select a folder',
 				properties: ["openDirectory", "createDirectory", "promptToCreate"]
 			});
@@ -215,7 +215,7 @@ const initHandlers = async () => {
 			return { canceled, filePaths };
 		});
 		WSSHost.addReducer(requestChannels.selectFile, async ({ title }) => {
-			const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+			const { canceled, filePaths } = await dialog.showOpenDialog(MainWindow.window, {
 				title: title || 'Select a file',
 				properties: ["openFile"]
 			});
