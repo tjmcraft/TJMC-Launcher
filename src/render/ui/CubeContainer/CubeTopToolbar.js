@@ -36,7 +36,7 @@ const CubeTopToolbar = ({ hash }) => {
 				id='playButton'
 				onClick={handlePlayClick}
 				isLoading={isLoading}
-				disabled={!hostOnline}
+				disabled={!hostOnline || isLoading}
 			>Играть</Button>
 		</div>
 	);
