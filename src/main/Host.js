@@ -62,21 +62,21 @@ exports.start = async () => {
 	return undefined;
 }
 
+const os = require('os');
+const { ipcMain, dialog } = require('electron');
+const { autoUpdater } = require('electron-updater');
+const { checkForUpdates } = require('./Updater');
+const MainWindow = require('./MainWindow');
+const { launchMinecraft } = require('./Launcher');
+
+const ConfigManager = require('./managers/ConfigManager');
+const VersionManager = require('./managers/VersionManager');
+const InstallationsManager = require('./managers/InstallationsManager');
+
 /**
 * Init reducers for TCHost
 */
 const initHandlers = async () => {
-
-	const os = require('os');
-	const { ipcMain, dialog } = require('electron');
-	const { autoUpdater } = require('electron-updater');
-	const { checkForUpdates } = require('./Updater');
-	const MainWindow = require('./MainWindow');
-	const { launchMinecraft } = require('./Launcher');
-
-	const ConfigManager = require('./managers/ConfigManager');
-	const VersionManager = require('./managers/VersionManager');
-	const InstallationsManager = require('./managers/InstallationsManager');
 
 	// add sender to main window web contents
 	WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => MainWindow.send(type, payload));

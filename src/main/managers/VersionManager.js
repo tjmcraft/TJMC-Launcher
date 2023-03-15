@@ -132,6 +132,6 @@ exports.getGlobalVersion = async function (version) {
 exports.load = function (ver_path) {
     if (!fs.existsSync(ver_path)) fs.mkdirSync(ver_path, { recursive: true });
     versions_directory = ver_path;
-    exports.updateGlobalVersionsConfig();
+    this.updateGlobalVersionsConfig();
     return true;
 }
