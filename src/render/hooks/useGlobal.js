@@ -23,7 +23,7 @@ const updateContainer = (propsRef, selector, callback) => {
 			) {
 				// console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
 				propsRef.current = nextState;
-				callback(nextState);
+				callback(nextState.internalArray ?? nextState);
 			}
 		}
 	};
@@ -48,7 +48,8 @@ const useGlobal = (selector = () => { }, inputs = []) => {
 	}, [picker]);
 
 	useEffect(() => {
-		const callback = updateContainer(mappedProps, picker, forceUpdate);
+		const updateCallback = () => forceUpdate(bool => !bool);
+		const callback = updateContainer(mappedProps, picker, updateCallback);
 		addCallback(callback);
 		return () => removeCallback(callback);
 	}, [forceUpdate, picker]);
