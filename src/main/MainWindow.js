@@ -48,8 +48,8 @@ exports.create = () => new Promise((resolve, reject) => {
 
 	win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
 
-	win.once('show', () => resolve(win));
-	win.once('ready-to-show', () => win.show());
+	// win.once('show', () => resolve(win));
+	win.once('ready-to-show', () => resolve(win));
 	win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
 	win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
 	win.on('blur', () => win.webContents.send('blur'));
@@ -96,7 +96,7 @@ exports.restore = () => {
     win.focus();
 	}
 };
-
+exports.show = () => win != void 0 && win.show();
 exports.destroy = () => win != void 0 && win.destroy();
 exports.setProgressBar = (progress) => win != void 0 && win.setProgressBar(progress);
 exports.send = (channel, ...args) => win != void 0 && win.webContents.send(channel, ...args);

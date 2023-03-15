@@ -52,10 +52,15 @@ if (gotTheLock) {
         console.time("> init managers");
         setInstanceProtocolHandler();
         try {
+            console.time("> init vm");
             VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
-            VersionManager.updateGlobalVersionsConfig(); // update global versions manifest
+            console.timeEnd("> init vm");
+            console.time("> init im");
             InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+            console.timeEnd("> init im");
+            console.time("> init hm");
             Host.start(); // start socket and ipc servers
+            console.timeEnd("> init hm");
         } catch (e) {
             logger.error("[Startup]", "Error:", e);
             app.quit();
@@ -66,11 +71,10 @@ if (gotTheLock) {
         createTray().catch(void 0);
         require('@electron/remote/main').initialize();
 
-        if (!handleArgsLink(process.argv)) {
-            MainWindow.create().catch((e) => {
-                logger.error("[MainWindow]", "Error:", e);
-                app.quit();
-            });
+        if (handleArgsLink(process.argv)) {
+            MainWindow.create();
+        } else {
+            MainWindow.create().then(() => MainWindow.show());
         }
 
         console.timeEnd("> init ready");
