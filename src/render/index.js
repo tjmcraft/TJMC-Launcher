@@ -17,6 +17,9 @@ import BuildInfo from "!webpack-plugin-buildinfo?gitHashShort&time!";
 
 import './assets/css/launcher.css';
 
+console.debug(window.require);
+console.debug(window.exports);
+console.debug(window.module);
 
 getDispatch().init(); // for state cache load
 

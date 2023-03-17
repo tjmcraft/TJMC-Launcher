@@ -31,18 +31,16 @@ exports.create = () => new Promise((resolve, reject) => {
 		frame: process.platform === 'darwin',
 		webPreferences: {
 			preload: path.join(__dirname, 'preloader.js'),
-			nodeIntegration: false,
+			// nodeIntegration: true,
+			// sandbox: false,
 			contextIsolation: true,
 			worldSafeExecuteJavaScript: true,
 			spellcheck: true,
-			enableRemoteModule: true,
 		},
 		titleBarStyle: 'default',
 		roundedCorners: true,
 		backgroundColor: '#171614'
 	});
-
-	require('@electron/remote/main').enable(win.webContents);
 
 	windowState.manage(win);
 

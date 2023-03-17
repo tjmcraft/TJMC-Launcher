@@ -1,14 +1,26 @@
-const { shell, ipcRenderer, contextBridge } = require('electron');
-const remote = require('@electron/remote');
-const os = require('os');
-const { getOS } = require('./util/Tools');
-
-const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold');
+console.debug(">>", "process type", process.type);
+const { ipcRenderer, contextBridge } = require('electron');
+const logger = console;
 
 logger.debug("Application loading...");
 
+/**
+ * Function returns current platform
+ * @returns os
+ */
+function getOS() {
+  switch (process.platform) {
+    case 'win32': return 'windows';
+    case 'darwin': return 'osx';
+    case 'linux': return 'linux';
+    default: return 'web';
+  }
+}
+
+console.debug(">", "con", contextBridge);
+
 //Set Current Window as win
-const win = remote.getCurrentWindow();
+const win = {};
 
 const windowEvents = {
   close: () => win.close(),
@@ -53,15 +65,6 @@ process.once('loaded', () => {
     async invoke(eventName, ...params) {
       return await ipcRenderer.invoke(eventName, ...params)
     },
-    async shellOpenExternal(url) {
-      await shell.openExternal(url)
-    },
-    async shellOpenPath(file) {
-      await shell.openPath(file)
-    },
-    async shellTrashItem(file) {
-      await shell.trashItem(file)
-    }
   });
 });
 
@@ -81,20 +84,15 @@ contextBridge.exposeInMainWorld('tjmcNative', {
     setProgressBar: windowEvents.setProgressBar,
     setZoomFactor: windowEvents.setZoomFactor,
   },
-  os: {
-    type: os.type(),
-    release: os.release(),
-    arch: os.arch(),
-  },
   app: {
-    getVersion: remote.app.getVersion,
-    relaunch: remote.app.relaunch,
-    version: remote.process.versions,
+    getVersion: app.getVersion,
+    relaunch: app.relaunch,
+    version: process.versions,
   },
   process: {
-    platform: remote.process.platform,
-    arch: remote.process.arch,
-    env: remote.process.env,
+    platform: process.platform,
+    arch: process.arch,
+    env: process.env,
   },
   ipc: {
     send: ipcRenderer.send,
