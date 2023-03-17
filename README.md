@@ -3,7 +3,7 @@ This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*.
 
 TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **modded** versions of **Java Minecraft**.
 
-### Used Libraries:
+### Used libraries for host:
  - **[electron](https://github.com/electron/electron)**
  - **[electron-builder](https://github.com/electron-userland/electron-builder)**
  - **[adm-zip](https://github.com/cthackers/adm-zip)**
