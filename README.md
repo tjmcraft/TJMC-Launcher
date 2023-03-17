@@ -8,8 +8,9 @@ TJMC-Launcher is a simple to use, extremely fast, and well supported app, that a
  - **[electron-builder](https://github.com/electron-userland/electron-builder)**
  - **[adm-zip](https://github.com/cthackers/adm-zip)**
  - **[fs-extra](https://github.com/jprichardson/node-fs-extra)**
+ - **[got](https://github.com/sindresorhus/got)**
+ - **[md5](https://github.com/pvorb/node-md5)**
  - **[request](https://github.com/request/request)**
- - **[express](https://github.com/expressjs/express)**
  - **[ws](https://github.com/websockets/ws)**
 
 ### Available Scripts:
