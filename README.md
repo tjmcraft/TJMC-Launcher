@@ -16,12 +16,19 @@ TJMC-Launcher is a simple to use, extremely fast, and well supported app, that a
 
 In the project directory, you can run:
 
-#### `npm start` - Runs the app in the normal mode
-
-#### `npm dist` - Builds the distro for all systems
-
-#### `npm dist:win` - Builds the distro for Windows based systems
-
-#### `npm dist:mac` - Builds the distro for Darwin based systems (MacOS)
-
-#### `npm dist:linux` - Builds the distro for Linux based systems
+`npm run start` - Runs the app in the normal mode \
+`npm run build` - Build electron app with default config \
+`npm run build:win` - Build electron app for windows only \
+`npm run build:mac` - Build electron app for darwin only \
+`npm run build:linux` - Build electron app for linux only \
+`npm run build:linux-snap` - Build electron app for linux for snap store \
+`npm run serve-render:dev` - Serve UI on dedicated server \
+`npm run watch-render:dev` - Start watching UI in dev mode for dist build \
+`npm run build-render:dev` - Build UI in dev mode for dist build \
+`npm run build-render:prod` - Build UI in production mode for dist build \
+`npm run deploy` - Build and publish electron app with default config \
+`npm run deploy:win` - Build and publish electron app only for windows \
+`npm run deploy:mac` - Build and publish electron app only for darwin \
+`npm run deploy:linux` - Build and publish electron app only for linux \
+`npm run deploy:linux-snap` - Build and publish electron app for linux and publish to snap store \
+`npm run deploy:multi` - Build and publish electron app for all available platforms 
