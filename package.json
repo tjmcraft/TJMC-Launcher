@@ -41,7 +41,6 @@
     "adm-zip": "^0.5.1",
     "cross-env": "^7.0.3",
     "electron-updater": "^4.6.5",
-    "express": "^4.17.1",
     "fs-extra": "^9.1.0",
     "got": "^11.8.3",
     "md5": "^2.3.0",
