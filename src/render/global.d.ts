@@ -23,6 +23,7 @@ interface TJMCNative {
 		minimize: Function;
 		fullscreen: Function;
 	};
+	versions: Object;
 };
 
 interface Window {

@@ -9,7 +9,7 @@ const currentOS =
     openbsd: "linux",
     sunos: "linux",
 		win32: "windows",
-	})[process.platform] || "web";
+  })[process.platform] || "web";
 
 const windowActions = {
   close: () => ipcRenderer.send("window:action.close"),
@@ -46,7 +46,8 @@ process.once('loaded', () => {
       maximize: windowActions.maximize,
       minimize: windowActions.minimize,
       fullscreen: windowActions.fullscreen,
-    }
+    },
+    versions: process.versions,
   });
   ipcRenderer.on('enter-full-screen', enterFullScreen);
   ipcRenderer.on('leave-full-screen', leaveFullScreen);

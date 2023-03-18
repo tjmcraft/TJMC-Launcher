@@ -1,4 +1,4 @@
-import { memo, createElement, useCallback, useMemo, useState, useEffect } from "react";
+import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -76,6 +76,15 @@ const InfoBox = memo(() => {
 			</span>
 			<span className={buildClassName(style.line, style.size12)}>{host.hostVersion ? `${host.hostVendor} ${host.hostVersion.version}` : "Web Host"}</span>
 			<span className={buildClassName(style.line, style.size12)}>{os ? `${os.family} ${os.version} x${os.architecture}` : "Unknown OS"}</span>
+			<br />
+			{APP_ENV == "development" && (
+				<Fragment>
+					<span className={buildClassName(style.line, style.size12)}>Packages:</span>
+					{Object.entries(window.tjmcNative.versions).map(([k,v]) =>
+						(<span key={k} className={buildClassName(style.line, style.size12)}>{`${k}\xa0${v}`}</span>)
+					)}
+				</Fragment>
+			)}
 		</div>
 	);
 });
