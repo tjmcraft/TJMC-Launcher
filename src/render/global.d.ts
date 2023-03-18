@@ -23,11 +23,6 @@ interface TJMCNative {
 		minimize: Function;
 		fullscreen: Function;
 	};
-	ipc: {
-		send: Function;
-		on: Function;
-		invoke: Function;
-	};
 };
 
 interface Window {

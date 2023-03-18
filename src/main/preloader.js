@@ -1,8 +1,4 @@
-console.debug(">>", "process type", process.type);
 const { ipcRenderer, contextBridge } = require('electron');
-const logger = console;
-
-logger.debug("Application loading...");
 
 /**
  * Function resolves current platform
@@ -19,24 +15,12 @@ const getOS = () =>
 		win32: "windows",
 	})[process.platform] || "web";
 
-
-//Set Current Window as win
-const win = {};
-
 const windowActions = {
   close: () => ipcRenderer.send("window:action.close"),
   maximize: () => ipcRenderer.send("window:action.maximize"),
   minimize: () => ipcRenderer.send("window:action.minimize"),
   fullscreen: () => ipcRenderer.send("window:action.fullscreen"),
 };
-
-document.addEventListener('readystatechange', function () {
-  if (document.readyState === 'interactive') {
-    logger.debug("Initializing...");
-  } else if (document.readyState === 'complete') {
-    logger.debug("Init complete!");
-  }
-});
 
 function enterFullScreen () {
   document.documentElement.classList.add('fullscreen');
@@ -66,17 +50,8 @@ process.once('loaded', () => {
       maximize: windowActions.maximize,
       minimize: windowActions.minimize,
       fullscreen: windowActions.fullscreen,
-    },
-    ipc: {
-      send: ipcRenderer.send,
-      on: ipcRenderer.on,
-      invoke: ipcRenderer.invoke,
     }
   });
-});
-
-// Init global instances
-process.once('loaded', () => {
   ipcRenderer.on('enter-full-screen', enterFullScreen);
   ipcRenderer.on('leave-full-screen', leaveFullScreen);
   ipcRenderer.on('blur', windowBlur);
