@@ -117,7 +117,12 @@
       "output": "dist"
     },
     "files": [
-      "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js,webpack.config.js,.babelrc}"
+      "!src/render/**/*",
+      "!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js,webpack.config.js,.babelrc,build}",
+      {
+        "from": "src/render/dist",
+        "to": "src/render/dist"
+      }
     ],
     "asar": true,
     "compression": "maximum",
