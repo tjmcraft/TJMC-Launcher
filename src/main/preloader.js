@@ -1,10 +1,6 @@
 const { ipcRenderer, contextBridge } = require('electron');
 
-/**
- * Function resolves current platform
- * @returns os
- */
-const getOS = () =>
+const currentOS =
   Object.seal({
     aix: "linux",
     darwin: "osx",
@@ -36,7 +32,7 @@ function windowFocus () {
 }
 
 contextBridge.exposeInMainWorld('__STANDALONE__', true);
-contextBridge.exposeInMainWorld('system', { os: getOS() });
+contextBridge.exposeInMainWorld('system', { os: currentOS });
 
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
