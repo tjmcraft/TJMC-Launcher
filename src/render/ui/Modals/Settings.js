@@ -184,7 +184,7 @@ const TestContainer = memo(() => {
 	return (
 		<div className={style.settingGroupContainer}>
 			<h5>Debug container</h5>
-			<div className={style.settingGroup}>
+			<div className={buildClassName(style.settingGroup, style.withBorder)}>
 				<div className={style.settingContainer}>
 					<div className={style.description}>{"You can use selectable menu"}</div>
 					<div className={"test"}>

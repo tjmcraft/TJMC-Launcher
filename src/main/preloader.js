@@ -1,36 +1,22 @@
-const { shell, ipcRenderer, contextBridge } = require('electron');
-const remote = require('@electron/remote');
-const os = require('os');
-const { getOS } = require('./util/Tools');
+const { ipcRenderer, contextBridge } = require('electron');
 
-const logger = require('./util/loggerutil')('%c[Preloader]', 'color: #a02d2a; font-weight: bold');
+const currentOS =
+  Object.seal({
+    aix: "linux",
+    darwin: "osx",
+    freebsd: "linux",
+    linux: "linux",
+    openbsd: "linux",
+    sunos: "linux",
+		win32: "windows",
+	})[process.platform] || "web";
 
-logger.debug("Application loading...");
-
-//Set Current Window as win
-const win = remote.getCurrentWindow();
-
-const windowEvents = {
-  close: () => win.close(),
-  maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
-  minimize: () => win.minimize(),
-  restore: () => win.restore(),
-  blur: () => win.blur(),
-  focus: () => win.focus(),
-  fullscreen: () => win.fullscreen(),
-  setProgressBar: (e) => win.setProgressBar(e),
-  setZoomFactor: (e) => win.webContents.setZoomFactor(e),
+const windowActions = {
+  close: () => ipcRenderer.send("window:action.close"),
+  maximize: () => ipcRenderer.send("window:action.maximize"),
+  minimize: () => ipcRenderer.send("window:action.minimize"),
+  fullscreen: () => ipcRenderer.send("window:action.fullscreen"),
 };
-
-document.addEventListener('readystatechange', function () {
-  if (document.readyState === 'interactive') {
-    logger.debug("Initializing...");
-    if (win.isFullScreen()) enterFullScreen();
-  } else if (document.readyState === 'complete') {
-    logger.debug("Init complete!");
-  }
-  win.setProgressBar(-1);
-});
 
 function enterFullScreen () {
   document.documentElement.classList.add('fullscreen');
@@ -45,66 +31,23 @@ function windowFocus () {
   document.documentElement.classList.remove('blur');
 }
 
+contextBridge.exposeInMainWorld('__STANDALONE__', true);
+contextBridge.exposeInMainWorld('system', { os: currentOS });
+
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
-    on(eventName, callback) {
-      ipcRenderer.on(eventName, callback)
-    },
-    async invoke(eventName, ...params) {
-      return await ipcRenderer.invoke(eventName, ...params)
-    },
-    async shellOpenExternal(url) {
-      await shell.openExternal(url)
-    },
-    async shellOpenPath(file) {
-      await shell.openPath(file)
-    },
-    async shellTrashItem(file) {
-      await shell.trashItem(file)
+    on: (channel, listener) => ipcRenderer.on(channel, listener),
+    invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+    send: (channel, ...args) => ipcRenderer.send(channel, ...args),
+  });
+  contextBridge.exposeInMainWorld('tjmcNative', {
+    window: {
+      close: windowActions.close,
+      maximize: windowActions.maximize,
+      minimize: windowActions.minimize,
+      fullscreen: windowActions.fullscreen,
     }
   });
-});
-
-contextBridge.exposeInMainWorld('__STANDALONE__', true);
-contextBridge.exposeInMainWorld('system', {
-  os: getOS()
-});
-contextBridge.exposeInMainWorld('tjmcNative', {
-  window: {
-    close: windowEvents.close,
-    maximize: windowEvents.maximize,
-    minimize: windowEvents.minimize,
-    restore: windowEvents.restore,
-    blur: windowEvents.blur,
-    focus: windowEvents.focus,
-    fullscreen: windowEvents.fullscreen,
-    setProgressBar: windowEvents.setProgressBar,
-    setZoomFactor: windowEvents.setZoomFactor,
-  },
-  os: {
-    type: os.type(),
-    release: os.release(),
-    arch: os.arch(),
-  },
-  app: {
-    getVersion: remote.app.getVersion,
-    relaunch: remote.app.relaunch,
-    version: remote.process.versions,
-  },
-  process: {
-    platform: remote.process.platform,
-    arch: remote.process.arch,
-    env: remote.process.env,
-  },
-  ipc: {
-    send: ipcRenderer.send,
-    on: ipcRenderer.on,
-    invoke: ipcRenderer.invoke,
-  }
-});
-
-// Init global instances
-process.once('loaded', () => {
   ipcRenderer.on('enter-full-screen', enterFullScreen);
   ipcRenderer.on('leave-full-screen', leaveFullScreen);
   ipcRenderer.on('blur', windowBlur);

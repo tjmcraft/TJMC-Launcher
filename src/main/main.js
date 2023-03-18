@@ -69,7 +69,6 @@ if (gotTheLock) {
 
         console.time("> init ready");
         createTray().catch(void 0);
-        require('@electron/remote/main').initialize();
 
         if (handleArgsLink(process.argv)) {
             MainWindow.create();

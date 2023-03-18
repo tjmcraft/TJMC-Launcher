@@ -1,10 +1,30 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
+
+/**
+ * Callback for adding two numbers.
+ *
+ * @callback windowEventCallback
+ * @param {BrowserWindow} win - The window instance
+ * @param {any} args - Arguments
+ */
+
+/**
+ * Connect window to event
+ * @param {windowEventCallback} callback
+ * @returns
+ */
+const withWindow = (callback = (win, ...args) => void 0) => {
+	return (event, ...args) => {
+		const webContents = event.sender
+		const win = BrowserWindow.fromWebContents(webContents);
+		if (typeof callback == 'function') callback(win, ...args);
+	};
+}
 
 /**
  * @type {BrowserWindow} - The main window
  */
-var win = undefined;
-exports.window = win;
+exports.window = undefined;
 
 exports.create = () => new Promise((resolve, reject) => {
 
@@ -19,7 +39,7 @@ exports.create = () => new Promise((resolve, reject) => {
 		height: 720
 	});
 
-	win = new BrowserWindow({
+	this.window = new BrowserWindow({
 		x: windowState.x,
 		y: windowState.y,
 		width: windowState.width,
@@ -31,72 +51,79 @@ exports.create = () => new Promise((resolve, reject) => {
 		frame: process.platform === 'darwin',
 		webPreferences: {
 			preload: path.join(__dirname, 'preloader.js'),
-			nodeIntegration: false,
+			// nodeIntegration: true,
+			// sandbox: false,
 			contextIsolation: true,
 			worldSafeExecuteJavaScript: true,
 			spellcheck: true,
-			enableRemoteModule: true,
 		},
 		titleBarStyle: 'default',
 		roundedCorners: true,
 		backgroundColor: '#171614'
 	});
 
-	require('@electron/remote/main').enable(win.webContents);
+	windowState.manage(this.window);
 
-	windowState.manage(win);
-
-	win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
-
-	// win.once('show', () => resolve(win));
-	win.once('ready-to-show', () => resolve(win));
-	win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
-	win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
-	win.on('blur', () => win.webContents.send('blur'));
-	win.on('focus', () => win.webContents.send('focus'));
-	win.on('closed', () => (win = null, app.quit()));
-	win.on('close', (event) => {
+	this.window.once('ready-to-show', () => resolve(this.window));
+	this.window.on('enter-full-screen', () => this.window.webContents.send('enter-full-screen'));
+	this.window.on('leave-full-screen', () => this.window.webContents.send('leave-full-screen'));
+	this.window.on('blur', () => this.window.webContents.send('blur'));
+	this.window.on('focus', () => this.window.webContents.send('focus'));
+	this.window.on('closed', () => (this.window = null, app.quit()));
+	this.window.on('close', (event) => {
 		if (ConfigManager.getOption("launcher.hideOnClose")) {
 			event.preventDefault();
-			win.hide();
+			this.window.hide();
 		};
 	});
 
-	win.webContents.on("did-finish-load", () => {
+	ipcMain.on("window:action.close", withWindow((window) => window.close()));
+	ipcMain.on("window:action.maximize", withWindow((window) =>
+		window.isMaximized() ? window.unmaximize() : window.maximize()
+	));
+	ipcMain.on("window:action.minimize", withWindow((window) => window.minimize()));
+	ipcMain.on("window:action.fullscreen", withWindow((window) => window.fullScreen()));
+
+	if (this.window.isFullScreen()) this.window.webContents.send('enter-full-screen');
+
+	this.window.webContents.on("did-finish-load", () => {
 		console.debug("> finish load");
 		if (ConfigManager.getOption("launcher.checkUpdates")) {
 			Updater.checkForUpdates();
 		}
+		this.window.setProgressBar(-1);
 	});
 
 	// handler for blank target
-	win.webContents.setWindowOpenHandler(({ url }) =>
+	this.window.webContents.setWindowOpenHandler(({ url }) =>
 		url.startsWith("file://") ? { action: 'allow' } :
 			(shell.openExternal(url), { action: 'deny' })
 	);
 
 	// handler for self target
-	win.webContents.on('will-navigate', (e, url) =>
-		url != win.webContents.getURL() &&
+	this.window.webContents.on('will-navigate', (e, url) =>
+		url != this.window.webContents.getURL() &&
 		(e.preventDefault(), shell.openExternal(url))
 	);
 
 	ConfigManager.watchOption("launcher.openDevTools")(state =>
-		state ? win.webContents.openDevTools() : win.webContents.closeDevTools()
+		state ? this.window.webContents.openDevTools() : this.window.webContents.closeDevTools()
 	)
+
+	this.window.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
 
 });
 
 exports.restore = () => {
-	if (win == void 0) {
-		exports.create();
+	if (this.window == void 0) {
+		this.create();
 	} else {
-    if (!win.isVisible()) win.show();
-    if (win.isMinimized()) win.restore();
-    win.focus();
+    if (!this.window.isVisible()) this.window.show();
+    if (this.window.isMinimized()) this.window.restore();
+    this.window.focus();
 	}
 };
-exports.show = () => win != void 0 && win.show();
-exports.destroy = () => win != void 0 && win.destroy();
-exports.setProgressBar = (progress) => win != void 0 && win.setProgressBar(progress);
-exports.send = (channel, ...args) => win != void 0 && win.webContents.send(channel, ...args);
+exports.show = () => this.window != void 0 && this.window.show();
+exports.destroy = () => this.window != void 0 && this.window.destroy();
+exports.setProgressBar = (progress) => this.window != void 0 && this.window.setProgressBar(progress);
+exports.send = (channel, ...args) => this.window != void 0 && this.window.webContents.send(channel, ...args);

@@ -11,10 +11,27 @@ declare const APP_COPYRIGHT: string;
 declare const AUTHOR: string;
 declare const HTML_TIMESTAMP: string;
 declare const API_URL: string;
+
+interface TJMCSystem {
+	os: 'linux' | 'osx' | 'windows' | 'web'
+};
+
+interface TJMCNative {
+	window: {
+		close: Function;
+		maximize: Function;
+		minimize: Function;
+		fullscreen: Function;
+	};
+};
+
 interface Window {
 	GLOBAL_ENV: any;
 	buildInfo: any;
 	__debug__: boolean;
 	__debug_host__: boolean;
 	__debug_api__: boolean;
-}
+	__STANDALONE__: boolean;
+	system: TJMCSystem;
+	tjmcNative: TJMCNative;
+};
