@@ -5,19 +5,20 @@ const logger = console;
 logger.debug("Application loading...");
 
 /**
- * Function returns current platform
+ * Function resolves current platform
  * @returns os
  */
-function getOS() {
-  switch (process.platform) {
-    case 'win32': return 'windows';
-    case 'darwin': return 'osx';
-    case 'linux': return 'linux';
-    default: return 'web';
-  }
-}
+const getOS = () =>
+  Object.seal({
+    aix: "linux",
+    darwin: "osx",
+    freebsd: "linux",
+    linux: "linux",
+    openbsd: "linux",
+    sunos: "linux",
+		win32: "windows",
+	})[process.platform] || "web";
 
-console.debug(">", "con", contextBridge);
 
 //Set Current Window as win
 const win = {};
