@@ -24,25 +24,18 @@ const getOS = () =>
 const win = {};
 
 const windowActions = {
-  close: () => win.close(),
-  maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
-  minimize: () => win.minimize(),
-  restore: () => win.restore(),
-  blur: () => win.blur(),
-  focus: () => win.focus(),
-  fullscreen: () => win.fullscreen(),
-  setProgressBar: (e) => win.setProgressBar(e),
-  setZoomFactor: (e) => win.webContents.setZoomFactor(e),
+  close: () => ipcRenderer.send("window:action.close"),
+  maximize: () => ipcRenderer.send("window:action.maximize"),
+  minimize: () => ipcRenderer.send("window:action.minimize"),
+  fullscreen: () => ipcRenderer.send("window:action.fullscreen"),
 };
 
 document.addEventListener('readystatechange', function () {
   if (document.readyState === 'interactive') {
     logger.debug("Initializing...");
-    if (win.isFullScreen()) enterFullScreen();
   } else if (document.readyState === 'complete') {
     logger.debug("Init complete!");
   }
-  win.setProgressBar(-1);
 });
 
 function enterFullScreen () {
@@ -63,20 +56,16 @@ contextBridge.exposeInMainWorld('system', { os: getOS() });
 
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
-    on: (eventName, callback) => ipcRenderer.on(eventName, callback),
-    invoke: (eventName, ...params) => ipcRenderer.invoke(eventName, ...params),
+    on: (channel, listener) => ipcRenderer.on(channel, listener),
+    invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+    send: (channel, ...args) => ipcRenderer.send(channel, ...args),
   });
   contextBridge.exposeInMainWorld('tjmcNative', {
     window: {
       close: windowActions.close,
       maximize: windowActions.maximize,
       minimize: windowActions.minimize,
-      restore: windowActions.restore,
-      blur: windowActions.blur,
-      focus: windowActions.focus,
       fullscreen: windowActions.fullscreen,
-      setProgressBar: windowActions.setProgressBar,
-      setZoomFactor: windowActions.setZoomFactor,
     },
     ipc: {
       send: ipcRenderer.send,

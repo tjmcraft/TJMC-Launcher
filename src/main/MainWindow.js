@@ -1,4 +1,25 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
+
+/**
+ * Callback for adding two numbers.
+ *
+ * @callback windowEventCallback
+ * @param {BrowserWindow} win - The window instance
+ * @param {any} args - Arguments
+ */
+
+/**
+ * Connect window to event
+ * @param {windowEventCallback} callback
+ * @returns
+ */
+const withWindow = (callback = (win, ...args) => void 0) => {
+	return (event, ...args) => {
+		const webContents = event.sender
+		const win = BrowserWindow.fromWebContents(webContents);
+		if (typeof callback == 'function') callback(win, ...args);
+	};
+}
 
 /**
  * @type {BrowserWindow} - The main window
@@ -44,9 +65,6 @@ exports.create = () => new Promise((resolve, reject) => {
 
 	windowState.manage(win);
 
-	win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
-
-	// win.once('show', () => resolve(win));
 	win.once('ready-to-show', () => resolve(win));
 	win.on('enter-full-screen', () => win.webContents.send('enter-full-screen'));
 	win.on('leave-full-screen', () => win.webContents.send('leave-full-screen'));
@@ -60,11 +78,21 @@ exports.create = () => new Promise((resolve, reject) => {
 		};
 	});
 
+	ipcMain.on("window:action.close", withWindow((win) => win.close()));
+	ipcMain.on("window:action.maximize", withWindow((win) =>
+		win.isMaximized() ? win.unmaximize() : win.maximize()
+	));
+	ipcMain.on("window:action.minimize", withWindow((win) => win.minimize()));
+	ipcMain.on("window:action.fullscreen", withWindow((win) => win.fullScreen()));
+
+	if (win.isFullScreen()) win.webContents.send('enter-full-screen');
+
 	win.webContents.on("did-finish-load", () => {
 		console.debug("> finish load");
 		if (ConfigManager.getOption("launcher.checkUpdates")) {
 			Updater.checkForUpdates();
 		}
+		win.setProgressBar(-1);
 	});
 
 	// handler for blank target
@@ -82,6 +110,8 @@ exports.create = () => new Promise((resolve, reject) => {
 	ConfigManager.watchOption("launcher.openDevTools")(state =>
 		state ? win.webContents.openDevTools() : win.webContents.closeDevTools()
 	)
+
+	win.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
 
 });
 
