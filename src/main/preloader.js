@@ -23,7 +23,7 @@ const getOS = () =>
 //Set Current Window as win
 const win = {};
 
-const windowEvents = {
+const windowActions = {
   close: () => win.close(),
   maximize: () => win.isMaximized() ? win.unmaximize() : win.maximize(),
   minimize: () => win.minimize(),
@@ -58,48 +58,32 @@ function windowFocus () {
   document.documentElement.classList.remove('blur');
 }
 
+contextBridge.exposeInMainWorld('__STANDALONE__', true);
+contextBridge.exposeInMainWorld('system', { os: getOS() });
+
 process.once('loaded', () => {
   contextBridge.exposeInMainWorld('electron', {
-    on(eventName, callback) {
-      ipcRenderer.on(eventName, callback)
-    },
-    async invoke(eventName, ...params) {
-      return await ipcRenderer.invoke(eventName, ...params)
-    },
+    on: (eventName, callback) => ipcRenderer.on(eventName, callback),
+    invoke: (eventName, ...params) => ipcRenderer.invoke(eventName, ...params),
   });
-});
-
-contextBridge.exposeInMainWorld('__STANDALONE__', true);
-contextBridge.exposeInMainWorld('system', {
-  os: getOS()
-});
-contextBridge.exposeInMainWorld('tjmcNative', {
-  window: {
-    close: windowEvents.close,
-    maximize: windowEvents.maximize,
-    minimize: windowEvents.minimize,
-    restore: windowEvents.restore,
-    blur: windowEvents.blur,
-    focus: windowEvents.focus,
-    fullscreen: windowEvents.fullscreen,
-    setProgressBar: windowEvents.setProgressBar,
-    setZoomFactor: windowEvents.setZoomFactor,
-  },
-  app: {
-    getVersion: app.getVersion,
-    relaunch: app.relaunch,
-    version: process.versions,
-  },
-  process: {
-    platform: process.platform,
-    arch: process.arch,
-    env: process.env,
-  },
-  ipc: {
-    send: ipcRenderer.send,
-    on: ipcRenderer.on,
-    invoke: ipcRenderer.invoke,
-  }
+  contextBridge.exposeInMainWorld('tjmcNative', {
+    window: {
+      close: windowActions.close,
+      maximize: windowActions.maximize,
+      minimize: windowActions.minimize,
+      restore: windowActions.restore,
+      blur: windowActions.blur,
+      focus: windowActions.focus,
+      fullscreen: windowActions.fullscreen,
+      setProgressBar: windowActions.setProgressBar,
+      setZoomFactor: windowActions.setZoomFactor,
+    },
+    ipc: {
+      send: ipcRenderer.send,
+      on: ipcRenderer.on,
+      invoke: ipcRenderer.invoke,
+    }
+  });
 });
 
 // Init global instances
