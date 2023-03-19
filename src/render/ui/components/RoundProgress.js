@@ -1,9 +1,8 @@
-import { createElement } from "react";
+import { createElement, memo } from "react";
 
 const RoundProgress = ({ progress = 0 }) => {
 	const radius = 14;
 	let dashOffset = 0;
-	progress = parseInt(progress, 10);
 	if (isNaN(progress)) {
 		progress = 100;
 	} else {
@@ -24,4 +23,4 @@ const RoundProgress = ({ progress = 0 }) => {
 	);
 };
 
-export default RoundProgress;
+export default memo(RoundProgress);
