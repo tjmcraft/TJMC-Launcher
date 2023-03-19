@@ -50,17 +50,27 @@ if (gotTheLock) {
 
         // Entry point -->
         console.time("> init managers");
-        setInstanceProtocolHandler();
         try {
-            console.time("> init vm");
-            VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
-            console.timeEnd("> init vm");
-            console.time("> init im");
-            InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
-            console.timeEnd("> init im");
-            console.time("> init hm");
-            Host.start(); // start socket and ipc servers
-            console.timeEnd("> init hm");
+            {
+                console.time("> init proto");
+                setInstanceProtocolHandler();
+                console.timeEnd("> init proto");
+            }
+            {
+                console.time("> init vm");
+                VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
+                console.timeEnd("> init vm");
+            }
+            {
+                console.time("> init im");
+                InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+                console.timeEnd("> init im");
+            }
+            {
+                console.time("> init hm");
+                Host.start(); // start socket and ipc servers
+                console.timeEnd("> init hm");
+            }
         } catch (e) {
             logger.error("[Startup]", "Error:", e);
             app.quit();
