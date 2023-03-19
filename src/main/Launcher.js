@@ -43,7 +43,6 @@ exports.launchMinecraft = async (version_hash, params = {}) => {
 				uuid: undefined,
 			}
 		}, params);
-		logger.debug('launcherOptions', launcherOptions);
 
 		const launcher = new GameLauncher(launcherOptions);
 		launcher.on('progress', progress);

@@ -20,7 +20,15 @@ function createInstance(hash, javaPath, javaArgs, options = {}) {
 		}
 	);
 
-	instances.set(id, process);
+	if (!instances.get(id)) {
+		const instance = Object.seal({
+			process: process,
+			hash: hash,
+			javaPath: javaPath,
+			javaArgs: javaArgs,
+		});
+		instances.set(id, instance);
+	};
 
 	if (!options.disableLogging) {
 		process.stdout.on('data', (data) => {
@@ -39,9 +47,13 @@ function createInstance(hash, javaPath, javaArgs, options = {}) {
 	return id;
 }
 
-function getInstanceById(id) { }
+function getInstanceById(id) {
+	return instances.get(id) || undefined;
+}
 
-function getInstanceByHash(hash) { }
+function getInstanceByHash(hash) {
+	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k,v]) => v);
+}
 
 
 
