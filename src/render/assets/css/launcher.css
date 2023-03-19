@@ -544,6 +544,10 @@ p {
     background-color: var(--background-modifier-selected) !important;
 }
 
+.navItem.processing {
+    color: var(--brand-color) !important;
+}
+
 .header {
     padding: 6px 10px;
     font-size: 12px !important;

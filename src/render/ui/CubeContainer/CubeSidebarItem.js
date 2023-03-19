@@ -15,7 +15,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import useGlobal from "Hooks/useGlobal";
 
 
-const CubeSidebarItem = memo(({ hash, isSelected }) => {
+const CubeSidebarItem = ({ hash, isSelected }) => {
 
 	const { setVersionHash, invokeLaunch, alert, removeInstallation } = getDispatch();
 
@@ -91,7 +91,7 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 		createElement(
 			'div', {
 				ref: containerRef,
-				class: buildClassName('item', 'navItem', isSelected && "selected"),
+				class: buildClassName('item', 'navItem', isSelected && "selected", isProcessing && "processing"),
 				'version-hash': hash,
 				onClick: handleClick,
 				onContextMenu: handleContextMenu,
@@ -113,12 +113,12 @@ const CubeSidebarItem = memo(({ hash, isSelected }) => {
 					transformOriginX={transformOriginX} transformOriginY={transformOriginY}
 				>
 					<MenuItem compact onClick={handleClick}>Select</MenuItem>
-					<MenuItem compact onClick={handleLaunchClick}>Launch</MenuItem>
-					<MenuItem compact onClick={handleRemoveClick}><span className="color-red">Remove</span></MenuItem>
+					<MenuItem compact onClick={handleLaunchClick} disabled={isProcessing}><span className="">Launch</span></MenuItem>
+					<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}><span className="color-red">Remove</span></MenuItem>
 				</Menu>
 			)
 		)
 	);
-});
+};
 
-export default CubeSidebarItem;
+export default memo(CubeSidebarItem);
