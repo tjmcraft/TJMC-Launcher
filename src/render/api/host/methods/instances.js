@@ -36,3 +36,15 @@ export async function killInstance(options = {}) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function killAllInstances() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "killAllInstances",
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}

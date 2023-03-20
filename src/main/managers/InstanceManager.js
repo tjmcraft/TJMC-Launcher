@@ -69,11 +69,15 @@ exports.getInstanceByHash = (hash) => {
 	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k, v]) => v);
 }
 
-exports.killInstance = (instanceId) => {
+exports.killInstance = async (instanceId) => {
 	const instance = instances.get(instanceId);
 	console.debug(">>kill", instance.hash);
 	return instance.process.kill();
 }
+
+exports.killAllInstances = async () => {
+	return instances.forEach((value, instanceId) => this.killInstance(instanceId));
+};
 
 
 const callbacks = [void 0];

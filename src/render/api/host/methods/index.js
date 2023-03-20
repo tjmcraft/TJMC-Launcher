@@ -19,4 +19,5 @@ export {
 export {
 	fetchInstances,
 	killInstance,
+	killAllInstances,
 } from './instances';

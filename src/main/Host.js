@@ -10,6 +10,7 @@ const requestChannels = Object.seal({
 	fetchInstallations: 'fetchInstallations',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
+	killAllInstances: 'killAllInstances',
 	fetchVersions: 'fetchVersions',
 	createInstallation: 'createInstallation',
 	removeInstallation: 'removeInstallation',
@@ -190,6 +191,9 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.killInstance, async ({ instanceId }) =>
 			await InstanceManager.killInstance(instanceId)
+		);
+		WSSHost.addReducer(requestChannels.killAllInstances, async () =>
+			await InstanceManager.killAllInstances()
 		);
 	}
 

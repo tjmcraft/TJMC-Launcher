@@ -46,6 +46,9 @@ addReducer("killInstance", (global, actions, payload) => {
 	if (!payload) return;
 	void callHost("killInstance", { instanceId: payload });
 });
+addReducer("killAllInstances", (global, actions, payload) => {
+	void callHost("killAllInstances");
+});
 
 addReducer("getGlobalVersions", () => {
 	void callHost("fetchVersions");
