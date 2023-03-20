@@ -523,7 +523,7 @@ p {
 .navItem {
     border-radius: 2px;
     transition: 0.2s all;
-    padding: 5px 8px;
+    padding: 6px 10px;
     position: relative;
     font-size: 16px;
     line-height: 20px;
