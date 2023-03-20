@@ -262,7 +262,7 @@ class Minecraft {
 
             fs.mkdirSync(directory, { recursive: true });
 
-            const runRetry = async () => {
+            const runRetry = async (e) => {
                 logg.debug(`[FILE] Failed to download ${url} to ${filepath} due to\n${e}.` + ` Retrying... ${retry}`);
                 if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
                 if (retry) return resolve(await this.downloadAsync(url, directory, filename, false, type));
@@ -294,11 +294,11 @@ class Minecraft {
                     resolve(true);
                 })
 
-                file.on('error', () => runRetry());
+                file.on('error', (e) => runRetry(e));
 
             });
 
-            _request.on('error', () => runRetry());
+            _request.on('error', (e) => runRetry(e));
 
             _request.on('data', (data) => {
                 receivedBytes += data.length;
