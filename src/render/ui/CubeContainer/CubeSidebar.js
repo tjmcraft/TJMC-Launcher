@@ -3,10 +3,11 @@ import { memo, createElement, Fragment } from "react";
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Util/Store";
 import useGlobal from "Hooks/useGlobal";
-import { selectCurrentVersionHash, selectInstallations } from "Model/Selectors/installations";
+import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
 
 import { SVG } from "UI/svg";
 import CubeSidebarItem from "./CubeSidebarItem";
+import InstanceItem from "./InstanceItem";
 
 
 const CubeSidebarItems = memo(() => {
@@ -30,6 +31,24 @@ const CubeSidebarItems = memo(() => {
 	);
 });
 
+const InstanceItems = memo(() => {
+
+	const instances = useGlobal(global => Object.keys(selectInstances(global)));
+
+	if (!instances.length) return (
+		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
+			<h1>{'Launch new instance'}</h1>
+		</div>
+	);
+
+	return instances.map((instanceId) =>
+		<InstanceItem
+			key={instanceId}
+			instanceId={instanceId}
+		/>
+	);
+});
+
 const CubeSidebar = () => {
 
 	const { openVersionChooserModal } = getDispatch();
@@ -48,7 +67,7 @@ const CubeSidebar = () => {
 				<h2 className={buildClassName('header-w', 'container-df')}>
 					<span>{"Instances"}</span>
 				</h2>
-				<CubeSidebarItems />
+				<InstanceItems />
 			</div>
 		</Fragment>
 	);
