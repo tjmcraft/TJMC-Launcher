@@ -2247,6 +2247,8 @@ a:hover {
 }
 .menu > .menu-container {
     background: var(--background-floating);
+}
+.menu.full > .menu-container {
     width: 100%;
 }
 

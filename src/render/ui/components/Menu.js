@@ -8,15 +8,16 @@ import { createPortal } from "react-dom";
 
 
 const Menu = ({
-	isOpen,
+	full = false,
+	isOpen = false,
 	children,
-	onClose,
-	onCloseEnd,
-	ref,
-	containerRef,
-	style,
-	positionX, positionY,
-	transformOriginX, transformOriginY,
+	onClose = void 0,
+	onCloseEnd = void 0,
+	ref = undefined,
+	containerRef = undefined,
+	style = undefined,
+	positionX = undefined, positionY = undefined,
+	transformOriginX = undefined, transformOriginY = undefined,
 }) => {
 
 	let menuRef = useRef(null);
@@ -34,7 +35,7 @@ const Menu = ({
 	const handleClose = (e) => { e.stopPropagation(); onClose(); };
 
 	return (
-		<div className={buildClassName("menu")} style={style}>
+		<div className={buildClassName("menu", full && "full")} style={style}>
 			<div ref={menuRef}
 				className={buildClassName(
 					positionX, positionY,

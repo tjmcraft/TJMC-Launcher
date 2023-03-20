@@ -80,6 +80,7 @@ const Select = ({
 				</div>
 			</InputGroup>
 			<Menu
+				full={true}
 				isOpen={isOpen}
 				containerRef={dropdownRef}
 				onClose={handleClose}
