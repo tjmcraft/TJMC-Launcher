@@ -21,3 +21,15 @@ export function selectVersions(global, type) {
 	}
 	return [];
 }
+
+
+export function selectInstances(global) {
+	return global.instances || {};
+}
+
+export function selectInstance(global, instanceId) {
+	if (global.instances && Object(global.instances).hasOwnProperty(instanceId)) {
+		return { ...global.instances[instanceId] };
+	}
+	return undefined;
+}

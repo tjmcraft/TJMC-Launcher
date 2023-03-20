@@ -294,6 +294,7 @@ const INITIAL_STATE = {
 	},
 	users: {},
 	installations: {},
+	instances: {},
 	versions: [],
 	modals: [],
 	configuration: undefined,

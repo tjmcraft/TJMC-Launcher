@@ -2,6 +2,7 @@ import { addReducer } from "Util/Store";
 import { callHost } from "../../api/host";
 import { updateInstallations, updateInstallationProgress } from "Model/Reducers/installations";
 import { updateVersions } from "Model/Reducers/versions";
+import { updateInstances } from "Model/Reducers/instances";
 
 addReducer("hostUpdate", (global, actions, update) => {
 	// console.debug(">>> HOST UPDATE:", update);
@@ -10,6 +11,7 @@ addReducer("hostUpdate", (global, actions, update) => {
 		case "updateInstallationsProgressLoad": return updateInstallationProgress(global, update);
 		case "updateInstallationsProgressDownload": return updateInstallationProgress(global, update);
 		case "updateVersions": return updateVersions(global, update);
+		case "updateInstances": return updateInstances(global, update);
 		default: return undefined;
 	}
 });

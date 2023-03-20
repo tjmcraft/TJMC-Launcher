@@ -1,7 +1,7 @@
 
-export function updateVersions(global, update) {
+export function updateVersions(global, { versions }) {
 	return {
 		...global,
-		versions: update.versions
+		versions: versions
 	};
 }

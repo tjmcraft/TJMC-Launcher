@@ -63,6 +63,10 @@ export function updater(update) {
 		});
 	} else if (type == "updateInstances") {
 		console.debug("updateInstances", "=>", payload);
+		payload?.instances && onUpdate({
+			type: "updateInstances",
+			instances: payload.instances,
+		});
 	} else if (type == "game.error") {
 		payload?.version_hash && onUpdate({
 			type: "updateGameError",
