@@ -50,11 +50,18 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 	return process;
 }
 
-function getInstanceById(id) {
+exports.getInstances = (less = false) => {
+	if (less) {
+		return Object.fromEntries(Object.entries(Object.fromEntries(instances)).map(([k, v]) =>
+			[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => ['hash'].includes(k)))]
+		));
+	}
+	return ([...instances] || []).map(([k, v]) => v);
+}
+exports.getInstanceById = (id) => {
 	return instances.get(id) || undefined;
 }
-
-function getInstanceByHash(hash) {
+exports.getInstanceByHash = (hash) => {
 	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k, v]) => v);
 }
 

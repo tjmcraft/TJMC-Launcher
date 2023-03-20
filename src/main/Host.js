@@ -8,6 +8,7 @@ const requestChannels = Object.seal({
 	invokeLaunch: 'invokeLaunch',
 	setProgress: 'setProgress',
 	fetchInstallations: 'fetchInstallations',
+	fetchInstances: 'fetchInstances',
 	fetchVersions: 'fetchVersions',
 	createInstallation: 'createInstallation',
 	removeInstallation: 'removeInstallation',
@@ -180,6 +181,11 @@ const initHandlers = async () => {
 	WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 		const versions = await VersionManager.getGlobalVersions();
 		return { versions };
+	});
+
+	WSSHost.addReducer(requestChannels.fetchInstances, async () => {
+		const instances = InstanceManager.getInstances(true);
+		return { instances: instances };
 	});
 
 	{ // Installations

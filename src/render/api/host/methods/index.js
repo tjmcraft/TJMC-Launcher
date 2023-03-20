@@ -16,3 +16,6 @@ export {
 	createInstallation,
 	removeInstallation
 } from './installation';
+export {
+	fetchInstances
+} from './instances';

@@ -1,5 +1,6 @@
 import { init as initClient } from "./methods/client";
 import { init as initInstallations } from "./methods/installation";
+import { init as initInstances } from "./methods/instances";
 import { init as initHostex } from "./methods/host";
 
 import { init as initUpdater } from "./updater";
@@ -13,6 +14,7 @@ export async function initHost(_onUpdate, initialArgs) {
 	initUpdater(onUpdate);
 	initHostex(onUpdate);
 	initInstallations(onUpdate);
+	initInstances(onUpdate);
 
 	await initClient(onUpdate, initialArgs);
 }

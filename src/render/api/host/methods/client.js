@@ -4,6 +4,7 @@ import { TJMCConnectionState } from "Libs/IPCHostConnect/IPCConnection";
 import { updater } from "../updater";
 import { fetchConfiguration, fetchHostInfo } from "./host";
 import { fetchInstallations } from "./installation";
+import { fetchInstances } from "./instances";
 
 let client;
 let onUpdate;
@@ -41,6 +42,7 @@ export async function init(_onUpdate, initialArgs) {
 		void fetchHostInfo();
 		void fetchConfiguration();
 		void fetchInstallations();
+		void fetchInstances();
 
 	} catch (err) {
 		console.error(">> connecting error");
