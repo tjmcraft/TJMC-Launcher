@@ -38,12 +38,12 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 							}[type] || null}
 						</div>
 					)}
-					<h1 className={buildClassName('wrapper', 'size20', appStyle.base)}>{ title }</h1>
+					<h1 className={buildClassName('wrapper', 'sizeW', appStyle.base)}>{ title }</h1>
 				</div>
 			)}
 			{content && (
 				<div className={buildClassName(style.content, 'thin-s', multiline && style.log)}>
-					<span className={buildClassName('colorStandart', 'size14')}>{ content }</span>
+					<span className={buildClassName('colorStandart', 'size16')}>{ content }</span>
 				</div>
 			)}
 			<ModalFooter>
