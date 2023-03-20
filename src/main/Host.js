@@ -27,6 +27,7 @@ exports.requestChannels = requestChannels;
 const ackChannels = Object.seal({
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
+	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
 	gameProgressDownload: 'game.progress.download',
 	gameStartupSuccess: 'game.startup.success',
@@ -72,6 +73,7 @@ const { launchMinecraft } = require('./Launcher');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
+const InstanceManager = require('./managers/InstanceManager');
 
 /**
 * Init reducers for TCHost
@@ -95,6 +97,10 @@ const initHandlers = async () => {
 	InstallationsManager.addCallback(config => {
 		// console.debug("Update Installations:", config);
 		config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
+	});
+
+	InstanceManager.addCallback(instances => {
+		instances && WSSHost.emit(ackChannels.updateInstances, { instances: instances });
 	});
 
 	{ // Updates

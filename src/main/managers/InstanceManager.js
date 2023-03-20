@@ -7,7 +7,7 @@ const logger = LoggerUtil('%c[InstanceManager]', 'color: #f6fe10; font-weight: b
 
 const instances = new Map();
 
-function createInstance(hash, javaPath, javaArgs, options = {}) {
+exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 	logger.debug(`Launching ${hash} with arguments ${javaPath} ${javaArgs.join(' ')}`);
 
 	const id = generateIdFor(instances);
@@ -44,6 +44,8 @@ function createInstance(hash, javaPath, javaArgs, options = {}) {
 		});
 	}
 
+	runCallbacks();
+
 	return process;
 }
 
@@ -52,9 +54,21 @@ function getInstanceById(id) {
 }
 
 function getInstanceByHash(hash) {
-	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k,v]) => v);
+	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k, v]) => v);
 }
 
 
+const callbacks = [void 0];
 
-exports.createInstance = createInstance;
+this.addCallback = (callback = (instances) => void 0) => {
+	if (typeof callback === "function") callbacks.push(callback);
+};
+
+this.removeCallback = (callback = (instances) => void 0) => {
+	const index = callbacks.indexOf(callback);
+	if (index !== -1) callbacks.splice(index, 1);
+};
+
+const runCallbacks = () => {
+	callbacks.forEach((callback) => typeof callback === "function" ? callback(Object.fromEntries(instances)) : null);
+};
