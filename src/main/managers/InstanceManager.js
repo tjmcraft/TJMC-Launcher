@@ -28,6 +28,7 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 			javaArgs: javaArgs,
 		});
 		instances.set(id, instance);
+		runCallbacks();
 	};
 
 	if (!options.disableLogging) {
@@ -41,10 +42,10 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 
 		process.on('close', (code) => {
 			logger.warn(`{${hash}}`, "ExitCode:", code);
+			instances.delete(id);
+			runCallbacks();
 		});
 	}
-
-	runCallbacks();
 
 	return process;
 }
@@ -70,5 +71,8 @@ this.removeCallback = (callback = (instances) => void 0) => {
 };
 
 const runCallbacks = () => {
-	callbacks.forEach((callback) => typeof callback === "function" ? callback(Object.fromEntries(instances)) : null);
+	const filteredInstances = Object.fromEntries(Object.entries(Object.fromEntries(instances)).map(([k, v]) =>
+		[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => ['hash'].includes(k)))]
+	));
+	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances) : null);
 };

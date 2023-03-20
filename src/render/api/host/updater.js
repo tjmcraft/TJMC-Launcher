@@ -61,6 +61,8 @@ export function updater(update) {
 			type: "updateConfiguration",
 			configuration: payload.configuration,
 		});
+	} else if (type == "updateInstances") {
+		console.debug("updateInstances", "=>", payload);
 	} else if (type == "game.error") {
 		payload?.version_hash && onUpdate({
 			type: "updateGameError",

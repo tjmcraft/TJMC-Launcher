@@ -100,6 +100,7 @@ const initHandlers = async () => {
 	});
 
 	InstanceManager.addCallback(instances => {
+		// console.debug("Update Instances:", instances);
 		instances && WSSHost.emit(ackChannels.updateInstances, { instances: instances });
 	});
 
