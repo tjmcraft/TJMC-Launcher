@@ -42,6 +42,11 @@ addReducer("removeInstallation", (global, actions, payload) => {
 	void callHost("removeInstallation", { hash, forceDeps });
 });
 
+addReducer("killInstance", (global, actions, payload) => {
+	if (!payload) return;
+	void callHost("killInstance", { instanceId: payload });
+});
+
 addReducer("getGlobalVersions", () => {
 	void callHost("fetchVersions");
 });

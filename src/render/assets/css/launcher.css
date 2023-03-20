@@ -339,7 +339,6 @@ tt, code, samp {
 }
 
 .status-container {
-    margin-left: auto;
     display: flex;
     align-items: center;
     padding: 0 0 0 5px;
@@ -515,6 +514,7 @@ p {
     text-overflow: inherit;
     overflow: inherit;
     font-weight: inherit;
+    flex: 1;
 }
 
 .navItem {
@@ -546,6 +546,17 @@ p {
 
 .navItem.processing {
     color: var(--brand-color) !important;
+}
+
+.navItem.noAction {
+    cursor: default;
+}
+
+.navItem .simple-button {
+    visibility: hidden;
+}
+.navItem:hover .simple-button {
+    visibility: visible;
 }
 
 .header {
