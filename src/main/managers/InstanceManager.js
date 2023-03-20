@@ -40,11 +40,11 @@ function createInstance(hash, javaPath, javaArgs, options = {}) {
 		});
 
 		process.on('close', (code) => {
-			logger.warn(`{${hash}}` + code);
+			logger.warn(`{${hash}}`, "ExitCode:", code);
 		});
 	}
 
-	return id;
+	return process;
 }
 
 function getInstanceById(id) {

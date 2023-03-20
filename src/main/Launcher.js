@@ -1,3 +1,4 @@
+const { createInstance } = require('./managers/InstanceManager');
 
 const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; font-weight: bold;');
 
@@ -50,8 +51,11 @@ exports.launchMinecraft = async (version_hash, params = {}) => {
 
 		const javaPath = await launcher.getJava();
 		const minecraftArguments = await launcher.construct();
-		const jvm = await launcher.createJVM(javaPath, minecraftArguments);
-		logger.log("[Main]", "Starting minecraft! Version Hash:", version_hash);
+		const jvm = await createInstance(version_hash, javaPath, minecraftArguments, {
+			cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.root,
+      detached: launcherOptions.java.detached
+		});
+
 
 		let error_out = null,
 			std_out = null,

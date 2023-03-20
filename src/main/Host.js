@@ -163,19 +163,12 @@ const initHandlers = async () => {
 		});
 	}
 
-	WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
-		if (data.version_hash) {
-			let result;
-			try {
-				result = await launchMinecraft(data.version_hash, data.params = {});
-			} catch (err) {
-				console.error(err);
-				return false;
-			}
-			return result;
-		}
-		return false;
-	});
+	WSSHost.addReducer(requestChannels.invokeLaunch, (data) => new Promise((resolve) => {
+		if (!data.version_hash) return resolve(false);
+		launchMinecraft(data.version_hash, data.params = {}).then((result) => {
+			resolve(result);
+		}).catch(() => resolve(false));
+	}));
 
 	WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 		const versions = await VersionManager.getGlobalVersions();

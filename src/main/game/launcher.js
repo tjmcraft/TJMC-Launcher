@@ -77,34 +77,6 @@ class launcher extends EventEmitter {
         return args;
     }
 
-    async createJVM(java, launchArguments) {
-
-        this.logger.debug(`Launching with arguments:\n${java}\xa0${launchArguments.join(' ')}`);
-
-        const jvm = child.spawn(
-            java,
-            launchArguments,
-            {
-                encoding: 'utf8',
-                cwd: this.options.java.cwd || this.options.overrides.path.root,
-                detached: this.options.java.detached
-            }
-        );
-
-        jvm.stdout.on('data', (data) => {
-            this.logger.log(data.toString('utf-8'));
-        });
-
-        jvm.stderr.on('data', (data) => {
-            this.logger.error(data.toString('utf-8'));
-        });
-
-        jvm.on('close', (code) => {
-            this.logger.warn('ExitCode: ' + code);
-        });
-
-        return jvm;
-    }
 }
 
 function getOfflineUUID(username) {
