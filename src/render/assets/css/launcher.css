@@ -841,6 +841,8 @@ body {
     border-top: 2px solid var(--background-modifier-selected);
     box-shadow: 0 0, 0 10px 20px 10px var(--color-shadow);
     min-height: 10vh;
+    max-height: 35vh;
+    overflow: hidden overlay;
 }
 
 .sidebar-main > .container-3Wc7 > .scroller {
@@ -862,10 +864,12 @@ body {
     font-size: 1.2em;
 }
 .sidebar-main > .container-3Wc7 > .scroller + .scroller .header-w {
-    padding: 8px 8px 4px 18px;
+    padding: 8px 16px 8px 18px;
     height: 32px;
     position: sticky;
     top: 0;
+    background-color: var(--background-modifier-accent);
+    margin-bottom: 4px;
 }
 .sidebar-main > .container-3Wc7 .header-w {
     z-index: 1;
@@ -884,6 +888,12 @@ body {
 .sidebar-main > .container-3Wc7 .header-w span {
     flex: 1;
     font-weight: 600;
+}
+
+.sidebar-main > .container-3Wc7 > .scroller + .scroller .navItem {
+    margin-bottom: 1px;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .container-df {
