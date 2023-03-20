@@ -63,7 +63,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	const handleRemoveClick = useCallback((e) => {
 		alert({
 			title: "Удаление версии",
-			content: `Вы дествительно хотите удалить установку "${name}" с вашего компьютера?`,
+			content: `Вы действительно хотите удалить установку "${name}" с вашего компьютера?`,
 			type: "error",
 			buttons: [
 				{

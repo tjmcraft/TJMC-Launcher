@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment } from "react";
+import { memo, createElement, Fragment, useCallback } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Util/Store";
@@ -42,11 +42,35 @@ const InstallationsScroller = memo(() => {
 });
 
 const InstanceScroller = memo(() => {
+	const { killAllInstances, alert } = getDispatch();
 	const instances = useGlobal(global => Object.keys(selectInstances(global)));
+	const handleKillAll = useCallback(() => {
+		alert({
+			title: "Остановить всё",
+			content: `Вы действительно хотите остановить все запущенные версии?`,
+			type: "error",
+			buttons: [
+				{
+					name: "Отмена",
+					closeOverlay: true,
+				},
+				{
+					name: "Остановить",
+					class: ["filled", "colorRed"],
+					closeOverlay: true,
+					callback: () => {
+						killAllInstances();
+					}
+				}
+			],
+			mini: true,
+		});
+	}, [killAllInstances, alert]);
 	return instances.length > 0 && (
 		<div className={buildClassName('scroller', 'thin-s')}>
 			<h2 className={buildClassName('header-w', 'container-df')}>
-				<span>{"Instances"}</span>
+				<span>{"Запущенные"}</span>
+				<div className={'simple-button'} onClick={handleKillAll} title="Kill all instances">{SVG('cross')}</div>
 			</h2>
 			{instances.map((instanceId) =>
 				<InstanceItem
