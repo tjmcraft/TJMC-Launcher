@@ -1,4 +1,4 @@
-import { memo, createElement } from "react";
+import { memo, createElement, Fragment } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Util/Store";
@@ -15,8 +15,9 @@ const CubeSidebarItems = memo(() => {
 	const currentHash = useGlobal(selectCurrentVersionHash);
 
 	if (!installations.length) return (
-		createElement('div', { class: buildClassName('item', "d-flex", "centred", 'fp') },
-			createElement('h1', {}, 'Добавьте версию'))
+		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
+			<h1>{'Добавьте версию'}</h1>
+		</div>
 	);
 
 	return (
@@ -29,18 +30,28 @@ const CubeSidebarItems = memo(() => {
 	);
 });
 
-const CubeSidebar = memo(() => {
+const CubeSidebar = () => {
 
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
 
 	return (
-		createElement('div', { class: buildClassName('scroller', 'thin-s') },
-			createElement('h2', { class: buildClassName('header-w', 'container-df') },
-				createElement('span', null, 'Версии'),
-				createElement('div', { class: 'simple-button', onClick }, SVG('add-plus')),),
-			createElement(CubeSidebarItems))
+		<Fragment>
+			<div className={buildClassName('scroller', 'thin-s')}>
+				<h2 className={buildClassName('header-w', 'container-df')}>
+					<span>{"Версии"}</span>
+					<div className={'simple-button'} onClick={onClick}>{SVG('add-plus')}</div>
+				</h2>
+				<CubeSidebarItems />
+			</div>
+			<div className={buildClassName('scroller', 'thin-s')}>
+				<h2 className={buildClassName('header-w', 'container-df')}>
+					<span>{"Instances"}</span>
+				</h2>
+				<CubeSidebarItems />
+			</div>
+		</Fragment>
 	);
-});
+};
 
-export default CubeSidebar;
+export default memo(CubeSidebar);

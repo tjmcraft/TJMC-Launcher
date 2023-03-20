@@ -821,9 +821,14 @@ body {
     flex: 1;
 }
 
+.sidebar-main > .container-3Wc7 > .scroller + .scroller {
+    flex: 0 1 30%;
+    border-top: 2px solid var(--background-modifier-selected);
+}
+
 .sidebar-main > .container-3Wc7 > .scroller {
     padding-right: 0;
-    padding-top: 4px;
+    padding-top: 0;
     padding-bottom: 4px;
     overflow: hidden scroll;
     background: var(--background-secondary);
@@ -839,12 +844,19 @@ body {
     line-height: normal;
     font-size: 1.2em;
 }
-
+.sidebar-main > .container-3Wc7 > .scroller + .scroller .header-w {
+    padding: 10px 8px 4px 18px;
+    height: 32px;
+    position: sticky;
+    top: 0;
+}
 .sidebar-main > .container-3Wc7 .header-w {
+    z-index: 1;
     display: flex;
-    padding: 18px 8px 4px 18px;
+    padding: 18px 12px 4px 18px;
     height: 40px;
     color: var(--interactive-normal);
+    background-color: var(--background-secondary);
 }
 
 .sidebar-main > .container-3Wc7 .header-w:hover {

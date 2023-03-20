@@ -1,16 +1,19 @@
-import { createElement } from "react";
+import { createElement, memo } from "react";
 import MainSidebar from "UI/MainSidebar";
 import CubeSidebar from "./CubeSidebar";
 import CubeContent from "./CubeMainContent";
 
 const CubeContainer = () => {
 	return (
-		createElement('div', { id: 'cube', class: 'base', },
-			createElement('div', { class: 'content' },
-				createElement(MainSidebar, null,
-					createElement(CubeSidebar)),
-				createElement(CubeContent),))
+		<div className="base" id="cube">
+			<div className="content">
+				<MainSidebar>
+					<CubeSidebar />
+				</MainSidebar>
+				<CubeContent />
+			</div>
+		</div>
 	);
 };
 
-export default CubeContainer;
+export default memo(CubeContainer);

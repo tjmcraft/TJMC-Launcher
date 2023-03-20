@@ -10,13 +10,14 @@ const Test = memo(({ hash }) => {
 	return (<h1>{name} - {hash}</h1>);
 });
 
-const CubeMainContainer = memo(({ hash }) => {
+const CubeMainContainer = ({ hash }) => {
+
 	if (APP_ENV == "production") return null;
 	return (
 		<div class="main">
 			<Test hash={hash} />
 		</div>
 	);
-});
+};
 
-export default CubeMainContainer;
+export default memo(CubeMainContainer);
