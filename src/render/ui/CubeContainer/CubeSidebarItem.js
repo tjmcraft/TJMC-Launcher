@@ -13,6 +13,7 @@ import Menu from "UI/components/Menu";
 import MenuItem from "UI/components/MenuItem";
 import useHostOnline from "Hooks/useHostOnline";
 import useGlobal from "Hooks/useGlobal";
+import Portal from "UI/components/Portal";
 
 
 const CubeSidebarItem = ({ hash, isSelected }) => {
@@ -39,7 +40,6 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
-	const getTriggerElement = useCallback(() => containerRef.current, []);
 
 	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'), []);
 
@@ -48,9 +48,10 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	const {
 		positionX, positionY, style: menuStyle, transformOriginX, transformOriginY,
 	} = useContextMenuPosition(contextMenuPosition,
-		getTriggerElement,
 		getRootElement,
 		getMenuElement,);
+
+	useEffect(() => console.debug(">>ctxp", contextMenuPosition), [contextMenuPosition]);
 
 	const handleClick = useCallback(() => {
 		setVersionHash(hash);
@@ -104,18 +105,20 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 						createElement(PendingProgress)
 				) : null),
 			contextMenuPosition != undefined && (
-				<Menu
-					isOpen={isContextMenuOpen}
-					onClose={handleContextMenuClose}
-					onCloseEnd={handleContextMenuHide}
-					style={menuStyle}
-					positionX={positionX} positionY={positionY}
-					transformOriginX={transformOriginX} transformOriginY={transformOriginY}
-				>
-					<MenuItem compact onClick={handleClick}>Select</MenuItem>
-					<MenuItem compact onClick={handleLaunchClick} disabled={isProcessing}><span className="">Launch</span></MenuItem>
-					<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}><span className="color-red">Remove</span></MenuItem>
-				</Menu>
+				<Portal>
+					<Menu
+						isOpen={isContextMenuOpen}
+						onClose={handleContextMenuClose}
+						onCloseEnd={handleContextMenuHide}
+						style={menuStyle}
+						positionX={positionX} positionY={positionY}
+						transformOriginX={transformOriginX} transformOriginY={transformOriginY}
+					>
+						<MenuItem compact onClick={handleClick}>Select</MenuItem>
+						<MenuItem compact onClick={handleLaunchClick} disabled={isProcessing}><span className="">Launch</span></MenuItem>
+						<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}><span className="color-red">Remove</span></MenuItem>
+					</Menu>
+				</Portal>
 			)
 		)
 	);

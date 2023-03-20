@@ -8,7 +8,6 @@ const EMPTY_RECT = {
 
 export default function useContextMenuPosition(
 	anchor,
-	getTriggerElement,
 	getRootElement,
 	getMenuElement,
 	getLayout = undefined,
@@ -22,8 +21,7 @@ export default function useContextMenuPosition(
 	const [menuStyle, setMenuStyle] = useState('opacity: 0;');
 
 	useEffect(() => {
-		const triggerEl = getTriggerElement();
-		if (!anchor || !triggerEl) {
+		if (!anchor) {
 			return;
 		}
 
@@ -88,23 +86,20 @@ export default function useContextMenuPosition(
 		}
 		setPositionY(verticalPosition);
 
-		const triggerRect = triggerEl.getBoundingClientRect();
-		const left = horizontalPosition === 'left'
-			? Math.min(x - triggerRect.left, rootRect.width - menuRect.width - MENU_POSITION_VISUAL_COMFORT_SPACE_PX)
-			: (x - triggerRect.left);
-		const top = y - triggerRect.top;
+		const left = x;
+		const top = y;
 
 		const menuMaxHeight = rootRect.height - MENU_POSITION_BOTTOM_MARGIN - (marginTop || 0);
 
 		setWithScroll(menuMaxHeight < menuRect.height);
 		setMenuStyle(`max-height: ${menuMaxHeight}px;`);
 		setStyle(`left: ${left}px; top: ${top}px`);
-		const offsetX = (anchorX - triggerRect.left) - left;
-		const offsetY = (anchorY - triggerRect.top) - top - (marginTop || 0);
+		const offsetX = (anchorX) - left;
+		const offsetY = (anchorY) - top - (marginTop || 0);
 		setTransformOriginX(horizontalPosition === 'left' ? offsetX : menuRect.width + offsetX);
 		setTransformOriginY(verticalPosition === 'bottom' ? menuRect.height + offsetY : offsetY);
 	}, [
-		anchor, getMenuElement, getRootElement, getTriggerElement, getLayout,
+		anchor, getMenuElement, getRootElement, getLayout,
 	]);
 
 	return {
