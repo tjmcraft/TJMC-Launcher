@@ -548,7 +548,7 @@ p {
 }
 
 .navItem.processing {
-    color: var(--brand-color) !important;
+    /* color: var(--brand-color) !important; */
 }
 
 .navItem.noAction {
