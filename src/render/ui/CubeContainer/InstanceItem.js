@@ -19,9 +19,9 @@ const InstanceItem = ({ instanceId }) => {
 	}, [instanceId]);
 	const handleKill = useCallback(() => killInstance(instanceId), [killInstance, instanceId]);
 	return instanceId && (
-		<div className={buildClassName('item', 'navItem', 'noAction')}>
+		<div className={buildClassName('item', 'navItem', 'noAction', 'processing')}>
 			<span>{name || hash || instanceId}</span>
-			<div className="simple-button" title="Kill instance" onClick={handleKill}>{SVG('cross')}</div>
+			<div className={buildClassName("button", "small")} title="Kill instance" onClick={handleKill}>{SVG('cross')}</div>
 		</div>
 	);
 };

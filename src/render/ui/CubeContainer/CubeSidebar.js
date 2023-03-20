@@ -34,7 +34,7 @@ const InstallationsScroller = memo(() => {
 		<div className={buildClassName('scroller', 'thin-s')}>
 			<h2 className={buildClassName('header-w', 'container-df')}>
 				<span>{"Версии"}</span>
-				<div className={'simple-button'} onClick={onClick}>{SVG('add-plus')}</div>
+				<div className={buildClassName("button", "small")} onClick={onClick}>{SVG('add-plus')}</div>
 			</h2>
 			<CubeSidebarItems />
 		</div>
@@ -70,7 +70,7 @@ const InstanceScroller = memo(() => {
 		<div className={buildClassName('scroller', 'thin-s')}>
 			<h2 className={buildClassName('header-w', 'container-df')}>
 				<span>{"Запущенные"}</span>
-				<div className={'simple-button'} onClick={handleKillAll} title="Kill all instances">{SVG('cross')}</div>
+				<div className={buildClassName("button", "small")} onClick={handleKillAll} title="Kill all instances">{SVG('cross')}</div>
 			</h2>
 			{instances.map((instanceId) =>
 				<InstanceItem

@@ -552,10 +552,10 @@ p {
     cursor: default;
 }
 
-.navItem .simple-button {
+.navItem .button {
     visibility: hidden;
 }
-.navItem:hover .simple-button {
+.navItem:hover .button {
     visibility: visible;
 }
 
@@ -859,7 +859,7 @@ body {
     font-size: 1.2em;
 }
 .sidebar-main > .container-3Wc7 > .scroller + .scroller .header-w {
-    padding: 10px 8px 4px 18px;
+    padding: 8px 8px 4px 18px;
     height: 32px;
     position: sticky;
     top: 0;
@@ -867,6 +867,7 @@ body {
 .sidebar-main > .container-3Wc7 .header-w {
     z-index: 1;
     display: flex;
+    align-items: center;
     padding: 18px 12px 4px 18px;
     height: 40px;
     color: var(--interactive-normal);
@@ -879,24 +880,6 @@ body {
 
 .sidebar-main > .container-3Wc7 .header-w span {
     flex: 1;
-}
-
-.simple-button {
-    width: 16px;
-    flex: 0;
-    height: 16px;
-    margin-left: 0;
-    margin-right: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--interactive-normal);
-    transition: none;
-    cursor: pointer;
-}
-
-.simple-button:hover {
-    color: var(--interactive-hover);
 }
 
 .container-df {
@@ -1162,10 +1145,15 @@ body {
     cursor: pointer;
     transition: all .2s;
 }
-
 .button:hover {
     color: var(--interactive-hover);
     background-color: var(--background-modifier-selected);
+}
+
+.button.small {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
 }
 
 .bb {
