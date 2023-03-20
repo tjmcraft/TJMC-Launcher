@@ -70,7 +70,7 @@ exports.launchMinecraft = async (version_hash, params = {}) => {
 		});
 
 		jvm.on('close', (code) => {
-			if (code != 0) {
+			if (code != 0 && code != 143) {
 				MainWindow.setProgressBar(-1);
 				Host.Bridge.emit(Host.ackChannels.gameStartupError, {
 					error: logg_out,

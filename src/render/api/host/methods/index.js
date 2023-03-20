@@ -17,5 +17,6 @@ export {
 	removeInstallation
 } from './installation';
 export {
-	fetchInstances
+	fetchInstances,
+	killInstance,
 } from './instances';

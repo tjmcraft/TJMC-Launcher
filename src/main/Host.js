@@ -9,6 +9,7 @@ const requestChannels = Object.seal({
 	setProgress: 'setProgress',
 	fetchInstallations: 'fetchInstallations',
 	fetchInstances: 'fetchInstances',
+	killInstance: 'killInstance',
 	fetchVersions: 'fetchVersions',
 	createInstallation: 'createInstallation',
 	removeInstallation: 'removeInstallation',
@@ -100,11 +101,6 @@ const initHandlers = async () => {
 		config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
 	});
 
-	InstanceManager.addCallback(instances => {
-		// console.debug("Update Instances:", instances);
-		instances && WSSHost.emit(ackChannels.updateInstances, { instances: instances });
-	});
-
 	{ // Updates
 		autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
 		autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking }));
@@ -183,10 +179,19 @@ const initHandlers = async () => {
 		return { versions };
 	});
 
-	WSSHost.addReducer(requestChannels.fetchInstances, async () => {
-		const instances = InstanceManager.getInstances(true);
-		return { instances: instances };
-	});
+	{ // Instances
+		InstanceManager.addCallback(instances => {
+			// console.debug("Update Instances:", instances);
+			instances && WSSHost.emit(ackChannels.updateInstances, { instances: instances });
+		});
+		WSSHost.addReducer(requestChannels.fetchInstances, async () => {
+			const instances = InstanceManager.getInstances(true);
+			return { instances: instances };
+		});
+		WSSHost.addReducer(requestChannels.killInstance, async ({ instanceId }) =>
+			await InstanceManager.killInstance(instanceId)
+		);
+	}
 
 	{ // Installations
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {

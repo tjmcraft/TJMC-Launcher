@@ -22,3 +22,17 @@ export async function fetchInstances() {
 	});
 	return result.payload;
 }
+
+export async function killInstance(options = {}) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "killInstance",
+			data: options,
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}

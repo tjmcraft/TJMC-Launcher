@@ -1,7 +1,7 @@
 
 const { generateIdFor } = require("../util/Random");
 const LoggerUtil = require("../util/loggerutil");
-const child = require('child_process')
+const { spawn } = require('child_process');
 const logger = LoggerUtil('%c[InstanceManager]', 'color: #f6fe10; font-weight: bold');
 
 
@@ -11,18 +11,22 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 	logger.debug(`Launching ${hash} with arguments ${javaPath} ${javaArgs.join(' ')}`);
 
 	const id = generateIdFor(instances);
-	const process = child.spawn(
+
+	const controller = new AbortController();
+	const currentProcess = spawn(
 		javaPath, javaArgs,
 		{
 			encoding: 'utf8',
 			cwd: options.cwd || process.cwd,
 			detached: options.detached,
+			signal: controller.signal,
 		}
 	);
 
 	if (!instances.get(id)) {
 		const instance = Object.seal({
-			process: process,
+			process: currentProcess,
+			controller: controller,
 			hash: hash,
 			javaPath: javaPath,
 			javaArgs: javaArgs,
@@ -32,22 +36,22 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 	};
 
 	if (!options.disableLogging) {
-		process.stdout.on('data', (data) => {
+		currentProcess.stdout.on('data', (data) => {
 			logger.log(`{${hash}}`, data.toString('utf-8'));
 		});
 
-		process.stderr.on('data', (data) => {
+		currentProcess.stderr.on('data', (data) => {
 			logger.error(`{${hash}}`, data.toString('utf-8'));
 		});
 
-		process.on('close', (code) => {
+		currentProcess.on('close', (code) => {
 			logger.warn(`{${hash}}`, "ExitCode:", code);
 			instances.delete(id);
 			runCallbacks();
 		});
 	}
 
-	return process;
+	return currentProcess;
 }
 
 exports.getInstances = (less = false) => {
@@ -58,11 +62,17 @@ exports.getInstances = (less = false) => {
 	}
 	return ([...instances] || []).map(([k, v]) => v);
 }
-exports.getInstanceById = (id) => {
-	return instances.get(id) || undefined;
+exports.getInstanceById = (instanceId) => {
+	return instances.get(instanceId) || undefined;
 }
 exports.getInstanceByHash = (hash) => {
 	return ([...instances].filter(([key, value]) => value.hash == hash) || []).map(([k, v]) => v);
+}
+
+exports.killInstance = (instanceId) => {
+	const instance = instances.get(instanceId);
+	console.debug(">>kill", instance.hash);
+	return instance.process.kill();
 }
 
 
