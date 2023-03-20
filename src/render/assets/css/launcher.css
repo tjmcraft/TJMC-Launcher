@@ -801,6 +801,7 @@ body {
 }
 
 .sidebar-main>.panel {
+    z-index: 1;
     flex: 0 0 auto;
     height: 48px;
     background-color: var(--background-secondary-alt);
@@ -822,8 +823,9 @@ body {
 }
 
 .sidebar-main > .container-3Wc7 > .scroller + .scroller {
-    flex: 0 1 30%;
+    flex: 0 1 20%;
     border-top: 2px solid var(--background-modifier-selected);
+    box-shadow: 0 0, 0 10px 20px 10px var(--color-shadow);
 }
 
 .sidebar-main > .container-3Wc7 > .scroller {
