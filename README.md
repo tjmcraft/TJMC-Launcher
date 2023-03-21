@@ -1,6 +1,7 @@
 # TJMC-Launcher
 <p align="center">
   <img width="500" alt="TJMC-Launcher White" src="assets/tjmc-launcher-w.png">
+  <img width="500" alt="TJMC-Launcher Black" src="assets/tjmc-launcher-b.png">
 </p>
 This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*.
 
