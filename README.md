@@ -25,6 +25,7 @@ cd TJMC-Launcher
 To update the source code to the latest commit, run the following command inside the `TJMC-Launcher` directory:
 
 ```shell
+git fetch
 git pull
 ```
 
