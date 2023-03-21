@@ -62,7 +62,6 @@ export function updater(update) {
 			configuration: payload.configuration,
 		});
 	} else if (type == "updateInstances") {
-		console.debug("updateInstances", "=>", payload);
 		payload?.instances && onUpdate({
 			type: "updateInstances",
 			instances: payload.instances,
