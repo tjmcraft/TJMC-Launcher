@@ -1,7 +1,7 @@
 # TJMC-Launcher
-<p align="center" style="display:flex;flex-direction:row;">
-  <img alt="TJMC-Launcher White" src="assets/tjmc-launcher-w.png" width="450">
-  <img alt="TJMC-Launcher Black" src="assets/tjmc-launcher-b.png" width="450">
+<p align="center">
+  <img alt="TJMC-Launcher White" src="assets/tjmc-launcher-w.png" width="400">
+  <img alt="TJMC-Launcher Black" src="assets/tjmc-launcher-b.png" width="400">
 </p>
 
 ## About project
