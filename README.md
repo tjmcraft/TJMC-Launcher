@@ -4,14 +4,14 @@
   <img alt="TJMC-Launcher Black" src="assets/tjmc-launcher-b-min.png" width="400">
 </p>
 
-## About project
+## About project ✨
 This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to `TJMC-Company` (for *non-commercial* purpose only). \
 TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
-## Download
+## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
-## Developing
+## Developing 🐱‍💻
 
 ### Downloading the source code:
 
@@ -47,7 +47,7 @@ git pull
 `npm run deploy:linux-snap` - Build and publish electron app for linux and publish to snap store \
 `npm run deploy:multi` - Build and publish electron app for all available platforms
 
-## Libraries
+## Libraries 🎞
 
 ### Used libraries for **Host**:
  - [**Electron**](https://github.com/electron/electron)
@@ -77,5 +77,5 @@ git pull
  - [remark-gfm](https://github.com/remarkjs/remark-gfm)
  - [platform](https://github.com/bestiejs/platform.js)
 
- ## License
+ ## License 📝
  All code are licensed under [MIT Licence](https://github.com/tjmcraft/TJMC-Launcher/blob/main/LICENSE)
