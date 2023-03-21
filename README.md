@@ -3,8 +3,9 @@
   <img width="500" alt="TJMC-Launcher White" src="assets/tjmc-launcher-w.png">
   <img width="500" alt="TJMC-Launcher Black" src="assets/tjmc-launcher-b.png">
 </p>
-This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*.
 
+## About project
+This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*. \
 TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **modded** versions of **Java Minecraft**.
 
 ## Download
