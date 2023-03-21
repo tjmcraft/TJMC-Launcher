@@ -49,9 +49,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		positionX, positionY, style: menuStyle, transformOriginX, transformOriginY,
 	} = useContextMenuPosition(contextMenuPosition,
 		getRootElement,
-		getMenuElement,);
-
-	useEffect(() => console.debug(">>ctxp", contextMenuPosition), [contextMenuPosition]);
+		getMenuElement);
 
 	const handleClick = useCallback(() => {
 		setVersionHash(hash);

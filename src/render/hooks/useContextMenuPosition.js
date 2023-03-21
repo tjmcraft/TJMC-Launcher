@@ -12,8 +12,8 @@ export default function useContextMenuPosition(
 	getMenuElement,
 	getLayout = undefined,
 ) {
-	const [positionX, setPositionX] = useState('right');
-	const [positionY, setPositionY] = useState('bottom');
+	const [positionX, setPositionX] = useState('top');
+	const [positionY, setPositionY] = useState('left');
 	const [transformOriginX, setTransformOriginX] = useState();
 	const [transformOriginY, setTransformOriginY] = useState();
 	const [withScroll, setWithScroll] = useState(false);
