@@ -1,10 +1,13 @@
 # TJMC-Launcher
+<p align="center">
+  <img width="500" alt="TJMC-Launcher White" src="assets/tjmc-launcher-w.png">
+</p>
 This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*.
 
 TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **modded** versions of **Java Minecraft**.
 
 ## Download
-If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases). 
+If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
 ## Developing
 
@@ -39,7 +42,7 @@ git pull
 `npm run deploy:mac` - Build and publish electron app only for darwin \
 `npm run deploy:linux` - Build and publish electron app only for linux \
 `npm run deploy:linux-snap` - Build and publish electron app for linux and publish to snap store \
-`npm run deploy:multi` - Build and publish electron app for all available platforms 
+`npm run deploy:multi` - Build and publish electron app for all available platforms
 
 ## Libraries
 
@@ -52,6 +55,6 @@ git pull
  - **[md5](https://github.com/pvorb/node-md5)**
  - **[request](https://github.com/request/request)**
  - **[ws](https://github.com/websockets/ws)**
- 
+
  ## License
  All code are licensed under [MIT Licence](https://github.com/tjmcraft/TJMC-Launcher/blob/main/LICENSE)
