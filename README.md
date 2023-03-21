@@ -17,14 +17,14 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 
 Clone the repository with `git`:
 
-```shell
+```sh
 git clone https://github.com/tjmcraft/TJMC-Launcher
 cd TJMC-Launcher
 ```
 
 To update the source code to the latest commit, run the following command inside the `TJMC-Launcher` directory:
 
-```shell
+```sh
 git fetch
 git pull
 ```
@@ -49,15 +49,31 @@ git pull
 
 ## Libraries
 
-### Used libraries for host:
- - **[electron](https://github.com/electron/electron)**
- - **[electron-builder](https://github.com/electron-userland/electron-builder)**
- - **[adm-zip](https://github.com/cthackers/adm-zip)**
- - **[fs-extra](https://github.com/jprichardson/node-fs-extra)**
- - **[got](https://github.com/sindresorhus/got)**
- - **[md5](https://github.com/pvorb/node-md5)**
- - **[request](https://github.com/request/request)**
- - **[ws](https://github.com/websockets/ws)**
+### Used libraries for **Host**:
+ - [**Electron**](https://github.com/electron/electron)
+ - [electron-builder](https://github.com/electron-userland/electron-builder)
+ - [adm-zip](https://github.com/cthackers/adm-zip)
+ - [fs-extra](https://github.com/jprichardson/node-fs-extra)
+ - [got](https://github.com/sindresorhus/got)
+ - [md5](https://github.com/pvorb/node-md5)
+ - [Request](https://github.com/request/request)
+ - [ws](https://github.com/websockets/ws)
+ 
+ ### Used libraries for **UI**:
+ - [**Babel**](https://github.com/babel/babel)
+ - [**Preact**](https://github.com/preactjs/preact)
+ - [**Webpack**](https://github.com/webpack/webpack)
+ - [css-loader](https://github.com/webpack-contrib/css-loader)
+ - [html-webpack-loader](https://github.com/maskletter/html-webpack-loader)
+ - [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
+ - [style-loader](https://github.com/webpack-contrib/style-loader)
+ - [svg-inline-loader](https://github.com/webpack-contrib/svg-inline-loader)
+ - [svg-url-loader](https://github.com/bhovhannes/svg-url-loader)
+ - [terser-webpack-plugin](https://github.com/webpack-contrib/terser-webpack-plugin)
+ - [url-loader](https://github.com/webpack-contrib/url-loader)
+ - [react-markdown](https://github.com/remarkjs/react-markdown)
+ - [remark-gfm](https://github.com/remarkjs/remark-gfm)
+ - [platform](https://github.com/bestiejs/platform.js)
 
  ## License
  All code are licensed under [MIT Licence](https://github.com/tjmcraft/TJMC-Launcher/blob/main/LICENSE)
