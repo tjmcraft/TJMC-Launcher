@@ -1129,8 +1129,7 @@ body {
     box-sizing: border-box;
     font-size: 20px;
     font-weight: 800;
-    height: 2em;
-    min-width: 8em;
+    padding: 8px 32px;
     border-radius: 0;
     color: #fdfdfd;
     font-family: var(--font-primary);
