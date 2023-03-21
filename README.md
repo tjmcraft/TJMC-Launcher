@@ -5,8 +5,8 @@
 </p>
 
 ## About project
-This project was created by `TJMC-Company Co.Ltd.` for *non-commercial purpose*. \
-TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **modded** versions of **Java Minecraft**.
+This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to `TJMC-Company` for *non-commercial purpose* only. \
+TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
 ## Download
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
