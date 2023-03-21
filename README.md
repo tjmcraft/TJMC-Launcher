@@ -63,6 +63,8 @@ git pull
  - [**Babel**](https://github.com/babel/babel)
  - [**Preact**](https://github.com/preactjs/preact)
  - [**Webpack**](https://github.com/webpack/webpack)
+ - [babel-loader](https://github.com/babel/babel-loader)
+ - [copy-webpack-plugin](https://github.com/webpack-contrib/copy-webpack-plugin)
  - [css-loader](https://github.com/webpack-contrib/css-loader)
  - [html-webpack-loader](https://github.com/maskletter/html-webpack-loader)
  - [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin)
