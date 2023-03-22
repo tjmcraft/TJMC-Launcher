@@ -1,13 +1,7 @@
-import { createElement, useState, useEffect } from "react";
 import { getUnequalProps, pick, shallowEqual } from "./Iterates";
-import { generateIdFor } from "./Random";
 import { onBeforeUnload, throttle } from "./Shedulers";
-import useForceUpdate from "Hooks/useForceUpdate";
 
-function StateStore() {
-
-	const debug_picker = false;
-	const debug_container = false;
+export function StateStore() {
 
 	let currentState = {};
 
@@ -21,7 +15,7 @@ function StateStore() {
 
 	this.getState = (selector = (state) => state) => selector({ ...currentState }) ?? undefined;
 
-	const callbacks = [updateContainers];
+	const callbacks = [void 0];
 
 	this.addCallback = (cb = () => { }) => {
 		if (typeof cb === "function") {
@@ -67,38 +61,6 @@ function StateStore() {
 
 	this.getDispatch = () => actions;
 
-	const containers = new Map();
-
-	window._gsm_containers = containers;
-
-	function updateContainers(currentState) {
-		for (const container of containers.values()) {
-			const { selector, ownProps, mappedProps, callback } = container;
-
-			// debug_container && console.debug("[updateContainer]", "->", container.debug, "=>\n", { ...container });
-
-			let newMappedProps;
-
-			try {
-				newMappedProps = selector(currentState, ownProps);
-			} catch (err) {
-				console.error(">> GSTATE", "CONTAINER\n", "UPDATE",
-					"Чёт наебнулось, но всем как-то похуй, да?\n",
-					"Может трейс глянешь хоть:\n", err);
-				return;
-			}
-
-			debug_picker && console.debug("[pick]", "->", container.debug, "=>\n", { ...mappedProps }, "->", { ...newMappedProps });
-
-			if (Object.keys(newMappedProps).length && !shallowEqual(mappedProps, newMappedProps)) {
-				// debug_picker && console.debug("[picked]", "->", container.debug, "=>\n", { ...mappedProps }, "->", { ...newMappedProps });
-				debug_picker && console.debug("[picked]", "->", container.debug, "=>\n", getUnequalProps(mappedProps, newMappedProps).join(";\n"));
-				container.mappedProps = newMappedProps;
-				callback(container.mappedProps);
-			}
-		}
-	}
-
 	return this;
 
 }
@@ -111,7 +73,7 @@ function StateStore() {
  * @param {String} cache_key - state cache key for localStorage
  * @returns
  */
-const StoreCaching = (store, initialState, cache_key = null) => {
+export const StoreCaching = (store, initialState, cache_key = null) => {
 
 	if (typeof store != "object" || !(store instanceof StateStore)) throw new Error("Caching store in not instance of StateStore");
 
@@ -198,71 +160,3 @@ const StoreCaching = (store, initialState, cache_key = null) => {
 	return { loadCache, resetCache };
 
 };
-
-
-const INITIAL_STATE = {
-	currentUserId: undefined,
-	version_hash: undefined,
-	theme: "system",
-	auth_state: "pending",
-	hostConnectionState: "connectionStateBroken",
-	hostInfo: {
-		hostVendor: undefined,
-		hostVersion: undefined,
-	},
-	settings: {
-		debug_mode: false,
-		debug_host: false,
-		debug_api: false,
-		enable_preloader: true,
-		full_settings: false,
-		full_chooser: false,
-		dev_disable_faloc: false,
-	},
-	users: {},
-	installations: {},
-	instances: {},
-	versions: [],
-	modals: [],
-	configuration: undefined,
-	releases: [],
-	currentMainScreen: "home",
-	currentSettingsScreen: "my-account",
-	lastAppVersionId: undefined,
-	updateStatus: "not-available",
-	updateProgress: 0,
-	update: {
-		status: "not-available",
-		progress: 0,
-		next: undefined,
-	}
-};
-
-const stateStore = new StateStore();
-const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE);
-
-stateStore.addCallback(async (global) => {
-	window.__debug__ && console.debug("->", { ...global });
-});
-
-stateStore.addReducer("init", () => {
-	const initial = Object.assign({}, INITIAL_STATE);
-	const state = loadCache(initial) || initial;
-	return state;
-});
-
-const progressStore = new StateStore();
-
-stateStore.addReducer("reset", resetCache);
-
-window.resetCache = stateStore.getDispatch().reset;
-window._gstore = stateStore;
-
-export const getDispatch = stateStore.getDispatch;
-export const getState = stateStore.getState;
-export const setState = stateStore.setState;
-export const withState = stateStore.withState;
-export const stateComponent = stateStore.stateComponent;
-export const addReducer = stateStore.addReducer;
-export const addCallback = stateStore.addCallback;
-export const removeCallback = stateStore.removeCallback;
