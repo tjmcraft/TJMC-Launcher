@@ -11,7 +11,7 @@ TJMC-Launcher is a simple to use, extremely fast, and well supported app, that a
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
-## Developing 🐱‍💻
+## Developing 💻
 
 ### Downloading the source code:
 
@@ -47,7 +47,7 @@ git pull
 `npm run deploy:linux-snap` - Build and publish electron app for linux and publish to snap store \
 `npm run deploy:multi` - Build and publish electron app for all available platforms
 
-## Libraries 🎞
+## Libraries 📦
 
 ### Used libraries for **Host**:
  - [**Electron**](https://github.com/electron/electron)
