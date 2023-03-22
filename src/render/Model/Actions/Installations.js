@@ -8,10 +8,11 @@ addReducer("hostUpdate", (global, actions, update) => {
 	// console.debug(">>> HOST UPDATE:", update);
 	switch (update.type) {
 		case "updateInstallations": return updateInstallations(global, update);
-		case "updateInstallationsProgressLoad": return updateInstallationProgress(global, update);
-		case "updateInstallationsProgressDownload": return updateInstallationProgress(global, update);
 		case "updateVersions": return updateVersions(global, update);
 		case "updateInstances": return updateInstances(global, update);
+
+		case "updateInstallationsProgressLoad": return updateInstallationProgress(global, update);
+		case "updateInstallationsProgressDownload": return updateInstallationProgress(global, update);
 		default: return undefined;
 	}
 });

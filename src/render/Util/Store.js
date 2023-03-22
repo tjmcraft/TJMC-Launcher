@@ -251,6 +251,8 @@ stateStore.addReducer("init", () => {
 	return state;
 });
 
+const progressStore = new StateStore();
+
 stateStore.addReducer("reset", resetCache);
 
 window.resetCache = stateStore.getDispatch().reset;

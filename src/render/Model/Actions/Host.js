@@ -16,11 +16,14 @@ addReducer("hostUpdate", (global, actions, update) => {
 	window.__debug_host__ && console.debug(">>> HOST UPDATE:", update);
 	switch (update.type) {
 		case "updateConnectionState": return updateConnectionState(global, update);
+		// host initial
 		case "updateHostInfo": return updateHostInfo(global, update);
 		case "updateConfiguration": return updateConfiguration(global, update);
+		// game states
 		case "updateGameStartupError": return updateGameStartupError(global, actions, update);
 		case "updateGameStartupSuccess": return updateGameStartupSuccess(global, update);
 		case "updateGameError": return updateGameError(global, actions, update);
+		// host updates
 		case "updateStatus": return updateStatus(global, actions, update);
 		case "updateProgress": return updateProgress(global, actions, update);
 		default: return undefined;
