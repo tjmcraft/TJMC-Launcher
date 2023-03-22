@@ -17,6 +17,22 @@ import MenuItem from "UI/components/MenuItem";
 import Portal from "UI/components/Portal";
 
 
+
+const StatusContainer = ({ hash, isProcessing }) => {
+	const { progress } = useGlobalProgress(global => {
+		const version = global[hash] || {};
+		return {
+			progress: version.progress,
+		};
+	}, [hash]);
+	return createElement('div', { class: 'status-container' },
+		isProcessing ? (
+			progress > 0 ?
+				createElement(RoundProgress, { progress: progress * 100 }) :
+				createElement(PendingProgress)
+		) : null);
+};
+
 const CubeSidebarItem = ({ hash, isSelected }) => {
 
 	const { setVersionHash, invokeLaunch, alert, removeInstallation } = getDispatch();
@@ -28,13 +44,6 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 			name: version.name,
 			type: version.type,
 			isProcessing: version.isProcessing,
-		};
-	}, [hash]);
-
-	const { progress } = useGlobalProgress(global => {
-		const version = global[hash] || {};
-		return {
-			progress: version.progress,
 		};
 	}, [hash]);
 
@@ -103,12 +112,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 				onContextMenu: handleContextMenu,
 			},
 			createElement('span', null, name || hash),
-			createElement('div', { class: 'status-container' },
-				isProcessing ? (
-					progress > 0 ?
-						createElement(RoundProgress, { progress: progress * 100 }) :
-						createElement(PendingProgress)
-				) : null),
+			createElement(StatusContainer, { isProcessing: isProcessing, hash: hash }),
 			contextMenuPosition != undefined && (
 				<Portal>
 					<Menu
