@@ -5,6 +5,7 @@ import { updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
 import { addReducer } from "Store/Global";
+import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { selectCurrentUser } from "Model/Selectors/user";
 
@@ -60,6 +61,10 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	};
 
 	void callHost("invokeLaunch", hash, params);
+
+	ProgressStore.setState({
+		[hash]: { progress: 0 }
+	});
 
 	return updateInstallation(global, hash, {
 		isProcessing: true

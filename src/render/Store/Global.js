@@ -29,8 +29,6 @@ const INITIAL_STATE = {
 	currentMainScreen: "home",
 	currentSettingsScreen: "my-account",
 	lastAppVersionId: undefined,
-	updateStatus: "not-available",
-	updateProgress: 0,
 	update: {
 		status: "not-available",
 		progress: 0,
@@ -50,8 +48,6 @@ stateStore.addReducer("init", () => {
 	const state = loadCache(initial) || initial;
 	return state;
 });
-
-const progressStore = new StateStore();
 
 stateStore.addReducer("reset", resetCache);
 

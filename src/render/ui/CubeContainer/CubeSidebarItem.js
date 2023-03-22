@@ -6,13 +6,14 @@ import { getDispatch } from "Store/Global";
 import useContextMenu from "Hooks/useContextMenu";
 import useContextMenuPosition from "Hooks/useContextMenuPosition";
 import { selectInstallation } from "Model/Selectors/installations";
+import useHostOnline from "Hooks/useHostOnline";
+import useGlobal from "Hooks/useGlobal";
+import useGlobalProgress from "Hooks/useGlobalProgress";
 
 import PendingProgress from "UI/components/PendingProgress";
 import RoundProgress from "UI/components/RoundProgress";
 import Menu from "UI/components/Menu";
 import MenuItem from "UI/components/MenuItem";
-import useHostOnline from "Hooks/useHostOnline";
-import useGlobal from "Hooks/useGlobal";
 import Portal from "UI/components/Portal";
 
 
@@ -21,13 +22,19 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	const { setVersionHash, invokeLaunch, alert, removeInstallation } = getDispatch();
 
 	const hostOnline = useHostOnline();
-	const { name, type, progress, isProcessing } = useGlobal(global => {
+	const { name, type, isProcessing } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
 		return {
 			name: version.name,
 			type: version.type,
-			progress: version.progress,
 			isProcessing: version.isProcessing,
+		};
+	}, [hash]);
+
+	const { progress } = useGlobalProgress(global => {
+		const version = global[hash] || {};
+		return {
+			progress: version.progress,
 		};
 	}, [hash]);
 
