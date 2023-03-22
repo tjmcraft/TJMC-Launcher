@@ -19,6 +19,7 @@ export function updateGameError(global, actions, update) {
 	}));
 
 	ProgressStore.setState({
+		...ProgressStore.getState(),
 		[hash]: { progress: 0 }
 	});
 
@@ -39,9 +40,8 @@ export function updateGameStartupError(global, actions, update) {
 	}));
 
 	ProgressStore.setState({
-		[hash]: {
-			progress: 0,
-		}
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
 	});
 
 	actions.alert({
@@ -61,9 +61,8 @@ export function updateGameStartupSuccess(global, update) {
 	}));
 
 	ProgressStore.setState({
-		[hash]: {
-			progress: 0,
-		}
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
 	});
 
 

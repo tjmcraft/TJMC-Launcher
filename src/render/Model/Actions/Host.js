@@ -63,6 +63,7 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	void callHost("invokeLaunch", hash, params);
 
 	ProgressStore.setState({
+		...ProgressStore.getState(),
 		[hash]: { progress: 0 }
 	});
 
