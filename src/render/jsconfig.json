@@ -17,6 +17,7 @@
         "paths": {
             "Libs/*": ["Libs/*"],
             "Util/*": ["Util/*"],
+            "Store/*": ["Store/*"],
             "SVG/*": ["assets/svg/*"],
             "IMG/*": ["assets/images/*"],
             "CSS/*": ["./assets/css/*"],

@@ -1,4 +1,4 @@
-import { addReducer } from "Util/Store";
+import { addReducer } from "Store/Global";
 import { callHost } from "../../api/host";
 import { updateInstallations, updateInstallationProgress } from "Model/Reducers/installations";
 import { updateVersions } from "Model/Reducers/versions";

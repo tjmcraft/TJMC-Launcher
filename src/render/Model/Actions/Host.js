@@ -4,7 +4,7 @@ import { updateGameError, updateGameStartupError, updateGameStartupSuccess, upda
 import { updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
-import { addReducer } from "Util/Store";
+import { addReducer } from "Store/Global";
 import { callHost, initHost } from "../../api/host";
 import { selectCurrentUser } from "Model/Selectors/user";
 

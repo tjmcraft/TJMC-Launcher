@@ -48,6 +48,7 @@ module.exports = {
 		alias: {
 			Libs: path.resolve(basePath, 'Libs'),
 			Util: path.resolve(basePath, 'Util'),
+			Store: path.resolve(basePath, 'Store'),
 			SVG: path.resolve(basePath, 'assets', 'svg'),
 			IMG: path.resolve(basePath, 'assets', 'images'),
 			CSS: path.resolve(basePath, 'assets', 'css'),

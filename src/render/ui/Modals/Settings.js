@@ -3,7 +3,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import buildClassName from "Util/buildClassName.js";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import { randomString } from "Util/Random.js";
 
 import useGlobal from "Hooks/useGlobal";

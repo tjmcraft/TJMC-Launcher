@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { shallowEqual, stacksEqual } from "Util/Iterates";
-import { addCallback, getState, removeCallback } from "Util/Store";
+import { addCallback, getState, removeCallback } from "Store/Global";
 import useForceUpdate from "./useForceUpdate";
 
 const updateContainer = (propsRef, selector, callback) => {

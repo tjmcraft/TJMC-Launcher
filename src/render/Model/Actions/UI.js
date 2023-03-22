@@ -1,6 +1,6 @@
 import { addModal, closeModal, unloadModal } from "Model/Reducers/ui";
 import { debounce } from "Util/Shedulers";
-import { addCallback, addReducer, getState, setState } from "Util/Store";
+import { addCallback, addReducer, getState, setState } from "Store/Global";
 import getPreferredColorScheme from "Util/getPreferredColorScheme";
 
 const switchPlatform = (platform) => {

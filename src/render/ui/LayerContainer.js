@@ -3,7 +3,7 @@ import { createElement, memo, useEffect, useState } from "react";
 import useShowTransition from "Hooks/useShowTransition";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import buildClassName from "Util/buildClassName";
-import { getDispatch, getState } from "Util/Store";
+import { getDispatch, getState } from "Store/Global";
 import { SVG } from "./svg";
 
 import Settings from "./Modals/Settings";

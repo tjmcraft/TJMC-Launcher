@@ -3,7 +3,7 @@ import { createElement, useEffect } from "react";
 import useShowTransition from "Hooks/useShowTransition";
 import useFlag from "Hooks/useFlag";
 
-import { getState } from "Util/Store";
+import { getState } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 
 import style from "CSS/preloader.module.css";

@@ -1,4 +1,4 @@
-import { setState } from "Util/Store";
+import { setState } from "Store/Global";
 import { updateInstallation } from "./installations";
 
 export function updateHostInfo(global, update) {

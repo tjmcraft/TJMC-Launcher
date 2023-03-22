@@ -1,7 +1,7 @@
 import { memo, createElement, Fragment, useCallback } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
 

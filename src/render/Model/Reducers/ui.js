@@ -1,5 +1,5 @@
 import { randomString } from "Util/Random";
-import { getState, setState } from "Util/Store";
+import { getState, setState } from "Store/Global";
 
 export function addModal(payload) {
 	const global = getState();

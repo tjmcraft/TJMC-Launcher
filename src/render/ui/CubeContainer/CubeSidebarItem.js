@@ -1,7 +1,7 @@
 import { createElement, useCallback, useRef, memo, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 
 import useContextMenu from "Hooks/useContextMenu";
 import useContextMenuPosition from "Hooks/useContextMenuPosition";
