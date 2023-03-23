@@ -37,11 +37,11 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 
 	if (!options.disableLogging) {
 		currentProcess.stdout.on('data', (data) => {
-			// logger.log(`{${hash}}`, data.toString('utf-8'));
+			logger.log(`{${hash}}`, data.toString('utf-8'));
 		});
 
 		currentProcess.stderr.on('data', (data) => {
-			// logger.error(`{${hash}}`, data.toString('utf-8'));
+			logger.error(`{${hash}}`, data.toString('utf-8'));
 		});
 
 		currentProcess.on('close', (code) => {

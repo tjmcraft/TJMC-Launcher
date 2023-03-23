@@ -114,11 +114,11 @@ class Minecraft {
                 } catch (e) { this.debug && logg.warn(e) }
                 fs.unlinkSync(native_path);
                 count++;
-                /* this.client.emit('progress', {
+                this.client.emit('progress', {
                     type: 'natives',
                     task: count,
                     total: stat.length,
-                }); */
+                });
             }))
             this.debug && logg.debug(`Downloaded and extracted natives! ${stat.length}`);
             count = 0;
@@ -160,12 +160,12 @@ class Minecraft {
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
             count++;
-            return assetPath;
-            /* this.client.emit('progress', {
+            this.client.emit('progress', {
                 type: 'assets',
                 task: count,
                 total: Object.keys(index.objects).length,
-            }) */
+            })
+            return assetPath;
         }))
         count = 0
         this.client.emit('progress', {
@@ -215,11 +215,11 @@ class Minecraft {
 
             count++;
 
-            /* this.client.emit('progress', {
+            this.client.emit('progress', {
                 type: type,
                 task: count,
                 total: libraries.length,
-            }); */
+            });
 
             if (library.mod || library.downloadOnly) return false;
 
