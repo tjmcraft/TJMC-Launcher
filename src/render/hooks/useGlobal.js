@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { arePropsShallowEqual, shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
 import { addCallback, getState, removeCallback } from "Store/Global";
 import { randomString } from "Util/Random";
-import useEffectAfterMount from "./useEffectAfterMount";
+import useForceUpdate from "./useForceUpdate";
 
 const updateContainer = (selector, callback, options) => {
-	return (global) => {
-		callback((prev) => {
+	return (global) =>
+		callback((prevState) => {
 			if (options.debugPicker) {
-				console.debug("[picker]", options.label, "\nprev->\n", JSON.stringify(prev));
+				console.debug("[picker]", options.label, "\nprev->\n", JSON.stringify(prevState));
 			}
 			let nextState;
 			try {
@@ -16,55 +16,49 @@ const updateContainer = (selector, callback, options) => {
 			} catch (err) {
 				return;
 			}
-			if (nextState != undefined) {
+			if (nextState != void 0) {
+
 				if (options.debugPicker) {
 					console.debug("[picker]", options.label, "\nnext->\n", JSON.stringify(nextState));
 				}
 
-				const stage1 = prev != void 0;
-				const stage2 = stage1 && Array.isArray(prev) &&
-					nextState != void 0;
-
-				const shouldRepick = stage2 ?
-					!stacksEqual(prev, nextState) :
-					!shallowEqual(prev, nextState);
+				const isArray = Array.isArray(prevState) || Array.isArray(nextState);
+				const shouldUpdate = isArray ?
+					!stacksEqual(prevState, nextState) :
+					!shallowEqual(prevState, nextState);
 
 				if (options.debugPicker) {
 					console.debug(
 						"[picker]", "->", options.label,
 						"\n", "state", "=>", "picking",
 						"\n", "next", "=>", nextState,
-						...(Array.isArray(prev) ? (
+						...(isArray ? (
 							[
-								"\n", "stacksEqual", "=>", stacksEqual(prev, nextState),
-								"\n", "stacksDiff", "=>", stacksDiff(prev, nextState),
-								"\n", "current", "=>", prev,
+								"\n", "stacksEqual", "=>", stacksEqual(prevState, nextState),
+								"\n", "stacksDiff", "=>", stacksDiff(prevState, nextState),
+								"\n", "current", "=>", prevState,
 								"\n", "next", "=>", nextState,
-								"\n", "stages", "=>", [stage1, stage2],
-								"\n", "result", "=>", shouldRepick,
-
+								"\n", "result", "=>", shouldUpdate,
 							]
 						) : [])
 					);
 				}
 
 				if (
-					// !arePropsShallowEqual(prev, nextState)
-					shouldRepick
+					// !arePropsShallowEqual(prevState, nextState)
+					shouldUpdate
 				) {
 					if (options.debugPicked) {
 						console.debug(
 							"[picker]", "->", options.label,
 							"\n", "state", "=>", "picked!",
 							"\n", "next", "=>", nextState,
-							...(Array.isArray(prev) ? (
+							...(isArray ? (
 								[
-									"\n", "stacksEqual", "=>", stacksEqual(prev, nextState),
-									"\n", "stacksDiff", "=>", stacksDiff(prev, nextState),
-									"\n", "current", "=>", prev,
+									"\n", "stacksEqual", "=>", stacksEqual(prevState, nextState),
+									"\n", "stacksDiff", "=>", stacksDiff(prevState, nextState),
+									"\n", "current", "=>", prevState,
 									"\n", "next", "=>", nextState,
-									"\n", "stages", "=>", [stage1, stage2],
-
 								]
 							) : [])
 						);
@@ -73,9 +67,8 @@ const updateContainer = (selector, callback, options) => {
 					return nextState;
 				}
 			}
-			return prev;
+			return prevState;
 		});
-	};
 };
 
 /**
@@ -92,32 +85,45 @@ const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
 
 	options = useMemo(() => Object.assign({ debugPicker: false, debugPicked: false, label: randomString(5) }, options), [options]);
 
+	const forceUpdate = useForceUpdate();
+	const mappedProps = useRef(undefined);
+
 	const picker = useCallback(selector, [selector, ...inputs]);
-	const initialState = useCallback(() => {
+
+	useMemo(() => {
 		let nextState;
 		options.debugPicker && console.log(">>", "init picker", "->", options.label);
 		try {
 			nextState = getState(picker);
-			return nextState;
 		} catch (e) {
 			return undefined;
 		}
+		mappedProps.current = nextState;
 	}, [picker, options]);
-
-	const [state, setState] = useState(initialState);
-	useEffectAfterMount(() => setState(initialState), [initialState]);
 
 	useEffect(() => {
-		const callback = updateContainer(picker, setState, options);
-		addCallback(callback);
-		options.debugPicker && console.log(">>", "load picker", "->", options.label);
-		return () => {
-			removeCallback(callback);
-			options.debugPicker && console.log(">>", "unload picker", "->", options.label);
+		const updateCallback = (next) => {
+			let nextState;
+			try {
+				if (typeof next == 'function') {
+					nextState = next(mappedProps.current);
+				} else {
+					nextState = next;
+				}
+			} catch (e) {
+				return undefined;
+			}
+			if (nextState != null && nextState != mappedProps.current) {
+				mappedProps.current = nextState;
+				void forceUpdate(bool => !bool);
+			}
 		};
-	}, [picker, options]);
+		const callback = updateContainer(picker, updateCallback, options);
+		addCallback(callback);
+		return () => removeCallback(callback);
+	}, [forceUpdate, picker, options]);
 
-	return state;
+	return mappedProps.current;
 };
 
 export default useGlobal;
