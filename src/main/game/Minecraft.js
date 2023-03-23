@@ -15,6 +15,7 @@ class Minecraft {
      * @param client U may set here "this"
      */
     constructor(client) {
+        this.debug = false;
         this.client = client;
         this.options = client.options;
         this.baseRequest = request.defaults({
@@ -41,9 +42,9 @@ class Minecraft {
      */
     async loadClient(version) {
         const versionPath = path.join(this.options.overrides.path.version);
-        logg.debug(`<- Attempting to load ${this.overrides.version.id}.jar`);
+        this.debug && logg.debug(`<- Attempting to load ${this.overrides.version.id}.jar`);
         await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar');
-        logg.debug(`-> Loaded ${this.overrides.version.id}.jar`);
+        this.debug && logg.debug(`-> Loaded ${this.overrides.version.id}.jar`);
         return path.join(versionPath, `${this.overrides.version.id}.jar`);
     }
 
@@ -54,14 +55,14 @@ class Minecraft {
     async getClasses (classJson) {
         const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'));
         if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
-        const parsed = classJson.libraries.map(lib => {
+        const parsed = await Promise.all(classJson.libraries.map(async lib => {
             const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
             const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
             const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
             if (lib_ex) return lib;
-        }).filter(lib => Boolean(lib));
+        }).filter(lib => Boolean(lib)));
         const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
-        logg.log(`Collected Class Path's! (count: ${libs.length})`);
+        this.debug && logg.log(`Collected Class Path's! (count: ${libs.length})`);
         return libs;
     }
 
@@ -78,24 +79,22 @@ class Minecraft {
     async getNatives(version) {
         let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-        logg.debug(`Set natives directory to ${nativeDirectory}`)
+        this.debug && logg.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
-            const natives = async () => {
-                const natives = []
-                await Promise.all(version.libraries.map(async (lib) => {
+            const natives = () =>
+                Promise.all(version.libraries.map(async (lib) => {
                     if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
                     if (this.parseRule(lib)) return
                     const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
                     const native =
                         this.getOS() === 'osx'
-                        ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                        : (lib_clfs[`natives-${this.getOS()}`])
-                    natives.push(native)
-                }))
-                return natives
-            }
-            const stat = await natives()
+                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
+                            : (lib_clfs[`natives-${this.getOS()}`])
+                    return native;
+                }));
+
+            const stat = await natives();
             this.client.emit('progress', {
                 type: 'natives',
                 task: 0,
@@ -107,21 +106,21 @@ class Minecraft {
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
                 if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
-                    (promise_counter <= 0) && logg.debug(`Downloading natives...`); promise_counter++;
+                    (promise_counter <= 0) && this.debug && logg.debug(`Downloading natives...`); promise_counter++;
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives');
                 }
                 try {
                     new Zip(native_path).extractAllTo(nativeDirectory, true);
-                } catch (e) { logg.warn(e) }
+                } catch (e) { this.debug && logg.warn(e) }
                 fs.unlinkSync(native_path);
                 count++;
-                this.client.emit('progress', {
+                /* this.client.emit('progress', {
                     type: 'natives',
                     task: count,
                     total: stat.length,
-                });
+                }); */
             }))
-            logg.debug(`Downloaded and extracted natives! ${stat.length}`);
+            this.debug && logg.debug(`Downloaded and extracted natives! ${stat.length}`);
             count = 0;
             this.client.emit('progress', {
                 type: 'natives',
@@ -129,7 +128,7 @@ class Minecraft {
                 total: stat.length,
             });
         }
-        logg.debug(`Natives Collected!`);
+        this.debug && logg.debug(`Natives Collected!`);
         return nativeDirectory;
     }
 
@@ -143,30 +142,30 @@ class Minecraft {
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
         }
-        const assets_pathes = []
-        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }))
-        const res_url = "https://resources.download.minecraft.net"
+        let assets_pathes = [];
+        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
+        const res_url = "https://resources.download.minecraft.net";
         this.client.emit('progress', {
             type: 'assets',
             task: 0,
             total: Object.keys(index.objects).length,
         })
-        let promise_counter = 0;
-        await Promise.all(Object.keys(index.objects).map(async (asset, number) => {
+        assets_pathes = await Promise.all(Object.keys(index.objects).map(async (asset, number) => {
             const hash = index.objects[asset].hash
             const subhash = hash.substring(0, 2)
             const subAsset = path.join(assetDirectory, 'objects', subhash)
-            assets_pathes.push(path.join(subAsset, hash))
-            if (!fs.existsSync(path.join(subAsset, hash)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(subAsset, hash)))) {
-                (promise_counter <= 0) && logg.debug(`Downloading assets...`); promise_counter++;
+            const assetPath = path.join(subAsset, hash);
+            if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
+                (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
-            count++
-            this.client.emit('progress', {
+            count++;
+            return assetPath;
+            /* this.client.emit('progress', {
                 type: 'assets',
                 task: count,
                 total: Object.keys(index.objects).length,
-            })
+            }) */
         }))
         count = 0
         this.client.emit('progress', {
@@ -174,7 +173,7 @@ class Minecraft {
             task: count,
             total: Object.keys(index.objects).length,
         })
-        logg.debug('Collected assets')
+        this.debug && logg.debug('Collected assets')
         return assets_pathes
     }
 
@@ -216,11 +215,11 @@ class Minecraft {
 
             count++;
 
-            this.client.emit('progress', {
+            /* this.client.emit('progress', {
                 type: type,
                 task: count,
                 total: libraries.length,
-            });
+            }); */
 
             if (library.mod || library.downloadOnly) return false;
 
@@ -263,7 +262,7 @@ class Minecraft {
             fs.mkdirSync(directory, { recursive: true });
 
             const runRetry = async (e) => {
-                logg.debug(`[FILE] Failed to download ${url} to ${filepath} due to\n${e}.` + ` Retrying... ${retry}`);
+                this.debug && logg.debug(`[FILE] Failed to download ${url} to ${filepath} due to\n${e}.` + ` Retrying... ${retry}`);
                 if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
                 if (retry) return resolve(await this.downloadAsync(url, directory, filename, false, type));
                 resolve(false);
@@ -272,7 +271,7 @@ class Minecraft {
             _request.on('response', (data) => {
 
                 if (data.statusCode !== 200) {
-                    logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
+                    this.debug && logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
                     if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
                     resolve(false);
                     return;
@@ -350,7 +349,7 @@ class Minecraft {
      */
     getMemory () {
         if (!this.options.java.memory) {
-            logg.debug('Memory not set! Setting 1GB as MAX!')
+            this.debug && logg.debug('Memory not set! Setting 1GB as MAX!')
             this.options.java.memory = {
                 min: 512,
                 max: 1024
@@ -358,7 +357,7 @@ class Minecraft {
         }
         if (!isNaN(this.options.java.memory.max) && !isNaN(this.options.java.memory.min)) {
             if (this.options.java.memory.max < this.options.java.memory.min) {
-                logg.debug('MIN memory is higher then MAX! Resetting!')
+                this.debug && logg.debug('MIN memory is higher then MAX! Resetting!')
                 this.options.java.memory.max = 1024
                 this.options.java.memory.min = 512
             }

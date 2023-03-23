@@ -23,7 +23,7 @@ class launcher extends EventEmitter {
      */
     constructor(options = {}) {
         super();
-
+        this.debug = false;
         this.logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
         this.options = Object.assign({}, options);
@@ -36,8 +36,8 @@ class launcher extends EventEmitter {
 
         this.handler = new Minecraft(this);
 
-        this.logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
-        this.logger.debug("Launcher compiled options:", this.options);
+        this.debug && logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
+        this.debug && logger.debug("Launcher compiled options:", this.options);
 
     }
 
@@ -45,7 +45,7 @@ class launcher extends EventEmitter {
         const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw';
         const java = await JavaManager.checkJava(javaPath);
         if (!java.run) {
-            this.logger.error(`Couldn't start Minecraft due to: ${java.message}`);
+            this.debug && logger.error(`Couldn't start Minecraft due to: ${java.message}`);
             throw new Error(`Wrong java (${javaPath})`);
         }
         return javaPath;
@@ -63,13 +63,13 @@ class launcher extends EventEmitter {
         if (!fs.existsSync(this.options.mcPath))
             await this.handler.loadClient(versionFile);
 
-        this.logger.log('Attempting to load natives');
+        this.debug && logger.log('Attempting to load natives');
         const nativePath = await this.handler.getNatives(versionFile);
 
-        this.logger.log('Attempting to load classes');
+        this.debug && logger.log('Attempting to load classes');
         const classes = await this.handler.getClasses(versionFile);
 
-        this.logger.log('Attempting to load assets');
+        this.debug && logger.log('Attempting to load assets');
         const assets = await this.handler.getAssets(versionFile);
 
         const args = this.handler.constructJVMArguments(versionFile, nativePath, classes);
