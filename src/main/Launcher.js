@@ -19,8 +19,9 @@ exports.launchMinecraft = async (version_hash, params = {}) => {
 	function progress(e) {
 		const progress = (e.task / e.total);
 		Host.Bridge.emit(Host.ackChannels.gameProgressLoad, {
+			type: e.type,
 			progress: progress,
-			version_hash: version_hash
+			version_hash: version_hash,
 		});
 	}
 
@@ -28,8 +29,9 @@ exports.launchMinecraft = async (version_hash, params = {}) => {
 		const progress = (e.current / e.total);
 		if (e.type != 'version-jar') return;
 		Host.Bridge.emit(Host.ackChannels.gameProgressDownload, {
+			type: e.type,
 			progress: progress,
-			version_hash: version_hash
+			version_hash: version_hash,
 		});
 	}
 
