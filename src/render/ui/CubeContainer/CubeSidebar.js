@@ -11,7 +11,7 @@ import InstanceItem from "./InstanceItem";
 
 
 const CubeSidebarItems = memo(() => {
-	const installations = useGlobal(global => Object.keys(selectInstallations(global)), [], { debugPicked: true, debugPicker: true, label: "CubeSidebarItems" });
+	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
 	console.warn(">", "CubeSidebarItems");
 	// useEffect(() => {
