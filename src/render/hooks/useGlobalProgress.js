@@ -8,22 +8,15 @@ const updateContainer = (propsRef, selector, callback) => {
 		let nextState;
 		try {
 			nextState = selector(global);
-			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
 		} catch (err) {
 			return;
 		}
 		if (nextState != undefined) {
-			// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
 			if (
-				(
-					propsRef.current?.internalArray != void 0 &&
-					nextState.internalArray != void 0 &&
-					!stacksEqual(propsRef.current?.internalArray, nextState?.internalArray)
-				) || !shallowEqual(propsRef.current, nextState)
+				!shallowEqual(propsRef.current, nextState)
 			) {
-				// console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
 				propsRef.current = nextState;
-				callback(nextState.internalArray ?? nextState);
+				callback(nextState);
 			}
 		}
 	};
@@ -40,7 +33,6 @@ const useGlobalProgress = (selector = () => { }, inputs = []) => {
 		let nextState;
 		try {
 			nextState = getState(picker);
-			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
 			mappedProps.current = nextState;
 		} catch (e) {
 			return undefined;
@@ -54,7 +46,7 @@ const useGlobalProgress = (selector = () => { }, inputs = []) => {
 		return () => removeCallback(callback);
 	}, [forceUpdate, picker]);
 
-	return mappedProps.current?.internalArray || mappedProps.current;
+	return mappedProps.current;
 };
 
 export default useGlobalProgress;
