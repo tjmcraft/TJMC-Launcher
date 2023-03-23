@@ -78,14 +78,13 @@ const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
 
 	useMemo(() => {
 		let nextState;
-		options.debugPicker && console.log(">>", "init picker", "->", options.label);
 		try {
 			nextState = getState(picker);
 		} catch (e) {
 			return undefined;
 		}
 		mappedProps.current = nextState;
-	}, [picker, options]);
+	}, [picker]);
 
 	useEffect(() => {
 		const updateCallback = (next) => {
