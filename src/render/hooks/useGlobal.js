@@ -69,7 +69,7 @@ const updateContainer = (selector, callback, options) => {
 							) : [])
 						);
 					}
-					console.warn(">>", "propsRefSet", nextState);
+					// console.warn(">>", "propsRefSet", nextState);
 					return nextState;
 				}
 			}
