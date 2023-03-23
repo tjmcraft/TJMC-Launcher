@@ -125,9 +125,13 @@ export const stacksEqual = (a1, a2) => a1 === a2 || (
 	a1.map((val, idx) => shallowEqual(val, a2[idx])).every(e => e)
 );
 
-export const stacksDiff = (arr1, arr2) => arr1
-	.filter(x => !arr2.includes(x))
-	.concat(arr2.filter(x => !arr1.includes(x)));
+export const stacksDiff = (arr1, arr2) =>
+	arr1 !== null && arr2 !== null &&
+	Array.isArray(arr1) && Array.isArray(arr2) &&
+	arr1.length > 0 && arr2.length > 0 &&
+	arr1
+		.filter(x => !arr2.includes(x))
+		.concat(arr2.filter(x => !arr1.includes(x)));
 
 
 function naturalCompare(a, b) {

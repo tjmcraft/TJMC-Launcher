@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
+import { arePropsShallowEqual, shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
 import { addCallback, getState, removeCallback } from "Store/Global";
 import { randomString } from "Util/Random";
 import useEffectAfterMount from "./useEffectAfterMount";
@@ -9,12 +9,10 @@ const updateContainer = (selector, callback, options) => {
 		callback((prev) => {
 			if (options.debugPicker) {
 				console.debug("[picker]", options.label, "\nprev->\n", JSON.stringify(prev));
-				// window._dp = { [options.label]: propsRef };
 			}
 			let nextState;
 			try {
 				nextState = selector(global);
-				if (Array.isArray(nextState)) nextState = { internalArray: [...nextState] };
 			} catch (err) {
 				return;
 			}
@@ -22,21 +20,36 @@ const updateContainer = (selector, callback, options) => {
 				if (options.debugPicker) {
 					console.debug("[picker]", options.label, "\nnext->\n", JSON.stringify(nextState));
 				}
-				const stage1 = prev != void 0;
-				const stage2 = stage1 && prev.internalArray != void 0 &&
-					nextState.internalArray != void 0;
 
-				const shouldRepick2 = (
-					prev?.internalArray != void 0 &&
-					nextState.internalArray != void 0 &&
-					!stacksEqual(prev?.internalArray, nextState?.internalArray)
-				) || !shallowEqual(prev, nextState);
+				const stage1 = prev != void 0;
+				const stage2 = stage1 && Array.isArray(prev) &&
+					nextState != void 0;
 
 				const shouldRepick = stage2 ?
-					!stacksEqual(prev.internalArray, nextState.internalArray) :
+					!stacksEqual(prev, nextState) :
 					!shallowEqual(prev, nextState);
 
+				if (options.debugPicker) {
+					console.debug(
+						"[picker]", "->", options.label,
+						"\n", "state", "=>", "picking",
+						"\n", "next", "=>", nextState,
+						...(Array.isArray(prev) ? (
+							[
+								"\n", "stacksEqual", "=>", stacksEqual(prev, nextState),
+								"\n", "stacksDiff", "=>", stacksDiff(prev, nextState),
+								"\n", "current", "=>", prev,
+								"\n", "next", "=>", nextState,
+								"\n", "stages", "=>", [stage1, stage2],
+								"\n", "result", "=>", shouldRepick,
+
+							]
+						) : [])
+					);
+				}
+
 				if (
+					// !arePropsShallowEqual(prev, nextState)
 					shouldRepick
 				) {
 					if (options.debugPicked) {
@@ -44,16 +57,16 @@ const updateContainer = (selector, callback, options) => {
 							"[picker]", "->", options.label,
 							"\n", "state", "=>", "picked!",
 							"\n", "next", "=>", nextState,
-							...(nextState.internalArray ? (
+							...(Array.isArray(prev) ? (
 								[
-									"\n", "stacksEqual", "=>", stacksEqual(prev.internalArray, nextState.internalArray),
-									"\n", "stacksDiff", "=>", stacksDiff(prev.internalArray, nextState.internalArray),
-									"\n", "current", "=>", prev.internalArray,
-									"\n", "next", "=>", nextState.internalArray,
+									"\n", "stacksEqual", "=>", stacksEqual(prev, nextState),
+									"\n", "stacksDiff", "=>", stacksDiff(prev, nextState),
+									"\n", "current", "=>", prev,
+									"\n", "next", "=>", nextState,
 									"\n", "stages", "=>", [stage1, stage2],
 
 								]
-							) : [undefined])
+							) : [])
 						);
 					}
 					console.warn(">>", "propsRefSet", nextState);
@@ -85,7 +98,6 @@ const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
 		options.debugPicker && console.log(">>", "init picker", "->", options.label);
 		try {
 			nextState = getState(picker);
-			if (Array.isArray(nextState)) nextState = { internalArray: [...nextState] };
 			return nextState;
 		} catch (e) {
 			return undefined;
@@ -105,7 +117,7 @@ const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
 		};
 	}, [picker, options]);
 
-	return state?.internalArray || state;
+	return state;
 };
 
 export default useGlobal;
