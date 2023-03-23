@@ -7,20 +7,15 @@ import useForceUpdate from "./useForceUpdate";
 const updateContainer = (selector, callback, options) => {
 	return (global) =>
 		callback((prevState) => {
-			if (options.debugPicker) {
-				console.debug("[picker]", options.label, "\nprev->\n", JSON.stringify(prevState));
-			}
+
 			let nextState;
 			try {
 				nextState = selector(global);
 			} catch (err) {
 				return;
 			}
-			if (nextState != void 0) {
 
-				if (options.debugPicker) {
-					console.debug("[picker]", options.label, "\nnext->\n", JSON.stringify(nextState));
-				}
+			if (nextState != void 0) {
 
 				const isArray = Array.isArray(prevState) || Array.isArray(nextState);
 				const shouldUpdate = isArray ?
@@ -53,17 +48,8 @@ const updateContainer = (selector, callback, options) => {
 							"[picker]", "->", options.label,
 							"\n", "state", "=>", "picked!",
 							"\n", "next", "=>", nextState,
-							...(isArray ? (
-								[
-									"\n", "stacksEqual", "=>", stacksEqual(prevState, nextState),
-									"\n", "stacksDiff", "=>", stacksDiff(prevState, nextState),
-									"\n", "current", "=>", prevState,
-									"\n", "next", "=>", nextState,
-								]
-							) : [])
 						);
 					}
-					// console.warn(">>", "propsRefSet", nextState);
 					return nextState;
 				}
 			}
