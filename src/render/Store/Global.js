@@ -51,8 +51,8 @@ stateStore.addReducer("init", () => {
 
 stateStore.addReducer("reset", resetCache);
 
-// window.resetCache = stateStore.getDispatch().reset;
-// window._gstore = stateStore;
+window.resetCache = stateStore.getDispatch().reset;
+window._gstore = stateStore;
 
 export const getDispatch = stateStore.getDispatch;
 export const getState = stateStore.getState;
