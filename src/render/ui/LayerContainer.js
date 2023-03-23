@@ -70,8 +70,7 @@ const ModalLayer = ({ isShown, children }) => {
 const Modals = memo(() => {
 
 	const { closeModal } = getDispatch();
-	const modals = useGlobal(global => global.modals, [], { debugPicker: true, debugPicked: true });
-	// const { modals } = useGlobal(global => ({ modals: global.modals }), [], { debugPicker: true, debugPicked: true });
+	const modals = useGlobal(global => global.modals);
 
 	console.debug(">", modals);
 

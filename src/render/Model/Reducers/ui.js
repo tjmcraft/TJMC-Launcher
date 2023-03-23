@@ -21,26 +21,26 @@ export function addModal(payload) {
 	}
 	setState({
 		...global,
-		modals: modals.slice()
+		modals: modals
 	});
 }
 
 export function closeModal(payload = undefined) {
 	const global = getState();
 	const modals = [...global.modals];
-	let last = modals.pop();
+	let last = modals[modals.length - 1];
 	if (last && last.isShown) {
 		last = Object.assign({}, last, { isShown: false, isClosing: true });
-		modals.push(last);
+		modals[modals.length - 1] = last;
 	}
-	const prev = modals[modals.length - 2];
+	let prev = modals[modals.length - 2];
 	if (prev && !prev.isShown) {
-		Object.assign(prev, { isShown: true });
+		prev = Object.assign({}, prev, { isShown: true });
 		modals[modals.length - 2] = prev;
 	}
 	setState({
 		...global,
-		modals: modals.slice()
+		modals: modals
 	});
 }
 
@@ -51,6 +51,6 @@ export function unloadModal(payload = undefined) {
 	if (current) modals.splice(modals.indexOf(current), 1);
 	setState({
 		...global,
-		modals: modals.slice()
+		modals: modals
 	});
 }
