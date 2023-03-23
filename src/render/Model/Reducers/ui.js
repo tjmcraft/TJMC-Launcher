@@ -21,23 +21,26 @@ export function addModal(payload) {
 	}
 	setState({
 		...global,
-		modals
+		modals: modals.slice()
 	});
 }
 
 export function closeModal(payload = undefined) {
 	const global = getState();
 	const modals = [...global.modals];
-	const last = modals[modals.length - 1];
+	let last = modals.pop();
 	if (last && last.isShown) {
-		last.isShown = false;
-		last.isClosing = true;
+		last = Object.assign({}, last, { isShown: false, isClosing: true });
+		modals.push(last);
 	}
 	const prev = modals[modals.length - 2];
-	if (prev && !prev.isShown) prev.isShown = true;
+	if (prev && !prev.isShown) {
+		Object.assign(prev, { isShown: true });
+		modals[modals.length - 2] = prev;
+	}
 	setState({
 		...global,
-		modals
+		modals: modals.slice()
 	});
 }
 
@@ -48,6 +51,6 @@ export function unloadModal(payload = undefined) {
 	if (current) modals.splice(modals.indexOf(current), 1);
 	setState({
 		...global,
-		modals
+		modals: modals.slice()
 	});
 }
