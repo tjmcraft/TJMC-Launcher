@@ -1,4 +1,5 @@
 import { getUnequalProps, pick, shallowEqual } from "./Iterates";
+import { generateIdFor } from "./Random";
 import { onBeforeUnload, throttle } from "./Shedulers";
 
 export function StateStore() {
@@ -13,9 +14,9 @@ export function StateStore() {
 		}
 	};
 
-	this.getState = (selector = (state) => state) => selector({ ...currentState }) ?? undefined;
+	this.getState = (selector = (state) => state) => selector(currentState) ?? undefined;
 
-	const callbacks = [void 0];
+	const callbacks = [updateContainers];
 
 	this.addCallback = (cb = () => { }) => {
 		if (typeof cb === "function") {
@@ -32,7 +33,7 @@ export function StateStore() {
 
 	const runCallbacks = () => {
 		//console.debug("run callbacks", callbacks)
-		callbacks.forEach((cb) => typeof cb === "function" ? cb({ ...currentState }) : null);
+		callbacks.forEach((cb) => typeof cb === "function" ? cb(currentState) : null);
 	};
 
 	const reducers = {};
@@ -60,6 +61,61 @@ export function StateStore() {
 	};
 
 	this.getDispatch = () => actions;
+
+	const containers = new Map();
+
+	function updateContainers(currentState) {
+		for (const container of containers.values()) {
+			const { selector, ownProps, mappedProps, callback } = container;
+
+			let newMappedProps;
+
+			try {
+				newMappedProps = selector(currentState, ownProps);
+			} catch (err) {
+				console.error(">> GSTATE", "CONTAINER\n", "UPDATE",
+					"Чёт наебнулось, но всем как-то похуй, да?\n",
+					"Может трейс глянешь хоть:\n", err);
+				return;
+			}
+
+			if (Object.keys(newMappedProps).length && !shallowEqual(mappedProps, newMappedProps)) {
+				container.mappedProps = newMappedProps;
+				callback(container.mappedProps);
+			}
+		}
+	}
+
+	this.withState = (selector = void 0, debug = undefined) => {
+		return (callback = void 0) => {
+			const id = generateIdFor(containers);
+			let container = containers.get(id);
+			if (!container) {
+				container = {
+					selector,
+					callback,
+					mappedProps: undefined,
+					debug: debug || id,
+				};
+				containers.set(id, container);
+			}
+			if (!container.mappedProps) {
+				try {
+					container.mappedProps = selector(currentState);
+				} catch (err) {
+					console.error(">> GSTATE", "CONTAINER\n", "INITIAL UPDATE",
+						"Чёт наебнулось в первый раз, но всем как-то похуй, да?\n",
+						"Может трейс глянешь хоть:\n", err);
+					return;
+				}
+			}
+			callback(container.mappedProps);
+			return () => {
+				console.debug("[withState]", "{GC}", "container", "->", id);
+				containers.delete(id);
+			};
+		};
+	};
 
 	return this;
 
