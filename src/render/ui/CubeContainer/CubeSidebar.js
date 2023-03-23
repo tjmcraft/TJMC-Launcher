@@ -14,9 +14,6 @@ const CubeSidebarItems = memo(() => {
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
 	console.warn(">", "CubeSidebarItems");
-	// useEffect(() => {
-	// 	console.debug(">>>", "rerender", "CubeSidebarItems", installations);
-	// }, [installations]);
 	return installations.length ? (
 		installations.map((hash) =>
 			createElement(CubeSidebarItem, {
