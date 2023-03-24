@@ -1,23 +1,19 @@
-const LoggerUtil                             = require('../util/loggerutil')
 const request                                = require('request')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const crypto                                 = require('crypto')
 const os                                     = require('os')
 const Zip                                    = require('adm-zip')
-const { merge }                              = require('../util/Tools')
-const logg                                   = LoggerUtil('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
+const EventEmitter                           = require('events')
+const logg                                   = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
-class Minecraft {
+class Minecraft extends EventEmitter {
 
-    /**
-     * This is just constructor of class
-     * @param client U may set here "this"
-     */
-    constructor(client) {
+    constructor(options) {
+        super();
+
         this.debug = false;
-        this.client = client;
-        this.options = client.options;
+        this.options = options;
         this.baseRequest = request.defaults({
             pool: { maxSockets: this.options.overrides.request.maxSockets ?? 4 },
             timeout: this.options.overrides.request.timeout ?? 10000
@@ -34,6 +30,7 @@ class Minecraft {
             },
             checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true
         };
+        this.controller = new AbortController();
     }
 
     /**
@@ -95,7 +92,8 @@ class Minecraft {
                 }));
 
             const stat = await natives();
-            this.client.emit('progress', {
+
+            this.emit('progress', {
                 type: 'natives',
                 task: 0,
                 total: stat.length,
@@ -114,7 +112,7 @@ class Minecraft {
                 } catch (e) { this.debug && logg.warn(e) }
                 fs.unlinkSync(native_path);
                 count++;
-                this.client.emit('progress', {
+                this.emit('progress', {
                     type: 'natives',
                     task: count,
                     total: stat.length,
@@ -122,7 +120,7 @@ class Minecraft {
             }))
             this.debug && logg.debug(`Downloaded and extracted natives! ${stat.length}`);
             count = 0;
-            this.client.emit('progress', {
+            this.emit('progress', {
                 type: 'natives',
                 task: count,
                 total: stat.length,
@@ -145,7 +143,7 @@ class Minecraft {
         let assets_pathes = [];
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
         const res_url = "https://resources.download.minecraft.net";
-        this.client.emit('progress', {
+        this.emit('progress', {
             type: 'assets',
             task: 0,
             total: Object.keys(index.objects).length,
@@ -160,7 +158,7 @@ class Minecraft {
                 await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
             }
             count++;
-            this.client.emit('progress', {
+            this.emit('progress', {
                 type: 'assets',
                 task: count,
                 total: Object.keys(index.objects).length,
@@ -168,7 +166,7 @@ class Minecraft {
             return assetPath;
         }))
         count = 0
-        this.client.emit('progress', {
+        this.emit('progress', {
             type: 'assets',
             task: count,
             total: Object.keys(index.objects).length,
@@ -215,7 +213,7 @@ class Minecraft {
 
             count++;
 
-            this.client.emit('progress', {
+            this.emit('progress', {
                 type: type,
                 task: count,
                 total: libraries.length,
@@ -228,7 +226,7 @@ class Minecraft {
 
         count = 0;
 
-        this.client.emit('progress', {
+        this.emit('progress', {
             type: type,
             task: count,
             total: libraries.length,
@@ -284,7 +282,7 @@ class Minecraft {
                 _request.pipe(file);
 
                 file.once('finish', () => {
-                    this.client.emit('download-status', {
+                    this.emit('download-status', {
                         name: filename,
                         type: type,
                         current: 0,
@@ -301,7 +299,7 @@ class Minecraft {
 
             _request.on('data', (data) => {
                 receivedBytes += data.length;
-                this.client.emit('download-status', {
+                this.emit('download-status', {
                     name: filename,
                     type: type,
                     current: receivedBytes,
