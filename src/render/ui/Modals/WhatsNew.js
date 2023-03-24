@@ -4,7 +4,7 @@ import remarkGfm from "remark-gfm";
 
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from 'Util/Store';
+import { getDispatch } from 'Store/Global';
 import { SVG } from '../svg';
 
 import { Modal } from 'UI/Modals';

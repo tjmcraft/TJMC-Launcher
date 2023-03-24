@@ -1,5 +1,5 @@
 import { randomString } from "Util/Random";
-import { getState, setState } from "Util/Store";
+import { getState, setState } from "Store/Global";
 
 export function addModal(payload) {
 	const global = getState();
@@ -21,23 +21,26 @@ export function addModal(payload) {
 	}
 	setState({
 		...global,
-		modals
+		modals: modals
 	});
 }
 
 export function closeModal(payload = undefined) {
 	const global = getState();
 	const modals = [...global.modals];
-	const last = modals[modals.length - 1];
+	let last = modals[modals.length - 1];
 	if (last && last.isShown) {
-		last.isShown = false;
-		last.isClosing = true;
+		last = Object.assign({}, last, { isShown: false, isClosing: true });
+		modals[modals.length - 1] = last;
 	}
-	const prev = modals[modals.length - 2];
-	if (prev && !prev.isShown) prev.isShown = true;
+	let prev = modals[modals.length - 2];
+	if (prev && !prev.isShown) {
+		prev = Object.assign({}, prev, { isShown: true });
+		modals[modals.length - 2] = prev;
+	}
 	setState({
 		...global,
-		modals
+		modals: modals
 	});
 }
 
@@ -48,6 +51,6 @@ export function unloadModal(payload = undefined) {
 	if (current) modals.splice(modals.indexOf(current), 1);
 	setState({
 		...global,
-		modals
+		modals: modals
 	});
 }

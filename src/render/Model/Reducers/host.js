@@ -1,4 +1,5 @@
-import { setState } from "Util/Store";
+import { setState } from "Store/Global";
+import ProgressStore from "Store/Progress"
 import { updateInstallation } from "./installations";
 
 export function updateHostInfo(global, update) {
@@ -14,9 +15,13 @@ export function updateHostInfo(global, update) {
 export function updateGameError(global, actions, update) {
 	const { hash, error } = update;
 	setState(updateInstallation(global, hash, {
-		progress: 0,
 		isProcessing: false,
 	}));
+
+	ProgressStore.setState({
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
+	});
 
 	actions.alert({
 		title: "Construct error",
@@ -31,9 +36,13 @@ export function updateGameError(global, actions, update) {
 export function updateGameStartupError(global, actions, update) {
 	const { hash, error } = update;
 	setState(updateInstallation(global, hash, {
-		progress: 0,
 		isProcessing: false,
 	}));
+
+	ProgressStore.setState({
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
+	});
 
 	actions.alert({
 		title: "Startup error",
@@ -48,9 +57,15 @@ export function updateGameStartupError(global, actions, update) {
 export function updateGameStartupSuccess(global, update) {
 	const { hash } = update;
 	setState(updateInstallation(global, hash, {
-		progress: 0,
 		isProcessing: false,
 	}));
+
+	ProgressStore.setState({
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
+	});
+
+
 }
 
 export function updateUpdate(global, update) {

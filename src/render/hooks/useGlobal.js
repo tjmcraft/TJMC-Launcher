@@ -1,35 +1,75 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { shallowEqual, stacksEqual } from "Util/Iterates";
-import { addCallback, getState, removeCallback } from "Util/Store";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import { arePropsShallowEqual, shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
+import { addCallback, getState, removeCallback } from "Store/Global";
+import { randomString } from "Util/Random";
 import useForceUpdate from "./useForceUpdate";
 
-const updateContainer = (propsRef, selector, callback) => {
-	return (global) => {
-		let nextState;
-		try {
-			nextState = selector(global);
-			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
-		} catch (err) {
-			return;
-		}
-		if (nextState != undefined) {
-			// console.debug("[picker]", "->", selector, "\n=>", propsRef.current, "->", nextState);
-			if (
-				(
-					propsRef.current?.internalArray != void 0 &&
-					nextState.internalArray != void 0 &&
-					!stacksEqual(propsRef.current?.internalArray, nextState?.internalArray)
-				) || !shallowEqual(propsRef.current, nextState)
-			) {
-				// console.debug("[picker]", "->", selector, "\n=>", "picked!", "\n=>", nextState);
-				propsRef.current = nextState;
-				callback(nextState.internalArray ?? nextState);
+const updateContainer = (selector, callback, options) => {
+	return (global) =>
+		callback((prevState) => {
+
+			let nextState;
+			try {
+				nextState = selector(global);
+			} catch (err) {
+				return;
 			}
-		}
-	};
+
+			if (nextState != void 0) {
+
+				const isArray = Array.isArray(prevState) || Array.isArray(nextState);
+				const shouldUpdate = isArray ?
+					!stacksEqual(prevState, nextState) :
+					!shallowEqual(prevState, nextState);
+
+				if (options.debugPicker) {
+					console.debug(
+						"[picker]", "->", options.label,
+						"\n", "state", "=>", "picking",
+						"\n", "next", "=>", nextState,
+						...(isArray ? (
+							[
+								"\n", "stacksEqual", "=>", stacksEqual(prevState, nextState),
+								"\n", "stacksDiff", "=>", stacksDiff(prevState, nextState),
+								"\n", "current", "=>", prevState,
+								"\n", "next", "=>", nextState,
+								"\n", "result", "=>", shouldUpdate,
+							]
+						) : [])
+					);
+				}
+
+				if (
+					// !arePropsShallowEqual(prevState, nextState)
+					shouldUpdate
+				) {
+					if (options.debugPicked) {
+						console.debug(
+							"[picker]", "->", options.label,
+							"\n", "state", "=>", "picked!",
+							"\n", "next", "=>", nextState,
+						);
+					}
+					return nextState;
+				}
+			}
+			return prevState;
+		});
 };
 
-const useGlobal = (selector = () => { }, inputs = []) => {
+/**
+ * useGlobal hook
+ * @param {*} selector selector function (picker)
+ * @param {React.DependencyList} inputs dependency list
+ * @param {Object} options options (for debug)
+ * @param {boolean} [options.debugPicker] debug picker function
+ * @param {boolean} [options.debugPicked] debug when picker picked
+ * @param {string} [options.label] picker label for debug
+ * @returns
+ */
+const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
+
+	options = useMemo(() => Object.assign({ debugPicker: false, debugPicked: false, label: randomString(5) }, options), [options]);
 
 	const forceUpdate = useForceUpdate();
 	const mappedProps = useRef(undefined);
@@ -40,21 +80,35 @@ const useGlobal = (selector = () => { }, inputs = []) => {
 		let nextState;
 		try {
 			nextState = getState(picker);
-			if (Array.isArray(nextState)) nextState = { internalArray: nextState };
-			mappedProps.current = nextState;
 		} catch (e) {
 			return undefined;
 		}
+		mappedProps.current = nextState;
 	}, [picker]);
 
 	useEffect(() => {
-		const updateCallback = () => forceUpdate(bool => !bool);
-		const callback = updateContainer(mappedProps, picker, updateCallback);
+		const updateCallback = (next) => {
+			let nextState;
+			try {
+				if (typeof next == 'function') {
+					nextState = next(mappedProps.current);
+				} else {
+					nextState = next;
+				}
+			} catch (e) {
+				return undefined;
+			}
+			if (nextState != null && nextState != mappedProps.current) {
+				mappedProps.current = nextState;
+				void forceUpdate(bool => !bool);
+			}
+		};
+		const callback = updateContainer(picker, updateCallback, options);
 		addCallback(callback);
 		return () => removeCallback(callback);
-	}, [forceUpdate, picker]);
+	}, [forceUpdate, picker, options]);
 
-	return mappedProps.current?.internalArray || mappedProps.current;
+	return mappedProps.current;
 };
 
 export default useGlobal;

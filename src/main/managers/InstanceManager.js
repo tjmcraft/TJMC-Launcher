@@ -8,7 +8,7 @@ const logger = LoggerUtil('%c[InstanceManager]', 'color: #f6fe10; font-weight: b
 const instances = new Map();
 
 exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
-	logger.debug(`Launching ${hash} with arguments ${javaPath} ${javaArgs.join(' ')}`);
+	// logger.debug(`Launching ${hash} with arguments ${javaPath} ${javaArgs.join(' ')}`);
 
 	const id = generateIdFor(instances);
 

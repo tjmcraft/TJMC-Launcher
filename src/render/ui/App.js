@@ -1,6 +1,6 @@
 import { memo, createElement, useEffect } from "react";
 
-import { getDispatch } from "Util/Store.js";
+import { getDispatch } from "Store/Global.js";
 import useGlobal from "Hooks/useGlobal.js";
 import useConstructor from "Hooks/useConstructor.js";
 

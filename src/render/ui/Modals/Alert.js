@@ -1,7 +1,7 @@
 import { createElement, Fragment, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import { SVG } from "../svg";
 
 import { Modal, ModalFooter } from "UI/Modals";

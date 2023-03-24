@@ -1,32 +1,48 @@
 import { createElement, useCallback, useRef, memo, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 
 import useContextMenu from "Hooks/useContextMenu";
 import useContextMenuPosition from "Hooks/useContextMenuPosition";
 import { selectInstallation } from "Model/Selectors/installations";
+import useHostOnline from "Hooks/useHostOnline";
+import useGlobal from "Hooks/useGlobal";
+import useGlobalProgress from "Hooks/useGlobalProgress";
 
 import PendingProgress from "UI/components/PendingProgress";
 import RoundProgress from "UI/components/RoundProgress";
 import Menu from "UI/components/Menu";
 import MenuItem from "UI/components/MenuItem";
-import useHostOnline from "Hooks/useHostOnline";
-import useGlobal from "Hooks/useGlobal";
 import Portal from "UI/components/Portal";
 
+
+
+const StatusContainer = ({ hash, isProcessing }) => {
+	const { progress } = useGlobalProgress(global => {
+		const version = global[hash] || {};
+		return {
+			progress: version.progress || 0,
+		};
+	}, [hash]);
+	return createElement('div', { class: 'status-container' },
+		isProcessing ? (
+			progress > 0 ?
+				createElement(RoundProgress, { progress: progress * 100 }) :
+				createElement(PendingProgress)
+		) : null);
+};
 
 const CubeSidebarItem = ({ hash, isSelected }) => {
 
 	const { setVersionHash, invokeLaunch, alert, removeInstallation } = getDispatch();
 
 	const hostOnline = useHostOnline();
-	const { name, type, progress, isProcessing } = useGlobal(global => {
+	const { name, type, isProcessing } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
 		return {
 			name: version.name,
 			type: version.type,
-			progress: version.progress,
 			isProcessing: version.isProcessing,
 		};
 	}, [hash]);
@@ -96,12 +112,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 				onContextMenu: handleContextMenu,
 			},
 			createElement('span', null, name || hash),
-			createElement('div', { class: 'status-container' },
-				isProcessing ? (
-					progress > 0 ?
-						createElement(RoundProgress, { progress: progress * 100 }) :
-						createElement(PendingProgress)
-				) : null),
+			createElement(StatusContainer, { isProcessing: isProcessing, hash: hash }),
 			contextMenuPosition != undefined && (
 				<Portal>
 					<Menu

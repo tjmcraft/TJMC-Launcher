@@ -1,6 +1,6 @@
 import { createElement, memo, useCallback, useEffect, useState } from "react";
 
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
 import { pick } from "Util/Iterates";

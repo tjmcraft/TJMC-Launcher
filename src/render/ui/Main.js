@@ -1,6 +1,6 @@
 import { createElement, useEffect, useState, memo } from "react";
 
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { SVG } from "./svg";
 

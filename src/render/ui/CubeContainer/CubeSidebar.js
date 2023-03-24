@@ -1,7 +1,7 @@
-import { memo, createElement, Fragment, useCallback } from "react";
+import { memo, createElement, Fragment, useCallback, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
 
@@ -13,6 +13,7 @@ import InstanceItem from "./InstanceItem";
 const CubeSidebarItems = memo(() => {
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
+	console.warn(">", "CubeSidebarItems");
 	return installations.length ? (
 		installations.map((hash) =>
 			createElement(CubeSidebarItem, {
@@ -30,6 +31,7 @@ const CubeSidebarItems = memo(() => {
 const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
+	console.warn(">", "InstallationsScroller");
 	return (
 		<div className={buildClassName('scroller', 'thin-s')}>
 			<h2 className={buildClassName('header-w', 'container-df')}>

@@ -1,4 +1,4 @@
-import { addReducer } from "Util/Store";
+import { addReducer } from "Store/Global";
 
 addReducer("setSettings", (global, actions, payload) => {
 	window.__debug__ && console.debug(">>", "[setSettings]", payload);

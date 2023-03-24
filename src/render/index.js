@@ -10,7 +10,7 @@ import "Model/Actions/Api";
 import "Model/Actions/Host";
 import "Model/Actions/Initial";
 import "Model/Actions/Installations";
-import { getDispatch, getState } from "Util/Store";
+import { getDispatch, getState } from "Store/Global";
 
 import platform from "platform";
 import BuildInfo from "!webpack-plugin-buildinfo?gitHashShort&time!";

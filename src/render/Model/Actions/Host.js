@@ -4,7 +4,8 @@ import { updateGameError, updateGameStartupError, updateGameStartupSuccess, upda
 import { updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
-import { addReducer } from "Util/Store";
+import { addReducer } from "Store/Global";
+import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { selectCurrentUser } from "Model/Selectors/user";
 
@@ -16,11 +17,14 @@ addReducer("hostUpdate", (global, actions, update) => {
 	window.__debug_host__ && console.debug(">>> HOST UPDATE:", update);
 	switch (update.type) {
 		case "updateConnectionState": return updateConnectionState(global, update);
+		// host initial
 		case "updateHostInfo": return updateHostInfo(global, update);
 		case "updateConfiguration": return updateConfiguration(global, update);
+		// game states
 		case "updateGameStartupError": return updateGameStartupError(global, actions, update);
 		case "updateGameStartupSuccess": return updateGameStartupSuccess(global, update);
 		case "updateGameError": return updateGameError(global, actions, update);
+		// host updates
 		case "updateStatus": return updateStatus(global, actions, update);
 		case "updateProgress": return updateProgress(global, actions, update);
 		default: return undefined;
@@ -57,6 +61,11 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	};
 
 	void callHost("invokeLaunch", hash, params);
+
+	ProgressStore.setState({
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
+	});
 
 	return updateInstallation(global, hash, {
 		isProcessing: true

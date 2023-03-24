@@ -1,6 +1,6 @@
 import { createElement, memo, useEffect, useRef } from "react";
 
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
 import { SVG } from "./svg";

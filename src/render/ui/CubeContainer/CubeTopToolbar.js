@@ -1,6 +1,6 @@
 import { createElement, useCallback, memo } from "react";
 
-import { getDispatch } from "Util/Store";
+import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
