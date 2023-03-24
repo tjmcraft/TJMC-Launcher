@@ -99,10 +99,14 @@ const launchMinecraft = async (version_hash, params = {}, eventListener = (event
 				}
 			});
 
+			worker.terminate();
+
 			emit('success', {
 				version_hash: version_hash
 			});
-		})
+		});
+
+		worker.on('exit', (code) => console.warn("Worker exit with code:", code));
 
 		return true;
 
