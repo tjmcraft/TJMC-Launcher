@@ -78,6 +78,5 @@ if (!isMainThread) {
     });
     instance.construct().then(args => {
         parentPort.postMessage({ type: 'args', payload: args });
-
     });
 }

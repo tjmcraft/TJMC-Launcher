@@ -5,8 +5,9 @@ const TCHost = require('./libs/TCHost');
 
 const requestChannels = Object.seal({
 	requestHostInfo: 'requestHostInfo',
-	invokeLaunch: 'invokeLaunch',
 	setProgress: 'setProgress',
+	invokeLaunch: 'invokeLaunch',
+	revokeLaunch: 'revokeLaunch',
 	fetchInstallations: 'fetchInstallations',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
@@ -71,7 +72,7 @@ const { ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
-const launchMinecraft = require('./Launcher');
+const { startLaunch, abortLaunch } = require('./Launcher');
 
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -168,34 +169,40 @@ const initHandlers = async () => {
 		});
 	}
 
-	WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
-		if (!data.version_hash) return false;
-		const eventListener = (event, args) => {
-			switch (event) {
-				case 'download': {
-					WSSHost.emit(ackChannels.gameProgressDownload, args);
-				}; break;
-				case 'progress': {
-					WSSHost.emit(ackChannels.gameProgressLoad, args);
-				}; break;
-				case 'close': {
-					MainWindow.setProgressBar(-1);
-					WSSHost.emit(ackChannels.gameStartupError, args);
-				}; break;
-				case 'success': {
-					MainWindow.setProgressBar(-1);
-					WSSHost.emit(ackChannels.gameStartupSuccess, args);
-				}; break;
-				case 'error': {
-					MainWindow.setProgressBar(-1);
-					WSSHost.emit(ackChannels.gameError, args);
-				}; break;
-				default: break;
+	{ // Launching
+		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
+			if (!data.version_hash) return false;
+			const eventListener = (event, args) => {
+				switch (event) {
+					case 'download': {
+						WSSHost.emit(ackChannels.gameProgressDownload, args);
+					}; break;
+					case 'progress': {
+						WSSHost.emit(ackChannels.gameProgressLoad, args);
+					}; break;
+					case 'close': {
+						MainWindow.setProgressBar(-1);
+						WSSHost.emit(ackChannels.gameStartupError, args);
+					}; break;
+					case 'success': {
+						MainWindow.setProgressBar(-1);
+						WSSHost.emit(ackChannels.gameStartupSuccess, args);
+					}; break;
+					case 'error': {
+						MainWindow.setProgressBar(-1);
+						WSSHost.emit(ackChannels.gameError, args);
+					}; break;
+					default: break;
+				}
 			}
-		}
-		setImmediate(() => launchMinecraft(data.version_hash, data.params = {}, eventListener));
-		return true;
-	});
+			setImmediate(() => startLaunch(data.version_hash, data.params = {}, eventListener));
+			return true;
+		});
+		WSSHost.addReducer(requestChannels.revokeLaunch, async (data) => {
+			if (!data.version_hash) return false;
+			return abortLaunch(data.version_hash);
+		});
+	}
 
 	WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 		const versions = await VersionManager.getGlobalVersions();
