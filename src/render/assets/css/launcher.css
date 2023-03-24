@@ -1124,25 +1124,17 @@ body {
 
 #playButton {
     position: relative;
-    background-color: var(--brand-color) !important;
+    /* background-color: var(--brand-color) !important; */
     box-sizing: border-box;
     font-size: 20px;
     font-weight: 800;
     padding: 8px 16px;
     min-width: 10rem;
     border-radius: 0;
-    color: #fdfdfd;
-    font-family: var(--font-primary);
+    /* color: #fdfdfd; */
+    /* font-family: var(--font-primary); */
     border-radius: 4px;
     line-height: 1;
-}
-
-#playButton:hover {
-    background-color: var(--brand-color-1) !important;
-}
-
-#playButton:active {
-    background-color: var(--brand-color-2) !important;
 }
 
 .button {

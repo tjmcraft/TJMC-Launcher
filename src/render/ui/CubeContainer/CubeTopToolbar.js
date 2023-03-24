@@ -10,7 +10,7 @@ import Button from "UI/components/Button";
 
 const CubeTopToolbar = ({ hash }) => {
 
-	const { invokeLaunch } = getDispatch();
+	const { invokeLaunch, revokeLaunch } = getDispatch();
 
 	const hostOnline = useHostOnline();
 	const { name, type, isLoading } = useGlobal(global => {
@@ -22,9 +22,9 @@ const CubeTopToolbar = ({ hash }) => {
 		};
 	}, [hash]);
 
-	const handlePlayClick = useCallback(() => {
-		invokeLaunch({ hash }); // Start minecraft with given version hash and auth param
-	}, [hash, invokeLaunch]);
+	const handlePlayClick = useCallback(() => (!isLoading ?
+		invokeLaunch({ hash }) : revokeLaunch({ hash })
+	), [hash, isLoading, invokeLaunch, revokeLaunch]);
 
 	return hash && (
 		<div className="top-toolbar">
@@ -36,8 +36,11 @@ const CubeTopToolbar = ({ hash }) => {
 				id='playButton'
 				onClick={handlePlayClick}
 				isLoading={isLoading}
-				disabled={!hostOnline || isLoading}
-			>Играть</Button>
+				isFilled={true}
+				isPrimary={!isLoading}
+				isRed={isLoading}
+				disabled={!hostOnline}
+			>{isLoading ? 'Остановить' : 'Играть'}</Button>
 		</div>
 	);
 };

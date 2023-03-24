@@ -51,6 +51,21 @@ export async function invokeLaunch(version_hash, params = {}) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function revokeLaunch(version_hash) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "revokeLaunch",
+			data: {
+				version_hash
+			}
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
 
 export async function fetchConfiguration() {
 	let result;

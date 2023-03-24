@@ -12,6 +12,7 @@ const Button = ({
 	onClick = void 0,
 	disabled = false,
 	children,
+	isFilled = false,
 	isPrimary = false,
 	isRed = false,
 	isLoading = false,
@@ -34,6 +35,7 @@ const Button = ({
 	const fullClassName = buildClassName(
 		className,
 		'Button',
+		isFilled && 'filled',
 		isRed && 'colorRed',
 		isPrimary && 'colorBrand',
 		disabled && 'disabled',

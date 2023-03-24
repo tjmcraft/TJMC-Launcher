@@ -2,6 +2,7 @@ export {
 	fetchHostInfo,
 	relaunchHost,
 	invokeLaunch,
+	revokeLaunch,
 	fetchConfiguration,
 	setConfiguration,
 	selectFolder,

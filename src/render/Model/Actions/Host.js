@@ -71,6 +71,22 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 		isProcessing: true
 	});
 });
+addReducer("revokeLaunch", (global, actions, payload) => {
+
+	if (!payload) return;
+	const { hash } = payload;
+
+	void callHost("revokeLaunch", hash);
+
+	ProgressStore.setState({
+		...ProgressStore.getState(),
+		[hash]: { progress: 0 }
+	});
+
+	return updateInstallation(global, hash, {
+		isProcessing: false
+	});
+});
 
 export const selectFolder = ({ title }) => callHost("selectFolder", { title });
 export const selectFile = ({ title }) => callHost("selectFile", { title });
