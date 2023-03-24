@@ -71,7 +71,7 @@ const { ipcMain, dialog } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
-const { launchMinecraft } = require('./Launcher');
+const launchMinecraft = require('./Launcher');
 
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -168,12 +168,26 @@ const initHandlers = async () => {
 		});
 	}
 
-	WSSHost.addReducer(requestChannels.invokeLaunch, (data) => new Promise((resolve) => {
-		if (!data.version_hash) return resolve(false);
-		launchMinecraft(data.version_hash, data.params = {}).then((result) => {
-			resolve(result);
-		}).catch(() => resolve(false));
-	}));
+	WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
+		if (!data.version_hash) return false;
+		setImmediate(() => launchMinecraft(data.version_hash, data.params = {}, {
+			load: (data) => WSSHost.emit(ackChannels.gameProgressLoad, data),
+			download: (data) => WSSHost.emit(ackChannels.gameProgressDownload, data),
+			close: (data) => {
+				MainWindow.setProgressBar(-1);
+				WSSHost.emit(ackChannels.gameStartupError, data);
+			},
+			success: (data) => {
+				MainWindow.setProgressBar(-1);
+				WSSHost.emit(ackChannels.gameStartupSuccess, data);
+			},
+			error: (data) => {
+				MainWindow.setProgressBar(-1);
+				WSSHost.emit(ackChannels.gameError, data);
+			},
+		}));
+		return true;
+	});
 
 	WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 		const versions = await VersionManager.getGlobalVersions();

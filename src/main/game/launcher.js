@@ -1,14 +1,13 @@
-const child                                  = require('child_process')
 const EventEmitter                           = require('events')
 const LoggerUtil                             = require('../util/loggerutil')
 const fs                                     = require('fs')
 const path                                   = require('path')
 const Minecraft                              = require('./Minecraft')
-const VersionManager                         = require('../managers/VersionManager')
-const JavaManager                            = require('../managers/JavaManager')
-const md5                                    = require('md5');
+const md5 = require('md5');
 
-class launcher extends EventEmitter {
+const { parentPort, workerData, isMainThread } = require("node:worker_threads");
+
+class Launcher extends EventEmitter {
 
     /**
      * Minecraft launcher constructor
@@ -41,38 +40,25 @@ class launcher extends EventEmitter {
 
     }
 
-    async getJava() {
-        const javaPath = this.options?.installation?.javaPath || this.options?.java?.javaPath || 'javaw';
-        const java = await JavaManager.checkJava(javaPath);
-        if (!java.run) {
-            this.debug && logger.error(`Couldn't start Minecraft due to: ${java.message}`);
-            throw new Error(`Wrong java (${javaPath})`);
-        }
-        return javaPath;
-    }
-
     async construct() {
-
-        const versionFile = await VersionManager.getVersionManifest(this.options.installation.lastVersionId);
-        this.options.manifest = versionFile;
 
         if (!fs.existsSync(this.options.overrides.path.root))
             fs.mkdirSync(this.options.overrides.path.root, { recursive: true });
         if (!fs.existsSync(this.options.overrides.path.gameDirectory))
             fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
         if (!fs.existsSync(this.options.mcPath))
-            await this.handler.loadClient(versionFile);
+            await this.handler.loadClient(this.options.manifest);
 
         this.debug && logger.log('Attempting to load natives');
-        const nativePath = await this.handler.getNatives(versionFile);
+        const nativePath = await this.handler.getNatives(this.options.manifest);
 
         this.debug && logger.log('Attempting to load classes');
-        const classes = await this.handler.getClasses(versionFile);
+        const classes = await this.handler.getClasses(this.options.manifest);
 
         this.debug && logger.log('Attempting to load assets');
-        const assets = await this.handler.getAssets(versionFile);
+        const assets = await this.handler.getAssets(this.options.manifest);
 
-        const args = this.handler.constructJVMArguments(versionFile, nativePath, classes);
+        const args = this.handler.constructJVMArguments(this.options.manifest, nativePath, classes);
 
         return args;
     }
@@ -126,4 +112,11 @@ String.prototype.replaceAt = function (index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
 
-module.exports = launcher
+if (!isMainThread) {
+    const instance = new Launcher(workerData);
+    instance.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
+    instance.on('download-progress', (e) => parentPort.postMessage({ type: 'download-progress', payload: e }));
+    instance.construct().then(args => {
+        parentPort.postMessage({ type: 'args', payload: args });
+    });
+}
