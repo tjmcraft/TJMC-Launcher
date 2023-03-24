@@ -25,7 +25,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	const VersionManager = require('./managers/VersionManager');
 	const InstallationsManager = require('./managers/InstallationsManager');
 
-	const emit = (eventName, ...args) => eventListener(eventName, ...args);
+	const emit = (eventName, args) => eventListener(eventName, args);
 
 	const controller = new AbortController();
 	if (!instances.get(version_hash)) {
@@ -70,7 +70,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			emit('progress', {
 				type: payload.type,
 				progress: progress,
-				version_hash: version_hash,
 			});
 		});
 
@@ -81,7 +80,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			emit('download', {
 				type: payload.type,
 				progress: progress,
-				version_hash: version_hash,
 			});
 		});
 
@@ -89,7 +87,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			if (type != 'args') return;
 			if (controller.signal.aborted) return;
 
-			const jvm = await createInstance(version_hash, javaPath, payload, {
+			const jvm = createInstance(version_hash, javaPath, payload, {
 				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.root,
 				detached: launcherOptions.java.detached
 			});
@@ -110,16 +108,13 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				if (![null, 0, 143].includes(code)) {
 					emit('close', {
 						error: logg_out,
-						version_hash: version_hash
 					});
 				}
 			});
 
 			worker.terminate();
 
-			emit('success', {
-				version_hash: version_hash
-			});
+			emit('success');
 		});
 
 		worker.on('exit', (code) => {
@@ -136,7 +131,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		runCallbacks();
 		emit('error', {
 			error: error.message,
-			version_hash: version_hash
 		});
 	}
 	return false;

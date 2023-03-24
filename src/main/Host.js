@@ -92,17 +92,6 @@ const initHandlers = async () => {
 		ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
 	})
 
-	ConfigManager.addCallback(config => {
-		// console.debug("Update Config:", config);
-
-		config && WSSHost.emit(ackChannels.updateConfiguration, { configuration: config });
-	});
-
-	InstallationsManager.addCallback(config => {
-		// console.debug("Update Installations:", config);
-		config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
-	});
-
 	{ // Updates
 		autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
 		autoUpdater.on('checking-for-update', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.checking }));
@@ -172,7 +161,9 @@ const initHandlers = async () => {
 	{ // Launching
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
+			const { version_hash, params = {} } = data;
 			const eventListener = (event, args) => {
+				args = Object.assign({ version_hash }, args);
 				switch (event) {
 					case 'download': {
 						WSSHost.emit(ackChannels.gameProgressDownload, args);
@@ -195,7 +186,7 @@ const initHandlers = async () => {
 					default: break;
 				}
 			}
-			setImmediate(() => startLaunch(data.version_hash, data.params = {}, eventListener));
+			setImmediate(() => startLaunch(version_hash, params, eventListener));
 			return true;
 		});
 		WSSHost.addReducer(requestChannels.revokeLaunch, async (data) => {
@@ -227,6 +218,10 @@ const initHandlers = async () => {
 	}
 
 	{ // Installations
+		InstallationsManager.addCallback(config => {
+			// console.debug("Update Installations:", config);
+			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
+		});
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
 			const installations = await InstallationsManager.getInstallations();
 			return { installations };
@@ -240,6 +235,10 @@ const initHandlers = async () => {
 	}
 
 	{ // Configuration
+		ConfigManager.addCallback(config => {
+			// console.debug("Update Config:", config);
+			config && WSSHost.emit(ackChannels.updateConfiguration, { configuration: config });
+		});
 		WSSHost.addReducer(requestChannels.fetchConfiguration, async () => {
 			const configuration = await ConfigManager.getAllOptions();
 			return { configuration };
