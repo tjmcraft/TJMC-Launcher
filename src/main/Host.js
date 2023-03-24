@@ -170,22 +170,30 @@ const initHandlers = async () => {
 
 	WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 		if (!data.version_hash) return false;
-		setImmediate(() => launchMinecraft(data.version_hash, data.params = {}, {
-			load: (data) => WSSHost.emit(ackChannels.gameProgressLoad, data),
-			download: (data) => WSSHost.emit(ackChannels.gameProgressDownload, data),
-			close: (data) => {
-				MainWindow.setProgressBar(-1);
-				WSSHost.emit(ackChannels.gameStartupError, data);
-			},
-			success: (data) => {
-				MainWindow.setProgressBar(-1);
-				WSSHost.emit(ackChannels.gameStartupSuccess, data);
-			},
-			error: (data) => {
-				MainWindow.setProgressBar(-1);
-				WSSHost.emit(ackChannels.gameError, data);
-			},
-		}));
+		const eventListener = (event, args) => {
+			switch (event) {
+				case 'download': {
+					WSSHost.emit(ackChannels.gameProgressDownload, args);
+				}; break;
+				case 'progress': {
+					WSSHost.emit(ackChannels.gameProgressLoad, args);
+				}; break;
+				case 'close': {
+					MainWindow.setProgressBar(-1);
+					WSSHost.emit(ackChannels.gameStartupError, args);
+				}; break;
+				case 'success': {
+					MainWindow.setProgressBar(-1);
+					WSSHost.emit(ackChannels.gameStartupSuccess, args);
+				}; break;
+				case 'error': {
+					MainWindow.setProgressBar(-1);
+					WSSHost.emit(ackChannels.gameError, args);
+				}; break;
+				default: break;
+			}
+		}
+		setImmediate(() => launchMinecraft(data.version_hash, data.params = {}, eventListener));
 		return true;
 	});
 

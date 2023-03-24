@@ -17,16 +17,12 @@ const getJava = async (launcherOptions) => {
 	return javaPath;
 }
 
-const launchMinecraft = async (version_hash, params = {}, events = {
-	load: void 0,
-	download: void 0,
-	close: void 0,
-	success: void 0,
-	error: void 0,
-}) => {
+const launchMinecraft = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	const ConfigManager = require('./managers/ConfigManager');
 	const VersionManager = require('./managers/VersionManager');
 	const InstallationsManager = require('./managers/InstallationsManager');
+
+	const emit = (eventName, ...args) => eventListener(eventName, ...args);
 
 	if (!version_hash) throw new Error("version_hash is required");
 
@@ -34,26 +30,6 @@ const launchMinecraft = async (version_hash, params = {}, events = {
 	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
 	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
-
-	function progress(e) {
-		const progress = (e.task / e.total);
-		events.load != void 0 && events.load({
-			type: e.type,
-			progress: progress,
-			version_hash: version_hash,
-		});
-	}
-
-	function download_progress(e) {
-		const progress = (e.current / e.total);
-		if (e.type != 'version-jar') return;
-		events.download != void 0 && events.download({
-			type: e.type,
-			progress: progress,
-			version_hash: version_hash,
-		});
-	}
-
 
 	try {
 
@@ -73,17 +49,25 @@ const launchMinecraft = async (version_hash, params = {}, events = {
 			workerData: launcherOptions
 		});
 
-		// worker.on('progress', progress);
-		// worker.on('download-status', download_progress);
-
 		worker.on('message', async ({ type, payload }) => {
 			if (type != 'progress') return;
-			progress(payload);
+			const progress = (payload.task / payload.total);
+			emit('progress', {
+				type: payload.type,
+				progress: progress,
+				version_hash: version_hash,
+			});
 		});
 
 		worker.on('message', async ({ type, payload }) => {
 			if (type != 'download-progress') return;
-			download_progress(payload);
+			const progress = (payload.current / payload.total);
+			if (payload.type != 'version-jar') return;
+			emit('download', {
+				type: payload.type,
+				progress: progress,
+				version_hash: version_hash,
+			});
 		});
 
 		worker.on('message', async ({ type, payload }) => {
@@ -115,7 +99,7 @@ const launchMinecraft = async (version_hash, params = {}, events = {
 				}
 			});
 
-			events.success != void 0 && events.success({
+			emit('success', {
 				version_hash: version_hash
 			});
 		})
@@ -124,7 +108,7 @@ const launchMinecraft = async (version_hash, params = {}, events = {
 
 	} catch (error) {
 		logger.error(error);
-		events.error != void 0 && events.error({
+		emit('error', {
 			error: error.message,
 			version_hash: version_hash
 		});
