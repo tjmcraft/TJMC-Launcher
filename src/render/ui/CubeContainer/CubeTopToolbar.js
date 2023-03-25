@@ -18,7 +18,7 @@ const CubeTopToolbar = ({ hash }) => {
 	const { progress, progressType } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
-			progress: version.progress || 0,
+			progress: version.progress * 100 || 0,
 			progressType: version.progressType || undefined,
 		};
 	}, [hash]);
@@ -47,14 +47,14 @@ const CubeTopToolbar = ({ hash }) => {
 				'version-jar': 'loading main jar',
 				aborting: 'aborting',
 				terminated: 'terminated',
-			})[progressType] || "loading"}...`;
+			})[progressType] || "loading"}\xa0-\xa0${Math.round(progress * 100)/100}%`;
 		}
 		return type;
-	}, [type, progressType, isLoading]);
+	}, [type, progressType, isLoading, progress]);
 
 	return hash && (
 		// @ts-ignore
-		<div className="top-toolbar" style={{ '--progress': `${progress * 100}%` }}>
+		<div className="top-toolbar" style={{ '--progress': `${progress}%` }}>
 			<div className="title">
 				<h2>{name || hash}</h2>
 				<h5>{subtitle}</h5>
