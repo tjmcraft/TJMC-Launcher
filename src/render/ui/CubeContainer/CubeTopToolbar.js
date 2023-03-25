@@ -2,6 +2,7 @@ import { createElement, useCallback, memo } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
+import useGlobalProgress from "Hooks/useGlobalProgress";
 import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
 
@@ -22,12 +23,20 @@ const CubeTopToolbar = ({ hash }) => {
 		};
 	}, [hash]);
 
+	const { progress } = useGlobalProgress(global => {
+		const version = global[hash] || {};
+		return {
+			progress: version.progress || 0,
+		};
+	}, [hash]);
+
 	const handlePlayClick = useCallback(() => (!isLoading ?
 		invokeLaunch({ hash }) : revokeLaunch({ hash })
 	), [hash, isLoading, invokeLaunch, revokeLaunch]);
 
 	return hash && (
-		<div className="top-toolbar">
+		// @ts-ignore
+		<div className="top-toolbar" style={{ '--progress': `${progress * 100}%` }}>
 			<div className="title">
 				<h2>{name || hash}</h2>
 				<h5>{type}</h5>

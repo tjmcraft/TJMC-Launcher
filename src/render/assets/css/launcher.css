@@ -1098,6 +1098,17 @@ body {
     /* backdrop-filter: saturate(180%) blur(15px); */
     overflow: hidden;
     color: #fdfdfd;
+    --progress: 0;
+}
+.main-content > .top > .top-overlay > .top-toolbar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--brand-color);
+    width: var(--progress);
 }
 
 .main-content > .top > .top-overlay > .top-toolbar > .title {
