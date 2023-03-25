@@ -76,7 +76,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		worker.on('message', async ({ type, payload }) => {
 			if (type != 'download-progress') return;
 			const progress = (payload.current / payload.total);
-			if (payload.type != 'version-jar') return;
 			emit('download', {
 				type: payload.type,
 				progress: progress,

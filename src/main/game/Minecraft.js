@@ -288,7 +288,7 @@ class Minecraft extends EventEmitter {
                 _request.pipe(file);
 
                 file.once('finish', () => {
-                    this.emit('download-status', {
+                    this.emit('download-progress', {
                         name: filename,
                         type: type,
                         current: 0,
@@ -305,7 +305,7 @@ class Minecraft extends EventEmitter {
 
             _request.on('data', (data) => {
                 receivedBytes += data.length;
-                this.emit('download-status', {
+                this.emit('download-progress', {
                     name: filename,
                     type: type,
                     current: receivedBytes,
