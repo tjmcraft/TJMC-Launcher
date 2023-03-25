@@ -1,4 +1,4 @@
-import { createElement, useCallback, memo } from "react";
+import { createElement, useCallback, memo, useMemo } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
@@ -23,10 +23,11 @@ const CubeTopToolbar = ({ hash }) => {
 		};
 	}, [hash]);
 
-	const { progress } = useGlobalProgress(global => {
+	const { progress, progressType } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
 			progress: version.progress || 0,
+			progressType: version.loadType || undefined,
 		};
 	}, [hash]);
 
@@ -34,12 +35,26 @@ const CubeTopToolbar = ({ hash }) => {
 		invokeLaunch({ hash }) : revokeLaunch({ hash })
 	), [hash, isLoading, invokeLaunch, revokeLaunch]);
 
+	const subtitle = useMemo(() => {
+		if (progressType != void 0) {
+			return `${Object.seal({
+				natives: 'loading natives',
+				indexes: 'loading asset manifest',
+				assets: 'loading assets',
+				classes: 'loading libraries',
+				'classes-maven': 'loading maven libraries',
+				'version-jar': 'loading main jar'
+			})[progressType] || "loading"}...`;
+		}
+		return type;
+	}, [type, progressType]);
+
 	return hash && (
 		// @ts-ignore
 		<div className="top-toolbar" style={{ '--progress': `${progress * 100}%` }}>
 			<div className="title">
 				<h2>{name || hash}</h2>
-				<h5>{type}</h5>
+				<h5>{subtitle}</h5>
 			</div>
 			<Button
 				id='playButton'
