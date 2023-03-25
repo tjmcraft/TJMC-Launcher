@@ -28,8 +28,7 @@ class Minecraft extends EventEmitter {
                 id: this.options.installation.lastVersionId,
                 type: this.options.installation.type
             },
-            checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true,
-            syncAssets: this.options.installation?.syncAssets ?? this.options.overrides?.syncAssets ?? false,
+            checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true
         };
         this.controller = new AbortController();
     }
@@ -147,7 +146,9 @@ class Minecraft extends EventEmitter {
             type: 'assets',
             task: 0.0001,
             total: Object.keys(index.objects).length,
-        })
+        });
+
+        const assetsToLoad = [];
         const assetProcessor = async (asset) => {
             const hash = index.objects[asset].hash;
             const subHash = hash.substring(0, 2);
@@ -155,22 +156,30 @@ class Minecraft extends EventEmitter {
             const assetPath = path.join(subAsset, hash);
             if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
                 // (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
-                await this.downloadAsync(`${res_url}/${subHash}/${hash}`, subAsset, hash, true, 'assets');
+                assetsToLoad.push(async () => {
+                    await this.downloadAsync(`${res_url}/${subHash}/${hash}`, subAsset, hash, true, 'assets');
+                    count++;
+                    this.emit('progress', {
+                        type: 'assets',
+                        task: count,
+                        total: Object.keys(index.objects).length,
+                    });
+                });
+            } else {
+                count++;
+                this.emit('progress', {
+                    type: 'assets',
+                    task: count,
+                    total: Object.keys(index.objects).length,
+                })
             }
-            count++;
-            this.emit('progress', {
-                type: 'assets',
-                task: count,
-                total: Object.keys(index.objects).length,
-            })
             return assetPath;
         };
-        if (this.overrides.syncAssets) {
-            for (const asset of Object.keys(index.objects)) {
-                await assetProcessor(asset);
-            }
-        } else {
-            await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset)));
+        for (const asset of Object.keys(index.objects)) {
+            await assetProcessor(asset);
+        }
+        if (assetsToLoad.length > 0) {
+            await Promise.all(assetsToLoad.map(async asset => await asset()));
         }
         count = 0
         this.emit('progress', {
