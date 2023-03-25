@@ -35,9 +35,14 @@ const StatusContainer = ({ hash, isProcessing }) => {
 
 const CubeSidebarItem = ({ hash, isSelected }) => {
 
-	const { setVersionHash, invokeLaunch, alert, removeInstallation } = getDispatch();
+	const {
+		setVersionHash,
+		invokeLaunch,
+		revokeLaunch,
+		alert,
+		removeInstallation
+	} = getDispatch();
 
-	const hostOnline = useHostOnline();
 	const { name, type, isProcessing } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
 		return {
@@ -48,7 +53,6 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	}, [hash]);
 
 	const containerRef = useRef();
-	// const menuRef = useRef();
 
 	const {
 		isContextMenuOpen, contextMenuPosition,
@@ -56,9 +60,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
-
 	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'), []);
-
 	const getMenuElement = useCallback(() => undefined, []);
 
 	const {
@@ -67,13 +69,11 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		getRootElement,
 		getMenuElement);
 
-	const handleClick = useCallback(() => {
-		setVersionHash(hash);
-	}, [hash, setVersionHash]);
+	const handleClick = useCallback(() => setVersionHash(hash), [hash, setVersionHash]);
 
-	const handleLaunchClick = useCallback((e) => {
-		hostOnline && invokeLaunch({ hash });
-	}, [hash, invokeLaunch, hostOnline]);
+	const handleLaunchClick = useCallback((e) => (!isProcessing ?
+		invokeLaunch({ hash }) : revokeLaunch({ hash })
+	), [hash, invokeLaunch, revokeLaunch, isProcessing]);
 
 	const handleRemoveClick = useCallback((e) => {
 		alert({
@@ -98,10 +98,6 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		});
 	}, [alert, name, removeInstallation, hash]);
 
-	/* useEffect(() => {
-		console.debug(">>RC", isContextMenuOpen, contextMenuPosition);
-	}, [isContextMenuOpen, contextMenuPosition]); */
-
 	return hash && (
 		createElement(
 			'div', {
@@ -123,9 +119,15 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 						positionX={positionX} positionY={positionY}
 						transformOriginX={transformOriginX} transformOriginY={transformOriginY}
 					>
-						<MenuItem compact onClick={handleClick}>Select</MenuItem>
-						<MenuItem compact onClick={handleLaunchClick} disabled={isProcessing}><span className="">Launch</span></MenuItem>
-						<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}><span className="color-red">Remove</span></MenuItem>
+						<MenuItem compact onClick={handleClick}>
+							<span className="">{'Выбрать'}</span>
+						</MenuItem>
+						<MenuItem compact onClick={handleLaunchClick}>
+							<span className="">{!isProcessing ? 'Запустить' : 'Остановить'}</span>
+						</MenuItem>
+						<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}>
+							<span className="color-red">{'Удалить'}</span>
+						</MenuItem>
 					</Menu>
 				</Portal>
 			)
