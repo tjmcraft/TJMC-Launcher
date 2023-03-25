@@ -225,9 +225,10 @@ code {
 button {
     border: 0;
     outline: 0;
-    /* border-width: 0px 0px 1px 0px; */
-    border: none;
+    border-width: 1px;
+    border-style: solid;
     border-radius: 0.375rem;
+    border-color: transparent;
     background-color: transparent;
     color: var(--header-primary);
     font-family: var(--font-primary);
@@ -253,7 +254,7 @@ button.small {
 }
 
 button.filled {
-    transition: background-color .1s ease;
+    transition: background-color .1s ease, border-color .1s ease;
     color: var(--header-primary);
     background-color: var(--background-modifier-accent);
 }
@@ -262,6 +263,9 @@ button.filled:hover {
     background-color: var(--background-modifier-selected);
 }
 
+button.colorBrand {
+    border-color: var(--brand-color);
+}
 button.filled.colorBrand {
     color: #fff !important;
     background-color: var(--brand-color);
@@ -275,7 +279,7 @@ button.filled.colorBrand:disabled {
 }
 
 button.colorRed {
-    border: 1px solid var(--button-red-background);
+    border-color: var(--button-red-background);
 }
 button.filled.colorRed {
     color: #fff !important;
