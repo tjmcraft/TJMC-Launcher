@@ -28,7 +28,8 @@ class Minecraft extends EventEmitter {
                 id: this.options.installation.lastVersionId,
                 type: this.options.installation.type
             },
-            checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true
+            checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true,
+            syncAssets: this.options.installation?.syncAssets ?? this.options.overrides?.syncAssets ?? false,
         };
         this.controller = new AbortController();
     }
@@ -140,22 +141,21 @@ class Minecraft extends EventEmitter {
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
         }
-        let assets_pathes = [];
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
         const res_url = "https://resources.download.minecraft.net";
         this.emit('progress', {
             type: 'assets',
-            task: 0,
+            task: 0.0001,
             total: Object.keys(index.objects).length,
         })
-        assets_pathes = await Promise.all(Object.keys(index.objects).map(async (asset, number) => {
-            const hash = index.objects[asset].hash
-            const subhash = hash.substring(0, 2)
-            const subAsset = path.join(assetDirectory, 'objects', subhash)
+        const assetProcessor = async (asset) => {
+            const hash = index.objects[asset].hash;
+            const subHash = hash.substring(0, 2);
+            const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
             if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
-                (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
-                await this.downloadAsync(`${res_url}/${subhash}/${hash}`, subAsset, hash, true, 'assets');
+                // (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
+                await this.downloadAsync(`${res_url}/${subHash}/${hash}`, subAsset, hash, true, 'assets');
             }
             count++;
             this.emit('progress', {
@@ -164,15 +164,21 @@ class Minecraft extends EventEmitter {
                 total: Object.keys(index.objects).length,
             })
             return assetPath;
-        }))
+        };
+        if (this.overrides.syncAssets) {
+            for (const asset of Object.keys(index.objects)) {
+                await assetProcessor(asset);
+            }
+        } else {
+            await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset)));
+        }
         count = 0
         this.emit('progress', {
             type: 'assets',
             task: count,
             total: Object.keys(index.objects).length,
         })
-        this.debug && logg.debug('Collected assets')
-        return assets_pathes
+        this.debug && logg.debug('Collected assets');
     }
 
     /**

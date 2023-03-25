@@ -389,6 +389,14 @@ const MinecraftSettingsTab = memo(() => {
 									setConfig({ key: "overrides.checkHash", value: s });
 								}}
 							/>
+							<SettingContainer id="overrides.syncAssets"
+								header="Синхронизация проверки Assets"
+								note={"Эта опция позволяет вам отключать асинхронную проверку хеша файлов. \nРекомендуется включить параметр если наблюдается пониженная производительность при старте проверки!"}
+								checked={config.overrides.syncAssets}
+								action={(s) => {
+									setConfig({ key: "overrides.syncAssets", value: s });
+								}}
+							/>
 						</div>
 					</div>
 				</div>
