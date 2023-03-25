@@ -14,40 +14,43 @@ const CubeTopToolbar = ({ hash }) => {
 	const { invokeLaunch, revokeLaunch } = getDispatch();
 
 	const hostOnline = useHostOnline();
-	const { name, type, isLoading } = useGlobal(global => {
-		const version = selectInstallation(global, hash);
-		return {
-			name: version.name,
-			type: version.type,
-			isLoading: version.isProcessing,
-		};
-	}, [hash]);
 
 	const { progress, progressType } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
 			progress: version.progress || 0,
-			progressType: version.loadType || undefined,
+			progressType: version.progressType || undefined,
 		};
 	}, [hash]);
+
+	const { name, type, isLoading } = useGlobal(global => {
+		const version = selectInstallation(global, hash);
+		return {
+			name: version.name,
+			type: version.type,
+			isLoading: version.isProcessing || progressType == 'aborting',
+		};
+	}, [hash, progressType]);
 
 	const handlePlayClick = useCallback(() => (!isLoading ?
 		invokeLaunch({ hash }) : revokeLaunch({ hash })
 	), [hash, isLoading, invokeLaunch, revokeLaunch]);
 
 	const subtitle = useMemo(() => {
-		if (progressType != void 0) {
+		if (isLoading && progressType != void 0) {
 			return `${Object.seal({
 				natives: 'loading natives',
 				indexes: 'loading asset manifest',
 				assets: 'loading assets',
 				classes: 'loading libraries',
 				'classes-maven': 'loading maven libraries',
-				'version-jar': 'loading main jar'
+				'version-jar': 'loading main jar',
+				aborting: 'aborting',
+				terminated: 'terminated',
 			})[progressType] || "loading"}...`;
 		}
 		return type;
-	}, [type, progressType]);
+	}, [type, progressType, isLoading]);
 
 	return hash && (
 		// @ts-ignore
@@ -63,7 +66,7 @@ const CubeTopToolbar = ({ hash }) => {
 				isFilled={true}
 				isPrimary={!isLoading}
 				isRed={isLoading}
-				disabled={!hostOnline}
+				disabled={!hostOnline || progressType == 'aborting'}
 			>{isLoading ? 'Остановить' : 'Играть'}</Button>
 		</div>
 	);

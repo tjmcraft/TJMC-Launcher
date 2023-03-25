@@ -41,10 +41,10 @@ export function updateInstallations(global, update) {
 }
 
 export function updateInstallationProgress(global, update) {
-	const { hash, progress, loadType } = update;
+	const { hash, progress, progressType } = update;
 	ProgressStore.setState({
 		...ProgressStore.getState(),
-		[hash]: { progress: progress, loadType: loadType }
+		[hash]: { progress: progress, progressType: progressType }
 	});
 	return void 0;
 }

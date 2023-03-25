@@ -33,14 +33,14 @@ export function updater(update) {
 			type: "updateInstallationsProgressLoad",
 			hash: payload.version_hash,
 			progress: payload.progress,
-			loadType: payload.type,
+			progressType: payload.type,
 		});
 	} else if (type == "game.progress.download") {
 		payload?.version_hash && onUpdate({
 			type: "updateInstallationsProgressDownload",
 			hash: payload.version_hash,
 			progress: payload.progress,
-			loadType: payload.type,
+			progressType: payload.type,
 		});
 	} else if (type == "game.startup.error") {
 		payload?.version_hash && onUpdate({

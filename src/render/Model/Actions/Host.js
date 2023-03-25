@@ -78,11 +78,6 @@ addReducer("revokeLaunch", (global, actions, payload) => {
 
 	void callHost("revokeLaunch", hash);
 
-	ProgressStore.setState({
-		...ProgressStore.getState(),
-		[hash]: { progress: 0 }
-	});
-
 	return updateInstallation(global, hash, {
 		isProcessing: false
 	});

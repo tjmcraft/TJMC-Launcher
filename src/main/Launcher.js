@@ -61,11 +61,16 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		controller.signal.addEventListener('abort', () => {
 			logger.warn("Aborting..");
+			emit('progress', {
+				type: 'aborting',
+				progress: 0,
+			});
 			worker.terminate();
 		});
 
 		worker.on('message', async ({ type, payload }) => {
 			if (type != 'progress') return;
+			if (controller.signal.aborted) return;
 			const progress = (payload.task / payload.total);
 			emit('progress', {
 				type: payload.type,
@@ -75,6 +80,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		worker.on('message', async ({ type, payload }) => {
 			if (type != 'download-progress') return;
+			if (controller.signal.aborted) return;
 			const progress = (payload.current / payload.total);
 			if (!['version-jar'].includes(payload.type)) return;
 			emit('download', {
@@ -121,6 +127,10 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			console.warn("Worker exit with code:", code);
 			instances.delete(version_hash);
 			runCallbacks();
+			emit('progress', {
+				type: 'terminated',
+				progress: 0,
+			});
 		});
 
 		return true;
@@ -145,7 +155,7 @@ exports.getInstanceById = (instanceId) => {
 exports.abortLaunch = async (instanceId) => {
 	const instance = instances.get(instanceId);
 	if (instance) {
-		return instance.controller.abort();
+		return (instance.controller.abort(), true);
 	}
 	return false;
 };
