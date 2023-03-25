@@ -39,6 +39,8 @@ const ModalLayer = ({ isShown, children }) => {
 
 	const onCloseEnd = () => onHideModal(params.label);
 
+	useEffect(() => captureEscKeyListener(() => closeModal()), [closeModal]);
+
 	const {
 		transitionClassNames,
 	} = useShowTransition(
@@ -76,7 +78,6 @@ const Modals = memo(() => {
 
 	const isOpen = modals.length > 0;
 
-	useEffect(() => (isOpen ? captureEscKeyListener(closeModal) : undefined), [isOpen, closeModal]);
 
 	return isOpen &&
 		modals.map((modal) => (
