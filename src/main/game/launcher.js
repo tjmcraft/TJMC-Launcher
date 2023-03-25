@@ -22,7 +22,7 @@ class Launcher {
      */
     constructor(options = {}) {
 
-        this.debug = false;
+        this.debug = true;
         this.logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
         this.options = Object.assign({}, options);
@@ -35,8 +35,8 @@ class Launcher {
 
         this.handler = new Minecraft(this.options);
 
-        this.debug && logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
-        this.debug && logger.debug("Launcher compiled options:", this.options);
+        this.debug && this.logger.debug(`Minecraft folder is ${this.options.overrides.path.root}`);
+        this.debug && this.logger.debug("Launcher compiled options:", this.options);
     }
 
     async construct() {
@@ -48,13 +48,13 @@ class Launcher {
         if (!fs.existsSync(this.options.mcPath))
             await this.handler.loadClient(this.options.manifest);
 
-        this.debug && logger.log('Attempting to load natives');
+        this.debug && this.logger.log('Attempting to load natives');
         const nativePath = await this.handler.getNatives(this.options.manifest);
 
-        this.debug && logger.log('Attempting to load classes');
+        this.debug && this.logger.log('Attempting to load classes');
         const classes = await this.handler.getClasses(this.options.manifest);
 
-        this.debug && logger.log('Attempting to load assets');
+        this.debug && this.logger.log('Attempting to load assets');
         const assets = await this.handler.getAssets(this.options.manifest);
 
         const args = this.handler.constructJVMArguments(this.options.manifest, nativePath, classes);
