@@ -65,7 +65,6 @@ const CubeTopToolbar = ({ hash }) => {
 				isLoading={isLoading}
 				isFilled={true}
 				isPrimary={!isLoading}
-				isRed={isLoading}
 				disabled={!hostOnline || progressType == 'aborting'}
 			>{isLoading ? 'Остановить' : 'Играть'}</Button>
 		</div>
