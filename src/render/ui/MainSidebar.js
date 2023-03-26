@@ -28,7 +28,7 @@ const UserPanel = memo(() => {
 		<div className="panel">
 			<div className="container">
 				<div className="avatar">
-					<img src={`https://cdn.tjmcraft.ga/avatars/${user.id}/${user.avatar}.png?size=64`} />
+					<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} />
 				</div>
 				<div className="nameTag">
 					<div className="title">{user.realname || user.username}</div>

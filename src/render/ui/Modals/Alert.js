@@ -25,7 +25,7 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 		if (button.closeOverlay) closeModal();
 	};
 	return (
-		<>
+		<form>
 			{title && (
 				<div className={buildClassName('flex-group', 'horizontal', style.header)}>
 					{type && (
@@ -54,7 +54,7 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 					>{button.name}</Button>
 				))}
 			</ModalFooter>
-		</>
+		</form>
 	);
 };
 

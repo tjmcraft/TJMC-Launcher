@@ -260,7 +260,7 @@ const MyAccountTab = memo(() => {
 					<div className="bxcF1-box">
 						<div className="ictx-flex">
 							<div className="icon">
-								<img src={`https://cdn.tjmcraft.ga/avatars/${user.id}/${user.avatar}.png?size=128`} />
+								<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=128`} />
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>
 								<span className={buildClassName("vbx", "cu")}>
@@ -842,8 +842,8 @@ const AboutTab = memo(() => {
 							<div className="description">{APP_COPYRIGHT}</div>
 							<span className={buildClassName("flex-group", "horizontal")}>
 								<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
-								<a href="https://www.tjmcraft.ga/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
-								<a href="https://www.tjmcraft.ga/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
+								<a href="https://www.tjmc.ru/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
+								<a href="https://www.tjmc.ru/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
 							</span>
 						</div>
 					</div>
