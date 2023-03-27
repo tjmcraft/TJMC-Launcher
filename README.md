@@ -8,6 +8,17 @@
 This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to `TJMC-Company` (for *non-commercial* purpose only). \
 TJMC-Launcher is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
+## Tasks 📑
+- [x] Implement **Context Menu** on **Installations**
+- [ ] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
+- [ ] Implement **Edit** action on **Installations**
+- [ ] Create **JavaManager**, that can **install** required java and also scan **installed** versions
+- [ ] Fix Forge and other *modded* builds startup issues
+- [ ] Fix accessibility issues (aria tags + tab navigation)
+- [ ] Implement font resize + *accent color change*
+- [ ] Implement next **TCHost** (WebRTC) under Host
+- [ ] Update **Auth** system (move to Host as server + oauth on web) or just update **Auth** component to multi-step
+
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
