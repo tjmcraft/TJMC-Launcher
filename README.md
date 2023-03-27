@@ -5,7 +5,7 @@
 </p>
 
 ## About project ✨
-This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to [TJMC-Company](https://www.tjmc.ru) (for *non-commercial* purpose only). \
+This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to [TJMC-Company](https://github.com/tjmcraft) (for *non-commercial* purpose only). \
 **TJMC-Launcher** is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
 ## Tasks 📑
