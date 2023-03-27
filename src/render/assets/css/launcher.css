@@ -246,6 +246,18 @@ button {
     box-sizing: border-box;
 }
 
+[role="button"]:focus::before {
+    position: absolute;
+    z-index: 1;
+    top: calc(-1px - 3px);
+    right: calc(-1px - 3px);
+    bottom: calc(-1px - 3px);
+    left: calc(-1px - 3px);
+    border: 2px solid var(--text-link);
+    border-radius: calc(5px + 3px);
+    content: "";
+}
+
 button.small {
     padding: 8px 16px;
     min-width: 80px;

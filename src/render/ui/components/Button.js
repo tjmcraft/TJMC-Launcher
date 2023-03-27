@@ -47,6 +47,8 @@ const Button = ({
 		<button
 			id={id}
 			type={type}
+			tabIndex={0}
+			role="button"
 			className={fullClassName}
 			onClick={handleClick}
 			disabled={disabled}

@@ -17,7 +17,7 @@ export const Modal = ({
 		full && style.full,
 	);
 
-	return <div className={classNames}>{children}</div>;
+	return <div className={classNames} role="alertdialog" tabIndex={-1} aria-modal="true">{children}</div>;
 };
 
 export const ModalFooter = ({ children }) => {
