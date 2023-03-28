@@ -94,7 +94,7 @@ class JavaManager extends EventEmitter {
             await Promise.all(filesToDownload.map(async file => {
               const fileName = path.join(javaDir, file.name);
               await downloadToFile(file.downloads["raw"].url, fileName);
-              if (file.executable) {
+              if (file.executable && process.platform != "win32") {
                 await promisify(child.exec)(`chmod +x "${fileName}"`);
                 await promisify(child.exec)(`chmod 755 "${fileName}"`);
               }
