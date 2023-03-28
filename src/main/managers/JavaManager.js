@@ -4,6 +4,7 @@ const LoggerUtil = require("../util/loggerutil");
 const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
+const { promisify } = require('util');
 const logger = LoggerUtil('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
 class JavaManager extends EventEmitter {
@@ -63,7 +64,7 @@ class JavaManager extends EventEmitter {
   downloadJava = (javaVersionCode) => {
     console.debug("Download Java:", javaVersionCode);
     return new Promise((resolve, reject) => {
-      const javaPath = path.join(this.rootDir, "java", javaVersionCode, "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+      const javaPath = path.join(this.rootDir, "java", javaVersionCode, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
       if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
         return resolve(javaPath);
       } else {
@@ -75,6 +76,7 @@ class JavaManager extends EventEmitter {
               name: file,
               downloads: manifest.files[file].downloads,
               type: manifest.files[file].type,
+              executable: manifest.files[file].executable,
             }));
             const directory = files.filter((file) => file.type == "directory");
             const filesToDownload = files.filter((file) => file.type == "file");
@@ -90,7 +92,12 @@ class JavaManager extends EventEmitter {
             let downloadedFiles = 0;
 
             await Promise.all(filesToDownload.map(async file => {
-              await downloadToFile(file.downloads["raw"].url, path.join(javaDir, file.name));
+              const fileName = path.join(javaDir, file.name);
+              await downloadToFile(file.downloads["raw"].url, fileName);
+              if (file.executable) {
+                await promisify(child.exec)(`chmod +x "${fileName}"`);
+                await promisify(child.exec)(`chmod 755 "${fileName}"`);
+              }
               downloadedFiles++;
               this.emit('download-progress', {
                 current: downloadedFiles,
