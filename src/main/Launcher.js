@@ -153,7 +153,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		instances.delete(version_hash);
 		runCallbacks();
 		emit('error', {
-			error: error.message,
+			error: error.message || error,
 		});
 	}
 	return false;

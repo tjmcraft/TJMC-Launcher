@@ -40,13 +40,21 @@ class JavaManager extends EventEmitter {
   }
 
   fetchJavaConfig = (javaVersionCode) => {
-    const os = process.platform == "win32" ? "windows" : process.platform == "darwin" ? "mac-os" : "linux";
-    const arch = os == "linux" ? "" : ((os == "mac-os" ? (process.arch == "arm64" ? "arm64" : "") : (process.arch == "x64" ? "x64" : "x86")));
+    const os = process.platform == "win32" ? "windows" :
+      process.platform == "darwin" ? "mac-os" :
+        "linux";
+    const arch = os == "linux" ? "" :
+      (
+        (os == "mac-os" ?
+          (process.arch == "arm64" ? "arm64" : "") :
+          (process.arch == "x64" ? "x64" : "x86")
+        )
+      );
     const pc = os + "-" + arch;
     return new Promise((resolve, reject) => {
       downloadFile("https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json").then((response) => {
         if (!Object.keys(response).includes(pc)) return reject("Unsupported platform");
-        if (!response[pc][javaVersionCode]) return reject("Unsupported java version");
+        if (response[pc][javaVersionCode].length == 0) return reject("Unsupported java version");
         resolve(response[pc][javaVersionCode][0]);
       })
     });
@@ -60,6 +68,7 @@ class JavaManager extends EventEmitter {
         return resolve(javaPath);
       } else {
         this.fetchJavaConfig(javaVersionCode).then(async (config) => {
+          if (!config) return reject("Unknown java error");
           try {
             const manifest = await downloadFile(config.manifest.url);
             const files = Object.keys(manifest.files).map((file) => ({
@@ -93,7 +102,7 @@ class JavaManager extends EventEmitter {
           } catch (e) {
             return reject(e);
           }
-        });
+        }).catch(e => reject(e));
       }
     });
   }
