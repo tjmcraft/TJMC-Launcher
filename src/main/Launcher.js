@@ -9,13 +9,19 @@ const instances = new Map();
 
 const getJava = async (launcherOptions) => {
 	const JavaManager = require('./managers/JavaManager');
-	const recommendedJava = JavaManager.parseRecommendedJava(launcherOptions.manifest);
-	const javaPath = launcherOptions.installation?.javaPath ||  launcherOptions.java?.javaPath || 'javaw';
-	const java = await JavaManager.checkJava(javaPath);
-	if (!java.run) {
-			this.debug && logger.error(`Couldn't start Minecraft due to: ${java.message}`);
+
+	var javaPath = launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath;
+	if (!["", undefined].includes(javaPath)) {
+		const java = await JavaManager.checkJava(javaPath);
+		if (!java.run) {
+			this.debug && logger.error(`Wrong java (${javaPath}) => ${java.message}`);
 			throw new Error(`Wrong java (${javaPath})`);
+		}
+	} else {
+		const recommendedJava = JavaManager.getRecommendedJava(launcherOptions.manifest);
+		javaPath = recommendedJava;
 	}
+
 	return javaPath;
 }
 
@@ -56,6 +62,16 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		}, params);
 
 		const javaPath = await getJava(launcherOptions);
+
+		{
+			instances.delete(version_hash);
+			runCallbacks();
+			emit('progress', {
+				type: 'terminated',
+				progress: 0,
+			});
+		}
+		return true;
 		const worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
 		});
