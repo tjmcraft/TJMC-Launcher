@@ -79,6 +79,8 @@ const downloadJava = function (javaVersionCode) {
             }
           });
 
+          let downloadedFiles = 0;
+
           await Promise.all(filesToDownload.map(async file => {
             await downloadToFile(file.downloads["raw"].url, path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, file.name));
             downloadedFiles++;
