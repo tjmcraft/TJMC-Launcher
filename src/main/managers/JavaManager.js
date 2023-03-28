@@ -17,6 +17,17 @@ const checkJava = function (java) {
   })
 }
 
+exports.parseRecommendedJava = function (manifest) {
+  if (manifest.javaVersion) {
+    return manifest.javaVersion;
+  } else {
+    return {
+      component: 'jre-legacy',
+      majorVersion: 8
+    };
+  }
+}
+
 /**
  * Load Mojang's launcher.json file.
  *

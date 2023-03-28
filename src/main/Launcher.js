@@ -9,7 +9,8 @@ const instances = new Map();
 
 const getJava = async (launcherOptions) => {
 	const JavaManager = require('./managers/JavaManager');
-	const javaPath = launcherOptions?.installation?.javaPath || launcherOptions?.java?.javaPath || 'javaw';
+	const recommendedJava = JavaManager.parseRecommendedJava(launcherOptions.manifest);
+	const javaPath = launcherOptions.installation?.javaPath ||  launcherOptions.java?.javaPath || 'javaw';
 	const java = await JavaManager.checkJava(javaPath);
 	if (!java.run) {
 			this.debug && logger.error(`Couldn't start Minecraft due to: ${java.message}`);
