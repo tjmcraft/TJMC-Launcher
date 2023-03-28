@@ -63,15 +63,15 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		const javaPath = await getJava(launcherOptions);
 
-		{
-			instances.delete(version_hash);
-			runCallbacks();
-			emit('progress', {
-				type: 'terminated',
-				progress: 0,
-			});
-		}
-		return true;
+		// {
+		// 	instances.delete(version_hash);
+		// 	runCallbacks();
+		// 	emit('progress', {
+		// 		type: 'terminated',
+		// 		progress: 0,
+		// 	});
+		// }
+		// return true;
 		const worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
 		});

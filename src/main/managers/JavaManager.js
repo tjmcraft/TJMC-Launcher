@@ -1,6 +1,6 @@
 const child = require('child_process');
 const ConfigManager = require('../managers/ConfigManager');
-const { downloadFile } = require('../util/download');
+const { downloadFile, downloadToFile } = require('../util/download');
 const LoggerUtil = require("../util/loggerutil");
 const path = require('path');
 const fs = require('fs');
@@ -20,34 +20,6 @@ exports.checkJava = function (java) {
     })
   })
 }
-
-const convertOSToJavaFormat = ElectronFormat => {
-  switch (ElectronFormat) {
-    case 'win32':
-      return 'windows';
-    case 'darwin':
-      return 'mac';
-    case 'linux':
-      return 'linux';
-    default:
-      return false;
-  }
-};
-
-const convertArchToJavaFormat = ElectronFormat => {
-  switch (ElectronFormat) {
-    case 'x64':
-      return 'x64';
-    case 'ia32':
-      return 'x32';
-    case 'arm':
-      return 'arm';
-    case 'arm64':
-      return 'aarch64';
-    default:
-      return false;
-  }
-};
 
 const parseRecommendedJava = function (manifest) {
   if (manifest.javaVersion) {
@@ -74,87 +46,56 @@ const fetchJavaConfig = function (javaVersionCode) {
 }
 
 const downloadJava = function (javaVersionCode) {
+  console.debug("Download Java:", javaVersionCode);
   return new Promise((resolve, reject) => {
-    const javaPath = path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, "bin");
-    if (fs.existsSync(javaPath)) {
+    const javaPath = path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+    if (fs.existsSync(javaPath) && exports.checkJava(javaPath)['run'] != false) {
       return resolve(javaPath);
     } else {
       fetchJavaConfig(javaVersionCode).then(async (config) => {
-        const manifest = await downloadFile(config.manifest.url);
-        const files = Object.keys(manifest.files).map((file) => {
-          return { name: file, downloads: manifest.files[file].downloads, type: manifest.files[file].type };
-        });
-        const directory = files.filter((file) => file.type == "directory");
-        const filesToDownload = files.filter((file) => file.type == "file");
+        try {
+          const manifest = await downloadFile(config.manifest.url);
+          const files = Object.keys(manifest.files).map((file) => {
+            return { name: file, downloads: manifest.files[file].downloads, type: manifest.files[file].type };
+          });
+          const directory = files.filter((file) => file.type == "directory");
+          const filesToDownload = files.filter((file) => file.type == "file");
 
-        let javaDirs = [ConfigManager.getLauncherDirectory(), "java", javaVersionCode];
-        javaDirs.forEach((dir, i) => {
-          let _dir = javaDirs.slice(0, i + 1).join(path.sep);
-          if (!fs.existsSync(_dir)) {
-            fs.mkdirSync(_dir);
-          }
-        });
+          console.debug(">", manifest);
+          console.debug(">>", files);
 
-        directory.forEach((dir) => {
-          fs.mkdirSync(path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, dir.name));
-        });
+          let javaDirs = [ConfigManager.getLauncherDirectory(), "java", javaVersionCode];
+          javaDirs.forEach((dir, i) => {
+            let _dir = javaDirs.slice(0, i + 1).join(path.sep);
+            if (!fs.existsSync(_dir)) {
+              fs.mkdirSync(_dir);
+            }
+          });
 
-        console.debug(">", manifest);
-        console.debug(">>", files);
-        resolve(true);
+          directory.forEach((dir) => {
+            const _dir = path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, dir.name);
+            if (!fs.existsSync(_dir)) {
+              fs.mkdirSync(_dir);
+            }
+          });
+
+          await Promise.all(filesToDownload.map(async file => {
+            await downloadToFile(file.downloads["raw"].url, path.join(ConfigManager.getLauncherDirectory(), "java", javaVersionCode, file.name));
+            downloadedFiles++;
+          }))
+
+          resolve(javaPath);
+
+        } catch (e) {
+          return reject(e);
+        }
+
       });
     }
   });
 }
 
-/**
- * Fetch the last open JDK binary.
- *
- * HOTFIX: Uses Corretto 8 for macOS.
- * See: https://github.com/dscalzi/HeliosLauncher/issues/70
- * See: https://github.com/AdoptOpenJDK/openjdk-support/issues/101
- *
- * @param {string} major The major version of Java to fetch.
- *
- * @returns {Promise.<OpenJDKData>} Promise which resolved to an object containing the JRE download data.
- */
-const latestOpenJDK = function (major = '8') {
-    return this.latestAdoptium(major);
-}
-
-const latestAdoptium = function (major) {
-
-  const majorNum = Number(major);
-  const sanitizedOS = process.platform === 'win32' ? 'windows' : (process.platform === 'darwin' ? 'mac' : process.platform);
-  const sanitizedArch = process.arch === 'x64' ? 'x64' : (process.arch === 'arm64' ? 'aarch64' : process.arch);
-  const url = `https://api.adoptium.net/v3/assets/latest/${major}/hotspot?vendor=eclipse&os=${sanitizedOS}&architecture=${sanitizedArch}`
-
-  return new Promise((resolve, reject) => {
-    downloadFile(url).then((response) => {
-
-      const targetBinary = body.find(entry => {
-        return entry.version.major === majorNum
-          && entry.binary.os === sanitizedOS
-          && entry.binary.image_type === 'jdk'
-          && entry.binary.architecture === sanitizedArch
-      })
-
-      if (targetBinary != null) {
-        resolve({
-          uri: targetBinary.binary.package.link,
-          size: targetBinary.binary.package.size,
-          name: targetBinary.binary.package.name
-        })
-      } else {
-        resolve(null)
-      }
-
-    });
-  });
-}
-
 exports.getRecommendedJava = async (manifest) => {
   const recommendedJava = parseRecommendedJava(manifest);
-  await downloadJava(recommendedJava.component);
-  return undefined;
+  return await downloadJava(recommendedJava.component);
 }
