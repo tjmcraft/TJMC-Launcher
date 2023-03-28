@@ -1,4 +1,5 @@
 const { createInstance } = require('./managers/InstanceManager');
+const JavaManager = require('./managers/JavaManager');
 
 const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; font-weight: bold;');
 
@@ -6,24 +7,6 @@ const { Worker } = require("node:worker_threads");
 const path = require('node:path');
 
 const instances = new Map();
-
-const getJava = async (launcherOptions) => {
-	const JavaManager = require('./managers/JavaManager');
-
-	var javaPath = launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath;
-	if (!["", undefined].includes(javaPath)) {
-		const java = await JavaManager.checkJava(javaPath);
-		if (!java.run) {
-			this.debug && logger.error(`Wrong java (${javaPath}) => ${java.message}`);
-			throw new Error(`Wrong java (${javaPath})`);
-		}
-	} else {
-		const recommendedJava = JavaManager.getRecommendedJava(launcherOptions.manifest);
-		javaPath = recommendedJava;
-	}
-
-	return javaPath;
-}
 
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
@@ -61,17 +44,30 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			}
 		}, params);
 
-		const javaPath = await getJava(launcherOptions);
+		const javaManager = new JavaManager(ConfigManager.getLauncherDirectory());
+		var javaPath = launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath;
+		if (!["", undefined].includes(javaPath)) {
+			const java = await javaManager.checkJava(javaPath);
+			if (!java.run) {
+				this.debug && logger.error(`Wrong java (${javaPath}) => ${java.message}`);
+				javaPath = undefined;
+			}
+		}
+		if (["", undefined].includes(javaPath)) {
+			javaManager.on('download-progress', (e) => {
+				const progress = (e.current / e.total);
+				emit('download', {
+					type: 'java',
+					progress: progress,
+				});
+			});
+			javaPath = await javaManager.getRecommendedJava(launcherOptions.manifest);
+			const java = await javaManager.checkJava(javaPath);
+			if (!java.run) {
+				throw new Error(`Error while loading recommended java`);
+			}
+		}
 
-		// {
-		// 	instances.delete(version_hash);
-		// 	runCallbacks();
-		// 	emit('progress', {
-		// 		type: 'terminated',
-		// 		progress: 0,
-		// 	});
-		// }
-		// return true;
 		const worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
 		});
