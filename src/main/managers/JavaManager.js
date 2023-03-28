@@ -56,53 +56,43 @@ class JavaManager extends EventEmitter {
     console.debug("Download Java:", javaVersionCode);
     return new Promise((resolve, reject) => {
       const javaPath = path.join(this.rootDir, "java", javaVersionCode, "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
-      if (fs.existsSync(javaPath) && exports.checkJava(javaPath)['run'] != false) {
+      if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
         return resolve(javaPath);
       } else {
         this.fetchJavaConfig(javaVersionCode).then(async (config) => {
           try {
             const manifest = await downloadFile(config.manifest.url);
-            const files = Object.keys(manifest.files).map((file) => {
-              return { name: file, downloads: manifest.files[file].downloads, type: manifest.files[file].type };
-            });
+            const files = Object.keys(manifest.files).map((file) => ({
+              name: file,
+              downloads: manifest.files[file].downloads,
+              type: manifest.files[file].type,
+            }));
             const directory = files.filter((file) => file.type == "directory");
             const filesToDownload = files.filter((file) => file.type == "file");
 
-            console.debug(">", manifest);
-            console.debug(">>", files);
-
-            let javaDirs = [this.rootDir, "java", javaVersionCode];
-            javaDirs.forEach((dir, i) => {
-              let _dir = javaDirs.slice(0, i + 1).join(path.sep);
-              if (!fs.existsSync(_dir)) {
-                fs.mkdirSync(_dir);
-              }
-            });
+            const javaDir = path.join(this.rootDir, "java", javaVersionCode);
+            if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
 
             directory.forEach((dir) => {
-              const _dir = path.join(this.rootDir, "java", javaVersionCode, dir.name);
-              if (!fs.existsSync(_dir)) {
-                fs.mkdirSync(_dir);
-              }
+              const _dir = path.join(javaDir, dir.name);
+              if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
             });
 
             let downloadedFiles = 0;
 
             await Promise.all(filesToDownload.map(async file => {
-              await downloadToFile(file.downloads["raw"].url, path.join(this.rootDir, "java", javaVersionCode, file.name));
+              await downloadToFile(file.downloads["raw"].url, path.join(javaDir, file.name));
               downloadedFiles++;
               this.emit('download-progress', {
                 current: downloadedFiles,
                 total: filesToDownload.length,
               });
-            }))
+            }));
 
             resolve(javaPath);
-
           } catch (e) {
             return reject(e);
           }
-
         });
       }
     });
