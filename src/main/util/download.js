@@ -17,7 +17,7 @@ exports.downloadFile = async (url) => {
   }
 }
 
-exports.downloadToFile = (url, filePath, retry = false) => new Promise((resolve, reject) => {
+exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0) => new Promise((resolve, reject) => {
 
   if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) return resolve(false);
   if (!url.includes('http')) return resolve(false);
@@ -27,8 +27,13 @@ exports.downloadToFile = (url, filePath, retry = false) => new Promise((resolve,
 
   downloadStream
     .on("downloadProgress", ({ transferred, total, percent }) => {
-      const percentage = Math.round(percent * 100);
-      console.debug(`progress: ${transferred}/${total} (${percentage}%)`);
+      const percentage = Math.round(percent * 100 * 100) / 100;
+      typeof progressHandler == 'function' && progressHandler({
+        total: total,
+        current: transferred,
+        percentage: percentage,
+      });
+      // console.debug(`progress: ${transferred}/${total} (${percentage}%)`);
     })
     .on("error", (error) => {
       console.error(`Download failed: ${error.message}`);
@@ -41,7 +46,7 @@ exports.downloadToFile = (url, filePath, retry = false) => new Promise((resolve,
       resolve(false);
     })
     .on("finish", () => {
-      console.log(`File downloaded to ${filePath}`);
+      // console.log(`File downloaded to ${filePath}`);
       resolve(true);
     });
 
