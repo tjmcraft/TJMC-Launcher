@@ -70,61 +70,59 @@ class JavaManager extends EventEmitter {
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
     if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
       return javaPath;
-    } else {
-      const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
-      const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
+    }
+    const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
+    const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
+    if (signal?.aborted) return undefined;
+    if (!currentPlatformManifest) throw new Error("Unknown java error");
+    try {
+      const manifest = await downloadFile(currentPlatformManifest.manifest.url);
+      const files = Object.keys(manifest.files).map((file) => ({
+        name: file,
+        downloads: manifest.files[file].downloads,
+        type: manifest.files[file].type,
+        executable: manifest.files[file].executable,
+      }));
+      const directory = files.filter((file) => file.type == "directory");
+      const filesToDownload = files.filter((file) => file.type == "file");
       if (signal?.aborted) return undefined;
-      if (!currentPlatformManifest) throw new Error("Unknown java error");
-      try {
-        const manifest = await downloadFile(currentPlatformManifest.manifest.url);
-        const files = Object.keys(manifest.files).map((file) => ({
-          name: file,
-          downloads: manifest.files[file].downloads,
-          type: manifest.files[file].type,
-          executable: manifest.files[file].executable,
-        }));
-        const directory = files.filter((file) => file.type == "directory");
-        const filesToDownload = files.filter((file) => file.type == "file");
-        if (signal?.aborted) return undefined;
-        if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
+      if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
 
-        directory.forEach((dir) => {
-          const _dir = path.join(javaDir, dir.name);
-          if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
-        });
+      directory.forEach((dir) => {
+        const _dir = path.join(javaDir, dir.name);
+        if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
+      });
 
-        let totalProgress = 0;
-        const useProgressCounter = () => {
-          let prev = 0;
-          return ({ percent }) => {
-            totalProgress += percent - prev;
-            this.emit('download-progress', {
-              current: totalProgress,
-              total: filesToDownload.length,
-            });
-            prev = percent;
-          }
+      let totalProgress = 0;
+      const useProgressCounter = () => {
+        let prev = 0;
+        return ({ percent }) => {
+          totalProgress += percent - prev;
+          this.emit('download-progress', {
+            current: totalProgress,
+            total: filesToDownload.length,
+          });
+          prev = percent;
         }
-
-        await Promise.all(filesToDownload.map(async file => {
-          if (signal?.aborted) return undefined;
-          const fileName = path.join(javaDir, file.name);
-          if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
-          const handleProgress = useProgressCounter();
-          await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
-          if (file.executable && process.platform != "win32") {
-            await promisify(child.exec)(`chmod +x "${fileName}"`);
-            await promisify(child.exec)(`chmod 755 "${fileName}"`);
-          }
-        }));
-
-        if (signal?.aborted) return undefined;
-
-        return javaPath;
-      } catch (e) {
-        throw e;
       }
-      return undefined;
+
+      await Promise.all(filesToDownload.map(async file => {
+        if (signal?.aborted) return undefined;
+        const fileName = path.join(javaDir, file.name);
+        if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
+        const handleProgress = useProgressCounter();
+        await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
+        if (file.executable && process.platform != "win32") {
+          await promisify(child.exec)(`chmod +x "${fileName}"`);
+          await promisify(child.exec)(`chmod 755 "${fileName}"`);
+        }
+      }));
+
+      if (signal?.aborted) return undefined;
+
+      return javaPath;
+    } catch (e) {
+      throw e;
     }
   }
 
