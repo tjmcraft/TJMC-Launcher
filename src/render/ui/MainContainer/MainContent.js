@@ -69,7 +69,7 @@ const NewsScreen = memo(() => (
 
 const MapScreen = memo(() => (
 	<div className={buildClassName("main-content", "no-scroll")}>
-		<iframe src="https://map.tjmcraft.ga" seamless={true} />
+		<iframe src="https://map.tjmc.ru" seamless={true} />
 	</div>
 ));
 
