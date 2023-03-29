@@ -103,7 +103,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			javaController.reject = reject;
 		});
 
-		MainWorker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
+		MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
 			workerData: launcherOptions
 		});
 
