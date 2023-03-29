@@ -35,7 +35,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		runCallbacks();
 	};
 
-	var worker = undefined;
+	var MainWorker = undefined;
 
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
 	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
@@ -48,7 +48,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			type: 'aborting',
 			progress: 0,
 		});
-		worker != void 0 && worker.terminate();
+		MainWorker != void 0 && MainWorker.terminate();
 	}, { once: true });
 
 	try {
@@ -102,11 +102,11 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			throw new Error("Error while loading java");
 		}
 
-		worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
+		MainWorker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
 		});
 
-		worker.on('message', async ({ type, payload }) => {
+		MainWorker.on('message', async ({ type, payload }) => {
 			if (type != 'progress') return;
 			if (controller.signal.aborted) return;
 			const progress = (payload.task / payload.total);
@@ -116,7 +116,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		});
 
-		worker.on('message', async ({ type, payload }) => {
+		MainWorker.on('message', async ({ type, payload }) => {
 			if (type != 'download-progress') return;
 			if (controller.signal.aborted) return;
 			const progress = (payload.current / payload.total);
@@ -127,7 +127,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		});
 
-		worker.on('message', async ({ type, payload }) => {
+		MainWorker.on('message', async ({ type, payload }) => {
 			if (type != 'args') return;
 			if (controller.signal.aborted) return;
 
@@ -156,12 +156,12 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				}
 			});
 
-			worker.terminate();
+			MainWorker.terminate();
 
 			emit('success');
 		});
 
-		worker.on('exit', (code) => {
+		MainWorker.on('exit', (code) => {
 			console.warn("Worker exit with code:", code);
 			return terminateInstance();
 		});
