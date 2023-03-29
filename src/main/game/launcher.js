@@ -1,9 +1,8 @@
-const EventEmitter = require('events');
-const LoggerUtil = require('../util/loggerutil');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const Minecraft = require('./Minecraft');
 const { getOfflineUUID } = require('../util/Tools');
+const LoggerUtil = require('../util/loggerutil');
 
 const { parentPort, workerData, isMainThread } = require("node:worker_threads");
 
