@@ -16,9 +16,9 @@ class JavaManager extends EventEmitter {
   }
 
   checkJava = function (java) {
-    if (java == void 0) return { run: false };
     console.debug("Check java:", java);
     return new Promise(resolve => {
+      if (java == void 0) return resolve({ run: false });
       let cmd = `"${java}" -version`;
       child.exec(cmd, {}, (error, stdout, stderr) => {
         if (error) {
@@ -68,7 +68,7 @@ class JavaManager extends EventEmitter {
     console.debug("Download Java:", javaVersionCode);
     const javaDir = path.join(this.rootDir, "java", javaVersionCode);
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
-    if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
+    if (fs.existsSync(javaPath) && (await this.checkJava(javaPath))['run'] != false) {
       return javaPath;
     }
     const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
