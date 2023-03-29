@@ -70,7 +70,8 @@ class JavaManager extends EventEmitter {
 
   downloadJava = async (javaVersionCode) => {
     console.debug("Download Java:", javaVersionCode);
-    const javaPath = path.join(this.rootDir, "java", javaVersionCode, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+    const javaDir = path.join(this.rootDir, "java", javaVersionCode);
+    const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
     if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
       return javaPath;
     } else {
@@ -89,7 +90,6 @@ class JavaManager extends EventEmitter {
         const directory = files.filter((file) => file.type == "directory");
         const filesToDownload = files.filter((file) => file.type == "file");
 
-        const javaDir = path.join(this.rootDir, "java", javaVersionCode);
         if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
 
         directory.forEach((dir) => {
@@ -112,6 +112,7 @@ class JavaManager extends EventEmitter {
 
         await Promise.all(filesToDownload.map(async file => {
           const fileName = path.join(javaDir, file.name);
+          if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
           const handleProgress = useProgressCounter();
           await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
           if (file.executable && process.platform != "win32") {
