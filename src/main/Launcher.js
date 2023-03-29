@@ -1,5 +1,4 @@
 const { createInstance } = require('./managers/InstanceManager');
-const JavaManager = require('./managers/JavaManager');
 
 const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; font-weight: bold;');
 
@@ -35,6 +34,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		runCallbacks();
 	};
 
+	var JavaWorker = undefined;
 	var MainWorker = undefined;
 
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
@@ -48,6 +48,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			type: 'aborting',
 			progress: 0,
 		});
+		JavaWorker != void 0 && JavaWorker.terminate();
 		MainWorker != void 0 && MainWorker.terminate();
 	}, { once: true });
 
@@ -64,43 +65,43 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			}
 		}, params);
 
-		const javaManager = new JavaManager(ConfigManager.getLauncherDirectory());
-		var javaPath = launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath;
-		if (!["", undefined].includes(javaPath)) {
-			const java = await javaManager.checkJava(javaPath);
-			if (!java.run) {
-				this.debug && logger.error(`Wrong java (${javaPath}) => ${java.message}`);
-				javaPath = undefined;
-			}
+		const javaController = {
+			resolve: undefined,
+			reject: undefined,
 		}
-		if (["", undefined].includes(javaPath)) {
-			javaManager.on('download-progress', (e) => {
-				const progress = (e.current / e.total);
-				emit('download', {
-					type: 'java',
-					progress: progress,
-				});
+		JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
+			workerData: {
+				rootDir: ConfigManager.getLauncherDirectory(),
+				recommendedJava: launcherOptions.manifest?.javaVersion,
+				externalJava: launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath
+			}
+		});
+
+		JavaWorker.on('message', async ({ type, payload }) => {
+			if (type != 'javaPath') return;
+			if (controller.signal.aborted) return;
+			if (!javaController.resolve) return;
+			javaController.resolve(payload);
+			JavaWorker.terminate();
+		});
+		JavaWorker.on('message', async ({ type, payload }) => {
+			if (type != 'download-progress') return;
+			if (controller.signal.aborted) return;
+			emit('download', {
+				type: 'java',
+				progress: payload,
 			});
-			const recommendedJava = javaManager.getRecommendedJava(launcherOptions.manifest);
-			javaPath = await javaManager.downloadJava(recommendedJava.component, controller.signal);
+		});
+
+		JavaWorker.on('exit', (code) => {
+			console.warn("JavaWorker exit with code:", code);
 			if (controller.signal.aborted) return terminateInstance();
-			const java = await javaManager.checkJava(javaPath);
-			if (!java.run) {
-				javaPath = undefined;
-				this.debug && logger.error(`Error while loading recommended java: ${recommendedJava.component}`);
-			}
-		}
-		if (["", undefined].includes(javaPath)) {
-			javaPath = 'java';
-			const java = await javaManager.checkJava(javaPath);
-			if (!java.run) {
-				javaPath = undefined;
-				this.debug && logger.error(`Error with default java (${javaPath}) => ${java.message}`);
-			}
-		}
-		if (["", undefined].includes(javaPath)) {
-			throw new Error("Error while loading java");
-		}
+		});
+
+		const javaPath = await new Promise((resolve, reject) => {
+			javaController.resolve = resolve;
+			javaController.reject = reject;
+		});
 
 		MainWorker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
@@ -162,7 +163,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		});
 
 		MainWorker.on('exit', (code) => {
-			console.warn("Worker exit with code:", code);
+			console.warn("MainWorker exit with code:", code);
 			return terminateInstance();
 		});
 
