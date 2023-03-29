@@ -61,10 +61,10 @@ class JavaManager extends EventEmitter {
   /**
    * Download mojang jre by component code
    * @param {string} javaVersionCode
-   * @param {AbortSignal} signal
+   * @param {AbortSignal} [signal]
    * @returns
    */
-  downloadJava = async (javaVersionCode, signal) => {
+  downloadJava = async (javaVersionCode, signal = undefined) => {
     console.debug("Download Java:", javaVersionCode);
     const javaDir = path.join(this.rootDir, "java", javaVersionCode);
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
@@ -73,7 +73,7 @@ class JavaManager extends EventEmitter {
     } else {
       const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
       const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
-      if (signal.aborted) return undefined;
+      if (signal?.aborted) return undefined;
       if (!currentPlatformManifest) throw new Error("Unknown java error");
       try {
         const manifest = await downloadFile(currentPlatformManifest.manifest.url);
@@ -85,7 +85,7 @@ class JavaManager extends EventEmitter {
         }));
         const directory = files.filter((file) => file.type == "directory");
         const filesToDownload = files.filter((file) => file.type == "file");
-        if (signal.aborted) return undefined;
+        if (signal?.aborted) return undefined;
         if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
 
         directory.forEach((dir) => {
@@ -107,7 +107,7 @@ class JavaManager extends EventEmitter {
         }
 
         await Promise.all(filesToDownload.map(async file => {
-          if (signal.aborted) return undefined;
+          if (signal?.aborted) return undefined;
           const fileName = path.join(javaDir, file.name);
           if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
           const handleProgress = useProgressCounter();
@@ -118,7 +118,7 @@ class JavaManager extends EventEmitter {
           }
         }));
 
-        if (signal.aborted) return undefined;
+        if (signal?.aborted) return undefined;
 
         return javaPath;
       } catch (e) {
