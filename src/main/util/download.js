@@ -27,11 +27,11 @@ exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => 
 
   downloadStream
     .on("downloadProgress", ({ transferred, total, percent }) => {
-      const percentage = Math.round(percent * 100 * 100) / 100;
+      // const percentage = Math.round(percent * 100) / 100;
       typeof progressHandler == 'function' && progressHandler({
         total: total,
         current: transferred,
-        percentage: percentage,
+        percent: percent,
       });
       // console.debug(`progress: ${transferred}/${total} (${percentage}%)`);
     })

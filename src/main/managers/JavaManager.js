@@ -89,20 +89,28 @@ class JavaManager extends EventEmitter {
               if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
             });
 
-            let downloadedFiles = 0;
+            let totalProgress = 0;
+            const useProgressCounter = () => {
+              let prev = 0;
+              return ({ percent }) => {
+                totalProgress += percent - prev;
+                console.debug(">>", totalProgress);
+                this.emit('download-progress', {
+                  current: totalProgress,
+                  total: filesToDownload.length,
+                });
+                prev = percent;
+              }
+            }
 
             await Promise.all(filesToDownload.map(async file => {
               const fileName = path.join(javaDir, file.name);
-              await downloadToFile(file.downloads["raw"].url, fileName);
+              const handleProgress = useProgressCounter();
+              await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
               if (file.executable && process.platform != "win32") {
                 await promisify(child.exec)(`chmod +x "${fileName}"`);
                 await promisify(child.exec)(`chmod 755 "${fileName}"`);
               }
-              downloadedFiles++;
-              this.emit('download-progress', {
-                current: downloadedFiles,
-                total: filesToDownload.length,
-              });
             }));
 
             resolve(javaPath);
