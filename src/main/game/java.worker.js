@@ -18,8 +18,7 @@ if (!isMainThread) {
 		if (!["", undefined].includes(javaPath)) {
 			const java = await instance.checkJava(javaPath);
 			if (!java.run) {
-				this.debug && logger.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
-				// javaPath = undefined;
+				console.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
 			} else {
 				return javaPath;
 			}
