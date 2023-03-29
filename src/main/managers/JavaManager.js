@@ -48,17 +48,17 @@ class JavaManager extends EventEmitter {
   }
 
   pickCurrentPlatform = (runtimeManifest, javaVersionCode, os = undefined, arch = undefined) => {
-    os = os || process.platform == "win32" ? "windows" :
+    os = os != void 0 ? os : (process.platform == "win32" ? "windows" :
       process.platform == "darwin" ? "mac-os" :
-        "linux";
-    arch = arch || os == "linux" ? "" :
+        "linux");
+    arch = arch != void 0 ? arch : (os == "linux" ? "" :
       (
         (os == "mac-os" ?
           (process.arch == "arm64" ? "arm64" : "") :
           (process.arch == "x64" ? "x64" : "x86")
         )
-      );
-    const pc = os + "-" + arch;
+      ));
+    const pc = os + (arch ? ("-" + arch) : "");
     if (!Object.keys(runtimeManifest).includes(pc)) throw new Error("Unsupported platform");
     if (runtimeManifest[pc][javaVersionCode].length == 0) {
       if (os == 'mac-os' && arch == 'arm64') // to run x64 java on arm64 through Rosetta 2
