@@ -67,14 +67,6 @@ if (!isMainThread) {
     const instance = new Launcher(workerData);
     instance.handler.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
     instance.handler.on('download-progress', (e) => parentPort.postMessage({ type: 'download-progress', payload: e }));
-    parentPort.on("message", ({ type, payload = void 0 }) => {
-        switch (type) {
-            case 'abort': {
-                instance.handler.controller.abort(payload);
-            }; break;
-            default: break;
-        }
-    });
     instance.construct().then(args => {
         parentPort.postMessage({ type: 'args', payload: args });
     });

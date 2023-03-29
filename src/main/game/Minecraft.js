@@ -30,7 +30,6 @@ class Minecraft extends EventEmitter {
             },
             checkHash: this.options.installation?.checkHash ?? this.options.overrides?.checkHash ?? true
         };
-        this.controller = new AbortController();
     }
 
     /**
