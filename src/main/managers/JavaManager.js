@@ -12,6 +12,7 @@ class JavaManager extends EventEmitter {
   constructor(rootDir) {
     super();
     this.rootDir = rootDir;
+    this.runtimeManifest = undefined;
   }
 
   checkJava = function (java) {
@@ -40,11 +41,17 @@ class JavaManager extends EventEmitter {
     }
   }
 
-  fetchJavaConfig = (javaVersionCode) => {
-    const os = process.platform == "win32" ? "windows" :
+  fetchRuntimeManifest = async () => {
+    if (this.runtimeManifest != undefined) return this.runtimeManifest;
+    this.runtimeManifest = await downloadFile("https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json");
+    return this.fetchRuntimeManifest();
+  }
+
+  pickCurrentPlatform = (runtimeManifest, javaVersionCode, os = undefined, arch = undefined) => {
+    os = os || process.platform == "win32" ? "windows" :
       process.platform == "darwin" ? "mac-os" :
         "linux";
-    const arch = os == "linux" ? "" :
+    arch = arch || os == "linux" ? "" :
       (
         (os == "mac-os" ?
           (process.arch == "arm64" ? "arm64" : "") :
@@ -52,74 +59,73 @@ class JavaManager extends EventEmitter {
         )
       );
     const pc = os + "-" + arch;
-    return new Promise((resolve, reject) => {
-      downloadFile("https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json").then((response) => {
-        if (!Object.keys(response).includes(pc)) return reject("Unsupported platform");
-        if (response[pc][javaVersionCode].length == 0) return reject("Unsupported java version");
-        resolve(response[pc][javaVersionCode][0]);
-      })
-    });
+    if (!Object.keys(runtimeManifest).includes(pc)) throw new Error("Unsupported platform");
+    if (runtimeManifest[pc][javaVersionCode].length == 0) {
+      if (os == 'mac-os' && arch == 'arm64') // to run x64 java on arm64 through Rosetta 2
+        return this.pickCurrentPlatform(runtimeManifest, javaVersionCode, os, "");
+      throw new Error("Unsupported java version");
+    }
+    return runtimeManifest[pc][javaVersionCode][0];
   }
 
-  downloadJava = (javaVersionCode) => {
+  downloadJava = async (javaVersionCode) => {
     console.debug("Download Java:", javaVersionCode);
-    return new Promise((resolve, reject) => {
-      const javaPath = path.join(this.rootDir, "java", javaVersionCode, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
-      if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
-        return resolve(javaPath);
-      } else {
-        this.fetchJavaConfig(javaVersionCode).then(async (config) => {
-          if (!config) return reject("Unknown java error");
-          try {
-            const manifest = await downloadFile(config.manifest.url);
-            const files = Object.keys(manifest.files).map((file) => ({
-              name: file,
-              downloads: manifest.files[file].downloads,
-              type: manifest.files[file].type,
-              executable: manifest.files[file].executable,
-            }));
-            const directory = files.filter((file) => file.type == "directory");
-            const filesToDownload = files.filter((file) => file.type == "file");
+    const javaPath = path.join(this.rootDir, "java", javaVersionCode, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+    if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
+      return javaPath;
+    } else {
+      const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
+      const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
 
-            const javaDir = path.join(this.rootDir, "java", javaVersionCode);
-            if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
+      if (!currentPlatformManifest) throw new Error("Unknown java error");
+      try {
+        const manifest = await downloadFile(currentPlatformManifest.manifest.url);
+        const files = Object.keys(manifest.files).map((file) => ({
+          name: file,
+          downloads: manifest.files[file].downloads,
+          type: manifest.files[file].type,
+          executable: manifest.files[file].executable,
+        }));
+        const directory = files.filter((file) => file.type == "directory");
+        const filesToDownload = files.filter((file) => file.type == "file");
 
-            directory.forEach((dir) => {
-              const _dir = path.join(javaDir, dir.name);
-              if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
+        const javaDir = path.join(this.rootDir, "java", javaVersionCode);
+        if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
+
+        directory.forEach((dir) => {
+          const _dir = path.join(javaDir, dir.name);
+          if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
+        });
+
+        let totalProgress = 0;
+        const useProgressCounter = () => {
+          let prev = 0;
+          return ({ percent }) => {
+            totalProgress += percent - prev;
+            this.emit('download-progress', {
+              current: totalProgress,
+              total: filesToDownload.length,
             });
-
-            let totalProgress = 0;
-            const useProgressCounter = () => {
-              let prev = 0;
-              return ({ percent }) => {
-                totalProgress += percent - prev;
-                console.debug(">>", totalProgress);
-                this.emit('download-progress', {
-                  current: totalProgress,
-                  total: filesToDownload.length,
-                });
-                prev = percent;
-              }
-            }
-
-            await Promise.all(filesToDownload.map(async file => {
-              const fileName = path.join(javaDir, file.name);
-              const handleProgress = useProgressCounter();
-              await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
-              if (file.executable && process.platform != "win32") {
-                await promisify(child.exec)(`chmod +x "${fileName}"`);
-                await promisify(child.exec)(`chmod 755 "${fileName}"`);
-              }
-            }));
-
-            resolve(javaPath);
-          } catch (e) {
-            return reject(e);
+            prev = percent;
           }
-        }).catch(e => reject(e));
+        }
+
+        await Promise.all(filesToDownload.map(async file => {
+          const fileName = path.join(javaDir, file.name);
+          const handleProgress = useProgressCounter();
+          await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
+          if (file.executable && process.platform != "win32") {
+            await promisify(child.exec)(`chmod +x "${fileName}"`);
+            await promisify(child.exec)(`chmod 755 "${fileName}"`);
+          }
+        }));
+
+        return javaPath;
+      } catch (e) {
+        throw e;
       }
-    });
+      return undefined;
+    }
   }
 
   getRecommendedJava = async (manifest) => {
