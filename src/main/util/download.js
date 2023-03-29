@@ -30,8 +30,15 @@ exports.downloadFile = async (url) => {
  */
 exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0, signal) => new Promise((resolve, reject) => {
 
-  if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) return resolve(false);
   if (!url.includes('http')) return resolve(false);
+  if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) {
+    typeof progressHandler == 'function' && progressHandler({
+      total: 1,
+      current: 1,
+      percent: 1,
+    });
+    return resolve(false);
+  }
 
   const downloadStream = got.stream(url, { signal });
   const fileWriterStream = fs.createWriteStream(filePath);

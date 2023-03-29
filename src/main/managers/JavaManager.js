@@ -112,7 +112,6 @@ class JavaManager extends EventEmitter {
         if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
         const handleProgress = useProgressCounter();
         await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
-        handleProgress({ percent: 1 });
         if (file.executable && process.platform != "win32") {
           await promisify(child.exec)(`chmod +x "${fileName}"`);
           await promisify(child.exec)(`chmod 755 "${fileName}"`);
