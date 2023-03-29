@@ -1,79 +1,140 @@
 const child = require('child_process');
-const { downloadFile } = require('../util/download');
+const { downloadFile, downloadToFile } = require('../util/download');
 const LoggerUtil = require("../util/loggerutil");
+const path = require('path');
+const fs = require('fs');
+const EventEmitter = require('events');
+const { promisify } = require('util');
 const logger = LoggerUtil('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
-const checkJava = function (java) {
-  return new Promise(resolve => {
-    let cmd = `"${java}" -version`;
-    child.exec(cmd, {}, (error, stdout, stderr) => {
-      if (error) {
-        resolve({ run: false, message: error });
-      } else {
-        logger.debug(`Using Java (${java}) version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`);
-        resolve({ run: true });
-      }
-    })
-  })
-}
+class JavaManager extends EventEmitter {
 
-/**
- * Load Mojang's launcher.json file.
- *
- * @returns {Promise.<Object>} Promise which resolves to Mojang's launcher.json object.
- */
-const loadMojangLauncherData = function () {
-  return new Promise((resolve, reject) => {
-    downloadFile(`https://launchermeta.mojang.com/mc/launcher.json`)
-      .then(response => resolve(response))
-      .catch(e => resolve(null));
-  })
-}
+  constructor(rootDir) {
+    super();
+    this.rootDir = rootDir;
+    this.runtimeManifest = undefined;
+  }
 
-/**
- * Fetch the last open JDK binary.
- *
- * HOTFIX: Uses Corretto 8 for macOS.
- * See: https://github.com/dscalzi/HeliosLauncher/issues/70
- * See: https://github.com/AdoptOpenJDK/openjdk-support/issues/101
- *
- * @param {string} major The major version of Java to fetch.
- *
- * @returns {Promise.<OpenJDKData>} Promise which resolved to an object containing the JRE download data.
- */
-const latestOpenJDK = function (major = '8') {
-    return this.latestAdoptium(major);
-}
-
-const latestAdoptium = function (major) {
-
-  const majorNum = Number(major);
-  const sanitizedOS = process.platform === 'win32' ? 'windows' : (process.platform === 'darwin' ? 'mac' : process.platform);
-  const sanitizedArch = process.arch === 'x64' ? 'x64' : (process.arch === 'arm64' ? 'aarch64' : process.arch);
-  const url = `https://api.adoptium.net/v3/assets/latest/${major}/hotspot?vendor=eclipse&os=${sanitizedOS}&architecture=${sanitizedArch}`
-
-  return new Promise((resolve, reject) => {
-    downloadFile(url).then((response) => {
-
-      const targetBinary = body.find(entry => {
-        return entry.version.major === majorNum
-          && entry.binary.os === sanitizedOS
-          && entry.binary.image_type === 'jdk'
-          && entry.binary.architecture === sanitizedArch
+  checkJava = function (java) {
+    console.debug("Check java:", java);
+    return new Promise(resolve => {
+      let cmd = `"${java}" -version`;
+      child.exec(cmd, {}, (error, stdout, stderr) => {
+        if (error) {
+          resolve({ run: false, message: error });
+        } else {
+          logger.debug(`Using Java (${java}) version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`);
+          resolve({ run: true });
+        }
       })
+    })
+  }
 
-      if (targetBinary != null) {
-        resolve({
-          uri: targetBinary.binary.package.link,
-          size: targetBinary.binary.package.size,
-          name: targetBinary.binary.package.name
-        })
-      } else {
-        resolve(null)
+  parseRecommendedJava = (manifest) => {
+    if (manifest.javaVersion) {
+      return manifest.javaVersion;
+    } else {
+      return {
+        component: 'jre-legacy',
+        majorVersion: 8
+      };
+    }
+  }
+
+  fetchRuntimeManifest = async () => {
+    if (this.runtimeManifest != undefined) return this.runtimeManifest;
+    this.runtimeManifest = await downloadFile("https://launchermeta.mojang.com/v1/products/java-runtime/2ec0cc96c44e5a76b9c8b7c39df7210883d12871/all.json");
+    return this.fetchRuntimeManifest();
+  }
+
+  pickCurrentPlatform = (runtimeManifest, javaVersionCode, os = undefined, arch = undefined) => {
+    os = os != void 0 ? os : (process.platform == "win32" ? "windows" :
+      process.platform == "darwin" ? "mac-os" :
+        "linux");
+    arch = arch != void 0 ? arch : (os == "linux" ? "" :
+      (
+        (os == "mac-os" ?
+          (process.arch == "arm64" ? "arm64" : "") :
+          (process.arch == "x64" ? "x64" : "x86")
+        )
+      ));
+    const pc = os + (arch ? ("-" + arch) : "");
+    if (!Object.keys(runtimeManifest).includes(pc)) throw new Error("Unsupported platform");
+    if (runtimeManifest[pc][javaVersionCode].length == 0) {
+      if (os == 'mac-os' && arch == 'arm64') // to run x64 java on arm64 through Rosetta 2
+        return this.pickCurrentPlatform(runtimeManifest, javaVersionCode, os, "");
+      throw new Error("Unsupported java version");
+    }
+    return runtimeManifest[pc][javaVersionCode][0];
+  }
+
+  downloadJava = async (javaVersionCode) => {
+    console.debug("Download Java:", javaVersionCode);
+    const javaDir = path.join(this.rootDir, "java", javaVersionCode);
+    const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+    if (fs.existsSync(javaPath) && this.checkJava(javaPath)['run'] != false) {
+      return javaPath;
+    } else {
+      const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
+      const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
+
+      if (!currentPlatformManifest) throw new Error("Unknown java error");
+      try {
+        const manifest = await downloadFile(currentPlatformManifest.manifest.url);
+        const files = Object.keys(manifest.files).map((file) => ({
+          name: file,
+          downloads: manifest.files[file].downloads,
+          type: manifest.files[file].type,
+          executable: manifest.files[file].executable,
+        }));
+        const directory = files.filter((file) => file.type == "directory");
+        const filesToDownload = files.filter((file) => file.type == "file");
+
+        if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
+
+        directory.forEach((dir) => {
+          const _dir = path.join(javaDir, dir.name);
+          if (!fs.existsSync(_dir)) fs.mkdirSync(_dir);
+        });
+
+        let totalProgress = 0;
+        const useProgressCounter = () => {
+          let prev = 0;
+          return ({ percent }) => {
+            totalProgress += percent - prev;
+            this.emit('download-progress', {
+              current: totalProgress,
+              total: filesToDownload.length,
+            });
+            prev = percent;
+          }
+        }
+
+        await Promise.all(filesToDownload.map(async file => {
+          const fileName = path.join(javaDir, file.name);
+          if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
+          const handleProgress = useProgressCounter();
+          await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
+          if (file.executable && process.platform != "win32") {
+            await promisify(child.exec)(`chmod +x "${fileName}"`);
+            await promisify(child.exec)(`chmod 755 "${fileName}"`);
+          }
+        }));
+
+        return javaPath;
+      } catch (e) {
+        throw e;
       }
+      return undefined;
+    }
+  }
 
-    });
-  });
+  getRecommendedJava = async (manifest) => {
+    const recommendedJava = this.parseRecommendedJava(manifest);
+    return await this.downloadJava(recommendedJava.component);
+  }
+
 }
 
-exports.checkJava = checkJava;
+
+module.exports = JavaManager;

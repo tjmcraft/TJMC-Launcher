@@ -1,4 +1,6 @@
 const got = require('got');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * Function just download a single file and return its body
@@ -14,3 +16,39 @@ exports.downloadFile = async (url) => {
     return {};
   }
 }
+
+exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0) => new Promise((resolve, reject) => {
+
+  if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) return resolve(false);
+  if (!url.includes('http')) return resolve(false);
+
+  const downloadStream = got.stream(url);
+  const fileWriterStream = fs.createWriteStream(filePath);
+
+  downloadStream
+    .on("downloadProgress", ({ transferred, total, percent }) => {
+      // const percentage = Math.round(percent * 100) / 100;
+      typeof progressHandler == 'function' && progressHandler({
+        total: total,
+        current: transferred,
+        percent: percent,
+      });
+      // console.debug(`progress: ${transferred}/${total} (${percentage}%)`);
+    })
+    .on("error", (error) => {
+      console.error(`Download failed: ${error.message}`);
+      resolve(false);
+    });
+
+  fileWriterStream
+    .on("error", (error) => {
+      console.error(`Could not write file to system: ${error.message}`);
+      resolve(false);
+    })
+    .on("finish", () => {
+      // console.log(`File downloaded to ${filePath}`);
+      resolve(true);
+    });
+
+  downloadStream.pipe(fileWriterStream);
+})

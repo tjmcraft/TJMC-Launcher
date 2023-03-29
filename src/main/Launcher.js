@@ -1,4 +1,5 @@
 const { createInstance } = require('./managers/InstanceManager');
+const JavaManager = require('./managers/JavaManager');
 
 const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; font-weight: bold;');
 
@@ -6,17 +7,6 @@ const { Worker } = require("node:worker_threads");
 const path = require('node:path');
 
 const instances = new Map();
-
-const getJava = async (launcherOptions) => {
-	const JavaManager = require('./managers/JavaManager');
-	const javaPath = launcherOptions?.installation?.javaPath || launcherOptions?.java?.javaPath || 'javaw';
-	const java = await JavaManager.checkJava(javaPath);
-	if (!java.run) {
-			this.debug && logger.error(`Couldn't start Minecraft due to: ${java.message}`);
-			throw new Error(`Wrong java (${javaPath})`);
-	}
-	return javaPath;
-}
 
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
@@ -54,7 +44,30 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			}
 		}, params);
 
-		const javaPath = await getJava(launcherOptions);
+		const javaManager = new JavaManager(ConfigManager.getLauncherDirectory());
+		var javaPath = launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath;
+		if (!["", undefined].includes(javaPath)) {
+			const java = await javaManager.checkJava(javaPath);
+			if (!java.run) {
+				this.debug && logger.error(`Wrong java (${javaPath}) => ${java.message}`);
+				javaPath = undefined;
+			}
+		}
+		if (["", undefined].includes(javaPath)) {
+			javaManager.on('download-progress', (e) => {
+				const progress = (e.current / e.total);
+				emit('download', {
+					type: 'java',
+					progress: progress,
+				});
+			});
+			javaPath = await javaManager.getRecommendedJava(launcherOptions.manifest);
+			const java = await javaManager.checkJava(javaPath);
+			if (!java.run) {
+				throw new Error(`Error while loading recommended java`);
+			}
+		}
+
 		const worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
 		});
@@ -140,7 +153,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		instances.delete(version_hash);
 		runCallbacks();
 		emit('error', {
-			error: error.message,
+			error: error.message || error,
 		});
 	}
 	return false;
