@@ -1158,8 +1158,7 @@ body {
     padding: 8px 16px;
     min-width: 10rem;
     border-radius: 0;
-    /* color: #fdfdfd; */
-    /* font-family: var(--font-primary); */
+    color: #fdfdfd;
     border-radius: 4px;
     line-height: 1;
 }
