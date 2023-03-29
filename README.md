@@ -12,7 +12,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [x] Implement **Context Menu** on **Installations**
 - [ ] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [ ] Implement **Edit** action on **Installations**
-- [ ] Create **JavaManager**, that can **install** required java and also scan **installed** versions
+- [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [ ] Fix Forge and other *modded* builds startup issues
 - [ ] Fix accessibility issues (aria tags + tab navigation)
 - [ ] Implement font resize + *accent color change*
