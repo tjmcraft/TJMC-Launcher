@@ -3,7 +3,7 @@ const { downloadFile, downloadToFile } = require('../util/download');
 const LoggerUtil = require("../util/loggerutil");
 const path = require('path');
 const fs = require('fs');
-const EventEmitter = require('events');
+const EventEmitter = require('node:events');
 const { promisify } = require('util');
 const logger = LoggerUtil('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
@@ -16,6 +16,7 @@ class JavaManager extends EventEmitter {
   }
 
   checkJava = function (java) {
+    if (java == void 0) return { run: false };
     console.debug("Check java:", java);
     return new Promise(resolve => {
       let cmd = `"${java}" -version`;
@@ -28,17 +29,6 @@ class JavaManager extends EventEmitter {
         }
       })
     })
-  }
-
-  parseRecommendedJava = (manifest) => {
-    if (manifest.javaVersion) {
-      return manifest.javaVersion;
-    } else {
-      return {
-        component: 'jre-legacy',
-        majorVersion: 8
-      };
-    }
   }
 
   fetchRuntimeManifest = async () => {
@@ -68,7 +58,13 @@ class JavaManager extends EventEmitter {
     return runtimeManifest[pc][javaVersionCode][0];
   }
 
-  downloadJava = async (javaVersionCode) => {
+  /**
+   * Download mojang jre by component code
+   * @param {string} javaVersionCode
+   * @param {AbortSignal} signal
+   * @returns
+   */
+  downloadJava = async (javaVersionCode, signal) => {
     console.debug("Download Java:", javaVersionCode);
     const javaDir = path.join(this.rootDir, "java", javaVersionCode);
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
@@ -77,7 +73,7 @@ class JavaManager extends EventEmitter {
     } else {
       const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
       const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
-
+      if (signal.aborted) return undefined;
       if (!currentPlatformManifest) throw new Error("Unknown java error");
       try {
         const manifest = await downloadFile(currentPlatformManifest.manifest.url);
@@ -89,7 +85,7 @@ class JavaManager extends EventEmitter {
         }));
         const directory = files.filter((file) => file.type == "directory");
         const filesToDownload = files.filter((file) => file.type == "file");
-
+        if (signal.aborted) return undefined;
         if (!fs.existsSync(javaDir)) fs.mkdirSync(javaDir, { recursive: true });
 
         directory.forEach((dir) => {
@@ -111,15 +107,18 @@ class JavaManager extends EventEmitter {
         }
 
         await Promise.all(filesToDownload.map(async file => {
+          if (signal.aborted) return undefined;
           const fileName = path.join(javaDir, file.name);
           if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
           const handleProgress = useProgressCounter();
-          await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress);
+          await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
           if (file.executable && process.platform != "win32") {
             await promisify(child.exec)(`chmod +x "${fileName}"`);
             await promisify(child.exec)(`chmod 755 "${fileName}"`);
           }
         }));
+
+        if (signal.aborted) return undefined;
 
         return javaPath;
       } catch (e) {
@@ -129,10 +128,8 @@ class JavaManager extends EventEmitter {
     }
   }
 
-  getRecommendedJava = async (manifest) => {
-    const recommendedJava = this.parseRecommendedJava(manifest);
-    return await this.downloadJava(recommendedJava.component);
-  }
+  getRecommendedJava = (manifest) =>
+    manifest.javaVersion || { component: 'jre-legacy', majorVersion: 8 };
 
 }
 

@@ -1,6 +1,8 @@
 const got = require('got');
-const path = require('path');
 const fs = require('fs');
+const events = require('node:events');
+events.setMaxListeners(500);
+
 
 /**
  * Function just download a single file and return its body
@@ -17,12 +19,21 @@ exports.downloadFile = async (url) => {
   }
 }
 
-exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0) => new Promise((resolve, reject) => {
+/**
+ *
+ * @param {string} url
+ * @param {string} filePath
+ * @param {boolean} retry
+ * @param {Function} progressHandler
+ * @param {AbortSignal} signal
+ * @returns
+ */
+exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0, signal) => new Promise((resolve, reject) => {
 
   if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) return resolve(false);
   if (!url.includes('http')) return resolve(false);
 
-  const downloadStream = got.stream(url);
+  const downloadStream = got.stream(url, { signal });
   const fileWriterStream = fs.createWriteStream(filePath);
 
   downloadStream

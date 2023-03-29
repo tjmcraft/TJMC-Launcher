@@ -16,6 +16,15 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	const InstallationsManager = require('./managers/InstallationsManager');
 
 	const emit = (eventName, args) => eventListener(eventName, args);
+	const terminateInstance = () => {
+		instances.delete(version_hash);
+		runCallbacks();
+		emit('progress', {
+			type: 'terminated',
+			progress: 0,
+		});
+		return void 0;
+	}
 
 	const controller = new AbortController();
 	if (!instances.get(version_hash)) {
@@ -26,10 +35,21 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		runCallbacks();
 	};
 
+	var worker = undefined;
+
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
 	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
 	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
+
+	controller.signal.addEventListener('abort', () => {
+		logger.warn("Aborting..");
+		emit('progress', {
+			type: 'aborting',
+			progress: 0,
+		});
+		worker != void 0 && worker.terminate();
+	}, { once: true });
 
 	try {
 
@@ -61,24 +81,29 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 					progress: progress,
 				});
 			});
-			javaPath = await javaManager.getRecommendedJava(launcherOptions.manifest);
+			const recommendedJava = javaManager.getRecommendedJava(launcherOptions.manifest);
+			javaPath = await javaManager.downloadJava(recommendedJava.component, controller.signal);
+			if (controller.signal.aborted) return terminateInstance();
 			const java = await javaManager.checkJava(javaPath);
 			if (!java.run) {
-				throw new Error(`Error while loading recommended java`);
+				javaPath = undefined;
+				this.debug && logger.error(`Error while loading recommended java: ${recommendedJava.component}`);
 			}
 		}
+		if (["", undefined].includes(javaPath)) {
+			javaPath = 'java';
+			const java = await javaManager.checkJava(javaPath);
+			if (!java.run) {
+				javaPath = undefined;
+				this.debug && logger.error(`Error with default java (${javaPath}) => ${java.message}`);
+			}
+		}
+		if (["", undefined].includes(javaPath)) {
+			throw new Error("Error while loading java");
+		}
 
-		const worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
+		worker = new Worker(path.resolve(__dirname, "game/launcher.js"), {
 			workerData: launcherOptions
-		});
-
-		controller.signal.addEventListener('abort', () => {
-			logger.warn("Aborting..");
-			emit('progress', {
-				type: 'aborting',
-				progress: 0,
-			});
-			worker.terminate();
 		});
 
 		worker.on('message', async ({ type, payload }) => {
@@ -138,12 +163,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		worker.on('exit', (code) => {
 			console.warn("Worker exit with code:", code);
-			instances.delete(version_hash);
-			runCallbacks();
-			emit('progress', {
-				type: 'terminated',
-				progress: 0,
-			});
+			return terminateInstance();
 		});
 
 		return true;
