@@ -162,8 +162,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			emit('success');
 		}
 
-
-		return true;
+		return terminateInstance();
 
 	} catch (error) {
 		logger.error(error);
