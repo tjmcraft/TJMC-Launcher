@@ -14,7 +14,7 @@ const launcherDir = path.normalize(
 
 const DEFAULT_CONFIG = Object.seal({
     java: {
-        javaPath: 'javaw',
+        javaPath: '',
         memory: {
             max: 1024,
             min: 512
