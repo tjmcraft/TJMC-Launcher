@@ -134,6 +134,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		const javaArgs = await promiseRequest(argsController);
 
 		{
+			logger.debug(javaPath, javaArgs.join(" "));
 			const jvm = createInstance(version_hash, javaPath, javaArgs, {
 				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.root,
 				detached: launcherOptions.java.detached
