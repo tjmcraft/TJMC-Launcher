@@ -67,66 +67,74 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		}, params);
 
 		const javaController = promiseControl();
-		JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
-			workerData: {
-				rootDir: ConfigManager.getLauncherDirectory(),
-				recommendedJava: launcherOptions.manifest?.javaVersion,
-				externalJava: launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath
-			}
-		});
-
-		JavaWorker.on('message', async ({ type, payload }) => {
-			if (type != 'javaPath') return;
-			if (controller.signal.aborted) return;
-			javaController.resolve(payload);
-			JavaWorker.terminate();
-		});
-		JavaWorker.on('message', async ({ type, payload }) => {
-			if (type != 'download-progress') return;
-			if (controller.signal.aborted) return;
-			emit('download', {
-				type: 'java',
-				progress: payload,
+		{
+			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
+				workerData: {
+					rootDir: ConfigManager.getLauncherDirectory(),
+					recommendedJava: launcherOptions.manifest?.javaVersion,
+					externalJava: launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath
+				}
 			});
-		});
-
-		JavaWorker.on('exit', (code) => {
-			console.warn("JavaWorker exit with code:", code);
-			if (controller.signal.aborted) return terminateInstance();
-		});
-
+			JavaWorker.on('message', async ({ type, payload }) => {
+				if (type != 'javaPath') return;
+				if (controller.signal.aborted) return;
+				javaController.resolve(payload);
+				JavaWorker.terminate();
+			});
+			JavaWorker.on('message', async ({ type, payload }) => {
+				if (type != 'download-progress') return;
+				if (controller.signal.aborted) return;
+				emit('download', {
+					type: 'java',
+					progress: payload,
+				});
+			});
+			JavaWorker.on('exit', (code) => {
+				console.warn("JavaWorker exit with code:", code);
+				if (controller.signal.aborted) return terminateInstance();
+			});
+		}
 		const javaPath = await promiseRequest(javaController);
 
-		MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
-			workerData: launcherOptions
-		});
-
-		MainWorker.on('message', async ({ type, payload }) => {
-			if (type != 'progress') return;
-			if (controller.signal.aborted) return;
-			const progress = (payload.task / payload.total);
-			emit('progress', {
-				type: payload.type,
-				progress: progress,
+		const argsController = promiseControl();
+		{
+			MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
+				workerData: launcherOptions
 			});
-		});
-
-		MainWorker.on('message', async ({ type, payload }) => {
-			if (type != 'download-progress') return;
-			if (controller.signal.aborted) return;
-			const progress = (payload.current / payload.total);
-			if (!['version-jar'].includes(payload.type)) return;
-			emit('download', {
-				type: payload.type,
-				progress: progress,
+			MainWorker.on('message', async ({ type, payload }) => {
+				if (type != 'progress') return;
+				if (controller.signal.aborted) return;
+				const progress = (payload.task / payload.total);
+				emit('progress', {
+					type: payload.type,
+					progress: progress,
+				});
 			});
-		});
+			MainWorker.on('message', async ({ type, payload }) => {
+				if (type != 'download-progress') return;
+				if (controller.signal.aborted) return;
+				const progress = (payload.current / payload.total);
+				if (!['version-jar'].includes(payload.type)) return;
+				emit('download', {
+					type: payload.type,
+					progress: progress,
+				});
+			});
+			MainWorker.on('message', async ({ type, payload }) => {
+				if (type != 'args') return;
+				if (controller.signal.aborted) return;
+				argsController.resolve(payload);
+				MainWorker.terminate();
+			});
+			MainWorker.on('exit', (code) => {
+				console.warn("MainWorker exit with code:", code);
+				if (controller.signal.aborted) return terminateInstance();
+			});
+		}
+		const javaArgs = await promiseRequest(argsController);
 
-		MainWorker.on('message', async ({ type, payload }) => {
-			if (type != 'args') return;
-			if (controller.signal.aborted) return;
-
-			const jvm = createInstance(version_hash, javaPath, payload, {
+		{
+			const jvm = createInstance(version_hash, javaPath, javaArgs, {
 				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.root,
 				detached: launcherOptions.java.detached
 			});
@@ -151,15 +159,9 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				}
 			});
 
-			MainWorker.terminate();
-
 			emit('success');
-		});
+		}
 
-		MainWorker.on('exit', (code) => {
-			console.warn("MainWorker exit with code:", code);
-			return terminateInstance();
-		});
 
 		return true;
 
