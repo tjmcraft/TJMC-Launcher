@@ -183,6 +183,7 @@ class Minecraft extends EventEmitter {
      */
     async downloadLibrary(directory, libraries, type = 'classes') {
         let count = 0;
+        const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
             if (!library) return false;
 
@@ -193,11 +194,18 @@ class Minecraft extends EventEmitter {
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
-            if (!fs.existsSync(path.join(jarPath, name)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(jarPath, name)))) {
-                const lib_url = library.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
-                    library.artifact?.url.includes('http') ? library.artifact.url :
-                        library.url ? library.url :
-                            library.exact_url ? library.exact_url : "";
+            if (!fs.existsSync(path.join(jarPath, name)) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, path.join(jarPath, name)))) {
+                const lib_url = ((library) => {
+                    if (isValidUrl(library.downloads?.artifact?.url))
+                        return library.downloads.artifact.url;
+                    if (isValidUrl(library.artifact?.url))
+                        return library.artifact.url;
+                    if (isValidUrl(library.url))
+                        return library.url;
+                    if (isValidUrl(library.exact_url))
+                        return library.exact_url;
+                    return "";
+                })(library);
                 const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`;
                 const urls = [
                     lib_url,
