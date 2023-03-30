@@ -65,12 +65,12 @@ exports.getVersionManifest = async function (version, props = {}) {
     }
     if (c_version.inheritsFrom) {
         const inherit = await this.getVersionManifest(c_version.inheritsFrom);
-        c_version.libraries = merge(c_version.libraries, inherit.libraries);
         c_version.mainClass = c_version.mainClass || inherit.mainClass;
-        c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
-        c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
+        c_version.libraries = merge(c_version.libraries, inherit.libraries);
         c_version.downloads = c_version.downloads || inherit.downloads;
+        c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
         c_version.javaVersion = c_version.javaVersion || inherit.javaVersion;
+        c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
         if (c_version.arguments || inherit.arguments) {
             c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
             c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
@@ -79,7 +79,7 @@ exports.getVersionManifest = async function (version, props = {}) {
     }
     c_version = Object.assign(c_version, props);
     fs.mkdirSync(versionPath, { recursive: true });
-    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version, null, 4));
+    fs.writeFileSync(versionJsonPath, JSON.stringify(c_version, null, 2));
     return c_version
 }
 
