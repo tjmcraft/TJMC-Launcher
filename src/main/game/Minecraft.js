@@ -189,6 +189,7 @@ class Minecraft extends EventEmitter {
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
+            logg.debug(">>", "load", name);
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
