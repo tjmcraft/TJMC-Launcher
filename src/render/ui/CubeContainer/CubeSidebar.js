@@ -13,7 +13,6 @@ import InstanceItem from "./InstanceItem";
 const CubeSidebarItems = memo(() => {
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
-	console.warn(">", "CubeSidebarItems");
 	return installations.length ? (
 		installations.map((hash) =>
 			createElement(CubeSidebarItem, {
@@ -31,7 +30,6 @@ const CubeSidebarItems = memo(() => {
 const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
-	console.warn(">", "InstallationsScroller");
 	return (
 		<div className={buildClassName('scroller', 'thin-s')}>
 			<h2 className={buildClassName('header-w', 'container-df')}>
