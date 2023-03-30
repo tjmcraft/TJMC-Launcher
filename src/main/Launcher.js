@@ -51,6 +51,9 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		});
 		JavaWorker != void 0 && JavaWorker.terminate();
 		MainWorker != void 0 && MainWorker.terminate();
+		if (JavaWorker == void 0 && MainWorker == void 0) {
+			return terminateInstance();
+		}
 	}, { once: true });
 
 	try {
@@ -91,6 +94,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 			JavaWorker.on('exit', (code) => {
 				console.warn("JavaWorker exit with code:", code);
+				JavaWorker = undefined;
 				if (controller.signal.aborted) return terminateInstance();
 			});
 		}
@@ -128,6 +132,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 			MainWorker.on('exit', (code) => {
 				console.warn("MainWorker exit with code:", code);
+				MainWorker = undefined;
 				if (controller.signal.aborted) return terminateInstance();
 			});
 		}
