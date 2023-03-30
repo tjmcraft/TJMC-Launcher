@@ -62,12 +62,12 @@ class JavaManager extends EventEmitter {
    * @returns
    */
   downloadJava = async (javaVersionCode, signal = undefined) => {
-    logger.debug("Download Java:", javaVersionCode);
     const javaDir = path.join(this.rootDir, "java", javaVersionCode);
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
     if (fs.existsSync(javaPath) && (await this.checkJava(javaPath))['run'] != false) {
       return javaPath;
     }
+    logger.debug("Download Java:", javaVersionCode);
     const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
     const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
     if (signal?.aborted) return undefined;
