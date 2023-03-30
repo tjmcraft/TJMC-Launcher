@@ -70,6 +70,7 @@ exports.getVersionManifest = async function (version, props = {}) {
         c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
         c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
         c_version.downloads = c_version.downloads || inherit.downloads;
+        c_version.javaVersion = c_version.javaVersion || inherit.javaVersion;
         if (c_version.arguments || inherit.arguments) {
             c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
             c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
