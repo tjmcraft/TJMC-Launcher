@@ -1,11 +1,10 @@
 const child = require('child_process');
 const { downloadFile, downloadToFile } = require('../util/download');
-const LoggerUtil = require("../util/loggerutil");
 const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('node:events');
 const { promisify } = require('util');
-const logger = LoggerUtil('%c[JavaManager]', 'color: #beb600; font-weight: bold');
+const logger = require("../util/loggerutil")('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
 class JavaManager extends EventEmitter {
 
@@ -16,7 +15,6 @@ class JavaManager extends EventEmitter {
   }
 
   checkJava = function (java) {
-    console.debug("Check java:", java);
     return new Promise(resolve => {
       if (java == void 0) return resolve({ run: false });
       let cmd = `"${java}" -version`;
@@ -24,8 +22,7 @@ class JavaManager extends EventEmitter {
         if (error) {
           resolve({ run: false, message: error });
         } else {
-          logger.debug(`Using Java (${java}) version ${stderr.match(/"(.*?)"/).pop()} ${stderr.includes('64-Bit') ? '64-Bit' : '32-Bit'}`);
-          resolve({ run: true });
+          resolve({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
         }
       })
     })
@@ -65,7 +62,7 @@ class JavaManager extends EventEmitter {
    * @returns
    */
   downloadJava = async (javaVersionCode, signal = undefined) => {
-    console.debug("Download Java:", javaVersionCode);
+    logger.debug("Download Java:", javaVersionCode);
     const javaDir = path.join(this.rootDir, "java", javaVersionCode);
     const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
     if (fs.existsSync(javaPath) && (await this.checkJava(javaPath))['run'] != false) {
@@ -119,6 +116,7 @@ class JavaManager extends EventEmitter {
       }));
 
       if (signal?.aborted) return undefined;
+      logger.debug("Loaded Java:", javaVersionCode, "=>", javaPath);
 
       return javaPath;
     } catch (e) {

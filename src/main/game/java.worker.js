@@ -1,5 +1,6 @@
 const { parentPort, workerData, isMainThread } = require("node:worker_threads");
 const JavaManager = require("../managers/JavaManager");
+const logger = require("../util/loggerutil")('%c[JavaWorker]', 'color: #feb600; font-weight: bold');
 
 if (!isMainThread) {
 	if (!workerData) return;
@@ -20,6 +21,7 @@ if (!isMainThread) {
 			if (!java.run) {
 				console.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
 			} else {
+				logger.debug(`Using Java (${javaPath}) version ${java.version} ${java.arch}`);
 				return javaPath;
 			}
 		}
