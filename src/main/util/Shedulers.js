@@ -57,5 +57,12 @@ function throttle(fn = () => {},
 	};
 }
 
+const requestPromise = () => {
+	const resolver = { resolve: void 0, reject: void 0 };
+	const promise = new Promise((resolve, reject) => Object.assign(resolver, { resolve, reject }));
+	return [resolver, promise];
+}
+
+exports.requestPromise = requestPromise;
 exports.debounce = debounce;
 exports.throttle = throttle;
