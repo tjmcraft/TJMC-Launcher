@@ -49,14 +49,14 @@ class Minecraft extends EventEmitter {
      * @param {Object} classJson - version JSON
      */
     async getClasses(classJson) {
-        const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'));
+        const libraryDirectory = path.join(this.options.overrides.path.root, 'libraries');
         if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
-        const parsed = await Promise.all(classJson.libraries.map(async lib => {
+        const parsed = classJson.libraries.filter(lib => {
             const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
             const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
             const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
             if (lib_ex) return lib;
-        }).filter(lib => Boolean(lib)));
+        });
         const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
         this.debug && logg.log(`Collected Class Path's! (count: ${libs.length})`);
         return libs;
@@ -202,7 +202,9 @@ class Minecraft extends EventEmitter {
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
 
-            if (!fs.existsSync(path.join(jarPath, name))) {
+            const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
+
+            if (!fs.existsSync(path.join(jarPath, name)) || (this.overrides.checkHash && !await this.checkSum(hash, path.join(jarPath, name)))) {
                 const lib_url = library.downloads?.artifact?.url?.includes('http') ? library.downloads.artifact.url :
                     library.artifact?.url.includes('http') ? library.artifact.url :
                         library.url ? library.url :
@@ -216,6 +218,7 @@ class Minecraft extends EventEmitter {
                     'http://dl.liteloader.com/versions/' + jar_name,
                     'https://repo1.maven.org/maven2/' + jar_name,
                     'https://maven.minecraftforge.net/' + jar_name,
+                    'https://search.maven.org/remotecontent?filepath=' + jar_name,
                     (library.url ? library.url : '') + jar_name
                 ];
                 for (const url of urls) {
@@ -261,7 +264,7 @@ class Minecraft extends EventEmitter {
 
             const filepath = path.join(directory, filename);
 
-            if (fs.existsSync(filepath) && fs.readFileSync(filepath).length > 0) return resolve(false);
+            // if (fs.existsSync(filepath) && fs.readFileSync(filepath).length > 0) return resolve(false);
             if (!url.includes('http')) return resolve(false);
 
             const _request = this.baseRequest(url);
