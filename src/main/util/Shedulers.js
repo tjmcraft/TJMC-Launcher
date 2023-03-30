@@ -57,12 +57,17 @@ function throttle(fn = () => {},
 	};
 }
 
-const requestPromise = () => {
-	const resolver = { resolve: void 0, reject: void 0 };
-	const promise = new Promise((resolve, reject) => Object.assign(resolver, { resolve, reject }));
-	return [resolver, promise];
-}
+const promiseControl = () =>
+	Object.seal({ resolve: (payload) => void 0, reject: (payload) => void 0 });
 
-exports.requestPromise = requestPromise;
+const promiseRequest = (controller) => {
+	return new Promise((resolve, reject) => {
+		controller.resolve = resolve;
+		controller.reject = reject;
+	});
+};
+
+exports.promiseRequest = promiseRequest;
+exports.promiseControl = promiseControl;
 exports.debounce = debounce;
 exports.throttle = throttle;

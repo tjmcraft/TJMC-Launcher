@@ -4,6 +4,7 @@ const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; 
 
 const { Worker } = require("node:worker_threads");
 const path = require('node:path');
+const { promiseControl, promiseRequest } = require('./util/Shedulers');
 
 const instances = new Map();
 
@@ -65,10 +66,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			}
 		}, params);
 
-		const javaController = {
-			resolve: undefined,
-			reject: undefined,
-		}
+		const javaController = promiseControl();
 		JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
 			workerData: {
 				rootDir: ConfigManager.getLauncherDirectory(),
@@ -80,7 +78,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		JavaWorker.on('message', async ({ type, payload }) => {
 			if (type != 'javaPath') return;
 			if (controller.signal.aborted) return;
-			if (!javaController.resolve) return;
 			javaController.resolve(payload);
 			JavaWorker.terminate();
 		});
@@ -98,10 +95,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			if (controller.signal.aborted) return terminateInstance();
 		});
 
-		const javaPath = await new Promise((resolve, reject) => {
-			javaController.resolve = resolve;
-			javaController.reject = reject;
-		});
+		const javaPath = await promiseRequest(javaController);
 
 		MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
 			workerData: launcherOptions
