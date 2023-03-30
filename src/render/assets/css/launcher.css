@@ -1123,8 +1123,16 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background-color: var(--brand-color);
-    width: var(--progress);
+    /* background-color: var(--brand-color); */
+    max-width: 100%;
+    width: var(--progress, 0);
+    animation-duration: 1s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: placeHolderShimmer;
+    animation-timing-function: linear;
+    background: linear-gradient(to right, var(--brand-color) 10%, var(--brand-color-2) 20%, var(--brand-color) 30%);
+    background-size: 200% 1px;
 }
 
 .main-content > .top > .top-overlay > .top-toolbar > .title {
