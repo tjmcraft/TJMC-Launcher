@@ -1,11 +1,11 @@
-const request                                = require('request')
-const fs                                     = require('fs')
-const path                                   = require('path')
-const crypto                                 = require('crypto')
-const os                                     = require('os')
-const Zip                                    = require('adm-zip')
-const EventEmitter                           = require('events')
-const logg                                   = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
+const request = require('request')
+const fs = require('fs')
+const path = require('path')
+const crypto = require('crypto')
+const os = require('os')
+const Zip = require('adm-zip')
+const EventEmitter = require('events')
+const logg = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft extends EventEmitter {
 
@@ -48,7 +48,7 @@ class Minecraft extends EventEmitter {
      * Collect cp of libraries
      * @param {Object} classJson - version JSON
      */
-    async getClasses (classJson) {
+    async getClasses(classJson) {
         const libraryDirectory = path.resolve(path.join(this.options.overrides.path.root, 'libraries'));
         if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
         const parsed = await Promise.all(classJson.libraries.map(async lib => {
@@ -62,7 +62,7 @@ class Minecraft extends EventEmitter {
         return libs;
     }
 
-    popString (path) {
+    popString(path) {
         const tempArray = path.split('/')
         tempArray.pop()
         return tempArray.join('/')
@@ -338,7 +338,7 @@ class Minecraft extends EventEmitter {
      * @param lib - Library to check
      * @returns {Boolean} - allow or disallow rule is
      */
-    parseRule (lib) {
+    parseRule(lib) {
         if (lib.rules) {
             if (lib.rules.length > 1) {
                 if (lib.rules[0].action === 'allow' &&
@@ -357,7 +357,7 @@ class Minecraft extends EventEmitter {
     /**
      * Returns memory arguments for JVM process.
      */
-    getMemory () {
+    getMemory() {
         if (!this.options.java.memory) {
             this.debug && logg.debug('Memory not set! Setting 1GB as MAX!')
             this.options.java.memory = {
@@ -405,7 +405,7 @@ class Minecraft extends EventEmitter {
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }
-        if(versionFile.arguments){
+        if (versionFile.arguments) {
             return this.getJVMArgs113(versionFile, tempNativePath, cp)
         } else {
             return this.getJVMArgs112(versionFile, tempNativePath, cp)
@@ -416,13 +416,13 @@ class Minecraft extends EventEmitter {
      * Construct the argument array that will be passed to the JVM process.
      * This function is for 1.12 and below.
      */
-    getJVMArgs112(versionFile, tempNativePath, cp){
+    getJVMArgs112(versionFile, tempNativePath, cp) {
 
         let args = []
         const jar = (this.overrides.javaSep) + this.options.mcPath;
 
         // Java Arguments
-        if(process.platform === 'darwin'){
+        if (process.platform === 'darwin') {
             args.push('-Xdock:name=TJMC-Launcher')
             args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
         }
@@ -450,11 +450,11 @@ class Minecraft extends EventEmitter {
      * Note: Required Libs https://github.com/MinecraftForge/MinecraftForge/blob/af98088d04186452cb364280340124dfd4766a5c/src/fmllauncher/java/net/minecraftforge/fml/loading/LibraryFinder.java#L82
      *
      */
-    getJVMArgs113(versionFile){
+    getJVMArgs113(versionFile) {
 
         let args = []
 
-        if(process.platform === 'darwin'){
+        if (process.platform === 'darwin') {
             args.push('-Xdock:name=TJMC-Launcher')
             args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
         }
@@ -468,26 +468,26 @@ class Minecraft extends EventEmitter {
         // Vanilla Arguments
         args = args.concat(versionFile.arguments.game)
 
-        for(let i=0; i<args.length; i++){
-            if(typeof args[i] === 'object' && args[i].rules != null){
+        for (let i = 0; i < args.length; i++) {
+            if (typeof args[i] === 'object' && args[i].rules != null) {
                 let checksum = 0
-                for(let rule of args[i].rules){
-                    if(rule.os != null){
-                        if(rule.os.name === this.getOS()
-                            && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))){
-                            if(rule.action === 'allow'){
+                for (let rule of args[i].rules) {
+                    if (rule.os != null) {
+                        if (rule.os.name === this.getOS()
+                            && (rule.os.version == null || new RegExp(rule.os.version).test(os.release))) {
+                            if (rule.action === 'allow') {
                                 checksum++
                             }
                         } else {
-                            if(rule.action === 'disallow'){
+                            if (rule.action === 'disallow') {
                                 checksum++
                             }
                         }
-                    } else if(rule.features != null){
+                    } else if (rule.features != null) {
                         // We don't have many 'features' in the index at the moment.
                         // This should be fine for a while.
-                        if(rule.features.has_custom_resolution != null && rule.features.has_custom_resolution === true){
-                            if(this.options.minecraft.launch.fullscreen){
+                        if (rule.features.has_custom_resolution != null && rule.features.has_custom_resolution === true) {
+                            if (this.options.minecraft.launch.fullscreen) {
                                 args[i].value = [
                                     '--fullscreen',
                                     'true'
@@ -499,10 +499,10 @@ class Minecraft extends EventEmitter {
                 }
 
                 // TODO splice not push
-                if(checksum === args[i].rules.length){
-                    if(typeof args[i].value === 'string'){
+                if (checksum === args[i].rules.length) {
+                    if (typeof args[i].value === 'string') {
                         args[i] = args[i].value
-                    } else if(typeof args[i].value === 'object'){
+                    } else if (typeof args[i].value === 'object') {
                         //args = args.concat(args[i].value)
                         args.splice(i, 1, ...args[i].value)
                     }
@@ -512,16 +512,16 @@ class Minecraft extends EventEmitter {
                     args[i] = null
                 }
 
-            } else if(typeof args[i] === 'string' && !(args[i] === undefined)){
+            } else if (typeof args[i] === 'string' && !(args[i] === undefined)) {
                 for (let ob of Object.keys(this.fields)) {
                     if (args[i].includes(ob)) {
                         args[i] = args[i].replace(ob, this.fields[ob])
                     }
                 }
             } else if (typeof args[i] === 'object' && !args[i].rules) {
-                if(typeof args[i].value === 'string'){
+                if (typeof args[i].value === 'string') {
                     args[i] = args[i].value
-                } else if(typeof args[i].value === 'object'){
+                } else if (typeof args[i].value === 'object') {
                     //args = args.concat(args[i].value)
                     args.splice(i, 1, ...args[i].value)
                 }
@@ -543,7 +543,7 @@ class Minecraft extends EventEmitter {
      *
      * @returns {Array.<string>} An array containing the arguments
      */
-    resolveArgs(versionFile){
+    resolveArgs(versionFile) {
 
         const mcArgs = versionFile.minecraftArguments.split(' ')
 
@@ -555,7 +555,7 @@ class Minecraft extends EventEmitter {
         }
 
         // Prepare game resolution
-        if(this.options.minecraft.launch.fullscreen){
+        if (this.options.minecraft.launch.fullscreen) {
             mcArgs.push('--fullscreen')
             mcArgs.push(true)
         } else {
