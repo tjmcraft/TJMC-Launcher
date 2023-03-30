@@ -78,19 +78,17 @@ class Minecraft extends EventEmitter {
         this.debug && logg.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true })
-            const natives = () =>
-                Promise.all(version.libraries.map(async (lib) => {
-                    if (!(lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false))) return
-                    if (this.parseRule(lib)) return
-                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
-                    const native =
-                        this.getOS() === 'osx'
-                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                            : (lib_clfs[`natives-${this.getOS()}`])
-                    return native;
-                }));
+            const stat = await Promise.all(version.libraries.filter(lib => {
+                if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
+            }).map(async (lib) => {
+                const lib_clfs = lib.classifiers || lib.downloads.classifiers || null;
+                const native =
+                    this.getOS() === 'osx'
+                        ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
+                        : (lib_clfs[`natives-${this.getOS()}`])
+                return native;
+            }));
 
-            const stat = await natives();
 
             this.emit('progress', {
                 type: 'natives',
