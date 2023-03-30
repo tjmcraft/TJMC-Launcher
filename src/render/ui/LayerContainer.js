@@ -70,14 +70,8 @@ const ModalLayer = ({ isShown, children }) => {
 };
 
 const Modals = memo(() => {
-
-	const { closeModal } = getDispatch();
 	const modals = useGlobal(global => global.modals);
-
-	console.debug(">", modals);
-
 	const isOpen = modals.length > 0;
-
 
 	return isOpen &&
 		modals.map((modal) => (
