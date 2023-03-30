@@ -77,7 +77,8 @@ class Minecraft extends EventEmitter {
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         this.debug && logg.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
-            fs.mkdirSync(nativeDirectory, { recursive: true })
+            fs.mkdirSync(nativeDirectory, { recursive: true });
+
             const stat = await Promise.all(version.libraries.filter(lib => {
                 if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
             }).map(async (lib) => {
@@ -89,19 +90,17 @@ class Minecraft extends EventEmitter {
                 return native;
             }));
 
-
             this.emit('progress', {
                 type: 'natives',
                 task: 0,
                 total: stat.length,
-            })
-            let promise_counter = 0;
-            await Promise.all(stat.map(async (native) => {
+            });
+            await Promise.all(stat.map(async (native, index) => {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
                 if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
-                    (promise_counter <= 0) && this.debug && logg.debug(`Downloading natives...`); promise_counter++;
+                    (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
                     await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives');
                 }
                 try {
@@ -114,14 +113,8 @@ class Minecraft extends EventEmitter {
                     task: count,
                     total: stat.length,
                 });
-            }))
+            }));
             this.debug && logg.debug(`Downloaded and extracted natives! ${stat.length}`);
-            count = 0;
-            this.emit('progress', {
-                type: 'natives',
-                task: count,
-                total: stat.length,
-            });
         }
         this.debug && logg.debug(`Natives Collected!`);
         return nativeDirectory;
@@ -146,13 +139,13 @@ class Minecraft extends EventEmitter {
         });
 
         const assetsToLoad = [];
-        const assetProcessor = async (asset) => {
+        const assetProcessor = async (asset, number) => {
             const hash = index.objects[asset].hash;
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
             if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
-                // (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
+                (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
                     await this.downloadAsync(`${res_url}/${subHash}/${hash}`, subAsset, hash, true, 'assets');
                     count++;
@@ -172,18 +165,13 @@ class Minecraft extends EventEmitter {
             }
             return assetPath;
         };
-        for (const asset of Object.keys(index.objects)) {
-            await assetProcessor(asset);
+        for (const number in Object.keys(index.objects)) {
+            const asset = Object.keys(index.objects)[number];
+            await assetProcessor(asset, number);
         }
         if (assetsToLoad.length > 0) {
             await Promise.all(assetsToLoad.map(async asset => await asset()));
         }
-        count = 0
-        this.emit('progress', {
-            type: 'assets',
-            task: count,
-            total: Object.keys(index.objects).length,
-        })
         this.debug && logg.debug('Collected assets');
     }
 
