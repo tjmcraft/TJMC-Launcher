@@ -98,7 +98,7 @@
     "appId": "com.github.makandjo.tjmc.app.launcher",
     "productName": "TJMC-Launcher",
     "copyright": "Copyright © 2020-2022 MakAndJo",
-    "artifactName": "${productName}-setup-${version}-${arch}.${ext}",
+    "artifactName": "${productName}-setup-${arch}.${ext}",
     "publish": {
       "provider": "github",
       "releaseType": "draft",
