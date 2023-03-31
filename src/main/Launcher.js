@@ -165,10 +165,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				}
 			});
 
-			emit('success');
 		}
-
-		return terminateInstance();
 
 	} catch (error) {
 		logger.error(error);
@@ -178,7 +175,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			error: error.message || error,
 		});
 	}
-	return false;
+	return terminateInstance();
 }
 
 exports.getInstances = () => {

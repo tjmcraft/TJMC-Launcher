@@ -54,20 +54,6 @@ export function updateGameStartupError(global, actions, update) {
 	});
 }
 
-export function updateGameStartupSuccess(global, update) {
-	const { hash } = update;
-	setState(updateInstallation(global, hash, {
-		isProcessing: false,
-	}));
-
-	ProgressStore.setState({
-		...ProgressStore.getState(),
-		[hash]: { progress: 0 }
-	});
-
-
-}
-
 export function updateUpdate(global, update) {
 	return {
 		...global,
