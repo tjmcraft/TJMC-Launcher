@@ -116,7 +116,7 @@ class JavaManager extends EventEmitter {
       }));
 
       if (signal?.aborted) return undefined;
-      logger.debug("Loaded Java:", javaVersionCode, "=>", javaPath);
+      logger.debug("Downloaded Java:", javaVersionCode, "=>", javaPath);
 
       return javaPath;
     } catch (e) {
