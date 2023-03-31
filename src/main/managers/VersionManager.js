@@ -47,7 +47,7 @@ exports.getLocalVersions = async function () {
  * Gets Main JSON of given version
  * @param {String} version - Version of Minecraft
  */
-exports.getVersionManifest = async function (version, props = {}) {
+exports.getVersionManifest = async function (version, props = {}, progressHandler = (e) => void 0) {
     logger.debug(`Loading ${version} version manifest...`);
     if (!versions_directory) return;
     const versionPath = path.join(versions_directory, version);
@@ -57,11 +57,8 @@ exports.getVersionManifest = async function (version, props = {}) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
         const parsed = await this.getGlobalVersions();
-        for (const cv in parsed) {
-            if (parsed[cv].id === version) {
-                c_version = await downloadFile(parsed[cv].url ?? `https://tlaun.ch/repo/versions/${version}.json`);
-            }
-        }
+        const cvv = parsed.find(v => v.id == version);
+        c_version = await downloadFile(cvv.url ?? `https://tlaun.ch/repo/versions/${version}.json`, progressHandler);
     }
     if (c_version.inheritsFrom) {
         const inherit = await this.getVersionManifest(c_version.inheritsFrom);
@@ -96,6 +93,10 @@ exports.removeVersion = async function (version) {
 
 /* ============= GLOBAL ============= */
 
+/**
+ *
+ * @returns {Promise<Array<object>>}
+ */
 exports.getGlobalVersionsManifests = async function () {
     let [mojang_versions, tlaunch_versions] = await Promise.all([
         downloadFile(`https://launchermeta.mojang.com/mc/game/version_manifest.json`),

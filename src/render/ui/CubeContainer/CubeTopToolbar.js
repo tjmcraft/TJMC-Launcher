@@ -39,6 +39,7 @@ const CubeTopToolbar = ({ hash }) => {
 	const subtitle = useMemo(() => {
 		if (isLoading && progressType != void 0) {
 			return `${Object.seal({
+				'load:version-manifest': 'loading version manifest',
 				java: 'loading java',
 				natives: 'loading natives',
 				indexes: 'loading asset manifest',
