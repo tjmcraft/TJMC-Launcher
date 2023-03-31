@@ -1,5 +1,5 @@
 import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
-import { setState } from "Store/Global";
+import { getState, setState } from "Store/Global";
 import ProgressStore from "Store/Progress";
 
 export function replaceInstallation(global, hash, update) {
@@ -52,6 +52,9 @@ export function updateInstallationProgress(global, update) {
 			[hash]: { progress: 0 }
 		});
 	} else {
+		if (getState(global => selectInstallation(global, hash)).isProcessing == false) {
+			setState(updateInstallation(global, hash, { isProcessing: true }));
+		}
 		ProgressStore.setState({
 			...ProgressStore.getState(),
 			[hash]: { progress: progress, progressType: progressType }
