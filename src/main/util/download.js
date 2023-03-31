@@ -8,9 +8,17 @@ events.setMaxListeners(500);
  * Function just download a single file and return its body
  * @param url give url of file
  */
-exports.downloadFile = async (url) => {
+exports.downloadFile = async (url, progressHandler = (e) => void 0) => {
   try {
-    const response = await got(url, { retry: { limit: 3 } });
+    const promiseRequest = got(url, { retry: { limit: 3 } });
+    promiseRequest.on('downloadProgress', ({ transferred, total, percent }) => {
+      typeof progressHandler == 'function' && progressHandler({
+        total: total,
+        current: transferred,
+        percent: percent,
+      });
+    })
+    const response = await promiseRequest;
     if (response.statusCode && response.statusCode != 200) throw new Error('Invalid status code <' + response.statusCode + '>');
     return JSON.parse(response.body);
   } catch (err) {
@@ -28,7 +36,7 @@ exports.downloadFile = async (url) => {
  * @param {AbortSignal} signal
  * @returns
  */
-exports.downloadToFile = (url, filePath, retry = false, progressHandler = () => void 0, signal) => new Promise((resolve, reject) => {
+exports.downloadToFile = (url, filePath, retry = false, progressHandler = (e) => void 0, signal) => new Promise((resolve, reject) => {
 
   if (!url.includes('http')) return resolve(false);
   if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) {
