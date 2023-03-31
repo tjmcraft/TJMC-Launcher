@@ -13,7 +13,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [ ] Implement **Edit** action on **Installations**
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
-- [ ] Fix Forge and other *modded* builds startup issues
+- [x] Fix Forge and other *modded* builds startup issues
 - [ ] Fix accessibility issues (aria tags + tab navigation)
 - [ ] Implement font resize + *accent color change*
 - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
