@@ -52,7 +52,7 @@ export function updateInstallationProgress(global, update) {
 			[hash]: { progress: 0 }
 		});
 	} else {
-		if (getState(global => selectInstallation(global, hash)).isProcessing == false) {
+		if (!getState(global => selectInstallation(global, hash)).isProcessing) {
 			setState(updateInstallation(global, hash, { isProcessing: true }));
 		}
 		ProgressStore.setState({
