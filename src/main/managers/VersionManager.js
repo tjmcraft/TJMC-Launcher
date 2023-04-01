@@ -84,7 +84,7 @@ exports.removeVersion = async function (version) {
     if (!versions_directory) return;
     const versionFile = await this.getVersionManifest(version)
     const versionPath = path.join(versions_directory, version)
-    const assetsIndexDir = path.join(ConfigManager.getDataDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
+    const assetsIndexDir = path.join(ConfigManager.getMinecraftDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
     fs.rmdirSync(versionPath, { recursive: true })
     fs.rmdirSync(assetsIndexDir, { recursive: true })
     logger.log(`${version} was removed!`)

@@ -35,7 +35,7 @@ exports.createTray = async () => {
         },
         {
             label: 'Open Folder',
-            click: () => openDir(ConfigManager.getDataDirectory())
+            click: () => openDir(ConfigManager.getMinecraftDirectory())
         },
         {
             type: 'separator'

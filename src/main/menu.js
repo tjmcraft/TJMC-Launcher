@@ -31,7 +31,7 @@ const createMenu = async () => {
           submenu: [{
                   label: 'Root Directory',
                   accelerator: 'Ctrl+Shift+D',
-                  click: () => openDir(ConfigManager.getDataDirectory())
+                  click: () => openDir(ConfigManager.getMinecraftDirectory())
               },
               {
                   label: 'Options',

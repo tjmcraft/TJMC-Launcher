@@ -68,5 +68,5 @@ exports.getAllOptions = async () => config.getOption();
 exports.setOption = (key, value) => config.setOption(key, value);
 
 exports.getLauncherDirectory = () => launcherDir;
-exports.getDataDirectory = (def = false) => config.getOption(config => config.overrides.path.minecraft, def);
+exports.getMinecraftDirectory = (def = false) => config.getOption(config => config.overrides.path.minecraft, def);
 exports.getVersionsDirectory = (def = false) => config.getOption(config => config.overrides.path.versions, def);
