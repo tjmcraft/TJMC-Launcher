@@ -9,6 +9,29 @@ const logg = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600;
 
 class Minecraft extends EventEmitter {
 
+    /**
+     * @typedef MinecraftOptions
+     * @type {object}
+     * @property {Object} overrides - Object that describes overrides
+     * @property {Object} overrides.path - Object that describes all path overrides
+     * @property {Object} overrides.path.version - Path to version directory (where main jar located)
+     * @property {Object} overrides.path.minecraft - Path to minecraft (root) directory
+     * @property {Object} overrides.path.mcPath - Path to version main jar
+     * @property {Object} overrides.path.gameDirectory - Path to game directory
+     * @property {Object} java.javaPath - Path to java executable
+     * @property {Object} installation.lastVersionId - ID of current version
+     * @property {Object} installation.type - Type of current version
+     */
+
+    /**
+     * @type {MinecraftOptions}
+     */
+    options = {};
+
+    /**
+     * Minecraft constructor
+     * @param {MinecraftOptions} options - Options to construct the launcher
+     */
     constructor(options) {
         super();
 
@@ -38,13 +61,12 @@ class Minecraft extends EventEmitter {
      */
     async loadClient(version) {
         const versionPath = path.join(this.options.overrides.path.version);
-        const versionJarPath = path.join(versionPath, `${this.overrides.version.id}.jar`);
         this.debug && logg.debug(`<- Attempting to load ${this.overrides.version.id}.jar`);
-        if (!fs.existsSync(versionJarPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, versionJarPath))) {
+        if (!fs.existsSync(this.options.overrides.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.overrides.mcPath))) {
             await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar');
         }
         this.debug && logg.debug(`-> Loaded ${this.overrides.version.id}.jar`);
-        return versionJarPath;
+        return this.options.overrides.mcPath;
     }
 
     /**
@@ -52,7 +74,7 @@ class Minecraft extends EventEmitter {
      * @param {Object} classJson - version JSON
      */
     async getClasses(classJson) {
-        const libraryDirectory = path.join(this.options.overrides.path.root, 'libraries');
+        const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
         if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
         const parsed = classJson.libraries.filter(lib => {
             const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
@@ -129,7 +151,7 @@ class Minecraft extends EventEmitter {
      */
     async getAssets(version) {
         let count = 0;
-        const assetDirectory = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
+        const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
         }
@@ -382,7 +404,7 @@ class Minecraft extends EventEmitter {
      * Construct the argument array that will be passed to the JVM process.
      */
     constructJVMArguments(versionFile, tempNativePath, cp) {
-        const assetRoot = path.resolve(path.join(this.options.overrides.path.root, 'assets'))
+        const assetRoot = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         const assetPath = path.join(assetRoot)
         const jar = this.overrides.javaSep + this.options.mcPath;
         this.fields = {
@@ -395,7 +417,7 @@ class Minecraft extends EventEmitter {
             '${user_type}': 'mojang',
             '${version_name}': this.overrides.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
-            '${game_directory}': this.options.overrides.path?.gameDirectory,
+            '${game_directory}': this.options.overrides.path.gameDirectory,
             '${assets_root}': assetPath,
             '${game_assets}': assetPath,
             '${version_type}': this.overrides.version.type,
@@ -404,7 +426,7 @@ class Minecraft extends EventEmitter {
             '${resolution_height}': this.overrides.resolution.height,
             '${classpath}': `${cp.join(this.overrides.javaSep) + jar}`,
             '${natives_directory}': tempNativePath,
-            '${game_libraries_directory}': this.options.overrides.path.directory,
+            '${game_libraries_directory}': this.options.overrides.path.versions,
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }

@@ -150,7 +150,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		{
 			logger.debug(javaPath, javaArgs.join(" "));
 			const jvm = createInstance(version_hash, javaPath, javaArgs, {
-				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.root,
+				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.minecraft,
 				detached: launcherOptions.java.detached
 			});
 
