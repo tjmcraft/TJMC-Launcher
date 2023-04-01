@@ -25,9 +25,9 @@ class Launcher {
         this.logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
         this.options = Object.assign({}, options);
-        this.options.overrides.path.gameDirectory = path.resolve(this.options.installation?.gameDir || this.options.overrides.path?.gameDirectory || this.options.overrides.path?.minecraft || undefined);
-        this.options.overrides.path.version = path.join(this.options.overrides.path.versions, this.options.installation.lastVersionId);
-        this.options.mcPath = path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
+        this.options.overrides.path.gameDirectory = this.options.installation.gameDir || path.resolve(this.options.overrides.path.gameDirectory || this.options.overrides.path.minecraft);
+        this.options.overrides.path.version = this.options.installation.versionPath || path.join(this.options.overrides.path.versions, this.options.installation.lastVersionId);
+        this.options.mcPath = this.options.installation.mcPath || path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
         this.options.auth = Object.assign({}, this.options.auth, {
             uuid: getOfflineUUID(this.options.auth.username)
         });

@@ -1,7 +1,6 @@
 const Config = require('../libs/Config');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
-const { removeVersion } = require('./VersionManager');
 
 
 /* ============= INSTALLATIONS ============= */
@@ -20,6 +19,25 @@ module.exports.load = (dir_path) => config.load(dir_path);
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 
+const DEFAULT_PROFILE = {
+    created: new Date().toISOString(),
+    icon: undefined,
+    type: 'custom',
+    gameDir: undefined,
+    versionDir: undefined,
+    mcPath: undefined,
+    javaPath: undefined,
+    javaArgs: undefined,
+    lastUsed: undefined,
+    lastVersionId: undefined,
+    name: undefined,
+    resolution: {
+        width: undefined,
+        height: undefined,
+    },
+    checkHash: true,
+};
+
 /**
  * Create new installation
  * @param {Object} options - Options for version
@@ -35,21 +53,8 @@ module.exports.removeCallback = config.removeCallback;
  */
 exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
-    options = Object.assign({ // reassign
+    options = Object.assign(DEFAULT_PROFILE, { // reassign
         created: current_date,
-        icon: undefined,
-        type: 'custom',
-        gameDir: undefined,
-        javaPath: undefined,
-        javaArgs: undefined,
-        lastUsed: undefined,
-        lastVersionId: undefined,
-        name: undefined,
-        resolution: {
-            width: undefined,
-            height: undefined,
-        },
-        checkHash: true,
     }, options);
     const profile = cleanObject(options);
 
@@ -84,9 +89,22 @@ exports.getInstallation = async function (hash) {
  * @returns {Object} - The installation's object
  */
 exports.getInstallationSync = function (hash) {
+    const path = require('node:path');
+    const { getOption } = require('./ConfigManager');
     const installations = config.getOption("profiles");
-    if (hash && Object(installations).hasOwnProperty(hash))
-        return { hash: hash, ...installations[hash] };
+    if (hash && Object(installations).hasOwnProperty(hash)) {
+        let installation = installations[hash];
+        installation = Object.assign({}, DEFAULT_PROFILE, {
+            hash: hash,
+        }, installation);
+        installation.gameDir = installation.gameDir != void 0 ? installation.gameDir :
+        path.resolve(getOption('overrides.path.gameDirectory') || getOption('overrides.path.minecraft'));
+        installation.versionDir = installation.versionDir != void 0 ? installation.versionDir :
+        path.join(getOption('overrides.path.versions'), installation.lastVersionId);
+        installation.mcPath = installation.mcPath != void 0 ? installation.mcPath :
+        path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
+        return installation;
+    }
     return undefined;
 }
 
@@ -97,6 +115,7 @@ exports.getInstallationSync = function (hash) {
  * @returns {Boolean} - Whether the deletion is success
  */
 exports.removeInstallation = async function (hash, forceDeps = false) {
+    const { removeVersion } = require('./VersionManager');
     const installations = config.getOption("profiles");
     if (hash && Object(installations).hasOwnProperty(hash)) {
         const installation = installations[hash];
