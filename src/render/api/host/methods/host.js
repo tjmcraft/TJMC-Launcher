@@ -35,7 +35,30 @@ export async function relaunchHost() {
 	return result.payload;
 }
 
-
+export async function openMinecraftFolder() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "openMinecraftFolder"
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
+export async function openVersionsFolder() {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "openVersionsFolder"
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
 
 export async function selectFolder({ title }) {
 	let result;

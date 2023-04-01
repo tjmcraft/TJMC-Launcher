@@ -25,6 +25,8 @@ const requestChannels = Object.seal({
 	updateCheck: 'updateCheck',
 	updateDownload: 'updateDownload',
 	updateInstall: 'updateInstall',
+	openMinecraftFolder: 'openMinecraftFolder',
+	openVersionsFolder: 'openVersionsFolder',
 });
 exports.requestChannels = requestChannels;
 
@@ -67,7 +69,7 @@ exports.start = async () => {
 }
 
 const os = require('os');
-const { ipcMain, dialog } = require('electron');
+const { ipcMain, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
@@ -147,13 +149,17 @@ const initHandlers = async () => {
 			hostVersion: autoUpdater.currentVersion,
 			hostMemory: os.totalmem() / 1024 / 1024,
 		}));
-
 		WSSHost.addReducer(requestChannels.relaunchHost, () => {
 			app.relaunch();
 		});
-
 		WSSHost.addReducer(requestChannels.setProgress, (data) => {
 			if (data.progress) win?.setProgressBar(data.progress);
+		});
+		WSSHost.addReducer(requestChannels.openMinecraftFolder, async () => {
+			shell.openPath(ConfigManager.getMinecraftDirectory());
+		});
+		WSSHost.addReducer(requestChannels.openVersionsFolder, async () => {
+			shell.openPath(ConfigManager.getVersionsDirectory());
 		});
 	}
 

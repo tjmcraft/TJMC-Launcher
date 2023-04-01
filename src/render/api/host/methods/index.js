@@ -1,6 +1,8 @@
 export {
 	fetchHostInfo,
 	relaunchHost,
+	openMinecraftFolder,
+	openVersionsFolder,
 	selectFolder,
 	selectFile,
 	updateCheck,
