@@ -62,11 +62,11 @@ class Minecraft extends EventEmitter {
     async loadClient(version) {
         const versionPath = path.join(this.options.overrides.path.version);
         this.debug && logg.debug(`<- Attempting to load ${this.overrides.version.id}.jar`);
-        if (!fs.existsSync(this.options.overrides.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.overrides.mcPath))) {
+        if (!fs.existsSync(this.options.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.mcPath))) {
             await this.downloadAsync(version.downloads.client.url, versionPath, `${this.overrides.version.id}.jar`, true, 'version-jar');
         }
         this.debug && logg.debug(`-> Loaded ${this.overrides.version.id}.jar`);
-        return this.options.overrides.mcPath;
+        return this.options.mcPath;
     }
 
     /**
