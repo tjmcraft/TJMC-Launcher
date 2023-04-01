@@ -89,7 +89,7 @@ const Config = function ({
 		} else {
 			try {
 				config = fs.readFileSync(configPath, "utf-8");
-				config = JSON.parse(config);
+				config = Object.assign({}, DEFAULT_CONFIG, JSON.parse(config));
 			} catch (err) {
 				logger.warn('Configuration file contains malformed JSON or is corrupted!');
 				config = DEFAULT_CONFIG;
