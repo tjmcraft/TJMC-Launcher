@@ -12,15 +12,38 @@ class Minecraft extends EventEmitter {
     /**
      * @typedef MinecraftOptions
      * @type {object}
-     * @property {Object} overrides - Object that describes overrides
-     * @property {Object} overrides.path - Object that describes all path overrides
-     * @property {Object} overrides.path.version - Path to version directory (where main jar located)
-     * @property {Object} overrides.path.minecraft - Path to minecraft (root) directory
-     * @property {Object} overrides.path.mcPath - Path to version main jar
-     * @property {Object} overrides.path.gameDirectory - Path to game directory
-     * @property {Object} java.javaPath - Path to java executable
-     * @property {Object} installation.lastVersionId - ID of current version
-     * @property {Object} installation.type - Type of current version
+     * @property {object} overrides - Object that describes overrides
+     * @property {object} overrides.request - Request overrides
+     * @property {number} overrides.request.maxSockets - Request max sockets in pool
+     * @property {number} overrides.request.timeout - Maximum request timeout
+     * @property {object} overrides.path - Object that describes all path overrides
+     * @property {string} overrides.path.versions - Path to version directory (where main jar located)
+     * @property {string} overrides.path.minecraft - Path to minecraft (root) directory
+     * @property {string} overrides.path.gameDirectory - Path to game directory
+     * @property {boolean} overrides.checkHash - Check hash
+     * @property {string} mcPath - Path to main jar
+     * @property {string} java.javaPath - Path to java executable
+     * @property {object} installation - Installation object
+     * @property {boolean} installation.checkHash - Installation check hash
+     * @property {object} installation.resolution - Installation resolution object
+     * @property {string | number} installation.resolution.width - Installation width
+     * @property {string | number} installation.resolution.height - Installation height
+     * @property {string} installation.lastVersionId - ID of current version
+     * @property {string} installation.type - Type of current version
+     * @property {object} java - Minecraft java options
+     * @property {object} java.memory - Minecraft java memory options
+     * @property {number} java.memory.min - Minecraft minimum java memory
+     * @property {number} java.memory.max - Minecraft maximum java memory
+     * @property {object} minecraft - Minecraft options
+     * @property {object} minecraft.launch - Minecraft launch options
+     * @property {string | number} minecraft.launch.width - Minecraft width
+     * @property {string | number} minecraft.launch.height - Minecraft height
+     * @property {boolean} minecraft.launch.fullscreen - Minecraft fullscreen mode
+     * @property {object} auth - Minecraft auth
+     * @property {object} auth.access_token - Minecraft auth token
+     * @property {object} auth.uuid - Minecraft auth uuid (offline)
+     * @property {object} auth.username - Minecraft auth username
+     * @property {object} auth.user_properties - Minecraft auth user properties
      */
 
     /**
@@ -593,12 +616,16 @@ class Minecraft extends EventEmitter {
         return mcArgs
     }
 
+    /**
+     * Get current platform
+     * @returns {'windows' | 'osx' | 'linux' | undefined}
+     */
     getOS() {
         switch (process.platform) {
             case 'win32': return 'windows'
             case 'darwin': return 'osx'
             case 'linux': return 'linux'
-            default: return 'unknown_os'
+            default: return undefined
         }
     }
 
