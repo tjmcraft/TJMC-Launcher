@@ -22,43 +22,11 @@ export async function fetchHostInfo() {
 	});
 	return result.payload;
 }
-
 export async function relaunchHost() {
 	let result;
 	try {
 		result = await invokeRequest({
 			type: "relaunchHost"
-		}, false, true, true);
-	} catch (e) {
-		return;
-	}
-	if (!result) return undefined;
-	return result.payload;
-}
-
-export async function invokeLaunch(version_hash, params = {}) {
-	let result;
-	try {
-		result = await invokeRequest({
-			type: "invokeLaunch",
-			data: {
-				version_hash, params
-			}
-		}, false, true, true);
-	} catch (e) {
-		return;
-	}
-	if (!result) return undefined;
-	return result.payload;
-}
-export async function revokeLaunch(version_hash) {
-	let result;
-	try {
-		result = await invokeRequest({
-			type: "revokeLaunch",
-			data: {
-				version_hash
-			}
 		}, false, true, true);
 	} catch (e) {
 		return;
@@ -83,7 +51,6 @@ export async function fetchConfiguration() {
 	});
 	return result.payload;
 }
-
 export async function setConfiguration(key, value) {
 	let result;
 	try {

@@ -23,6 +23,37 @@ export async function fetchInstances() {
 	return result.payload;
 }
 
+export async function invokeLaunch(version_hash, params = {}) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "invokeLaunch",
+			data: {
+				version_hash, params
+			}
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
+export async function revokeLaunch(version_hash) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "revokeLaunch",
+			data: {
+				version_hash
+			}
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
+
 export async function killInstance(options = {}) {
 	let result;
 	try {

@@ -1,8 +1,6 @@
 export {
 	fetchHostInfo,
 	relaunchHost,
-	invokeLaunch,
-	revokeLaunch,
 	fetchConfiguration,
 	setConfiguration,
 	selectFolder,
@@ -19,6 +17,8 @@ export {
 } from './installation';
 export {
 	fetchInstances,
+	invokeLaunch,
+	revokeLaunch,
 	killInstance,
 	killAllInstances,
 } from './instances';
