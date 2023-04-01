@@ -10,7 +10,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 
 ## Tasks 📑
 - [x] Implement **Context Menu** on **Installations**
-- [ ] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
+- [x] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [ ] Implement **Edit** action on **Installations**
 - [ ] Implement open current installation folder
 - [ ] Prevent loading same installation as a second instance in host launcher (strict)
