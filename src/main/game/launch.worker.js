@@ -6,69 +6,41 @@ const LoggerUtil = require('../util/loggerutil');
 
 const { parentPort, workerData, isMainThread } = require("node:worker_threads");
 
-class Launcher {
-
-    /**
-     * Minecraft launcher constructor
-     * @param {Object} options - Options to construct the launcher
-     * @param {Object} options.overrides.path.version - Path to directory of version (where main jar located)
-     * @param {Object} options.overrides.path.minecraft - Path to root directory of minecraft
-     * @param {Object} options.overrides.path.mcPath - Path to version main jar
-     * @param {Object} options.overrides.path.gameDirectory - Path to game directory
-     * @param {Object} options.java.javaPath - Path to java executable
-     * @param {Object} options.installation.lastVersionId - ID of current version
-     * @param {Object} options.installation.type - Type of current version
-     */
-    constructor(options = {}) {
-
-        this.debug = true;
-        this.logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
-
-        this.options = Object.assign({}, options);
-        this.options.overrides.path.gameDirectory = this.options.installation.gameDir || path.resolve(this.options.overrides.path.gameDirectory || this.options.overrides.path.minecraft);
-        this.options.overrides.path.version = this.options.installation.versionPath || path.join(this.options.overrides.path.versions, this.options.installation.lastVersionId);
-        this.options.mcPath = this.options.installation.mcPath || path.join(this.options.overrides.path.version, `${this.options.installation.lastVersionId}.jar`);
-        this.options.auth = Object.assign({}, this.options.auth, {
-            uuid: getOfflineUUID(this.options.auth.username)
-        });
-
-        this.handler = new Minecraft(this.options);
-
-        this.debug && this.logger.debug(`Minecraft folder is ${this.options.overrides.path.minecraft}`);
-        this.debug && this.logger.debug("Launcher compiled options:", this.options);
-    }
-
-    async construct() {
-
-        if (!fs.existsSync(this.options.overrides.path.version))
-            fs.mkdirSync(this.options.overrides.path.version, { recursive: true });
-        if (!fs.existsSync(this.options.overrides.path.gameDirectory))
-            fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
-
-        this.debug && this.logger.log('Attempting to load client');
-        const client = await this.handler.loadClient(this.options.manifest);
-
-        this.debug && this.logger.log('Attempting to load natives');
-        const nativePath = await this.handler.getNatives(this.options.manifest);
-
-        this.debug && this.logger.log('Attempting to load classes');
-        const classes = await this.handler.getClasses(this.options.manifest);
-
-        this.debug && this.logger.log('Attempting to load assets');
-        const assets = await this.handler.getAssets(this.options.manifest);
-
-        const args = this.handler.constructJVMArguments(this.options.manifest, nativePath, classes);
-
-        return args;
-    }
-
-}
-
 if (!isMainThread) {
-    const instance = new Launcher(workerData);
-    instance.handler.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
-    instance.handler.on('download-progress', (e) => parentPort.postMessage({ type: 'download-progress', payload: e }));
-    instance.construct().then(args => {
-        parentPort.postMessage({ type: 'args', payload: args });
+    if (!workerData) return;
+    const options = Object.assign({}, workerData);
+    options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
+    options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
+    options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
+    options.auth = Object.assign({}, options.auth, {
+        uuid: getOfflineUUID(options.auth.username)
     });
+
+    const logger = LoggerUtil(`%c[Launcher-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+
+    const instance = new Minecraft(options);
+    instance.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
+    instance.on('download-progress', (e) => parentPort.postMessage({ type: 'download-progress', payload: e }));
+
+    logger.debug("Launcher compiled options:", options);
+
+    (async () => {
+        if (!fs.existsSync(options.overrides.path.version))
+            fs.mkdirSync(options.overrides.path.version, { recursive: true });
+        if (!fs.existsSync(options.overrides.path.gameDirectory))
+            fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
+
+        logger.log('Attempting to load client');
+        const client = await instance.loadClient(options.manifest);
+        logger.log('Attempting to load natives');
+        const nativePath = await instance.getNatives(options.manifest);
+        logger.log('Attempting to load classes');
+        const classes = await instance.getClasses(options.manifest);
+        logger.log('Attempting to load assets');
+        const assets = await instance.getAssets(options.manifest);
+
+        const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
+
+        parentPort.postMessage({ type: 'args', payload: args });
+    })();
 }
