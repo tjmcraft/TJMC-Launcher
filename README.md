@@ -19,6 +19,9 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Implement font resize + *accent color change*
 - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
 - [ ] Update **Auth** system (move to host as auth server + oauth on web) or just update **Auth** component to multi-step
+- [ ] Fix directories bug and create directories setting
+- [ ] Implement multi-account store
+- [ ] Offline account support
 
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).

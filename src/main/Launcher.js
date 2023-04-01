@@ -41,7 +41,16 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
 	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
-	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
+	emit('progress', {
+		type: 'load:version-manifest',
+		progress: 0.001,
+	});
+	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, {}, ({ progress }) => {
+		emit('progress', {
+			type: 'load:version-manifest',
+			progress: progress,
+		});
+	});
 
 	controller.signal.addEventListener('abort', () => {
 		logger.warn("Aborting..");
@@ -165,10 +174,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				}
 			});
 
-			emit('success');
 		}
-
-		return terminateInstance();
 
 	} catch (error) {
 		logger.error(error);
@@ -178,7 +184,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			error: error.message || error,
 		});
 	}
-	return false;
+	return terminateInstance();
 }
 
 exports.getInstances = () => {

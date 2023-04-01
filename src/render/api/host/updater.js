@@ -48,11 +48,6 @@ export function updater(update) {
 			hash: payload.version_hash,
 			error: payload.error,
 		});
-	} else if (type == "game.startup.success") {
-		payload?.version_hash && onUpdate({
-			type: "updateGameStartupSuccess",
-			hash: payload.version_hash,
-		});
 	} else if (type == "updateInstallations") {
 		payload?.installations && onUpdate({
 			type: "updateInstallations",

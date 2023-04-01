@@ -44,8 +44,9 @@ class Launcher {
             fs.mkdirSync(this.options.overrides.path.root, { recursive: true });
         if (!fs.existsSync(this.options.overrides.path.gameDirectory))
             fs.mkdirSync(this.options.overrides.path.gameDirectory, { recursive: true });
-        if (!fs.existsSync(this.options.mcPath))
-            await this.handler.loadClient(this.options.manifest);
+
+        this.debug && this.logger.log('Attempting to load client');
+        const client = await this.handler.loadClient(this.options.manifest);
 
         this.debug && this.logger.log('Attempting to load natives');
         const nativePath = await this.handler.getNatives(this.options.manifest);
