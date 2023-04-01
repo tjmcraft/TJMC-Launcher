@@ -59,20 +59,19 @@ exports.getVersionManifest = async function (version, props = {}, progressHandle
         const parsed = await this.getGlobalVersions();
         const cvv = parsed.find(v => v.id == version);
         c_version = await downloadFile(cvv.url ?? `https://tlaun.ch/repo/versions/${version}.json`, progressHandler);
-    }
-    if (c_version.inheritsFrom) {
-        const inherit = await this.getVersionManifest(c_version.inheritsFrom);
-        c_version.mainClass = c_version.mainClass || inherit.mainClass;
-        c_version.libraries = merge(c_version.libraries, inherit.libraries);
-        c_version.downloads = c_version.downloads || inherit.downloads;
-        c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
-        c_version.javaVersion = c_version.javaVersion || inherit.javaVersion;
-        c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
-        if (c_version.arguments || inherit.arguments) {
-            c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
-            c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
+        if (c_version.inheritsFrom) {
+            const inherit = await this.getVersionManifest(c_version.inheritsFrom);
+            c_version.mainClass = c_version.mainClass || inherit.mainClass;
+            c_version.libraries = merge(c_version.libraries, inherit.libraries);
+            c_version.downloads = c_version.downloads || inherit.downloads;
+            c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
+            c_version.javaVersion = c_version.javaVersion || inherit.javaVersion;
+            c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
+            if (c_version.arguments || inherit.arguments) {
+                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
+                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
+            }
         }
-        delete c_version.inheritsFrom;
     }
     c_version = Object.assign(c_version, props);
     fs.mkdirSync(versionPath, { recursive: true });
@@ -80,14 +79,13 @@ exports.getVersionManifest = async function (version, props = {}, progressHandle
     return c_version
 }
 
-exports.removeVersion = async function (version) {
-    if (!versions_directory) return;
-    const versionFile = await this.getVersionManifest(version)
-    const versionPath = path.join(versions_directory, version)
-    const assetsIndexDir = path.join(ConfigManager.getMinecraftDirectory(), 'assets', 'indexes', `${versionFile.assetIndex.id}.json`)
-    fs.rmdirSync(versionPath, { recursive: true })
-    fs.rmdirSync(assetsIndexDir, { recursive: true })
-    logger.log(`${version} was removed!`)
+exports.removeVersion = async (versionId) => {
+    const { getVersionsDirectory, getMinecraftDirectory } = require('./ConfigManager');
+    const versionFile = await this.getVersionManifest(versionId);
+    const versionPath = path.join(getVersionsDirectory(), versionId);
+    fs.rmSync(versionPath, { recursive: true, force: true });
+    logger.log(`${versionId} was removed!`);
+    return true;
 }
 
 

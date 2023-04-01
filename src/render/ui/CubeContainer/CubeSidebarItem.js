@@ -77,7 +77,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 
 	const handleRemoveClick = useCallback((e) => {
 		alert({
-			title: "Удаление версии",
+			title: "Удаление установки",
 			content: `Вы действительно хотите удалить установку "${name}" с вашего компьютера?`,
 			type: "error",
 			buttons: [
@@ -87,6 +87,14 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 				},
 				{
 					name: "Удалить",
+					class: ["colorRed"],
+					closeOverlay: true,
+					callback: () => {
+						removeInstallation({ hash, forceDeps: true });
+					}
+				},
+				{
+					name: "Стереть",
 					class: ["filled", "colorRed"],
 					closeOverlay: true,
 					callback: () => {

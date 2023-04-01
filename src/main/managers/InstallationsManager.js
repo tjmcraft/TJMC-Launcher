@@ -1,6 +1,8 @@
 const Config = require('../libs/Config');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
+const { removeVersion } = require('./VersionManager');
+
 
 /* ============= INSTALLATIONS ============= */
 
@@ -91,12 +93,16 @@ exports.getInstallationSync = function (hash) {
 /**
  * Delete the installation with given hash
  * @param {String} hash - The hash of the installation
- * @param {Boolean} forceDeps - Should we delete all dependences
+ * @param {Boolean} forceDeps - Should we delete all dependencies
  * @returns {Boolean} - Whether the deletion is success
  */
 exports.removeInstallation = async function (hash, forceDeps = false) {
     const installations = config.getOption("profiles");
     if (hash && Object(installations).hasOwnProperty(hash)) {
+        const installation = installations[hash];
+        if (forceDeps) {
+            await removeVersion(installation.lastVersionId);
+        }
         delete installations[hash];
         config.setOption("profiles", installations);
         return hash;
