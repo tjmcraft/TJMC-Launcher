@@ -2,9 +2,10 @@
 import IPCClient from "Libs/IPCHostConnect/client";
 import { TJMCConnectionState } from "Libs/IPCHostConnect/IPCConnection";
 import { updater } from "../updater";
-import { fetchConfiguration, fetchHostInfo } from "./host";
-import { fetchInstallations } from "./installation";
+import { fetchHostInfo } from "./host";
+import { fetchConfiguration } from "./config";
 import { fetchInstances } from "./instances";
+import { fetchInstallations } from "./installation";
 
 let client;
 let onUpdate;

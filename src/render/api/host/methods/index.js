@@ -1,8 +1,6 @@
 export {
 	fetchHostInfo,
 	relaunchHost,
-	fetchConfiguration,
-	setConfiguration,
 	selectFolder,
 	selectFile,
 	updateCheck,
@@ -22,3 +20,7 @@ export {
 	killInstance,
 	killAllInstances,
 } from './instances';
+export {
+	fetchConfiguration,
+	setConfiguration,
+} from './config';
