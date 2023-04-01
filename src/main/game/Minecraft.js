@@ -388,7 +388,7 @@ class Minecraft extends EventEmitter {
             '${auth_player_name}': this.options.auth.username,
             '${auth_uuid}': this.options.auth.uuid,
             '${auth_xuid}': this.options.auth.uuid,
-            '${user_properties}': this.options.auth.user_properties || `{}`,
+            '${user_properties}': JSON.stringify(this.options.auth.user_properties) || `{}`,
             '${user_type}': 'mojang',
             '${version_name}': this.overrides.version.id,
             '${assets_index_name}': versionFile.assetIndex.id,
