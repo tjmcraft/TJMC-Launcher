@@ -13,6 +13,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [ ] Implement **Edit** action on **Installations**
 - [ ] Implement open current installation folder
+- [ ] Prevent loading same installation as a second instance in host launcher (strict)
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
 - [ ] Fix accessibility issues (aria tags + tab navigation)
