@@ -77,7 +77,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				uuid: undefined,
 			}
 		}, params);
-
+		if (controller.signal.aborted) return terminateInstance();
 		const javaController = promiseControl();
 		{
 			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
@@ -108,15 +108,15 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		}
 		const javaPath = await promiseRequest(javaController);
-
+		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
 			MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
 				workerData: launcherOptions
 			});
 			MainWorker.on('message', async ({ type, payload }) => {
-				if (type != 'progress') return;
 				if (controller.signal.aborted) return;
+				if (type != 'progress') return;
 				const progress = (payload.task / payload.total);
 				emit('progress', {
 					type: payload.type,
@@ -124,8 +124,8 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				});
 			});
 			MainWorker.on('message', async ({ type, payload }) => {
-				if (type != 'download-progress') return;
 				if (controller.signal.aborted) return;
+				if (type != 'download-progress') return;
 				const progress = (payload.current / payload.total);
 				if (!['version-jar'].includes(payload.type)) return;
 				emit('download', {
@@ -134,8 +134,8 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				});
 			});
 			MainWorker.on('message', async ({ type, payload }) => {
-				if (type != 'args') return;
 				if (controller.signal.aborted) return;
+				if (type != 'args') return;
 				argsController.resolve(payload);
 				MainWorker.terminate();
 			});
@@ -146,7 +146,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		}
 		const javaArgs = await promiseRequest(argsController);
-
+		if (controller.signal.aborted) return terminateInstance();
 		{
 			logger.debug(javaPath, javaArgs.join(" "));
 			const jvm = createInstance(version_hash, javaPath, javaArgs, {
