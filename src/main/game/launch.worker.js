@@ -8,9 +8,9 @@ const { parentPort, workerData, isMainThread } = require("node:worker_threads");
 
 if (!isMainThread) {
     if (!workerData) return;
+    const options = Object.assign({}, workerData);
     const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
-    const options = Object.assign({}, workerData);
     options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
     options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
     options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
