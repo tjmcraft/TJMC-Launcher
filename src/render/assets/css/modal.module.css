@@ -90,18 +90,19 @@
     opacity: 0;
 }
 
-.layer.show * {
-    pointer-events: all;
-}
-
 .layer.show {
     opacity: 1;
     visibility: visible;
 }
 
+.layer.show .backdrop {
+    pointer-events: all;
+}
+
 .layer.show > .modal {
     transform: scale(1);
     opacity: 1;
+    pointer-events: all;
 }
 
 .layer.show > .tools {
