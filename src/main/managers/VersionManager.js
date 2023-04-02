@@ -76,6 +76,7 @@ exports.getVersionManifest = async function (version, props = {}, progressHandle
     c_version = Object.assign(c_version, props);
     fs.mkdirSync(versionPath, { recursive: true });
     fs.writeFileSync(versionJsonPath, JSON.stringify(c_version, null, 2));
+    progressHandler({ progress: 1 });
     return c_version
 }
 
