@@ -1,5 +1,6 @@
 const got = require('got');
 const fs = require('fs');
+const path = require('node:path');
 const events = require('node:events');
 events.setMaxListeners(500);
 
@@ -28,25 +29,26 @@ exports.downloadFile = async (url, progressHandler = (e) => void 0) => {
 }
 
 /**
- *
- * @param {string} url
- * @param {string} filePath
- * @param {boolean} retry
- * @param {Function} progressHandler
- * @param {AbortSignal} signal
+ * Async download to file
+ * @param {string} url - url to download
+ * @param {string} filePath - path to save
+ * @param {boolean} force - force download (overwrite if exists)
+ * @param {Function} progressHandler - progress handler
+ * @param {AbortSignal} signal - abort signal
  * @returns
  */
-exports.downloadToFile = (url, filePath, retry = false, progressHandler = (e) => void 0, signal) => new Promise((resolve, reject) => {
-
+exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) => void 0, signal) => new Promise((resolve, reject) => {
   if (!url.includes('http')) return resolve(false);
-  if (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0) {
+  if (!force && (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0)) {
     typeof progressHandler == 'function' && progressHandler({
       total: 1,
       current: 1,
       percent: 1,
     });
-    return resolve(false);
+    return resolve(true);
   }
+
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
   const downloadStream = got.stream(url, { signal });
   const fileWriterStream = fs.createWriteStream(filePath);
