@@ -3,7 +3,13 @@ const fs = require('fs');
 const path = require('node:path');
 const events = require('node:events');
 events.setMaxListeners(500);
+const https = require('https');
+const http = require('http');
 
+const maxSockets = 128;
+
+const httpsAgent = new https.Agent({ maxSockets: maxSockets, keepAlive: false });
+const httpAgent = new http.Agent({ maxSockets: maxSockets, keepAlive: false });
 
 /**
  * Function just download a single file and return its body
@@ -11,7 +17,7 @@ events.setMaxListeners(500);
  */
 exports.downloadFile = async (url, progressHandler = (e) => void 0) => {
   try {
-    const promiseRequest = got(url, { retry: { limit: 3 } });
+    const promiseRequest = got(url, { retry: { limit: 3 }, agent: { https: httpsAgent, http: httpAgent } });
     promiseRequest.on('downloadProgress', ({ transferred, total, percent }) => {
       typeof progressHandler == 'function' && progressHandler({
         total: total,
@@ -50,7 +56,7 @@ exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) =>
 
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-  const downloadStream = got.stream(url, { signal });
+  const downloadStream = got.stream(url, { signal, agent: { https: httpsAgent, http: httpAgent } });
   const fileWriterStream = fs.createWriteStream(filePath);
 
   downloadStream
