@@ -76,9 +76,8 @@ git pull
  - [fs-extra](https://github.com/jprichardson/node-fs-extra)
  - [got](https://github.com/sindresorhus/got)
  - [md5](https://github.com/pvorb/node-md5)
- - [Request](https://github.com/request/request)
  - [ws](https://github.com/websockets/ws)
- 
+
  ### Used libraries for **UI**:
  - [**Babel**](https://github.com/babel/babel)
  - [**Preact**](https://github.com/preactjs/preact)

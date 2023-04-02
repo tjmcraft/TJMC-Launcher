@@ -29,10 +29,6 @@ const DEFAULT_CONFIG = Object.seal({
         openDevTools: false,
     },
     overrides: {
-        request: {
-            maxSockets: 32,
-            timeout: 10000
-        },
         path: {
             minecraft: path.join(launcherDir, 'minecraft'),
             versions: path.join(launcherDir, 'minecraft', 'versions'),

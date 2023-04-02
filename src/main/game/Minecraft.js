@@ -13,9 +13,6 @@ class Minecraft extends EventEmitter {
      * @typedef MinecraftOptions
      * @type {object}
      * @property {object} overrides - Object that describes overrides
-     * @property {object} overrides.request - Request overrides
-     * @property {number} overrides.request.maxSockets - Request max sockets in pool
-     * @property {number} overrides.request.timeout - Maximum request timeout
      * @property {object} overrides.path - Object that describes all path overrides
      * @property {string} overrides.path.versions - Path to version directory (where main jar located)
      * @property {string} overrides.path.minecraft - Path to minecraft (root) directory
