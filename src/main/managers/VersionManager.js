@@ -107,15 +107,16 @@ exports.getGlobalVersionsManifests = async function () {
     return versions.sort((a,b) => new Date(b.releaseTime) - new Date(a.releaseTime));
 }
 
-exports.updateGlobalVersionsConfig = async function () {
+exports.updateGlobalVersionsConfig = async () => {
     if (!versions_directory) return;
     const manifest_path = path.join(versions_directory, `version_manifest_v2.json`);
     const versions = await this.getGlobalVersionsManifests();
+    fs.mkdirSync(versions_directory, { recursive: true });
     fs.writeFileSync(manifest_path, JSON.stringify(versions, null, 4));
     return versions;
 }
 
-exports.getGlobalVersions = async function () {
+exports.getGlobalVersions = async () => {
     if (!versions_directory) return;
     const manifest_path = path.join(versions_directory, `version_manifest_v2.json`);
     if (!fs.existsSync(manifest_path)) await this.updateGlobalVersionsConfig();
