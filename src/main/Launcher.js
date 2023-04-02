@@ -83,23 +83,23 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
 				workerData: {
 					rootDir: ConfigManager.getLauncherDirectory(),
-					recommendedJava: launcherOptions.manifest?.javaVersion,
-					externalJava: launcherOptions.installation?.javaPath || launcherOptions.java?.javaPath
+					recommendedJava: launcherOptions.manifest.javaVersion,
+					externalJava: launcherOptions.installation.javaPath || launcherOptions.java.javaPath
 				}
 			});
 			JavaWorker.on('message', async ({ type, payload }) => {
-				if (type != 'javaPath') return;
 				if (controller.signal.aborted) return;
-				javaController.resolve(payload);
-				JavaWorker.terminate();
-			});
-			JavaWorker.on('message', async ({ type, payload }) => {
 				if (type != 'download-progress') return;
-				if (controller.signal.aborted) return;
 				emit('download', {
 					type: 'java',
 					progress: payload,
 				});
+			});
+			JavaWorker.on('message', async ({ type, payload }) => {
+				if (controller.signal.aborted) return;
+				if (type != 'javaPath') return;
+				javaController.resolve(payload);
+				JavaWorker.terminate();
 			});
 			JavaWorker.on('exit', (code) => {
 				console.warn("JavaWorker exit with code:", code);

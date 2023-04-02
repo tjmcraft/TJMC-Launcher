@@ -5,8 +5,8 @@ const logger = require("../util/loggerutil")('%c[JavaWorker]', 'color: #feb600; 
 if (!isMainThread) {
 	if (!workerData) return;
 	const { rootDir, externalJava, recommendedJava } = workerData;
-	const instance = new JavaManager(rootDir);
 
+	const instance = new JavaManager(rootDir);
 	instance.on('download-progress', (e) => {
 		const progress = (e.current / e.total);
 		parentPort.postMessage({
@@ -19,7 +19,7 @@ if (!isMainThread) {
 		if (!["", undefined].includes(javaPath)) {
 			const java = await instance.checkJava(javaPath);
 			if (!java.run) {
-				console.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
+				logger.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
 			} else {
 				logger.debug(`Using Java (${javaPath}) version ${java.version} ${java.arch}`);
 				return javaPath;
