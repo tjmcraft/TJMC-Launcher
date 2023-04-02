@@ -1213,9 +1213,6 @@ body {
     justify-content: center;
     flex: 0 0 auto;
 }
-.panel .avatar {
-    box-shadow: 0 0 6px 2px var(--color-shadow);
-}
 
 .avatar img {
     width: 100%;
@@ -1785,7 +1782,7 @@ a.anchor:hover {
 }
 
 .ictx-flex>.icon {
-    max-width: 75px;
+    /* max-width: 75px; */
     /* max-height: 64px; */
     margin: 0 16px 0 0;
     display: flex;
@@ -1793,8 +1790,35 @@ a.anchor:hover {
     flex-wrap: nowrap;
 }
 
-.ictx-flex>.icon>img.accountAvatar {
-    box-shadow: 0 0 10px 5px var(--color-shadow);
+.ictx-flex>.icon>.accountAvatar {
+    position: relative;
+    background-position: 50%;
+    background-size: 90%;
+    background-repeat: no-repeat;
+    width: 128px;
+    height: 128px;
+}
+.ictx-flex>.icon>.accountAvatar.premium {
+    position: relative;
+    border-radius: 50%;
+    background-position: 60% 50%;
+    background-size: 70%;
+    background-repeat: no-repeat;
+    width: 128px;
+    height: 128px;
+}
+.ictx-flex>.icon>.accountAvatar.premium::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    padding: 10px;
+    background:linear-gradient(135deg,#ff6e00 15%,#49104f 85%);
+    -webkit-mask:
+       linear-gradient(#fff 0 0) content-box,
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
 }
 .ictx-flex>.icon>img {
     max-width: 100%;
