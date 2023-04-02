@@ -1709,7 +1709,10 @@ a.anchor:hover {
 .bxcF1-box .separator {
     margin: 16px 0 !important;
 }
-.bxcF1-box > :not(.separator) + *:last-child {
+.bxcF1-box > :not(.separator) + button + button {
+    /* margin-top: 8px !important; */
+}
+.bxcF1-box > :not(.separator) + * {
     margin-top: 16px !important;
 }
 
@@ -1741,6 +1744,26 @@ a.anchor:hover {
 .release .icon > img {
     max-width: 52px !important;
     max-height: 52px !important;
+}
+
+.skin-flex {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    column-gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--background-primary);
+    padding: 16px;
+}
+.skin-flex > img {
+    max-width: 100%;
+    min-height: 390px;
+    max-height: 390px;
 }
 
 .pctx-flex {

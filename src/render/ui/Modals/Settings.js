@@ -300,14 +300,24 @@ const MyAccountTab = memo(() => {
 
 const SkinTab = memo(() => {
 	const user = useGlobal(selectCurrentUser);
+
+	const handleDownloadClick = useCallback(() => {
+		window.open(`https://api.tjmc.ru/v1/skin.render?user=${user.username}&format=raw&dl=true`);
+	}, [user]);
+
 	return user && (
 		<TabItem id="skin">
 			<h2>Конфигурация скина</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<h5>Ваш скин</h5>
 					<div className="bxcF1-box">
-						<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}`} height={390} />
+						<div className="skin-flex">
+							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&vr=-25&hr=35`} />
+							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18`} />
+							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&hr=90`} />
+						</div>
+						<button className={buildClassName("filled", "colorBrand", "w100")}>{"Изменить"}</button>
+						<button className={buildClassName("filled", "w100")} onClick={handleDownloadClick}>{"Скачать"}</button>
 					</div>
 				</div>
 			</div>
