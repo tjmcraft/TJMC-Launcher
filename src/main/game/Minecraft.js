@@ -85,8 +85,15 @@ class Minecraft extends EventEmitter {
      */
     async loadClient(version) {
         this.debug && logg.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
+        const handleProgress = ({ percent }) => {
+            this.emit('progress', {
+                type: 'load:version-jar',
+                task: percent,
+                total: 1,
+            });
+        }
         if (!fs.existsSync(this.options.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.mcPath))) {
-            await this.downloadAsync(version.downloads.client.url, path.dirname(this.options.mcPath), path.basename(this.options.mcPath), true, 'version-jar');
+            await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress);
         }
         this.debug && logg.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;

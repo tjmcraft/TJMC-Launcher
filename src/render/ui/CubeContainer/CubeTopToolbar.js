@@ -46,7 +46,7 @@ const CubeTopToolbar = ({ hash }) => {
 				assets: 'loading assets',
 				classes: 'loading libraries',
 				'classes-maven': 'loading maven libraries',
-				'version-jar': 'loading main jar',
+				'load:version-jar': 'loading main jar',
 				aborting: 'aborting',
 				terminated: 'terminated',
 			})[progressType] || "loading"}\xa0-\xa0${Math.round(progress * 100)/100}%`;

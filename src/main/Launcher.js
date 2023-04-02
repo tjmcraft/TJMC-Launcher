@@ -133,16 +133,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 			MainWorker.on('message', async ({ type, payload }) => {
 				if (controller.signal.aborted) return;
-				if (type != 'download-progress') return;
-				const progress = (payload.current / payload.total);
-				if (!['version-jar'].includes(payload.type)) return;
-				emit('download', {
-					type: payload.type,
-					progress: progress,
-				});
-			});
-			MainWorker.on('message', async ({ type, payload }) => {
-				if (controller.signal.aborted) return;
 				if (type != 'args') return;
 				argsController.resolve(payload);
 				MainWorker.terminate();
