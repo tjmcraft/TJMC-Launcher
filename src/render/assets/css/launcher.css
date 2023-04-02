@@ -1795,24 +1795,24 @@ a.anchor:hover {
     background-position: 50%;
     background-size: 90%;
     background-repeat: no-repeat;
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
 }
 .ictx-flex>.icon>.accountAvatar.premium {
     position: relative;
     border-radius: 50%;
-    background-position: 60% 50%;
+    background-position: 50%;
     background-size: 70%;
     background-repeat: no-repeat;
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
 }
 .ictx-flex>.icon>.accountAvatar.premium::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    padding: 10px;
+    padding: 8px;
     background:linear-gradient(135deg,#ff6e00 15%,#49104f 85%);
     -webkit-mask:
        linear-gradient(#fff 0 0) content-box,
