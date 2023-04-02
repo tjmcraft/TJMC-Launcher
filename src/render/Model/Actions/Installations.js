@@ -12,7 +12,6 @@ addReducer("hostUpdate", (global, actions, update) => {
 		case "updateInstances": return updateInstances(global, update);
 
 		case "updateInstallationsProgressLoad": return updateInstallationProgress(global, update);
-		case "updateInstallationsProgressDownload": return updateInstallationProgress(global, update);
 		default: return undefined;
 	}
 });

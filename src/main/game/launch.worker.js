@@ -22,7 +22,6 @@ if (!isMainThread) {
 
     const instance = new Minecraft(options);
     instance.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
-    instance.on('download-progress', (e) => parentPort.postMessage({ type: 'download-progress', payload: e }));
 
     (async () => {
         if (!fs.existsSync(options.overrides.path.version))

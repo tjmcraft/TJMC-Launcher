@@ -35,7 +35,6 @@ const ackChannels = Object.seal({
 	updateInstallations: 'updateInstallations',
 	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
-	gameProgressDownload: 'game.progress.download',
 	gameStartupError: 'game.startup.error',
 	gameError: 'game.error',
 	updateStatus: 'update.status',
@@ -170,9 +169,6 @@ const initHandlers = async () => {
 			const eventListener = (event, args) => {
 				args = Object.assign({ version_hash }, args);
 				switch (event) {
-					case 'download': {
-						WSSHost.emit(ackChannels.gameProgressDownload, args);
-					}; break;
 					case 'progress': {
 						MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
 						WSSHost.emit(ackChannels.gameProgressLoad, args);
