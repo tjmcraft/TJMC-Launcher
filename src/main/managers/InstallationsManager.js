@@ -34,6 +34,7 @@ const DEFAULT_PROFILE = {
     resolution: {
         width: undefined,
         height: undefined,
+        fullscreen: undefined,
     },
     checkHash: undefined,
 };
@@ -97,14 +98,18 @@ exports.getInstallationSync = function (hash) {
         installation = Object.assign({}, DEFAULT_PROFILE, {
             hash: hash,
         }, installation);
-        installation.gameDir = installation.gameDir != void 0 ? installation.gameDir :
+        installation.gameDir = installation.gameDir ??
             path.resolve(getOption('overrides.path.gameDirectory') || getOption('overrides.path.minecraft'));
-        installation.versionDir = installation.versionDir != void 0 ? installation.versionDir :
+        installation.versionDir = installation.versionDir ??
             path.join(getOption('overrides.path.versions'), installation.lastVersionId);
-        installation.mcPath = installation.mcPath != void 0 ? installation.mcPath :
+        installation.mcPath = installation.mcPath ??
             path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
-        installation.checkHash = installation.checkHash != void 0 ? installation.checkHash :
-            (getOption('overrides.checkHash') ?? true);
+        installation.checkHash = installation.checkHash ?? getOption('overrides.checkHash');
+        installation.resolution = {
+            width: installation.resolution.width ?? getOption('minecraft.launch.width'),
+            height: installation.resolution.height ?? getOption('minecraft.launch.height'),
+            fullscreen: installation.resolution.fullscreen ?? getOption('minecraft.launch.fullscreen'),
+        };
         return installation;
     }
     return undefined;

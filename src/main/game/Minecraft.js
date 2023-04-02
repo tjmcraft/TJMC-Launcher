@@ -17,7 +17,6 @@ class Minecraft extends EventEmitter {
      * @property {string} overrides.path.versions - Path to version directory (where main jar located)
      * @property {string} overrides.path.minecraft - Path to minecraft (root) directory
      * @property {string} overrides.path.gameDirectory - Path to game directory
-     * @property {boolean} overrides.checkHash - Check hash
      * @property {string} mcPath - Path to main jar
      * @property {string} java.javaPath - Path to java executable
      * @property {object} installation - Installation object
@@ -25,17 +24,13 @@ class Minecraft extends EventEmitter {
      * @property {object} installation.resolution - Installation resolution object
      * @property {string | number} installation.resolution.width - Installation width
      * @property {string | number} installation.resolution.height - Installation height
+     * @property {boolean} installation.resolution.fullscreen - Installation fullscreen mode
      * @property {string} installation.lastVersionId - ID of current version
      * @property {string} installation.type - Type of current version
      * @property {object} java - Minecraft java options
      * @property {object} java.memory - Minecraft java memory options
      * @property {number} java.memory.min - Minecraft minimum java memory
      * @property {number} java.memory.max - Minecraft maximum java memory
-     * @property {object} minecraft - Minecraft options
-     * @property {object} minecraft.launch - Minecraft launch options
-     * @property {string | number} minecraft.launch.width - Minecraft width
-     * @property {string | number} minecraft.launch.height - Minecraft height
-     * @property {boolean} minecraft.launch.fullscreen - Minecraft fullscreen mode
      * @property {object} auth - Minecraft auth
      * @property {object} auth.access_token - Minecraft auth token
      * @property {object} auth.uuid - Minecraft auth uuid (offline)
@@ -60,14 +55,15 @@ class Minecraft extends EventEmitter {
         this.overrides = {
             javaSep: process.platform === 'win32' ? ';' : ':',
             resolution: {
-                width: this.options.installation?.resolution?.width ?? this.options.minecraft?.launch?.width ?? 854,
-                height: this.options.installation?.resolution?.height ?? this.options.minecraft?.launch?.height ?? 480
+                width: this.options.installation.resolution.width ?? 854,
+                height: this.options.installation.resolution.height ?? 480,
+                fullscreen: this.options.installation.resolution.fullscreen ?? false,
             },
             version: {
                 id: this.options.installation.lastVersionId,
-                type: this.options.installation.type
+                type: this.options.installation.type,
             },
-            checkHash: this.options.installation.checkHash != void 0 ? this.options.installation.checkHash : true
+            checkHash: this.options.installation.checkHash != void 0 ? this.options.installation.checkHash : true,
         };
     }
 
@@ -464,7 +460,7 @@ class Minecraft extends EventEmitter {
                         // We don't have many 'features' in the index at the moment.
                         // This should be fine for a while.
                         if (rule.features.has_custom_resolution != null && rule.features.has_custom_resolution === true) {
-                            if (this.options.minecraft.launch.fullscreen) {
+                            if (this.overrides.resolution.fullscreen) {
                                 args[i].value = [
                                     '--fullscreen',
                                     'true'
@@ -532,7 +528,7 @@ class Minecraft extends EventEmitter {
         }
 
         // Prepare game resolution
-        if (this.options.minecraft.launch.fullscreen) {
+        if (this.overrides.resolution.fullscreen) {
             mcArgs.push('--fullscreen')
             mcArgs.push(true)
         } else {
