@@ -259,7 +259,7 @@ const MyAccountTab = memo(() => {
 				<div className={style.settingGroupContainer}>
 					<div className="bxcF1-box">
 						<div className="ictx-flex">
-							<div className="icon">
+							<div className={buildClassName("icon", "ns")}>
 								<span style={{ backgroundImage: `url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)` }} className="accountAvatar" />
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>

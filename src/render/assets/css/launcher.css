@@ -1781,8 +1781,11 @@ a.anchor:hover {
     transform: translateZ(0);
 }
 
+.ictx-flex>.icon.ns {
+    max-width: unset;
+}
 .ictx-flex>.icon {
-    /* max-width: 75px; */
+    max-width: 75px;
     /* max-height: 64px; */
     margin: 0 16px 0 0;
     display: flex;
