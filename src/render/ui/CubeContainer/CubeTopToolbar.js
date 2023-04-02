@@ -40,7 +40,7 @@ const CubeTopToolbar = ({ hash }) => {
 		if (isLoading && progressType != void 0) {
 			return `${Object.seal({
 				'load:version-manifest': 'loading version manifest',
-				java: 'loading java',
+				'load:java': 'loading java',
 				natives: 'loading natives',
 				indexes: 'loading asset manifest',
 				assets: 'loading assets',

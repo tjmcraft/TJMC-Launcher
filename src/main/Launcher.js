@@ -80,6 +80,10 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		if (controller.signal.aborted) return terminateInstance();
 		const javaController = promiseControl();
 		{
+			emit('progress', {
+				type: 'load:java',
+				progress: 0.0001,
+			});
 			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
 				workerData: {
 					rootDir: ConfigManager.getLauncherDirectory(),
@@ -90,8 +94,8 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			JavaWorker.on('message', async ({ type, payload }) => {
 				if (controller.signal.aborted) return;
 				if (type != 'download-progress') return;
-				emit('download', {
-					type: 'java',
+				emit('progress', {
+					type: 'load:java',
 					progress: payload,
 				});
 			});
@@ -100,6 +104,10 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				if (type != 'javaPath') return;
 				javaController.resolve(payload);
 				JavaWorker.terminate();
+				emit('progress', {
+					type: 'load:java',
+					progress: 1,
+				});
 			});
 			JavaWorker.on('exit', (code) => {
 				console.warn("JavaWorker exit with code:", code);

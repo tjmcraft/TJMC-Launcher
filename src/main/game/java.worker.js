@@ -31,6 +31,10 @@ if (!isMainThread) {
 	const checkExternal = async () => checkJava(externalJava, 'external');
 	const checkRecommended = async () => {
 		const java = instance.getRecommendedJava({ javaVersion: recommendedJava });
+		parentPort.postMessage({
+			type: 'download-progress',
+			payload: 0.0002,
+		})
 		let javaPath = await instance.downloadJava(java.component);
 		return await checkJava(javaPath, 'recommended');
 	}
