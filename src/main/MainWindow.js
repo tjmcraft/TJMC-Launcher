@@ -48,7 +48,9 @@ exports.create = () => new Promise((resolve, reject) => {
 		minHeight: 480,
 		show: false,
 		resizable: true,
-		frame: process.platform === 'darwin',
+		frame: true,
+		thickFrame: true,
+		autoHideMenuBar: true,
 		webPreferences: {
 			preload: path.join(__dirname, 'preloader.js'),
 			// nodeIntegration: true,
@@ -59,7 +61,7 @@ exports.create = () => new Promise((resolve, reject) => {
 		},
 		titleBarStyle: 'default',
 		roundedCorners: true,
-		backgroundColor: '#171614'
+		backgroundColor: '#171614',
 	});
 
 	windowState.manage(this.window);
