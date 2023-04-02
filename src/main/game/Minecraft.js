@@ -1,4 +1,3 @@
-const request = require('request')
 const fs = require('fs')
 const path = require('path')
 const crypto = require('crypto')
@@ -61,10 +60,6 @@ class Minecraft extends EventEmitter {
 
         this.debug = false;
         this.options = options;
-        this.baseRequest = request.defaults({
-            pool: { maxSockets: this.options.overrides.request.maxSockets ?? 4 },
-            timeout: this.options.overrides.request.timeout ?? 10000
-        });
         this.overrides = {
             javaSep: process.platform === 'win32' ? ';' : ':',
             resolution: {
@@ -157,7 +152,7 @@ class Minecraft extends EventEmitter {
                 const native_path = path.join(nativeDirectory, name);
                 if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
                     (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
-                    await this.downloadAsync(native.url, nativeDirectory, name, true, 'natives');
+                    await downloadToFile(native.url, native_path, true);
                 }
                 try {
                     new Zip(native_path).extractAllTo(nativeDirectory, true);
@@ -184,7 +179,7 @@ class Minecraft extends EventEmitter {
         let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
-            await this.downloadAsync(version.assetIndex.url, path.join(assetDirectory, 'indexes'), `${version.assetIndex.id}.json`, true, 'asset-json')
+            await downloadToFile(version.assetIndex.url, path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), true);
         }
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
         const res_url = "https://resources.download.minecraft.net";
@@ -203,7 +198,7 @@ class Minecraft extends EventEmitter {
             if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
                 (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
-                    await this.downloadAsync(`${res_url}/${subHash}/${hash}`, subAsset, hash, true, 'assets');
+                    await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
                     count++;
                     this.emit('progress', {
                         type: 'assets',
@@ -305,81 +300,6 @@ class Minecraft extends EventEmitter {
         }));
 
         return libs.filter(lib => Boolean(lib));
-    }
-
-    /**
-     * TODO: Move to "got" lib
-     * Download file asynchronous to directory
-     * @param {String} url - URL to download
-     * @param {String} directory - Directory to download
-     * @param {String} filename - Filename to download
-     * @param {Boolean} retry - Try again?
-     * @param {String} type - Meta type of download
-     */
-    downloadAsync(url, directory, filename, retry, type = null) {
-        return new Promise((resolve) => {
-
-            const filepath = path.join(directory, filename);
-
-            // if (fs.existsSync(filepath) && fs.readFileSync(filepath).length > 0) return resolve(false);
-            if (!url.includes('http')) return resolve(false);
-
-            const _request = this.baseRequest(url);
-
-            let receivedBytes = 0;
-            let totalBytes = 0;
-
-            fs.mkdirSync(directory, { recursive: true });
-
-            const runRetry = async (e) => {
-                this.debug && logg.debug(`[FILE] Failed to download ${url} to ${filepath} due to\n${e}.` + ` Retrying... ${retry}`);
-                if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
-                if (retry) return resolve(await this.downloadAsync(url, directory, filename, false, type));
-                resolve(false);
-            };
-
-            _request.on('response', (data) => {
-
-                if (data.statusCode !== 200) {
-                    this.debug && logg.warn(`[REQUEST] Failed to download ${url} due to: error (${data.statusCode})...`)
-                    if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
-                    resolve(false);
-                    return;
-                }
-
-                totalBytes = parseInt(data.headers['content-length']);
-
-                const file = fs.createWriteStream(filepath, { flags: 'w+' });
-
-                _request.pipe(file);
-
-                file.once('finish', () => {
-                    this.emit('download-progress', {
-                        name: filename,
-                        type: type,
-                        current: 0,
-                        total: totalBytes,
-                    });
-                    resolve(true);
-                })
-
-                file.on('error', (e) => runRetry(e));
-
-            });
-
-            _request.on('error', (e) => runRetry(e));
-
-            _request.on('data', (data) => {
-                receivedBytes += data.length;
-                this.emit('download-progress', {
-                    name: filename,
-                    type: type,
-                    current: receivedBytes,
-                    total: totalBytes,
-                })
-            });
-
-        })
     }
 
     /**
