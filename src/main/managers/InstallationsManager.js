@@ -35,7 +35,7 @@ const DEFAULT_PROFILE = {
         width: undefined,
         height: undefined,
     },
-    checkHash: true,
+    checkHash: undefined,
 };
 
 /**
@@ -98,11 +98,13 @@ exports.getInstallationSync = function (hash) {
             hash: hash,
         }, installation);
         installation.gameDir = installation.gameDir != void 0 ? installation.gameDir :
-        path.resolve(getOption('overrides.path.gameDirectory') || getOption('overrides.path.minecraft'));
+            path.resolve(getOption('overrides.path.gameDirectory') || getOption('overrides.path.minecraft'));
         installation.versionDir = installation.versionDir != void 0 ? installation.versionDir :
-        path.join(getOption('overrides.path.versions'), installation.lastVersionId);
+            path.join(getOption('overrides.path.versions'), installation.lastVersionId);
         installation.mcPath = installation.mcPath != void 0 ? installation.mcPath :
-        path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
+            path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
+        installation.checkHash = installation.checkHash != void 0 ? installation.checkHash :
+            (getOption('overrides.checkHash') ?? true);
         return installation;
     }
     return undefined;
