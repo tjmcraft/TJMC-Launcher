@@ -5,6 +5,7 @@ const crypto = require('crypto')
 const os = require('os')
 const Zip = require('adm-zip')
 const EventEmitter = require('events')
+const { downloadToFile } = require('../util/download')
 const logg = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft extends EventEmitter {
@@ -230,19 +231,35 @@ class Minecraft extends EventEmitter {
      * @param {String} type - Meta library type
      */
     async downloadLibrary(directory, libraries, type = 'classes') {
-        let count = 0;
+        let totalProgress = 0;
+        const useProgressCounter = () => {
+          let prev = 0;
+          return ({ percent }) => {
+            totalProgress += percent - prev;
+            this.emit('progress', {
+                type: type,
+                task: totalProgress,
+                total: libraries.length,
+            });
+            prev = percent;
+          }
+        }
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
             if (!library) return false;
 
+            const handleProgress = useProgressCounter();
+
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
-            logg.debug(">>", "load", name);
+            const jarFile = path.join(jarPath, name);
+            this.debug && logg.debug(">>", "load", name);
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
-            if (!fs.existsSync(path.join(jarPath, name)) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, path.join(jarPath, name)))) {
+            if (!fs.existsSync(jarFile) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, jarFile))) {
+                // logg.debug("<<", "download", name);
                 const lib_url = ((library) => {
                     if (isValidUrl(library.downloads?.artifact?.url))
                         return library.downloads.artifact.url;
@@ -267,30 +284,18 @@ class Minecraft extends EventEmitter {
                     (library.url ? library.url : '') + jar_name
                 ];
                 for (const url of urls) {
-                    if (await this.downloadAsync(url, jarPath, name, true, type)) { break; };
+                    const loaded = await downloadToFile(url, jarFile, true, handleProgress);
+                    // logg.debug(">>", "downloaded", name);
+                    if (loaded) break;
                 }
+            } else {
+                handleProgress({ percent: 1 });
             }
-
-            count++;
-
-            this.emit('progress', {
-                type: type,
-                task: count,
-                total: libraries.length,
-            });
 
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
         }));
-
-        count = 0;
-
-        this.emit('progress', {
-            type: type,
-            task: count,
-            total: libraries.length,
-        });
 
         return libs.filter(lib => Boolean(lib));
     }
