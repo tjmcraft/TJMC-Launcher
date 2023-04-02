@@ -260,7 +260,7 @@ const MyAccountTab = memo(() => {
 					<div className="bxcF1-box">
 						<div className="ictx-flex">
 							<div className="icon">
-								<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=128`} />
+								<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true`} className="accountAvatar" />
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>
 								<span className={buildClassName("vbx", "cu")}>
@@ -299,13 +299,16 @@ const MyAccountTab = memo(() => {
 });
 
 const SkinTab = memo(() => {
-
-	return (
+	const user = useGlobal(selectCurrentUser);
+	return user && (
 		<TabItem id="skin">
 			<h2>Конфигурация скина</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<h5>skin</h5>
+					<h5>Ваш скин</h5>
+					<div className="bxcF1-box">
+						<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}`} height={390} />
+					</div>
 				</div>
 			</div>
 		</TabItem>

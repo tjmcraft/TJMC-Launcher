@@ -1203,7 +1203,6 @@ body {
 .avatar {
     width: 32px;
     height: 32px;
-    border-radius: 30%;
     position: relative;
     margin-right: 8px;
     overflow: hidden;
@@ -1213,6 +1212,9 @@ body {
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
+}
+.panel .avatar {
+    box-shadow: 0 0 6px 2px var(--color-shadow);
 }
 
 .avatar img {
@@ -1791,6 +1793,9 @@ a.anchor:hover {
     flex-wrap: nowrap;
 }
 
+.ictx-flex>.icon>img.accountAvatar {
+    box-shadow: 0 0 10px 5px var(--color-shadow);
+}
 .ictx-flex>.icon>img {
     max-width: 100%;
     max-height: 100%;
