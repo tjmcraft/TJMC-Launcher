@@ -25,6 +25,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Offline account support
 - [ ] Implement installations load queue
 - [ ] Implement *last-used* time on **Installation**
+- [ ] Fix non-centred main window on first start
 
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
