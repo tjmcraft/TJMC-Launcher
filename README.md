@@ -9,24 +9,28 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 **TJMC-Launcher** is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
 ## Tasks 📑
+### UI improvements:
 - [x] Implement **Context Menu** on **Installations**
 - [x] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [ ] Implement **Edit** action on **Installations**
 - [ ] Implement open current installation folder
+- [ ] Fix accessibility issues (aria tags + tab navigation)
+- [ ] Implement font resize + *accent color change*
+- [ ] Fix non-centred main window on first start
+- [ ] Fix fullscreen after reloading UI
+### Host improvements:
 - [ ] Prevent loading same installation as a second instance in host launcher (strict)
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
-- [ ] Fix accessibility issues (aria tags + tab navigation)
-- [ ] Implement font resize + *accent color change*
-- [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
-- [ ] Update **Auth** system (move to host as auth server + oauth on web) or just update **Auth** component to multi-step
 - [ ] Fix directories bug and create directories setting
-- [ ] Implement multi-account store
-- [ ] Offline account support
 - [ ] Implement installations load queue
 - [ ] Implement *last-used* time on **Installation**
-- [ ] Fix non-centred main window on first start
-- [ ] Fix fullscreen after reloading UI
+### Auth improvements:
+- [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
+- [ ] Update **Auth** system (move to host as auth server + oauth on web) or just update **Auth** component to multi-step
+- [ ] Implement multi-account store
+- [ ] Offline account support
+- [ ] Connect to keytar store
 
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
