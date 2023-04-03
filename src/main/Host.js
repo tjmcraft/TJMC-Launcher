@@ -164,10 +164,23 @@ const initHandlers = async () => {
 	}
 
 	{ // Auth
-		WSSHost.addReducer(requestChannels.requestAuth, async () => { });
-		WSSHost.addReducer(requestChannels.revokeAuth, async () => { });
-		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {
+		var isAuthorized = false;
+		WSSHost.addReducer(requestChannels.requestAuth, async ({ username, password }) => {
+			isAuthorized = true;
 			return {
+				user: {
+					id: 10,
+					username,
+					password,
+				}
+			};
+		});
+		WSSHost.addReducer(requestChannels.revokeAuth, async () => {
+			isAuthorized = false;
+			return { code: 1 };
+		});
+		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {
+			return !isAuthorized ? {} : {
 				user_id: 10,
 				user: {
 					"id": 10,

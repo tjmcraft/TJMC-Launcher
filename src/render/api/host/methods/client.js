@@ -60,12 +60,15 @@ function handleTJMCUpdate(update) {
 }
 
 export async function invokeRequest(request, shouldReturnTrue = false, shouldThrow = false, ignoreUpdates = false) {
-	if (!isConnected) return undefined;
+	if (!isConnected) {
+		console.warn(">> INVOKE WHILE DISCONNECTED");
+		return undefined;
+	}
 
 	try {
-		//console.debug(">> INVOKE SWING SEND", request);
+		// console.debug(">> INVOKE SWING SEND", request);
 		let result = await client.invoke(request);
-		//console.debug(">> INVOKE SWING PATCH", result);
+		// console.debug(">> INVOKE SWING PATCH", result);
 
 		if (!ignoreUpdates) {
 			handleUpdatesFromRequest(result, request);
