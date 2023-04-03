@@ -29,7 +29,7 @@ const AppContainer = memo(() => {
 const App = () => {
 
 	const { initApi } = getDispatch();
-	useConstructor(() => initApi());
+	// useConstructor(() => initApi());
 
 	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 

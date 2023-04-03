@@ -26,3 +26,6 @@ export {
 	fetchConfiguration,
 	setConfiguration,
 } from './config';
+export {
+	fetchCurrentUser,
+} from './auth';
