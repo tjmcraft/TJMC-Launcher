@@ -10,8 +10,8 @@ import Main from "UI/Main.js";
 
 const AppContainer = memo(() => {
 
-	const { initHost, openSettingsModal } = getDispatch();
-	useConstructor(() => initHost());
+	const { openSettingsModal } = getDispatch();
+	// useConstructor(() => initHost());
 
 	useEffect(() => {
 		// @ts-ignore
@@ -28,8 +28,8 @@ const AppContainer = memo(() => {
 
 const App = () => {
 
-	const { initApi } = getDispatch();
-	// useConstructor(() => initApi());
+	const { initHost } = getDispatch();
+	useConstructor(() => initHost());
 
 	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 

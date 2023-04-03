@@ -27,5 +27,7 @@ export {
 	setConfiguration,
 } from './config';
 export {
+	requestAuth,
+	revokeAuth,
 	fetchCurrentUser,
 } from './auth';

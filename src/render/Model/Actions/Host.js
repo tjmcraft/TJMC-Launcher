@@ -38,6 +38,24 @@ addReducer("relaunchHost", () => {
 	void callHost("relaunchHost");
 });
 
+addReducer("requestAuth", (global, actions, update) => {
+	if (!update) return;
+	const { login, password } = update;
+	if (!login || !password) return;
+	void callHost("requestAuth", login, password);
+	return {
+		...global,
+		authIsLoading: true,
+	};
+});
+
+addReducer("logout", async (global, actions) => {
+	try {
+		await callHost("revokeAuth");
+	} catch (e) { }
+	// actions.reset();
+});
+
 addReducer("setConfig", async (global, actions, payload) => {
 	if (!payload) return;
 	const { key, value } = payload;
