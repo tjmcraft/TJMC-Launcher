@@ -1,4 +1,5 @@
 import { init as initUpdater } from "./updater";
+import { init as initAuth } from "./methods/auth";
 import { init as initHostex } from "./methods/host";
 import { init as initConfig } from "./methods/config";
 import { init as initInstances } from "./methods/instances";
@@ -13,6 +14,7 @@ export async function initHost(_onUpdate, initialArgs) {
 	onUpdate = _onUpdate;
 
 	initUpdater(onUpdate);
+	initAuth(onUpdate);
 	initHostex(onUpdate);
 	initConfig(onUpdate);
 	initInstallations(onUpdate);

@@ -6,6 +6,9 @@ const TCHost = require('./libs/TCHost');
 const requestChannels = Object.seal({
 	requestHostInfo: 'requestHostInfo',
 	setProgress: 'setProgress',
+	fetchCurrentUser: 'auth:fetchCurrentUser',
+	requestAuth: 'auth:requestAuth',
+	revokeAuth: 'auth:revokeAuth',
 	invokeLaunch: 'invokeLaunch',
 	revokeLaunch: 'revokeLaunch',
 	fetchInstallations: 'fetchInstallations',
@@ -140,8 +143,6 @@ const initHandlers = async () => {
 		);
 	}
 
-	// Main
-
 	{ // Host
 		WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
 			hostVendor: 'TJMC-Launcher',
@@ -159,6 +160,29 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.openVersionsFolder, async () => {
 			shell.openPath(ConfigManager.getVersionsDirectory());
+		});
+	}
+
+	{ // Auth
+		WSSHost.addReducer(requestChannels.requestAuth, async () => { });
+		WSSHost.addReducer(requestChannels.revokeAuth, async () => { });
+		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {
+			return {
+				user_id: 10,
+				user: {
+					"id": 10,
+					"realname": "nvclon",
+					"username": "nvclon",
+					"avatar": null,
+					"email": "nvclon@tjmc.ru",
+					"discriminator": 16131,
+					"public_flags": "0",
+					"balance": 0,
+					"uuid": "07d97e69-8c75-3673-99b1-5e085397d18e",
+					"permission": "admin",
+					"permission_display_name": "Админ"
+				}
+			};
 		});
 	}
 
@@ -192,7 +216,6 @@ const initHandlers = async () => {
 			return abortLaunch(data.version_hash);
 		});
 	}
-
 
 	{ // Instances
 		InstanceManager.addCallback(instances => {
