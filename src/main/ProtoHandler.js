@@ -1,6 +1,6 @@
 const logger = require('./util/loggerutil')('%c[Main-Proto]', 'color: #ff2119; font-weight: bold;');
 const { app } = require('electron');
-const { launchMinecraft } = require('./Launcher');
+const { startLaunch } = require('./Launcher');
 
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
@@ -35,7 +35,7 @@ const protoHandler = (link) => {
 
 		case "launch": {
 			const version_hash = args[0];
-			launchMinecraft(version_hash);
+			startLaunch(version_hash);
 		}; break;
 
 		default: return false;

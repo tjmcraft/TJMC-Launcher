@@ -95,14 +95,15 @@
     visibility: visible;
 }
 
-.layer.show .backdrop {
+.layer.show .tools,
+.layer.show .backdrop,
+.layer.show .modal {
     pointer-events: all;
 }
 
 .layer.show > .modal {
     transform: scale(1);
     opacity: 1;
-    pointer-events: all;
 }
 
 .layer.show > .tools {
