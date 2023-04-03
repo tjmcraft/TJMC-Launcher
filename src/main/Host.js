@@ -193,10 +193,6 @@ const initHandlers = async () => {
 		});
 	}
 
-	WSSHost.addReducer(requestChannels.fetchVersions, async () => {
-		const versions = await VersionManager.getGlobalVersions();
-		return { versions };
-	});
 
 	{ // Instances
 		InstanceManager.addCallback(instances => {
@@ -230,6 +226,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
 			await InstallationsManager.removeInstallation(hash, forceDeps)
 		);
+		WSSHost.addReducer(requestChannels.fetchVersions, async () => {
+			const versions = await VersionManager.getGlobalVersions();
+			return { versions };
+		});
 	}
 
 	{ // Configuration
