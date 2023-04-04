@@ -1,6 +1,7 @@
-const logger = require('./util/loggerutil')('%c[Main-Proto]', 'color: #ff2119; font-weight: bold;');
+const logger = require('./util/loggerutil')('%c[ProtoHandler]', 'color: #ff2119; font-weight: bold;');
 const { app } = require('electron');
 const { startLaunch } = require('./Launcher');
+const path = require('node:path');
 
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
@@ -18,7 +19,13 @@ const setInstanceProtocolHandler = () => {
 			logger.warn(`Failed to set Protocol Handler on Linux: ${e}`)
 		}
 	} else {
-		app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER)
+		if (process.defaultApp) {
+			if (process.argv.length >= 2) {
+				app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER, process.execPath, [path.resolve(process.argv[1])])
+			}
+		} else {
+			app.setAsDefaultProtocolClient(DEFAULT_PROTOCOL_HANDLER)
+		}
 	}
 }
 exports.setInstanceProtocolHandler = setInstanceProtocolHandler;
@@ -26,10 +33,12 @@ exports.setInstanceProtocolHandler = setInstanceProtocolHandler;
 const protoHandler = (link) => {
 	if (!link) return;
 
-	const { host: command, path: argument } = require('url').parse(link);
-	const args = argument.split('/').slice(1);
+	const { hostname, pathname, searchParams } = new URL(link);
+	const command = hostname;
+	const args = pathname.split('/').filter(Boolean);
+	const params = Object.fromEntries(searchParams.entries());
 
-	logger.debug("[ProtoHandler]", link, "->", command, args);
+	logger.debug(link, "->", command, args);
 
 	switch (command) {
 
@@ -39,7 +48,7 @@ const protoHandler = (link) => {
 		}; break;
 
 		case "authorize": {
-			console.debug(args[0]);
+			logger.debug(params.code);
 		}; break;
 
 		default: return false;
