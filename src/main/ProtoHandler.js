@@ -38,6 +38,10 @@ const protoHandler = (link) => {
 			startLaunch(version_hash);
 		}; break;
 
+		case "authorize": {
+			console.debug(args[0]);
+		}; break;
+
 		default: return false;
 	}
 
