@@ -17,17 +17,17 @@ export async function requestAuth(username, password) {
 				password,
 			}
 		}, false, true, true);
-		if (result.payload.error) {
+		/* if (result.payload.error) {
 			onUpdate({
 				type: "updateAuthError",
 				authError: result.payload.error,
 			});
 			return undefined;
-		}
+		} */
 	} catch (e) {
 		return;
 	}
-	if (!result.payload) return undefined;
+	/* if (!result.payload) return undefined;
 	const user = result.payload.user;
 	if (!user.id) {
 		onUpdate({
@@ -37,7 +37,8 @@ export async function requestAuth(username, password) {
 		return;
 	}
 	void fetchCurrentUser();
-	return user;
+	return user; */
+	return result.payload;
 }
 
 export async function revokeAuth() {

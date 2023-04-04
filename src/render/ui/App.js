@@ -11,7 +11,6 @@ import Main from "UI/Main.js";
 const AppContainer = memo(() => {
 
 	const { openSettingsModal } = getDispatch();
-	// useConstructor(() => initHost());
 
 	useEffect(() => {
 		// @ts-ignore

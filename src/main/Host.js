@@ -81,6 +81,7 @@ const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
+const { buildUrl } = require('./util/Tools');
 
 /**
 * Init reducers for TCHost
@@ -166,6 +167,16 @@ const initHandlers = async () => {
 	{ // Auth
 		var isAuthorized = false;
 		WSSHost.addReducer(requestChannels.requestAuth, async ({ username, password }) => {
+			if (!isAuthorized) {
+				const url = buildUrl('https://oauth.tjmc.ru/authorize', {
+					response_type: 'code',
+					client_id: 1,
+					scope: 'read,write',
+					redirect_uri: 'tjmc://authorize'
+				});
+				shell.openExternal(url);
+			}
+			return undefined;
 			isAuthorized = true;
 			return {
 				user: {
