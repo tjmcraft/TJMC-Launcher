@@ -25,7 +25,7 @@ if (gotTheLock) {
     logger.debug("Process args:", process.argv);
 
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        console.debug("Second instance call", commandLine);
+        // console.debug("Second instance call", commandLine);
         if (!handleArgsLink(commandLine)) {
             MainWindow.restore();
         }
@@ -33,11 +33,15 @@ if (gotTheLock) {
 
     app.on('open-url', (event, data) => {
         event.preventDefault();
-        console.debug("Open url call", data);
+        // console.debug("Open url call", data);
         if (!protoHandler(data)) {
             MainWindow.restore();
         }
     });
+
+    console.time("> init proto");
+    setInstanceProtocolHandler();
+    console.timeEnd("> init proto");
 
     ConfigManager.load(); // Load config
 
@@ -51,11 +55,6 @@ if (gotTheLock) {
         // Entry point -->
         console.time("> init managers");
         try {
-            {
-                console.time("> init proto");
-                setInstanceProtocolHandler();
-                console.timeEnd("> init proto");
-            }
             {
                 console.time("> init vm");
                 VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
