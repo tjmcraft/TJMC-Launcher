@@ -29,7 +29,7 @@ const AppContainer = memo(() => {
 const App = () => {
 
 	const { initHost } = getDispatch();
-	useConstructor(() => initHost());
+	useConstructor(initHost);
 
 	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 
