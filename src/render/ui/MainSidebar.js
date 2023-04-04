@@ -28,8 +28,11 @@ const UserPanel = memo(() => {
 		<div className="panel">
 			<div className="container">
 				<div className="avatar">
-					<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`} />
-					{/* <img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} /> */}
+					{(user.avatar != void 0) ? (
+						<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} />
+					) : (
+						<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`} />
+					)}
 				</div>
 				<div className="nameTag">
 					<div className="title">{user.realname || user.username}</div>
@@ -42,13 +45,13 @@ const UserPanel = memo(() => {
 	);
 });
 
-const MainSidebar = memo(({ children }) => {
+const MainSidebar = ({ children }) => {
 	return (
-		<div class="sidebar-main">
-			<nav class="container-3Wc7">{children}</nav>
+		<div className="sidebar-main">
+			<nav className="container-3Wc7">{children}</nav>
 			<UserPanel />
 		</div>
 	);
-});
+};
 
-export default MainSidebar;
+export default memo(MainSidebar);
