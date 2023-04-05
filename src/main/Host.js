@@ -34,6 +34,7 @@ const requestChannels = Object.seal({
 exports.requestChannels = requestChannels;
 
 const ackChannels = Object.seal({
+	updateCurrentUser: 'auth:updateCurrentUser',
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
 	updateInstances: 'updateInstances',
@@ -81,6 +82,7 @@ const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
+const AuthManager = require('./managers/AuthManager');
 const { buildUrl } = require('./util/Tools');
 
 /**
@@ -165,7 +167,6 @@ const initHandlers = async () => {
 	}
 
 	{ // Auth
-		var isAuthorized = false;
 		WSSHost.addReducer(requestChannels.requestAuth, async ({ username, password }) => {
 			if (!isAuthorized) {
 				const url = buildUrl('https://oauth.tjmc.ru/authorize', {
@@ -177,36 +178,16 @@ const initHandlers = async () => {
 				shell.openExternal(url);
 			}
 			return undefined;
-			isAuthorized = true;
-			return {
-				user: {
-					id: 10,
-					username,
-					password,
-				}
-			};
+		});
+		AuthManager.on('user-switch', (user) => {
+			console.debug("[auth]", user);
+			WSSHost.emit(ackChannels.updateCurrentUser, user);
 		});
 		WSSHost.addReducer(requestChannels.revokeAuth, async () => {
-			isAuthorized = false;
 			return { code: 1 };
 		});
 		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {
-			return !isAuthorized ? {} : {
-				user_id: 10,
-				user: {
-					"id": 10,
-					"realname": "nvclon",
-					"username": "nvclon",
-					"avatar": null,
-					"email": "nvclon@tjmc.ru",
-					"discriminator": 16131,
-					"public_flags": "0",
-					"balance": 0,
-					"uuid": "07d97e69-8c75-3673-99b1-5e085397d18e",
-					"permission": "admin",
-					"permission_display_name": "Админ"
-				}
-			};
+			return { user: await AuthManager.getCurrentUser() };
 		});
 	}
 
