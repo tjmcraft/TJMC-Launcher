@@ -173,13 +173,7 @@ const initHandlers = async () => {
 			if (username) {
 				AuthManager.handleOfflineAuth(username);
 			} else {
-				const url = buildUrl('https://oauth.tjmc.ru/authorize', {
-					response_type: 'code',
-					client_id: 1,
-					scope: 'read,write',
-					redirect_uri: 'tjmc://authorize'
-				});
-				shell.openExternal(url);
+				shell.openExternal(AuthManager.handleTJMCAuth());
 			}
 			return undefined;
 		});
