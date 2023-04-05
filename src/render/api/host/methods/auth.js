@@ -71,21 +71,10 @@ export async function fetchCurrentUser() {
 	} catch (e) {
 		return;
 	}
-	if (!result.payload?.user) {
-		onUpdate({
-			type: "updateAuthState",
-			auth_state: "need_auth"
-		});
-		return false;
-	}
 	const user = result.payload.user;
 	onUpdate({
 		type: "updateCurrentUser",
-		currentUser: user,
-	});
-	onUpdate({
-		type: "updateAuthState",
-		auth_state: "ready"
+		user: user,
 	});
 	return user;
 }

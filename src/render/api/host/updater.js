@@ -28,6 +28,11 @@ export function updater(update) {
 			type: "updateConnectionState",
 			connectionState,
 		});
+	} else if (type == "auth:updateCurrentUser") {
+		payload?.user && onUpdate({
+			type: "updateCurrentUser",
+			user: payload.user,
+		});
 	} else if (type == "game.progress.load") {
 		payload?.version_hash && onUpdate({
 			type: "updateInstallationsProgressLoad",
