@@ -42,7 +42,7 @@ class AuthManager extends EventEmitter {
 		if (this.currentUserId) {
 			const storedToken = JSON.parse(await keytar.getPassword(KEYTAR_KEY, this.currentUserId));
 			if (storedToken) {
-				if (this.currentUserId.split('/')[0] == 'tjmc.auth') {
+				if (this.currentUserId.split('/')[0] == 'tjmc') {
 					this.token = storedToken.accessToken;
 				}
 			}
