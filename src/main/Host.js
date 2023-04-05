@@ -183,6 +183,9 @@ const initHandlers = async () => {
 			}
 			return undefined;
 		});
+		AuthManager.on('handle-code', () => {
+			MainWindow.focus();
+		});
 		AuthManager.on('user-switch', (user) => {
 			console.debug("[auth]", user);
 			WSSHost.emit(ackChannels.updateCurrentUser, user);

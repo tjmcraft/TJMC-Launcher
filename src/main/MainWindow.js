@@ -125,6 +125,7 @@ exports.restore = () => {
     this.window.focus();
 	}
 };
+exports.focus = () => this.window != void 0 && this.window.focus();
 exports.show = () => this.window != void 0 && this.window.show();
 exports.destroy = () => this.window != void 0 && this.window.destroy();
 exports.setProgressBar = (progress) => this.window != void 0 && this.window.setProgressBar(progress);
