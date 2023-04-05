@@ -43,6 +43,7 @@ const DEFAULT_CONFIG = Object.seal({
             height: 720
         }
     },
+    currentUser: '',
 });
 
 const config = new Config({
