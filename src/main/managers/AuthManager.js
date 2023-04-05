@@ -2,7 +2,8 @@ const EventEmitter = require('node:events');
 const { downloadFile, postBody } = require('../util/download');
 const ConfigManager = require('./ConfigManager');
 const keytar = require('keytar');
-const { getOfflineUUID } = require('../util/Tools');
+const { getOfflineUUID, buildUrl } = require('../util/Tools');
+const { randomString } = require('../util/Random');
 
 const KEYTAR_KEY = 'ru.tjmc.launcher.auth';
 
@@ -97,6 +98,16 @@ class AuthManager extends EventEmitter {
 				user: user
 			});
 		}
+	}
+
+	handleTJMCAuth = () => {
+		return buildUrl('https://oauth.tjmc.ru/authorize', {
+			response_type: 'code',
+			client_id: 1,
+			scope: 'read,write',
+			redirect_uri: 'tjmc://authorize',
+			state: randomString(8),
+		});
 	}
 
 	handleCode = async (code) => {
