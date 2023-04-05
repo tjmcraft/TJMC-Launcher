@@ -22,17 +22,12 @@ const Authentication = () => {
 	const { requestAuth } = getDispatch();
 
 	const [login, setLogin] = useState('');
-	const [password, setPassword] = useState('');
-	const canSubmit = login.length > 0 && password.length >= 3;
+
+	const canSubmit = login.length > 0;
 
 	const onLoginChange = (e) => {
 		const { value } = e.target;
 		setLogin(value);
-	};
-
-	const onPasswordChange = (e) => {
-		const { value } = e.target;
-		setPassword(value);
 	};
 
 	const onSubmit = (e) => {
@@ -42,15 +37,12 @@ const Authentication = () => {
 
 		requestAuth({
 			login,
-			password,
 		});
 	};
 
-	const [showPassword, setShowPassword] = useState(false);
-
-	const handleChangePasswordVisibility = useCallback((isVisible) => {
-		setShowPassword(isVisible);
-	}, []);
+	const handleTJMCIDAuth = useCallback(() => {
+		requestAuth({ login: undefined });
+	}, [requestAuth]);
 
 	useEffect(() => {
 		console.debug(">> authIsLoading", authIsLoading);
@@ -76,23 +68,11 @@ const Authentication = () => {
 								required={true}
 								autoFocus={true}
 								autoComplete="email"
-								placeholder="Email"
+								placeholder="Имя пользователя"
 								onChange={onLoginChange}
 								value={login || ''}
-								label="Email"
+								label="Username"
 								error={authError}
-							/>
-							<InputPassword id="password"
-								name="password"
-								required={true}
-								autoComplete="current-password"
-								placeholder="Пароль"
-								onChange={onPasswordChange}
-								value={password || ''}
-								label="Password"
-								error={authError}
-								isPasswordVisible={showPassword}
-								onChangePasswordVisibility={handleChangePasswordVisibility}
 							/>
 							<Button
 								type="submit"
@@ -100,6 +80,11 @@ const Authentication = () => {
 								isLoading={authIsLoading}
 								disabled={!canSubmit}
 							>{"Войти"}</Button>
+							<Button
+								type="button"
+								onClick={handleTJMCIDAuth}
+								className={buildClassName("filled")}
+							>{"TJMC ID"}</Button>
 						</div>
 					</div>
 				</form>

@@ -40,9 +40,8 @@ addReducer("relaunchHost", () => {
 
 addReducer("requestAuth", (global, actions, update) => {
 	if (!update) return;
-	const { login, password } = update;
-	if (!login || !password) return;
-	void callHost("requestAuth", login, password);
+	const { login } = update;
+	void callHost("requestAuth", login);
 	return {
 		...global,
 		authIsLoading: true,
