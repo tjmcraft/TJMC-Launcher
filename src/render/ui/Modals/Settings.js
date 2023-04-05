@@ -245,12 +245,13 @@ const TestContainer = memo(() => {
 
 const MyAccountTab = memo(() => {
 
-	const { logout } = getDispatch();
+	const { logout, closeModal } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 
 	const onLogoutClick = useCallback(() => {
 		logout();
-	}, [logout]);
+		closeModal();
+	}, [logout, closeModal]);
 
 	return user && (
 		<TabItem id="my-account">
