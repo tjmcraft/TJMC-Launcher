@@ -188,6 +188,7 @@ const initHandlers = async () => {
 			WSSHost.emit(ackChannels.updateCurrentUser, user);
 		});
 		WSSHost.addReducer(requestChannels.revokeAuth, async () => {
+			await AuthManager.logoutCurrentUser();
 			return { code: 1 };
 		});
 		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {

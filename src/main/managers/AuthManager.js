@@ -11,6 +11,8 @@ class AuthManager extends EventEmitter {
 		super();
 	}
 
+	token = undefined;
+
 	load = async () => {
 		const username = ConfigManager.getOption('currentUser');
 		if (username) {
@@ -28,7 +30,14 @@ class AuthManager extends EventEmitter {
 		return response.user;
 	};
 
-	token = undefined;
+	revokeAuth = async (userId) => {
+
+	};
+
+	logoutCurrentUser = async () => {
+		ConfigManager.setOption('currentUser', '');
+		this.token = undefined;
+	};
 
 	handleOfflineAuth = async (username) => {
 		const user = {
