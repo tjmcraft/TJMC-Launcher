@@ -90,6 +90,8 @@ const { buildUrl } = require('./util/Tools');
 */
 const initHandlers = async () => {
 
+	await AuthManager.load();
+
 	// add sender to main window web contents
 	WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => MainWindow.send(type, payload));
 
