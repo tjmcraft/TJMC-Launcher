@@ -101,6 +101,8 @@ class AuthManager extends EventEmitter {
 
 	handleCode = async (code) => {
 
+		this.emit('handle-code');
+
 		const response = await postBody("https://oauth.tjmc.ru/token", {
 			grant_type: 'authorization_code',
 			client_id: 1,
