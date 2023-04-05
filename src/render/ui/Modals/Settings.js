@@ -279,19 +279,23 @@ const MyAccountTab = memo(() => {
 							{/* <button className={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button> */}
 						</div>
 						<div className="separator" />
-						<div className="fieldList">
-							<div className="field" data-type="email">
-								<div className="containedRow">
-									<div>
-										<h5>{"Email"}</h5>
-										<div>
-											<span className="colorHeaderPrimary">{user.email}</span>
+						{[user.email].some(Boolean) && (
+							<div className="fieldList">
+								{user.email && (
+									<div className="field" data-type="email">
+										<div className="containedRow">
+											<div>
+												<h5>{"Email"}</h5>
+												<div>
+													<span className="colorHeaderPrimary">{user.email}</span>
+												</div>
+											</div>
 										</div>
+										<button className="filled">{"Изменить"}</button>
 									</div>
-								</div>
-								<button className="filled">{"Изменить"}</button>
+								)}
 							</div>
-						</div>
+						)}
 						<button className={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
 					</div>
 				</div>
