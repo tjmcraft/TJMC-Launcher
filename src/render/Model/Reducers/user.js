@@ -21,15 +21,23 @@ export function updateCurrentUser(global, update) {
 
 	const { user } = update;
 
+	if (user) {
+		return {
+			...global,
+			...replaceUsers(global, {
+				...global.users,
+				[user.id]: user
+			}),
+			currentUserId: user.id,
+			auth_state: 'ready',
+			authIsLoading: false,
+		};
+	}
+
 	return {
 		...global,
-		...replaceUsers(global, {
-			...global.users,
-			[user.id]: user
-		}),
-		currentUserId: user.id,
-		auth_state: user.id ? 'ready' : 'need_auth',
+		currentUserId: undefined,
+		auth_state: 'need_auth',
 		authIsLoading: false,
 	};
-
 }
