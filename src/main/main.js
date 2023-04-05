@@ -12,7 +12,6 @@ const InstallationsManager = require('./managers/InstallationsManager');
 const { handleArgsLink, protoHandler, setInstanceProtocolHandler } = require('./ProtoHandler');
 const { destroyTray, createTray } = require('./tray');
 const MainWindow = require('./MainWindow');
-const Host = require('./Host');
 
 console.timeEnd("> require");
 
@@ -67,6 +66,7 @@ if (gotTheLock) {
             }
             {
                 console.time("> init hm");
+                const Host = require('./Host');
                 Host.start(); // start socket and ipc servers
                 console.timeEnd("> init hm");
             }
