@@ -2,6 +2,7 @@ const logger = require('./util/loggerutil')('%c[ProtoHandler]', 'color: #ff2119;
 const { app } = require('electron');
 const { startLaunch } = require('./Launcher');
 const path = require('node:path');
+const { handleCode } = require('./managers/AuthManager');
 
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
@@ -49,6 +50,9 @@ const protoHandler = (link) => {
 
 		case "authorize": {
 			logger.debug(params.code);
+			if (params.code) {
+				handleCode(params.code);
+			}
 		}; break;
 
 		default: return false;
