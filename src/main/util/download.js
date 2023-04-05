@@ -12,6 +12,25 @@ const httpsAgent = new https.Agent({ maxSockets: maxSockets, keepAlive: false })
 const httpAgent = new http.Agent({ maxSockets: maxSockets, keepAlive: false });
 
 /**
+ * Post json body to url
+ * @param {string} url url post to
+ * @param {object} body body object
+ * @returns {object}
+ */
+exports.postBody = async (url, body) => {
+  try {
+    const promise = got(url, { method: 'POST', form: body });
+    console.debug("->", url, body);
+    const response = await promise;
+    if (response.statusCode && response.statusCode != 200) throw new Error('Invalid status code <' + response.statusCode + '>');
+    return JSON.parse(response.body);
+  } catch (err) {
+    console.error('[postBody]', err);
+    return {};
+  }
+}
+
+/**
  * Function just download a single file and return its body
  * @param url give url of file
  */
