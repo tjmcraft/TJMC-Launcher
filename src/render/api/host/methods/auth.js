@@ -6,15 +6,13 @@ export function init(_onUpdate) {
 	onUpdate = _onUpdate;
 }
 
-export async function requestAuth(username, password) {
-	username = username.toLowerCase();
+export async function requestAuth(username) {
 	let result;
 	try {
 		result = await invokeRequest({
 			type: "auth:requestAuth",
 			data: {
 				username,
-				password,
 			}
 		}, false, true, true);
 		/* if (result.payload.error) {

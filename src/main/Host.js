@@ -169,14 +169,18 @@ const initHandlers = async () => {
 	}
 
 	{ // Auth
-		WSSHost.addReducer(requestChannels.requestAuth, async ({ username, password }) => {
-			const url = buildUrl('https://oauth.tjmc.ru/authorize', {
-				response_type: 'code',
-				client_id: 1,
-				scope: 'read,write',
-				redirect_uri: 'tjmc://authorize'
-			});
-			shell.openExternal(url);
+		WSSHost.addReducer(requestChannels.requestAuth, async ({ username }) => {
+			if (username) {
+				AuthManager.handleOfflineAuth(username);
+			} else {
+				const url = buildUrl('https://oauth.tjmc.ru/authorize', {
+					response_type: 'code',
+					client_id: 1,
+					scope: 'read,write',
+					redirect_uri: 'tjmc://authorize'
+				});
+				shell.openExternal(url);
+			}
 			return undefined;
 		});
 		AuthManager.on('user-switch', (user) => {

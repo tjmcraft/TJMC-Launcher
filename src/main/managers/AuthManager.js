@@ -13,9 +13,11 @@ class AuthManager extends EventEmitter {
 
 	load = async () => {
 		const username = ConfigManager.getOption('currentUser');
-		const storedToken = JSON.parse(await keytar.getPassword(KEYTAR_KEY, username));
-		if (storedToken) {
-			this.token = storedToken.accessToken;
+		if (username) {
+			const storedToken = JSON.parse(await keytar.getPassword(KEYTAR_KEY, username));
+			if (storedToken) {
+				this.token = storedToken.accessToken;
+			}
 		}
 	}
 
@@ -27,6 +29,39 @@ class AuthManager extends EventEmitter {
 	};
 
 	token = undefined;
+
+	handleOfflineAuth = async (username) => {
+		const user = {
+			username: username,
+			realname: username,
+			"id": "offline.1",
+			"avatar": undefined,
+			"email": undefined,
+			"discriminator": 1613,
+			"public_flags": "0",
+			"balance": 0,
+			"uuid": "130ef346-8ed3-3c92-8783-01c0a3aea9d8",
+			"permission": "default",
+			"permission_display_name": "Default"
+		};
+		try {
+			ConfigManager.setOption('currentUser', user.realname);
+			keytar.setPassword(KEYTAR_KEY, user.realname, JSON.stringify({
+				type: 'tjmc.auth',
+				accessToken: response.accessToken,
+				accessTokenExpiresAt: response.accessTokenExpiresAt,
+				refreshToken: response.refreshToken,
+				refreshTokenExpiresAt: response.refreshTokenExpiresAt,
+				scope: response.scope,
+				user: { id: response.user.id },
+			}));
+		} catch (e) {}
+		if (user?.id) {
+			this.emit('user-switch', {
+				user: user
+			});
+		}
+	}
 
 	handleCode = async (code) => {
 
@@ -45,6 +80,7 @@ class AuthManager extends EventEmitter {
 			try {
 				ConfigManager.setOption('currentUser', user.realname);
 				keytar.setPassword(KEYTAR_KEY, user.realname, JSON.stringify({
+					type: 'tjmc.auth',
 					accessToken: response.accessToken,
 					accessTokenExpiresAt: response.accessTokenExpiresAt,
 					refreshToken: response.refreshToken,
