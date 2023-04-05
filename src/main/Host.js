@@ -168,15 +168,13 @@ const initHandlers = async () => {
 
 	{ // Auth
 		WSSHost.addReducer(requestChannels.requestAuth, async ({ username, password }) => {
-			if (!isAuthorized) {
-				const url = buildUrl('https://oauth.tjmc.ru/authorize', {
-					response_type: 'code',
-					client_id: 1,
-					scope: 'read,write',
-					redirect_uri: 'tjmc://authorize'
-				});
-				shell.openExternal(url);
-			}
+			const url = buildUrl('https://oauth.tjmc.ru/authorize', {
+				response_type: 'code',
+				client_id: 1,
+				scope: 'read,write',
+				redirect_uri: 'tjmc://authorize'
+			});
+			shell.openExternal(url);
 			return undefined;
 		});
 		AuthManager.on('user-switch', (user) => {
