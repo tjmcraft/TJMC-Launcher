@@ -61,7 +61,7 @@ if (gotTheLock) {
             }
             {
                 console.time("> init im");
-                InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+                InstallationsManager.load(); // load installations
                 console.timeEnd("> init im");
             }
             {
