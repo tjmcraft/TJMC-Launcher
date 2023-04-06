@@ -3,6 +3,7 @@ const ConfigManager = require('../managers/ConfigManager');
 const path = require('path');
 const fs = require('fs');
 const electron = require('electron');
+const { launcherDir } = require('../Paths');
 const logg = require('../util/loggerutil')('%c[WindowState]', 'color: #d59215; font-weight: bold');
 
 module.exports = function (config) {
@@ -165,7 +166,7 @@ const DEFAULT_WINDOW_CONFIG = {
     isFullScreen: false
 }
 
-let windowStateConfigPath = path.join(ConfigManager.getLauncherDirectory(), 'window-config.json')
+let windowStateConfigPath = path.join(launcherDir, 'window-config.json')
 let windowConfig = null
 
 const saveWindowState = function () {
@@ -182,7 +183,7 @@ const loadWindowState = function () {
     }
     if (!loaded) {
         try {
-            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8')) 
+            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8'))
         } catch (err) {
             logg.error(err)
             logg.log('Configuration file contains malformed JSON or is corrupt.')

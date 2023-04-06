@@ -1,11 +1,23 @@
+const Config = require('../libs/Config');
+const keytar = require('keytar');
 const EventEmitter = require('node:events');
 const { downloadFile, postBody } = require('../util/download');
-const ConfigManager = require('./ConfigManager');
-const keytar = require('keytar');
 const { getOfflineUUID, buildUrl } = require('../util/Tools');
 const { randomString } = require('../util/Random');
+const { launcherDir } = require('../Paths');
 
 const KEYTAR_KEY = 'ru.tjmc.launcher.auth';
+
+const config = new Config({
+	prefix: "AuthConfig",
+	color: "#a0a255",
+	configName: 'auth-config.json',
+	configDir: launcherDir,
+	defaultConfig: Object.seal({
+		currentUserId: "",
+		users: [],
+	})
+});
 
 class AuthManager extends EventEmitter {
 
@@ -35,11 +47,12 @@ class AuthManager extends EventEmitter {
 
 	constructor() {
 		super();
+		config.load();
 		// this.currentUserType = this.currentUserId.split('/')[0];
 	}
 
 	load = async () => {
-		this.currentUserId = ConfigManager.getOption('currentUser');
+		this.currentUserId = config.getOption('currentUserId');
 		if (this.currentUserId) {
 			const storedToken = JSON.parse(await keytar.getPassword(KEYTAR_KEY, this.currentUserId));
 			if (storedToken) {
@@ -83,7 +96,7 @@ class AuthManager extends EventEmitter {
 	};
 
 	logoutCurrentUser = async () => {
-		ConfigManager.setOption('currentUser', '');
+		config.setOption('currentUserId', '');
 		this.currentUserId = undefined;
 		this.token = undefined;
 	};
@@ -91,7 +104,7 @@ class AuthManager extends EventEmitter {
 	handleOfflineAuth = async (username) => {
 		const user = this.createMockedOfflineUser(username);
 		try {
-			ConfigManager.setOption('currentUser', user.id);
+			config.setOption('currentUserId', user.id);
 		} catch (e) {}
 		if (user?.id) {
 			this.emit('user-switch', {
@@ -128,7 +141,7 @@ class AuthManager extends EventEmitter {
 			const user = await this.getCurrentUser();
 			const userId = `tjmc/${user.realname}`;
 			try {
-				ConfigManager.setOption('currentUser', userId);
+				config.setOption('currentUserId', userId);
 				keytar.setPassword(KEYTAR_KEY, userId, JSON.stringify({
 					type: 'tjmc.auth',
 					accessToken: response.accessToken,

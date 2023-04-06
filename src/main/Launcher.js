@@ -5,6 +5,7 @@ const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; 
 const { Worker } = require("node:worker_threads");
 const path = require('node:path');
 const { promiseControl, promiseRequest } = require('./util/Shedulers');
+const { launcherDir } = require('./Paths');
 
 const instances = new Map();
 
@@ -86,7 +87,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
 				workerData: {
-					rootDir: ConfigManager.getLauncherDirectory(),
+					rootDir: launcherDir,
 					recommendedJava: launcherOptions.manifest.javaVersion,
 					externalJava: launcherOptions.installation.javaPath || launcherOptions.java.javaPath
 				}

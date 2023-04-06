@@ -1,15 +1,8 @@
+const { launcherDir } = require('../Paths');
 const Config = require('../libs/Config');
 const path = require('path');
 
-const launcherDir = path.normalize(
-    (
-        process.env.APPDATA || (
-            process.platform == 'darwin' ?
-                process.env.HOME + '/Library/Preferences' :
-                process.env.HOME + "/.local/share"
-        )
-    ) + '/.tjmc'
-) || require('electron').remote.app.getPath('userData');
+
 
 
 const DEFAULT_CONFIG = Object.seal({
@@ -43,7 +36,6 @@ const DEFAULT_CONFIG = Object.seal({
             height: 720
         }
     },
-    currentUser: '',
 });
 
 const config = new Config({
@@ -64,6 +56,5 @@ exports.getAllOptionsSync = () => config.getOption();
 exports.getAllOptions = async () => config.getOption();
 exports.setOption = (key, value) => config.setOption(key, value);
 
-exports.getLauncherDirectory = () => launcherDir;
 exports.getMinecraftDirectory = (def = false) => config.getOption(config => config.overrides.path.minecraft, def);
 exports.getVersionsDirectory = (def = false) => config.getOption(config => config.overrides.path.versions, def);

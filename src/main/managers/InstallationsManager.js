@@ -1,6 +1,7 @@
 const Config = require('../libs/Config');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
+const { launcherDir } = require('../Paths');
 
 
 /* ============= INSTALLATIONS ============= */
@@ -9,13 +10,14 @@ const config = new Config({
     prefix: "InstallationsManager",
     color: "#0066d6",
     configName: "launcher-profiles.json",
+    configDir: launcherDir,
     defaultConfig: Object.seal({
         tjmcVersion: '1.0.0',
         profiles: {},
     })
 });
 
-module.exports.load = (dir_path) => config.load(dir_path);
+module.exports.load = () => config.load();
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 
