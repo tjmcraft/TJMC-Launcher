@@ -34,6 +34,7 @@ const requestChannels = Object.seal({
 exports.requestChannels = requestChannels;
 
 const ackChannels = Object.seal({
+	updateAuthState: 'auth:updateAuthState',
 	updateCurrentUser: 'auth:updateCurrentUser',
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
@@ -179,6 +180,7 @@ const initHandlers = async () => {
 		});
 		AuthManager.on('handle-code', () => {
 			MainWindow.focus();
+			WSSHost.emit(ackChannels.updateAuthState, { authState: 'handleCode' });
 		});
 		AuthManager.on('user-switch', (user) => {
 			console.debug("[auth]", user);

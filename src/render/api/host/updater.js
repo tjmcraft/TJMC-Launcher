@@ -33,6 +33,11 @@ export function updater(update) {
 			type: "updateCurrentUser",
 			user: payload.user,
 		});
+	} else if (type == "auth:updateAuthState") {
+		payload?.authState && onUpdate({
+			type: "updateAuthState",
+			auth_state: payload.authState,
+		});
 	} else if (type == "game.progress.load") {
 		payload?.version_hash && onUpdate({
 			type: "updateInstallationsProgressLoad",
