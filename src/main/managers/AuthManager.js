@@ -100,6 +100,8 @@ class AuthManager extends EventEmitter {
 	};
 
 	logoutCurrentUser = async () => {
+		if (!this.currentUserId) return;
+		await keytar.deletePassword(KEYTAR_KEY, this.currentUserId);
 		config.setOption('currentUserId', '');
 		this.currentUserId = undefined;
 		this.token = undefined;
