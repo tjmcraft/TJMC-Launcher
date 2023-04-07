@@ -44,7 +44,7 @@ addReducer("requestAuth", (global, actions, update) => {
 	void callHost("requestAuth", login);
 	return {
 		...global,
-		authIsLoading: true,
+		authIsLoading: Boolean(login),
 	};
 });
 
