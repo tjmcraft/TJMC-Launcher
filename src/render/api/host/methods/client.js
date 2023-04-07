@@ -6,6 +6,7 @@ import { fetchHostInfo } from "./host";
 import { fetchConfiguration } from "./config";
 import { fetchInstances } from "./instances";
 import { fetchInstallations } from "./installation";
+import { fetchCurrentUser } from "./auth";
 
 let client;
 let onUpdate;
@@ -23,7 +24,7 @@ export async function init(_onUpdate, initialArgs) {
 
 	try {
 
-		self.invoke = invokeRequest;
+		// self.invoke = invokeRequest;
 
 		try {
 			await client.connect();
@@ -42,6 +43,7 @@ export async function init(_onUpdate, initialArgs) {
 
 		void fetchHostInfo();
 		void fetchConfiguration();
+		void fetchCurrentUser();
 		void fetchInstallations();
 		void fetchInstances();
 
@@ -58,12 +60,15 @@ function handleTJMCUpdate(update) {
 }
 
 export async function invokeRequest(request, shouldReturnTrue = false, shouldThrow = false, ignoreUpdates = false) {
-	if (!isConnected) return undefined;
+	if (!isConnected) {
+		console.warn(">> INVOKE WHILE DISCONNECTED");
+		return undefined;
+	}
 
 	try {
-		//console.debug(">> INVOKE SWING SEND", request);
+		// console.debug(">> INVOKE SWING SEND", request);
 		let result = await client.invoke(request);
-		//console.debug(">> INVOKE SWING PATCH", result);
+		// console.debug(">> INVOKE SWING PATCH", result);
 
 		if (!ignoreUpdates) {
 			handleUpdatesFromRequest(result, request);

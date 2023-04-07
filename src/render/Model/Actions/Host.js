@@ -1,13 +1,14 @@
 
 import { updateConfiguration } from "Model/Reducers/configuration";
 import { updateGameError, updateGameStartupError, updateHostInfo, updateProgress, updateStatus } from "Model/Reducers/host";
-import { updateConnectionState } from "Model/Reducers/initial";
+import { updateAuthState, updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
 import { addReducer } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { selectCurrentUser } from "Model/Selectors/user";
+import { updateCurrentUser } from "Model/Reducers/user";
 
 addReducer("initHost", (global, actions) => {
 	void initHost(actions.hostUpdate);
@@ -17,6 +18,9 @@ addReducer("hostUpdate", (global, actions, update) => {
 	window.__debug_host__ && console.debug(">>> HOST UPDATE:", update);
 	switch (update.type) {
 		case "updateConnectionState": return updateConnectionState(global, update);
+		case "updateAuthState": return updateAuthState(global, update);
+		// host auth
+		case "updateCurrentUser": return updateCurrentUser(global, update);
 		// host initial
 		case "updateHostInfo": return updateHostInfo(global, update);
 		case "updateConfiguration": return updateConfiguration(global, update);
@@ -32,6 +36,23 @@ addReducer("hostUpdate", (global, actions, update) => {
 
 addReducer("relaunchHost", () => {
 	void callHost("relaunchHost");
+});
+
+addReducer("requestAuth", (global, actions, update) => {
+	if (!update) return;
+	const { login } = update;
+	void callHost("requestAuth", login);
+	return {
+		...global,
+		authIsLoading: Boolean(login),
+	};
+});
+
+addReducer("logout", async (global, actions) => {
+	try {
+		await callHost("revokeAuth");
+	} catch (e) { }
+	// actions.reset();
 });
 
 addReducer("setConfig", async (global, actions, payload) => {

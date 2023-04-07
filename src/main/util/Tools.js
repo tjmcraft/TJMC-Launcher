@@ -139,3 +139,11 @@ function ord(string) {
 String.prototype.replaceAt = function (index, replacement) {
     return this.substr(0, index) + replacement + this.substr(index + replacement.length);
 }
+
+exports.buildUrl = function (endpoint, parameters = {}) {
+    const url = new URL(endpoint);
+    const params = Object.assign({}, parameters);
+    !!Object.keys(params).length &&
+        (url.search = new URLSearchParams(params).toString());
+    return url.toString();
+}

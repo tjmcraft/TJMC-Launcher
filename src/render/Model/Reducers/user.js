@@ -19,14 +19,25 @@ export function updateUser(global, userId, userUpdate) {
 
 export function updateCurrentUser(global, update) {
 
-	const { currentUser } = update;
+	const { user } = update;
+
+	if (user) {
+		return {
+			...global,
+			...replaceUsers(global, {
+				...global.users,
+				[user.id]: user
+			}),
+			currentUserId: user.id,
+			auth_state: 'ready',
+			authIsLoading: false,
+		};
+	}
 
 	return {
-		...replaceUsers(global, {
-			...global.users,
-			[currentUser.id]: currentUser
-		}),
-		currentUserId: currentUser.id,
+		...global,
+		currentUserId: undefined,
+		auth_state: 'need_auth',
+		authIsLoading: false,
 	};
-
 }

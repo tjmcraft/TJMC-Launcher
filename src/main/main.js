@@ -12,7 +12,6 @@ const InstallationsManager = require('./managers/InstallationsManager');
 const { handleArgsLink, protoHandler, setInstanceProtocolHandler } = require('./ProtoHandler');
 const { destroyTray, createTray } = require('./tray');
 const MainWindow = require('./MainWindow');
-const Host = require('./Host');
 
 console.timeEnd("> require");
 
@@ -25,7 +24,7 @@ if (gotTheLock) {
     logger.debug("Process args:", process.argv);
 
     app.on('second-instance', (event, commandLine, workingDirectory) => {
-        console.debug("Second instance call", commandLine);
+        // console.debug("Second instance call", commandLine);
         if (!handleArgsLink(commandLine)) {
             MainWindow.restore();
         }
@@ -33,11 +32,15 @@ if (gotTheLock) {
 
     app.on('open-url', (event, data) => {
         event.preventDefault();
-        console.debug("Open url call", data);
+        // console.debug("Open url call", data);
         if (!protoHandler(data)) {
             MainWindow.restore();
         }
     });
+
+    console.time("> init proto");
+    setInstanceProtocolHandler();
+    console.timeEnd("> init proto");
 
     ConfigManager.load(); // Load config
 
@@ -52,22 +55,18 @@ if (gotTheLock) {
         console.time("> init managers");
         try {
             {
-                console.time("> init proto");
-                setInstanceProtocolHandler();
-                console.timeEnd("> init proto");
-            }
-            {
                 console.time("> init vm");
                 VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
                 console.timeEnd("> init vm");
             }
             {
                 console.time("> init im");
-                InstallationsManager.load(ConfigManager.getLauncherDirectory()); // set installations config dir
+                InstallationsManager.load(); // load installations
                 console.timeEnd("> init im");
             }
             {
                 console.time("> init hm");
+                const Host = require('./Host');
                 Host.start(); // start socket and ipc servers
                 console.timeEnd("> init hm");
             }

@@ -245,12 +245,13 @@ const TestContainer = memo(() => {
 
 const MyAccountTab = memo(() => {
 
-	const { logout } = getDispatch();
+	const { logout, closeModal } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 
 	const onLogoutClick = useCallback(() => {
 		logout();
-	}, [logout]);
+		closeModal();
+	}, [logout, closeModal]);
 
 	return user && (
 		<TabItem id="my-account">
@@ -260,7 +261,11 @@ const MyAccountTab = memo(() => {
 					<div className="bxcF1-box">
 						<div className="ictx-flex">
 							<div className={buildClassName("icon", "ns")}>
-								<span style={{ backgroundImage: `url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)` }} className="accountAvatar" />
+								<span style={{
+									backgroundImage: user.avatar != void 0 ?
+										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64)` :
+										`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`
+								}} className="accountAvatar" />
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>
 								<span className={buildClassName("vbx", "cu")}>
@@ -274,19 +279,23 @@ const MyAccountTab = memo(() => {
 							{/* <button className={buildClassName("r", "filled", "colorBrand")}>{"Профиль"}</button> */}
 						</div>
 						<div className="separator" />
-						<div className="fieldList">
-							<div className="field" data-type="email">
-								<div className="containedRow">
-									<div>
-										<h5>{"Email"}</h5>
-										<div>
-											<span className="colorHeaderPrimary">{user.email}</span>
+						{[user.email].some(Boolean) && (
+							<div className="fieldList">
+								{user.email && (
+									<div className="field" data-type="email">
+										<div className="containedRow">
+											<div>
+												<h5>{"Email"}</h5>
+												<div>
+													<span className="colorHeaderPrimary">{user.email}</span>
+												</div>
+											</div>
 										</div>
+										<button className="filled">{"Изменить"}</button>
 									</div>
-								</div>
-								<button className="filled">{"Изменить"}</button>
+								)}
 							</div>
-						</div>
+						)}
 						<button className={buildClassName("filled", "colorRed", "w100")} onClick={onLogoutClick}>{"Выйти"}</button>
 					</div>
 				</div>

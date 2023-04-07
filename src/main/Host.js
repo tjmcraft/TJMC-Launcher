@@ -6,6 +6,9 @@ const TCHost = require('./libs/TCHost');
 const requestChannels = Object.seal({
 	requestHostInfo: 'requestHostInfo',
 	setProgress: 'setProgress',
+	fetchCurrentUser: 'auth:fetchCurrentUser',
+	requestAuth: 'auth:requestAuth',
+	revokeAuth: 'auth:revokeAuth',
 	invokeLaunch: 'invokeLaunch',
 	revokeLaunch: 'revokeLaunch',
 	fetchInstallations: 'fetchInstallations',
@@ -31,6 +34,8 @@ const requestChannels = Object.seal({
 exports.requestChannels = requestChannels;
 
 const ackChannels = Object.seal({
+	updateAuthState: 'auth:updateAuthState',
+	updateCurrentUser: 'auth:updateCurrentUser',
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
 	updateInstances: 'updateInstances',
@@ -78,11 +83,15 @@ const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
+const AuthManager = require('./managers/AuthManager');
+const { buildUrl } = require('./util/Tools');
 
 /**
 * Init reducers for TCHost
 */
 const initHandlers = async () => {
+
+	await AuthManager.load();
 
 	// add sender to main window web contents
 	WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => MainWindow.send(type, payload));
@@ -140,8 +149,6 @@ const initHandlers = async () => {
 		);
 	}
 
-	// Main
-
 	{ // Host
 		WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
 			hostVendor: 'TJMC-Launcher',
@@ -159,6 +166,32 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.openVersionsFolder, async () => {
 			shell.openPath(ConfigManager.getVersionsDirectory());
+		});
+	}
+
+	{ // Auth
+		WSSHost.addReducer(requestChannels.requestAuth, async ({ username }) => {
+			if (username) {
+				AuthManager.handleOfflineAuth(username);
+			} else {
+				shell.openExternal(AuthManager.handleTJMCAuth());
+			}
+			return undefined;
+		});
+		AuthManager.on('handle-code', () => {
+			MainWindow.focus();
+			WSSHost.emit(ackChannels.updateAuthState, { authState: 'handleCode' });
+		});
+		AuthManager.on('user-switch', (user) => {
+			console.debug("[auth]", user);
+			WSSHost.emit(ackChannels.updateCurrentUser, user);
+		});
+		WSSHost.addReducer(requestChannels.revokeAuth, async () => {
+			await AuthManager.logoutCurrentUser();
+			return { code: 1 };
+		});
+		WSSHost.addReducer(requestChannels.fetchCurrentUser, async () => {
+			return { user: await AuthManager.getCurrentUser() };
 		});
 	}
 
@@ -192,7 +225,6 @@ const initHandlers = async () => {
 			return abortLaunch(data.version_hash);
 		});
 	}
-
 
 	{ // Instances
 		InstanceManager.addCallback(instances => {
