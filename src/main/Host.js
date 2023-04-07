@@ -198,7 +198,17 @@ const initHandlers = async () => {
 	{ // Launching
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
-			const { version_hash, params = {} } = data;
+			let { version_hash, params = {} } = data;
+			const user = await AuthManager.getCurrentUser();
+			if (!user) return false;
+			Object.assign(params, {
+				auth: {
+					username: user.realname,
+					uuid: "",
+					access_token: "",
+					user_properties: {}
+				}
+			});
 			const eventListener = (event, args) => {
 				args = Object.assign({ version_hash }, args);
 				switch (event) {
