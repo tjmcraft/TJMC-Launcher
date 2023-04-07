@@ -19,18 +19,19 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Fix non-centred main window on first start
 - [ ] Fix fullscreen after reloading UI
 ### Host improvements:
-- [ ] Prevent loading same installation as a second instance in host launcher (strict)
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
-- [ ] Fix directories bug and create directories setting
-- [ ] Implement installations load queue
-- [ ] Implement *last-used* time on **Installation**
-### Auth improvements:
-- [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
-- [ ] Update **Auth** system (move to host as auth server + oauth on web) or just update **Auth** component to multi-step
-- [ ] Implement multi-account store
-- [ ] Offline account support
-- [ ] Connect to keytar store
+- [x] Fix directories bug and create directories setting
+- [ ] Installations:
+  - [ ] Prevent loading same installation as a second instance in host launcher (strict)
+  - [ ] Implement installations load queue
+  - [ ] Implement *last-used* time on **Installation**
+- [ ] Auth improvements:
+  - [x] Update **Auth** system (move to host as auth server + oauth on web)
+  - [x] Offline account support
+  - [x] Connect to keytar store
+  - [ ] Implement multi-account store
+  - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
 
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
