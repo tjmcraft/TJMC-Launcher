@@ -74,6 +74,10 @@ class AuthManager extends EventEmitter {
 		token = token ?? this.token;
 		if (token == void 0) return;
 		const { response } = await downloadFile("https://app.tjmc.ru/api/user?access_token=" + token);
+		if (response?.user == undefined) {
+			this.logoutCurrentUser();
+			return undefined;
+		}
 		return response.user;
 	};
 
@@ -111,6 +115,7 @@ class AuthManager extends EventEmitter {
 		const user = this.createMockedOfflineUser(username);
 		try {
 			config.setOption('currentUserId', user.id);
+			this.currentUserId = user.id;
 		} catch (e) {}
 		if (user?.id) {
 			this.emit('user-switch', {
