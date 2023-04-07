@@ -7,7 +7,6 @@ import { updateInstallation } from "Model/Reducers/installations";
 import { addReducer } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
-import { selectCurrentUser } from "Model/Selectors/user";
 import { updateCurrentUser } from "Model/Reducers/user";
 
 addReducer("initHost", (global, actions) => {

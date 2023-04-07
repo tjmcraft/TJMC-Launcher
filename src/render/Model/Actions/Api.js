@@ -1,6 +1,5 @@
 import { callApi, initApi } from "../../api/tjmc";
-import { updateAuthError, updateAuthState } from "Model/Reducers/initial";
-import { updateCurrentUser, updateUser } from "Model/Reducers/user";
+import { updateUser } from "Model/Reducers/user";
 import { addReducer } from "Store/Global";
 import { updateReleases } from "Model/Reducers/settings";
 
