@@ -44,6 +44,15 @@ class AuthManager extends EventEmitter {
 	}
 	createUserId = (type = 'offline', username) => `${type}/${username}`;
 
+	/**
+	 * Create discriminator for offline user
+	 * @param {string} username
+	 */
+	createOfflineDiscriminator = (username) => {
+		const codes = username.split('').map(letter => letter.charCodeAt(0) * 3);
+		return codes.reduce((t, c) => t + c, 0);
+	}
+
 	load = async () => {
 		this.currentUserId = config.getOption('currentUserId');
 		if (!this.currentUserId) return;
@@ -76,12 +85,12 @@ class AuthManager extends EventEmitter {
 			"id": userId,
 			"avatar": undefined,
 			"email": undefined,
-			"discriminator": 1613,
+			"discriminator": this.createOfflineDiscriminator(userId),
 			"public_flags": "0",
 			"balance": 0,
 			"uuid": getOfflineUUID(username),
-			"permission": "default",
-			"permission_display_name": "Default"
+			"permission": "offline",
+			"permission_display_name": "Offline"
 		};
 		return user;
 	}
