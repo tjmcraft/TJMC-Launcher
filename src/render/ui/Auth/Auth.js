@@ -15,8 +15,8 @@ import style from "CSS/auth.module.css";
 
 const Authentication = () => {
 
-	const { authIsLoading, authError } = useGlobal(global => pick(global, [
-		'authState', 'authIsLoading', 'authError'
+	const { auth_state, authIsLoading, authError } = useGlobal(global => pick(global, [
+		'auth_state', 'authIsLoading', 'authError'
 	]));
 
 	const { requestAuth } = getDispatch();
@@ -45,11 +45,15 @@ const Authentication = () => {
 	}, [requestAuth]);
 
 	useEffect(() => {
+		console.debug(">> authState", auth_state);
+	}, [auth_state]);
+
+	useEffect(() => {
 		console.debug(">> authIsLoading", authIsLoading);
 	}, [authIsLoading]);
 
 	useEffect(() => {
-		console.debug(">> authError", authError);
+		authError && console.debug(">> authError", authError);
 	}, [authError]);
 
 	return (
@@ -77,13 +81,13 @@ const Authentication = () => {
 							<Button
 								type="submit"
 								className={buildClassName("filled", "colorBrand")}
-								isLoading={authIsLoading}
+								isLoading={authIsLoading && auth_state != 'handleCode'}
 								disabled={authIsLoading || !canSubmit}
 							>{"Войти"}</Button>
 							<Button
 								type="button"
 								onClick={handleTJMCIDAuth}
-								isLoading={authIsLoading}
+								isLoading={authIsLoading && auth_state == 'handleCode'}
 								disabled={authIsLoading}
 								className={buildClassName("filled")}
 							>{"TJMC ID"}</Button>
