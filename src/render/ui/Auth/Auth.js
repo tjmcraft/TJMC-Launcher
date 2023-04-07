@@ -78,11 +78,13 @@ const Authentication = () => {
 								type="submit"
 								className={buildClassName("filled", "colorBrand")}
 								isLoading={authIsLoading}
-								disabled={!canSubmit}
+								disabled={authIsLoading || !canSubmit}
 							>{"Войти"}</Button>
 							<Button
 								type="button"
 								onClick={handleTJMCIDAuth}
+								isLoading={authIsLoading}
+								disabled={authIsLoading}
 								className={buildClassName("filled")}
 							>{"TJMC ID"}</Button>
 						</div>
