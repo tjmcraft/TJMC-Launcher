@@ -70,17 +70,7 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	if (!payload) return;
 	const { hash } = payload;
 
-	const currentUser = selectCurrentUser(global);
-	const params = {
-		auth: {
-			username: currentUser.realname || currentUser.username,
-			uuid: "",
-			access_token: "",
-			user_properties: {}
-		}
-	};
-
-	void callHost("invokeLaunch", hash, params);
+	void callHost("invokeLaunch", hash);
 
 	ProgressStore.setState({
 		...ProgressStore.getState(),
