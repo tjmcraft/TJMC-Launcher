@@ -28,18 +28,6 @@ class AuthManager extends EventEmitter {
 	currentUserId = undefined;
 
 	/**
-	 * Current user type
-	 * @type {'offline'|'tjmc'}
-	 */
-	currentUserType = undefined;
-
-	/**
-	 * Current user name
-	 * @type {string}
-	 */
-	currentUserName = undefined;
-
-	/**
 	 * Current access token
 	 * @type {string}
 	 */
@@ -48,33 +36,40 @@ class AuthManager extends EventEmitter {
 	constructor() {
 		super();
 		config.load();
-		// this.currentUserType = this.currentUserId.split('/')[0];
 	}
+
+	matchUserId = (user) => {
+		const match = /(?<group>\w+)\/(?<username>.+)/i.exec(user).slice(1);
+		return Object.seal({ type: match[0], username: match[1] });
+	}
+	createUserId = (type = 'offline', username) => `${type}/${username}`;
 
 	load = async () => {
 		this.currentUserId = config.getOption('currentUserId');
-		if (this.currentUserId) {
-			const storedToken = JSON.parse(await keytar.getPassword(KEYTAR_KEY, this.currentUserId));
-			if (storedToken) {
-				if (this.currentUserId.split('/')[0] == 'tjmc') {
-					this.token = storedToken.accessToken;
-				}
-			}
+		if (!this.currentUserId) return;
+		let storedToken;
+		try {
+			const keytarMatch = await keytar.getPassword(KEYTAR_KEY, this.currentUserId);
+			storedToken = JSON.parse(keytarMatch);
+		} catch (e) {}
+		if (!storedToken) return;
+		if (this.matchUserId(this.currentUserId)['type'] == 'tjmc') {
+			this.token = storedToken.accessToken;
 		}
 	}
 
 	getCurrentUser = async (token = undefined) => {
-		token = token ?? this.token;
-		if (this.currentUserId && this.currentUserId.split('/')[0] == 'offline') {
-			return this.createMockedOfflineUser(this.currentUserId.split('/')[1]);
+		if (this.currentUserId && this.matchUserId(this.currentUserId)['type'] == 'offline') {
+			return this.createMockedOfflineUser(this.matchUserId(this.currentUserId)['username']);
 		}
+		token = token ?? this.token;
 		if (token == void 0) return;
 		const { response } = await downloadFile("https://app.tjmc.ru/api/user?access_token=" + token);
 		return response.user;
 	};
 
 	createMockedOfflineUser = (username) => {
-		const userId = `offline/${username}`;
+		const userId = this.createUserId('offline', username);
 		const user = {
 			username: username,
 			realname: username,
@@ -139,7 +134,7 @@ class AuthManager extends EventEmitter {
 		if (response.accessToken) {
 			this.token = response.accessToken;
 			const user = await this.getCurrentUser();
-			const userId = `tjmc/${user.realname}`;
+			const userId = this.createUserId('tjmc', user.realname);
 			try {
 				config.setOption('currentUserId', userId);
 				keytar.setPassword(KEYTAR_KEY, userId, JSON.stringify({
@@ -153,7 +148,7 @@ class AuthManager extends EventEmitter {
 				}));
 				this.currentUserId = userId;
 			} catch (e) {}
-			if (user?.id) {
+			if (user?.id != undefined) {
 				this.emit('user-switch', {
 					user: user
 				});
