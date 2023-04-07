@@ -8,10 +8,11 @@ export function updateConnectionState(global, update) {
 }
 
 export function updateAuthState(global, update) {
+	const { auth_state } = update;
 	return {
 		...global,
-		auth_state: update.auth_state,
-		authIsLoading: false,
+		auth_state: auth_state,
+		authIsLoading: auth_state == 'handleCode',
 	};
 }
 
