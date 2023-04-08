@@ -105,8 +105,6 @@ const AuthContainer = ({ isShown }) => {
 		isShown, undefined, true, undefined, false, { }, 350
 	);
 
-	useEffect(() => console.debug(">t", transitionClassNames), [transitionClassNames]);
-
 	return shouldRender && (
 		<div className={buildClassName(style.container, transitionClassNames)}>
 			<Authentication />
