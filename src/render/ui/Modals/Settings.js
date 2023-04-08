@@ -136,9 +136,9 @@ const SettingSwitch = ({
 	checked = false,
 }) => {
 	id = id || randomString(5);
-	const onCheck = useCallback((checked) => {
-		if (typeof action === "function") action.call(this, checked, id);
-	}, [id, action]);
+	const onCheck = useCallback(() => {
+		if (typeof action === "function") action.call(this, !checked, id);
+	}, [id, action, checked]);
 	return (
 		<SettingContainerTwo note={note}>
 			<label htmlFor={id} className={style.title}>{title || ""}</label>
