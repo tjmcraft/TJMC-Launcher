@@ -754,12 +754,8 @@ body {
 }
 
 .app-container:not(.open) {
-    transform: scale(0.8);
+    transform: scale(0.93) translateZ(0px);
     opacity: 0;
-}
-.app-container.open {
-    transform: none;
-    opacity: 1;
 }
 
 :root.platform-win .preloader,

@@ -6,33 +6,7 @@ import useConstructor from "Hooks/useConstructor.js";
 
 import Preloader from "UI/Preloader.js";
 import Auth from "UI/Auth/Auth.js";
-import Main from "UI/Main.js";
-import useShowTransition from "Hooks/useShowTransition";
-import buildClassName from "Util/buildClassName";
-
-const AppContainer = ({ isShown }) => {
-
-	const { openSettingsModal } = getDispatch();
-
-	useEffect(() => {
-		// @ts-ignore
-		electron.on('open-settings', (e, data) => openSettingsModal()); // Send global event to open settings [electron]
-	}, [openSettingsModal]);
-
-	const {
-		shouldRender,
-		transitionClassNames,
-	} = useShowTransition(
-		isShown, undefined, true, undefined, false, { }, 350
-		);
-
-	return shouldRender && (
-		<div className={buildClassName("app-container",transitionClassNames)}>
-			<Main />
-			<div className="uploadArea" />
-		</div>
-	);
-};
+import AppContainer from "./AppContainer";
 
 const App = () => {
 
@@ -43,9 +17,9 @@ const App = () => {
 
 	return (
 		<div className="app">
+			<Preloader />
 			<Auth isShown={!isAuthReady} />
 			<AppContainer isShown={isAuthReady} />
-			<Preloader />
 		</div>
 	);
 };
