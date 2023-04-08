@@ -23,7 +23,7 @@ const AppContainer = ({ isShown }) => {
 		shouldRender,
 		transitionClassNames,
 	} = useShowTransition(
-		isShown, undefined, true, undefined, false, { }, 1350
+		isShown, undefined, true, undefined, false, { }, 350
 		);
 
 	return shouldRender && (
