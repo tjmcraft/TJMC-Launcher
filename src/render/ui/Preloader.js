@@ -28,10 +28,10 @@ const Preloader = () => {
 	);
 
 	return shouldRender && (
-		<div class={buildClassName(style.preloader, transitionClassNames)}>
-			<img class={buildClassName(style.logo, style.bounce)} src={iconImage} />
-			<div class={style.circle} />
-			<div class={style.circle} />
+		<div className={buildClassName(style.preloader, transitionClassNames)}>
+			<img className={buildClassName(style.logo, style.bounce)} src={iconImage} />
+			<div className={style.circle} />
+			<div className={style.circle} />
 		</div>
 	);
 };
