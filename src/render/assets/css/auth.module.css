@@ -4,10 +4,19 @@
 @import url(https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;600;700;800&display=swap);
 
 .container {
-    position: relative;
-    width: 100vw;
-    min-height: 100vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: auto;
+    background-color: var(--background-tertiary);
+    transition:transform 0.25s cubic-bezier(.65,-0.3,0.3,1.3), opacity 0.35s ease;
+    z-index: 2;
+}
+.container:global(:not(.open)) {
+    transform: scale(1.2);
+    opacity: 0;
 }
 
 .container .floatingLogo {
@@ -44,11 +53,11 @@
     box-sizing: border-box;
 }
 
-form.authBox button {
+.authBox button {
     width: 100%;
     margin-top: 2rem;
 }
-form.authBox button+button {
+.authBox button+button {
     margin-top: 1rem;
 }
 

@@ -1,4 +1,4 @@
-import { createElement, memo, useCallback, useEffect, useState } from "react";
+import { Fragment, createElement, memo, useCallback, useEffect, useState } from "react";
 
 import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
@@ -9,6 +9,8 @@ import { InputPassword, InputText } from "UI/components/Input";
 import Button from "UI/components/Button";
 
 import style from "CSS/auth.module.css";
+import useShowTransition from "Hooks/useShowTransition";
+import captureKeyboardListeners from "Util/captureKeyboard";
 
 // TODO: Implement multiscreen authState support
 // Need to implement multiAuthState support under API Requests and API itself
@@ -30,15 +32,10 @@ const Authentication = () => {
 		setLogin(value);
 	};
 
-	const onSubmit = (e) => {
-		e.preventDefault();
-
+	const handleOfflineAuth = useCallback(() => {
 		if (authIsLoading || !canSubmit) return;
-
-		requestAuth({
-			login,
-		});
-	};
+		requestAuth({login});
+	}, [requestAuth, authIsLoading, canSubmit, login]);
 
 	const handleTJMCIDAuth = useCallback(() => {
 		requestAuth({ login: undefined });
@@ -56,11 +53,12 @@ const Authentication = () => {
 		authError && console.debug(">> authError", authError);
 	}, [authError]);
 
+	useEffect(() => captureKeyboardListeners({ onEnter: handleOfflineAuth }), [handleOfflineAuth]);
+
 	return (
-		<div className={style.container}>
-			<a className={style.floatingLogo} href="/" target="_blank" rel="noopener" />
+		<Fragment>
 			<div className={style.wrapper}>
-				<form className={style.authBox} onSubmit={onSubmit}>
+				<div className={style.authBox}>
 					<div className={style.mainLoginContainer}>
 						<div className={style.header}>
 							<p className={buildClassName(style.title)}>{"Добро пожаловать!"}</p>
@@ -79,13 +77,12 @@ const Authentication = () => {
 								error={authError}
 							/>
 							<Button
-								type="submit"
+								onClick={handleOfflineAuth}
 								className={buildClassName("filled", "colorBrand")}
 								isLoading={authIsLoading && auth_state != 'handleCode'}
 								disabled={authIsLoading || !canSubmit}
 							>{"Войти"}</Button>
 							<Button
-								type="button"
 								onClick={handleTJMCIDAuth}
 								isLoading={authIsLoading && auth_state == 'handleCode'}
 								disabled={authIsLoading}
@@ -93,11 +90,28 @@ const Authentication = () => {
 							>{"TJMC ID"}</Button>
 						</div>
 					</div>
-				</form>
+				</div>
 			</div>
-		</div>
+		</Fragment>
 	);
 
 };
 
-export default memo(Authentication);
+const AuthContainer = ({ isShown }) => {
+	const {
+		shouldRender,
+		transitionClassNames,
+	} = useShowTransition(
+		isShown, undefined, true, undefined, false, { }, 350
+	);
+
+	useEffect(() => console.debug(">t", transitionClassNames), [transitionClassNames]);
+
+	return shouldRender && (
+		<div className={buildClassName(style.container, transitionClassNames)}>
+			<Authentication />
+		</div>
+	);
+}
+
+export default memo(AuthContainer);
