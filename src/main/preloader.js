@@ -31,26 +31,32 @@ function windowFocus () {
   document.documentElement.classList.remove('blur');
 }
 
+ipcRenderer.on('enter-full-screen', enterFullScreen);
+ipcRenderer.on('leave-full-screen', leaveFullScreen);
+ipcRenderer.on('blur', windowBlur);
+ipcRenderer.on('focus', windowFocus);
+
 contextBridge.exposeInMainWorld('__STANDALONE__', true);
 contextBridge.exposeInMainWorld('system', { os: currentOS });
-
-process.once('loaded', () => {
-  contextBridge.exposeInMainWorld('electron', {
-    on: (channel, listener) => ipcRenderer.on(channel, listener),
-    invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
-    send: (channel, ...args) => ipcRenderer.send(channel, ...args),
-  });
-  contextBridge.exposeInMainWorld('tjmcNative', {
-    window: {
-      close: windowActions.close,
-      maximize: windowActions.maximize,
-      minimize: windowActions.minimize,
-      fullscreen: windowActions.fullscreen,
-    },
-    versions: process.versions,
-  });
-  ipcRenderer.on('enter-full-screen', enterFullScreen);
-  ipcRenderer.on('leave-full-screen', leaveFullScreen);
-  ipcRenderer.on('blur', windowBlur);
-  ipcRenderer.on('focus', windowFocus);
+contextBridge.exposeInMainWorld('electron', {
+  on: (channel, listener) => ipcRenderer.on(channel, listener),
+  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+  send: (channel, ...args) => ipcRenderer.send(channel, ...args),
 });
+contextBridge.exposeInMainWorld('tjmcNative', {
+  window: {
+    close: windowActions.close,
+    maximize: windowActions.maximize,
+    minimize: windowActions.minimize,
+    fullscreen: windowActions.fullscreen,
+  },
+  versions: process.versions,
+});
+
+document.addEventListener('readystatechange', function () {
+  if (document.readyState === 'interactive') {
+    ipcRenderer.invoke('window:isFullScreen').then(state => {
+      state && enterFullScreen();
+    });
+  }
+}, { once: true });
