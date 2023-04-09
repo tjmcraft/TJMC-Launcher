@@ -83,8 +83,7 @@ exports.create = () => new Promise((resolve, reject) => {
 	));
 	ipcMain.on("window:action.minimize", withWindow((window) => window.minimize()));
 	ipcMain.on("window:action.fullscreen", withWindow((window) => window.fullScreen()));
-
-	if (this.window.isFullScreen()) this.window.webContents.send('enter-full-screen');
+	ipcMain.handle('window:isFullScreen', async () => this.window.isFullScreen());
 
 	this.window.webContents.on("did-finish-load", () => {
 		console.debug("> finish load");
