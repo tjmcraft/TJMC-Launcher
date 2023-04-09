@@ -56,7 +56,7 @@ const Button = ({
 			{isLoading ? (
 				<div>
 					<span>{children}</span>
-					<Spinner color={'white'} />
+					<Spinner color={(isFilled && (isPrimary || isRed)) ? 'white' : 'blue'} />
 				</div>
 			) : <div className="content">{children}</div>}
 

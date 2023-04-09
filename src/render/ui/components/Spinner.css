@@ -38,7 +38,7 @@
   background-image: var(--spinner-white-data);
 }
 .Spinner.blue > div {
-  background-image: var(--spinner-blue-data);
+  background-image: var(--spinner-dark-blue-data);
 }
 
 @keyframes spin {
