@@ -41,7 +41,7 @@ const filename = (ext) => `assets/${isDev ? `[name].${ext}` : `[contenthash].${e
 
 module.exports = {
 	entry: {
-		main: ['@babel/polyfill', path.resolve(basePath, 'index.js')]
+		main: path.resolve(basePath, 'index.js')
 	},
 	resolve: {
 		extensions: ['.js', '.jsx', '.json', '.css', '.png', '.*'],
