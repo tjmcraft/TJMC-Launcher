@@ -267,6 +267,9 @@
     font-size: 13px;
     text-align: center;
 }
+:global(.light-theme) .tools .keyCode {
+    color: #72767d;
+}
 
 .tools .closeButton {
     transition: none;
@@ -286,9 +289,11 @@
 }
 :global(.dark-theme) .closeButton {
     border-color: #72767d;
+    color: #72767d;
 }
 :global(.light-theme) .closeButton {
     border-color: #929995;
+    color: #929995;
 }
 
 
