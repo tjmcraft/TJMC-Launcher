@@ -67,7 +67,7 @@ if (gotTheLock) {
             {
                 console.time("> init hm");
                 const Host = require('./Host');
-                Host.start(); // start socket and ipc servers
+                await Host.start(); // start socket and ipc servers
                 console.timeEnd("> init hm");
             }
         } catch (e) {
