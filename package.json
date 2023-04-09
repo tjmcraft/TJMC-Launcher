@@ -127,7 +127,12 @@
     "asar": true,
     "compression": "maximum",
     "icon": "icons/icon.png",
+    "nodeGypRebuild": true,
+    "npmRebuild": true,
     "mac": {
+      "category": "public.app-category.games",
+      "icon": "icons/icon.icns",
+      "darkModeSupport": true,
       "target": [
         {
           "target": "default",
@@ -137,8 +142,11 @@
           ]
         }
       ],
-      "icon": "icons/icon.icns",
-      "category": "public.app-category.games"
+      "asarUnpack": ["**/*.node"],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist"
     },
     "win": {
       "target": [
@@ -197,6 +205,10 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false
-    }
+    },
+    "dmg": {
+      "sign": false
+    },
+    "remoteBuild": false
   }
 }
