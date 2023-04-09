@@ -30,7 +30,7 @@
         "no-void": "off",
         "no-continue": "off",
         "no-undef": "off",
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "default-case": "off",
         "no-param-reassign": "off",
         "no-prototype-builtins": "off",
