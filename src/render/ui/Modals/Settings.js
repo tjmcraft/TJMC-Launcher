@@ -91,9 +91,9 @@ const InfoBox = memo(() => {
 
 const SettingContainer = ({ id, action, header, note, checked }) => {
 	id = id || randomString(5);
-	const onCheck = useCallback((checked) => {
-		if (typeof action === "function") action.call(this, checked, id);
-	}, [id, action]);
+	const onCheck = useCallback(() => {
+		if (typeof action === "function") action.call(this, !checked, id);
+	}, [id, action, checked]);
 	return (
 		<div className={style.settingContainer}>
 			<div className={style.labelRow}>
