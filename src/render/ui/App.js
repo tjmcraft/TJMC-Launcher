@@ -1,4 +1,4 @@
-import { memo, createElement, useEffect } from "react";
+import { memo, createElement } from "react";
 
 import { getDispatch } from "Store/Global.js";
 import useGlobal from "Hooks/useGlobal.js";
@@ -10,8 +10,9 @@ import AppContainer from "./AppContainer";
 
 const App = () => {
 
-	const { initHost } = getDispatch();
+	const { initHost, initApi } = getDispatch();
 	useConstructor(initHost);
+	useConstructor(initApi);
 
 	const isAuthReady = useGlobal(global => ["ready"].includes(global.auth_state));
 
@@ -24,4 +25,4 @@ const App = () => {
 	);
 };
 
-export default (App);
+export default memo(App);
