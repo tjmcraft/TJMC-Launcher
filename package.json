@@ -31,7 +31,7 @@
     "ТюменьCraft"
   ],
   "author": "MakAndJo <makandjo@outlook.com>",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/tjmcraft/TJMC-Launcher.git"
