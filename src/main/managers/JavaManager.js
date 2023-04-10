@@ -1,9 +1,10 @@
-const child = require('child_process');
-const { downloadFile, downloadToFile } = require('../util/download');
-const path = require('path');
-const fs = require('fs');
+const fs = require('node:fs');
+const path = require('node:path');
+const child = require('node:child_process');
+const { promisify } = require('node:util');
+const exec = promisify(child.exec);
 const EventEmitter = require('node:events');
-const { promisify } = require('util');
+const { downloadFile, downloadToFile } = require('../util/download');
 const logger = require("../util/loggerutil")('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
 class JavaManager extends EventEmitter {
@@ -14,18 +15,17 @@ class JavaManager extends EventEmitter {
     this.runtimeManifest = undefined;
   }
 
-  checkJava = function (java) {
-    return new Promise(resolve => {
-      if (java == void 0) return resolve({ run: false });
+  checkJava = async function (java) {
+    if (java != void 0) {
       let cmd = `"${java}" -version`;
-      child.exec(cmd, {}, (error, stdout, stderr) => {
-        if (error) {
-          resolve({ run: false, message: error });
-        } else {
-          resolve({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
-        }
-      })
-    })
+      const { error, stdout, stderr } = await exec(cmd);
+      if (error) {
+        return ({ run: false, message: error });
+      } else {
+        return ({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
+      }
+    }
+    return ({ run: false });
   }
 
   fetchRuntimeManifest = async () => {
@@ -110,8 +110,8 @@ class JavaManager extends EventEmitter {
         const handleProgress = useProgressCounter();
         await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
         if (file.executable && process.platform != "win32") {
-          await promisify(child.exec)(`chmod +x "${fileName}"`);
-          await promisify(child.exec)(`chmod 755 "${fileName}"`);
+          await exec(`chmod +x "${fileName}"`);
+          await exec(`chmod 755 "${fileName}"`);
         }
       }));
 
