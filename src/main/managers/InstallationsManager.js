@@ -1,4 +1,5 @@
 const Config = require('../libs/Config');
+const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
 const { launcherDir } = require('../Paths');
@@ -94,7 +95,6 @@ exports.getInstallation = async function (hash) {
  */
 exports.getInstallationSync = function (hash) {
     const path = require('node:path');
-    const { getOption } = require('./ConfigManager');
     const installations = config.getOption("profiles");
     if (hash && Object(installations).hasOwnProperty(hash)) {
         let installation = installations[hash];
