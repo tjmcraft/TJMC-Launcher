@@ -156,7 +156,10 @@
           "arch": "x64"
         }
       ],
-      "icon": "icons/icon.ico"
+      "icon": "icons/icon.ico",
+      "publisherName":"MakAndJo",
+      "certificateFile": "MakAndJo.pfx",
+      "certificatePassword": ""
     },
     "linux": {
       "target": [
