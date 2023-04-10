@@ -3,6 +3,7 @@ const path = require('path');
 const { shallowEqual } = require('../util/Iterates');
 const { debounce } = require('../util/Shedulers');
 const LoggerUtil = require('../util/loggerutil');
+const { launcherDir } = require('../Paths');
 
 const validateKeySet = (srcObj, destObj) => {
 	if (srcObj == null) srcObj = {};
@@ -30,7 +31,7 @@ const Config = function ({
 	prefix = "ConfigManager",
 	color = "#1052a5",
 	configName,
-	configDir = undefined,
+	configDir = launcherDir,
 	defaultConfig,
 }) {
 
@@ -160,25 +161,31 @@ const Config = function ({
 	/**
 	 * Set one property by key string
 	 * @param {string} key key to set property
-	 * @param {string|object} value value to set to key
+	 * @param {string|object} [value] value to set to key
 	 * @returns {object}
 	 */
-	this.setOption = async (key, value) => {
-		let valuePath = key.split('.');
-		if (valuePath.length >= 2) {
-			let firstKey = valuePath.shift();
-			let lastKey = valuePath.pop();
-			valuePath.reduce((o, k) => o[k] = o[k] || {}, config[firstKey])[lastKey] = value;
+	this.setOption = async (key, value = void 0) => {
+		if (typeof key == 'object' && value == void 0) {
+			config = key;
+		} else if (typeof key == 'string') {
+			let valuePath = key.split('.');
+			if (valuePath.length >= 2) {
+				let firstKey = valuePath.shift();
+				let lastKey = valuePath.pop();
+				valuePath.reduce((o, k) => o[k] = o[k] || {}, config[firstKey])[lastKey] = value;
+			} else {
+				config[key] = value;
+			}
 		} else {
-			config[key] = value;
+			return;
 		}
 		return this.save(false, true, "set option");
 	}
 
 	/**
 	 * Get option from config
-	 * @param {Function|String} selector selector must be a picker function or just a key string
-	 * @param {boolean} _default return default config value
+	 * @param {Function|String} [selector] selector must be a picker function or just a key string
+	 * @param {boolean} [_default] return default config value
 	 * @returns {string|number|object}
 	 */
 	this.getOption = (selector = void 0, _default = false) => {
