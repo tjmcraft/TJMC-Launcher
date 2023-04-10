@@ -30,7 +30,7 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
   - [x] Update **Auth** system (move to host as auth server + oauth on web)
   - [x] Offline account support
   - [x] Connect to keytar store
-  - [ ] Implement multi-account store
+  - [x] Implement multi-account store
   - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
 
 ## Download 💿
