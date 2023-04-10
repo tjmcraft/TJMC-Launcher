@@ -2,9 +2,6 @@ const { launcherDir } = require('../Paths');
 const Config = require('../libs/Config');
 const path = require('path');
 
-
-
-
 const DEFAULT_CONFIG = Object.seal({
     java: {
         javaPath: '',
