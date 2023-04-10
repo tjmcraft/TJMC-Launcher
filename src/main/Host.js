@@ -200,8 +200,8 @@ const initHandlers = async () => {
 			if (!data.version_hash) return false;
 			console.debug(">>>", "invokeLaunch");
 			let { version_hash, params = {} } = data;
-			const user = await AuthManager.getCurrentUser();
-			if (!user) return false;
+			const user = await AuthManager.getCurrentUserName();
+			if (!user) return MainWindow.restore();
 			Object.assign(params, {
 				auth: {
 					username: user.realname,
