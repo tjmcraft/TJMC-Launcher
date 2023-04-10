@@ -1,10 +1,27 @@
 'use strict';
-const ConfigManager = require('../managers/ConfigManager');
-const path = require('path');
-const fs = require('fs');
+
 const electron = require('electron');
 const { launcherDir } = require('../Paths');
-const logg = require('../util/loggerutil')('%c[WindowState]', 'color: #d59215; font-weight: bold');
+const Config = require('./Config');
+const { debounce } = require('../util/Shedulers');
+
+
+const DEFAULT_WINDOW_CONFIG = {
+    x: undefined,
+    y: undefined,
+    width: 1280,
+    height: 720,
+    isMaximized: false,
+    isFullScreen: false
+};
+
+const config = new Config({
+    color: '#d59215',
+    prefix: 'WindowState',
+    configDir: launcherDir,
+    configName: 'window.state',
+    defaultConfig: DEFAULT_WINDOW_CONFIG,
+});
 
 module.exports = function (config) {
     loadWindowState();
@@ -18,23 +35,13 @@ module.exports = function (config) {
     function hasBounds() {
         return (
         state &&
-        Number.isInteger(state.x) &&
-        Number.isInteger(state.y) &&
         Number.isInteger(state.width) && state.width > 0 &&
         Number.isInteger(state.height) && state.height > 0
         )
     }
 
     function resetStateToDefault() {
-        const displayBounds = screen.getPrimaryDisplay().bounds
-
-        state = {
-            width: config.width || 800,
-            height: config.height || 600,
-            x: 0,
-            y: 0,
-            displayBounds
-        }
+        state = DEFAULT_WINDOW_CONFIG;
     }
 
     function windowWithinBounds(bounds) {
@@ -57,7 +64,7 @@ module.exports = function (config) {
     }
 
     function validateState() {
-        const isValid = state && (hasBounds() || state.isMinimized ||state.isMaximized || state.isFullScreen)
+        const isValid = state && (hasBounds() || state.isMinimized || state.isMaximized || state.isFullScreen)
         if (!isValid) {
             state = null
             return
@@ -67,6 +74,8 @@ module.exports = function (config) {
             ensureWindowVisibleOnSomeDisplay()
         }
     }
+
+    const saveDebounce = debounce(() => saveState(), 800, false, true);
 
     function updateState(win) {
         win = win || winRef
@@ -88,19 +97,19 @@ module.exports = function (config) {
     }
 
     function saveState(win) {
-        logg.info(state)
+        // logg.info(state)
         if (win) updateState(win)
         setWindowState(state)
-        saveWindowState()
     }
 
     function stateHandler() {
-        updateState()
+        updateState();
+        saveDebounce();
     }
 
     function closedHandler() {
-        unmanage()
-        saveState()
+        unmanage();
+        saveState();
     }
 
     function manage(win) {
@@ -144,7 +153,6 @@ module.exports = function (config) {
         get y() { return state.y },
         get width() { return state.width },
         get height() { return state.height },
-        get displayBounds() { return state.displayBounds },
         get isMaximized() { return state.isMaximized },
         get isMinimized() { return state.isMinimized },
         get isFullScreen() { return state.isFullScreen },
@@ -157,49 +165,14 @@ module.exports = function (config) {
 
 /* =====================   Window Properties   ===================== */
 
-const DEFAULT_WINDOW_CONFIG = {
-    x: 0,
-    y: 0,
-    width: 1280,
-    height: 720,
-    isMaximized: false,
-    isFullScreen: false
-}
-
-let windowStateConfigPath = path.join(launcherDir, 'window-config.json')
-let windowConfig = null
-
-const saveWindowState = function () {
-    fs.writeFileSync(windowStateConfigPath, JSON.stringify(windowConfig, null, 4), 'UTF-8')
-}
-
 const loadWindowState = function () {
-    let loaded = false
-    if (!fs.existsSync(windowStateConfigPath)) {
-        fs.mkdirSync(path.join(windowStateConfigPath, '..'), { recursive: true },);
-        loaded = true
-        windowConfig = DEFAULT_WINDOW_CONFIG
-        saveWindowState()
-    }
-    if (!loaded) {
-        try {
-            windowConfig = JSON.parse(fs.readFileSync(windowStateConfigPath, 'UTF-8'))
-        } catch (err) {
-            logg.error(err)
-            logg.log('Configuration file contains malformed JSON or is corrupt.')
-            logg.log('Generating a new configuration file.')
-            fs.mkdirSync(path.join(windowStateConfigPath, '..'), { recursive: true });
-            windowConfig = DEFAULT_WINDOW_CONFIG
-            saveWindowState()
-        }
-    }
-    logg.log('Load window config - success')
+    config.load();
 }
 
 const getWindowState = function () {
-    return windowConfig
+    return config.getOption();
 }
 
 const setWindowState = function (state) {
-    windowConfig = state
+    return config.setOption(state);
 }
