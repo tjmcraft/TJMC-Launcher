@@ -9,12 +9,16 @@ const { launcherDir } = require('./Paths');
 
 const instances = new Map();
 
+const ConfigManager = require('./managers/ConfigManager');
+const VersionManager = require('./managers/VersionManager');
+const InstallationsManager = require('./managers/InstallationsManager');
+
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
 
-	const ConfigManager = require('./managers/ConfigManager');
-	const VersionManager = require('./managers/VersionManager');
-	const InstallationsManager = require('./managers/InstallationsManager');
+	console.debug(">>", "startLaunch");
+
+	console.time('startup')
 
 	const emit = (eventName, args) => eventListener(eventName, args);
 	const terminateInstance = () => {
@@ -39,20 +43,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	var JavaWorker = undefined;
 	var MainWorker = undefined;
 
-	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
-	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
-
-	emit('progress', {
-		type: 'load:version-manifest',
-		progress: 0.001,
-	});
-	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, {}, ({ progress }) => {
-		emit('progress', {
-			type: 'load:version-manifest',
-			progress: progress,
-		});
-	});
-
 	controller.signal.addEventListener('abort', () => {
 		logger.warn("Aborting..");
 		emit('progress', {
@@ -65,6 +55,26 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			return terminateInstance();
 		}
 	}, { once: true });
+
+	console.timeEnd('startup')
+
+	console.time('getInstallation')
+	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
+	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
+	console.timeEnd('getInstallation')
+
+	console.time('getVersionManifest')
+	emit('progress', {
+		type: 'load:version-manifest',
+		progress: 0.1,
+	});
+	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ progress }) => {
+		emit('progress', {
+			type: 'load:version-manifest',
+			progress: progress,
+		});
+	});
+	console.timeEnd('getVersionManifest')
 
 	try {
 
@@ -83,7 +93,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		{
 			emit('progress', {
 				type: 'load:java',
-				progress: 0.0001,
+				progress: 0.1,
 			});
 			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
 				workerData: {
@@ -117,6 +127,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		}
 		const javaPath = await promiseRequest(javaController);
+		console.debug(">>", javaPath);
 		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
