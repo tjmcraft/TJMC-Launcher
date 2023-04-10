@@ -16,8 +16,8 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 - [ ] Implement open current installation folder
 - [ ] Fix accessibility issues (aria tags + tab navigation)
 - [ ] Implement font resize + *accent color change*
-- [ ] Fix non-centred main window on first start
-- [ ] Fix fullscreen after reloading UI
+- [x] Fix non-centred main window on first start
+- [x] Fix fullscreen after reloading UI
 ### Host improvements:
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
