@@ -198,6 +198,7 @@ const initHandlers = async () => {
 	{ // Launching
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
+			console.debug(">>>", "invokeLaunch");
 			let { version_hash, params = {} } = data;
 			const user = await AuthManager.getCurrentUser();
 			if (!user) return false;
