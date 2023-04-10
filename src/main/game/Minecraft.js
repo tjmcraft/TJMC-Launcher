@@ -202,7 +202,7 @@ class Minecraft extends EventEmitter {
                 });
             } else {
                 count++;
-                !this.overrides.checkFiles && // no emit when check files is off (causes lagging)
+                this.overrides.checkFiles && // no emit when check files is off (causes lagging)
                 this.emit('progress', {
                     type: 'assets',
                     task: count,
