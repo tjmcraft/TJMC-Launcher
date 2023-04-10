@@ -81,6 +81,10 @@ class AuthManager extends EventEmitter {
 		return response.user;
 	};
 
+	getCurrentUserName = async () => {
+		return this.matchUserId(this.currentUserId)['username'] ?? undefined;
+	}
+
 	createMockedOfflineUser = (username) => {
 		const userId = this.createUserId('offline', username);
 		const user = {
