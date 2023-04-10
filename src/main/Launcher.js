@@ -77,7 +77,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	console.timeEnd('getVersionManifest')
 
 	try {
-
 		const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
 			manifest: versionFile,
 			installation: currentInstallation,
@@ -110,9 +109,11 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 					progress: payload,
 				});
 			});
+			console.time("get:java");
 			JavaWorker.on('message', async ({ type, payload }) => {
 				if (controller.signal.aborted) return;
 				if (type != 'javaPath') return;
+				console.timeEnd("get:java");
 				javaController.resolve(payload);
 				JavaWorker.terminate();
 				emit('progress', {
@@ -127,7 +128,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 		}
 		const javaPath = await promiseRequest(javaController);
-		console.debug(">>", javaPath);
 		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
