@@ -8,6 +8,9 @@
 This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to [TJMC-Company](https://github.com/tjmcraft) (for *non-commercial* purpose only). \
 **TJMC-Launcher** is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**.
 
+## Download 💿
+If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
+
 ## Tasks 📑
 ### UI improvements:
 - [x] Implement **Context Menu** on **Installations**
@@ -32,9 +35,6 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
   - [x] Connect to keytar store
   - [x] Implement multi-account store
   - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
-
-## Download 💿
-If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
 ## Developing 💻
 
