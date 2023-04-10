@@ -209,9 +209,13 @@ class Minecraft extends EventEmitter {
             }
             return assetPath;
         };
-        for (const number in Object.keys(index.objects)) {
-            const asset = Object.keys(index.objects)[number];
-            await assetProcessor(asset, number);
+        if (this.overrides.checkHash) {
+            for (const number in Object.keys(index.objects)) {
+                const asset = Object.keys(index.objects)[number];
+                await assetProcessor(asset, number);
+            }
+        } else {
+            await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
         }
         if (assetsToLoad.length > 0) {
             await Promise.all(assetsToLoad.map(async asset => await asset()));
