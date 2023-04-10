@@ -411,6 +411,14 @@ const MinecraftSettingsTab = memo(() => {
 									setConfig({ key: "overrides.checkHash", value: s });
 								}}
 							/>
+							<SettingContainer id="overrides.checkFiles"
+								header="Проверять наличие файлов"
+								note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!\n(Ускоряет запуск)"}
+								checked={config.overrides.checkFiles}
+								action={(s) => {
+									setConfig({ key: "overrides.checkFiles", value: s });
+								}}
+							/>
 						</div>
 					</div>
 				</div>
