@@ -63,7 +63,8 @@ class Minecraft extends EventEmitter {
                 id: this.options.installation.lastVersionId,
                 type: this.options.installation.type,
             },
-            checkHash: this.options.installation.checkHash != void 0 ? this.options.installation.checkHash : true,
+            checkHash: this.options.installation.checkHash ?? true,
+            checkFiles: this.options.installation.checkFiles ?? true,
         };
     }
 
@@ -80,7 +81,7 @@ class Minecraft extends EventEmitter {
                 total: 1,
             });
         }
-        if (!fs.existsSync(this.options.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.mcPath))) {
+        if (this.overrides.checkFiles && (!fs.existsSync(this.options.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.mcPath)))) {
             await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress);
         }
         this.debug && logg.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
@@ -143,7 +144,7 @@ class Minecraft extends EventEmitter {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path))) {
+                if (this.overrides.checkFiles && (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path)))) {
                     (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
                 }
@@ -188,7 +189,7 @@ class Minecraft extends EventEmitter {
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
-            if (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath))) {
+            if (this.overrides.checkFiles && (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath)))) {
                 (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
                     await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
@@ -201,6 +202,7 @@ class Minecraft extends EventEmitter {
                 });
             } else {
                 count++;
+                !this.overrides.checkFiles && // no emit when check files is off (causes lagging)
                 this.emit('progress', {
                     type: 'assets',
                     task: count,
@@ -257,7 +259,7 @@ class Minecraft extends EventEmitter {
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
-            if (!fs.existsSync(jarFile) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, jarFile))) {
+            if (this.overrides.checkFiles && (!fs.existsSync(jarFile) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, jarFile)))) {
                 // logg.debug("<<", "download", name);
                 const lib_url = ((library) => {
                     if (isValidUrl(library.downloads?.artifact?.url))
