@@ -1,10 +1,10 @@
 const fs = require('fs')
 const path = require('path')
-const crypto = require('crypto')
 const os = require('os')
 const Zip = require('adm-zip')
 const EventEmitter = require('events')
 const { downloadToFile } = require('../util/download')
+const { checkFileHash } = require('../util/Crypto')
 const logg = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft extends EventEmitter {
@@ -21,6 +21,7 @@ class Minecraft extends EventEmitter {
      * @property {string} java.javaPath - Path to java executable
      * @property {object} installation - Installation object
      * @property {boolean} installation.checkHash - Installation check hash
+     * @property {boolean} installation.checkFiles - Installation check files
      * @property {object} installation.resolution - Installation resolution object
      * @property {string | number} installation.resolution.width - Installation width
      * @property {string | number} installation.resolution.height - Installation height
@@ -81,7 +82,10 @@ class Minecraft extends EventEmitter {
                 total: 1,
             });
         }
-        if (this.overrides.checkFiles && (!fs.existsSync(this.options.mcPath) || (this.overrides.checkHash && !await this.checkSum(version.downloads.client.sha1, this.options.mcPath)))) {
+        if (this.overrides.checkFiles && (
+            !fs.existsSync(this.options.mcPath) ||
+            (this.overrides.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
+        )) {
             await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress);
         }
         this.debug && logg.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
@@ -144,7 +148,10 @@ class Minecraft extends EventEmitter {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (this.overrides.checkFiles && (!fs.existsSync(native_path) || (this.overrides.checkHash && !await this.checkSum(native.sha1, native_path)))) {
+                if (this.overrides.checkFiles && (
+                    !fs.existsSync(native_path) ||
+                    (this.overrides.checkHash && !await checkFileHash(native_path, native.sha1))
+                )) {
                     (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
                 }
@@ -189,7 +196,10 @@ class Minecraft extends EventEmitter {
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
-            if (this.overrides.checkFiles && (!fs.existsSync(assetPath) || (this.overrides.checkHash && !await this.checkSum(hash, assetPath)))) {
+            if (this.overrides.checkFiles && (
+                !fs.existsSync(assetPath) ||
+                (this.overrides.checkHash && !await checkFileHash(assetPath, hash))
+            )) {
                 (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
                     await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
@@ -263,7 +273,10 @@ class Minecraft extends EventEmitter {
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
-            if (this.overrides.checkFiles && (!fs.existsSync(jarFile) || (this.overrides.checkHash && hash != void 0 && !await this.checkSum(hash, jarFile)))) {
+            if (this.overrides.checkFiles && (
+                !fs.existsSync(jarFile) ||
+                (this.overrides.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
+            )) {
                 // logg.debug("<<", "download", name);
                 const lib_url = ((library) => {
                     if (isValidUrl(library.downloads?.artifact?.url))
@@ -304,17 +317,6 @@ class Minecraft extends EventEmitter {
 
         return libs.filter(lib => Boolean(lib));
     }
-
-    /**
-     * Check sha1 file hash
-     * @param {String} file_hash - file hash
-     * @param {String} file - file path
-     */
-    checkSum = (file_hash, file) => new Promise((resolve, reject) => {
-        const hash = crypto.createHash('sha1');
-        fs.createReadStream(file).on('data', data => hash.update(data)).on('end', () => resolve(file_hash === hash.digest('hex')));
-    })
-
 
     /**
      * Parse rule for library
