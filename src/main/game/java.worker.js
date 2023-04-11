@@ -1,11 +1,22 @@
-const { parentPort, workerData, isMainThread } = require("node:worker_threads");
+const { parentPort, isMainThread } = require("node:worker_threads");
 const JavaManager = require("../managers/JavaManager");
 const logger = require("../util/loggerutil")('%c[JavaWorker]', 'color: #feb600; font-weight: bold');
+
+const instances = new Map();
 
 if (!isMainThread) {
 	parentPort.on('message', async ({ type, payload }) => {
 		if (type == 'start') {
-			const { rootDir, externalJava, recommendedJava } = payload;
+			const { label, rootDir, externalJava, recommendedJava } = payload;
+			if (instances.get(label)) return;
+			const controller = new AbortController();
+			instances.set(label, {
+				controller
+			});
+
+			controller.signal.addEventListener('abort', () => {
+				logger.debug("Aborted!");
+			})
 
 			const instance = new JavaManager(rootDir);
 			instance.on('download-progress', (e) => {
@@ -36,17 +47,30 @@ if (!isMainThread) {
 					type: 'download-progress',
 					payload: 0.5,
 				})
-				let javaPath = await instance.downloadJava(java.component);
+				let javaPath = await instance.downloadJava(java.component, controller.signal);
 				return await checkJava(javaPath, 'recommended');
 			}
 			const checkInternal = async () => checkJava('java', 'internal');
 
 			for (const task of [checkExternal, checkRecommended, checkInternal]) {
+				if (controller.signal.aborted) break;
 				const java = await task();
-				if (java != void 0) return parentPort.postMessage({ type: 'javaPath', payload: java });
+				if (java != void 0) {
+					instances.delete(label);
+					return parentPort.postMessage({ type: 'javaPath', payload: java });
+				}
 			}
+			instances.delete(label);
 			return parentPort.postMessage({ type: 'error', payload: "No java found!" });
 		}
-	})
-
+	});
+	parentPort.on('message', async ({type, payload}) => {
+		if (type == 'abort') {
+			const { label } = payload;
+			if (!instances.get(label)) return;
+			const { controller } = instances.get(label);
+			controller.abort();
+			instances.delete(label);
+		}
+	});
 }
