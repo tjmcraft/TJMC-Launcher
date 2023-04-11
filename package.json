@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.1.995",
+  "version": "0.1.996",
   "description": "An lightweight minecraft launcher by TJMC",
   "main": "src/main/main.js",
   "scripts": {
@@ -157,7 +157,7 @@
         }
       ],
       "icon": "icons/icon.ico",
-      "publisherName":"MakAndJo",
+      "publisherName": "MakAndJo",
       "certificateFile": "MakAndJo.pfx",
       "certificatePassword": ""
     },
