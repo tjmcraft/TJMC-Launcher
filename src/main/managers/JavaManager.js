@@ -18,12 +18,14 @@ class JavaManager extends EventEmitter {
   checkJava = async function (java) {
     if (java != void 0) {
       let cmd = `"${java}" -version`;
-      const { error, stdout, stderr } = await exec(cmd);
-      if (error) {
-        return ({ run: false, message: error });
-      } else {
-        return ({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
-      }
+      try {
+        const { error, stdout, stderr } = await exec(cmd);
+        if (error) {
+          return ({ run: false, message: error });
+        } else {
+          return ({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
+        }
+      } catch (e) {}
     }
     return ({ run: false });
   }
@@ -104,7 +106,6 @@ class JavaManager extends EventEmitter {
       }
 
       await Promise.all(filesToDownload.map(async file => {
-        if (signal?.aborted) return undefined;
         const fileName = path.join(javaDir, file.name);
         if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
         const handleProgress = useProgressCounter();
