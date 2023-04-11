@@ -59,10 +59,10 @@ exports.downloadFile = async (url, progressHandler = (e) => void 0) => {
  * @param {string} filePath - path to save
  * @param {boolean} force - force download (overwrite if exists)
  * @param {Function} progressHandler - progress handler
- * @param {AbortSignal} signal - abort signal
+ * @param {AbortSignal} [signal] - abort signal
  * @returns
  */
-exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) => void 0, signal) => new Promise((resolve, reject) => {
+exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) => void 0, signal = undefined) => new Promise((resolve, reject) => {
   if (!url.includes('http')) return resolve(false);
   if (!force && (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0)) {
     typeof progressHandler == 'function' && progressHandler({
@@ -75,7 +75,7 @@ exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) =>
 
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
 
-  const downloadStream = got.stream(url, { signal, agent: { https: httpsAgent, http: httpAgent } });
+  const downloadStream = got.stream(url, { signal: signal, agent: { https: httpsAgent, http: httpAgent } });
   const fileWriterStream = fs.createWriteStream(filePath);
 
   downloadStream
