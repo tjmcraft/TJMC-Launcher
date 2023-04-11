@@ -211,7 +211,7 @@ class Minecraft extends EventEmitter {
             }
             return assetPath;
         };
-        if (this.overrides.checkHash) {
+        if (this.overrides.checkFiles && this.overrides.checkHash) {
             console.time("assets:sync_check");
             for (const number in Object.keys(index.objects)) {
                 const asset = Object.keys(index.objects)[number];
