@@ -58,6 +58,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			progress: 0,
 		});
 		// JavaWorker != void 0 && JavaWorker.terminate();
+		JavaWorker.postMessage({ type: 'abort', payload: { label: version_hash } });
 		MainWorker != void 0 && MainWorker.terminate();
 		if (MainWorker == void 0) {
 			return terminateInstance();
@@ -126,6 +127,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			JavaWorker.postMessage({
 				type: 'start',
 				payload: {
+					label: version_hash,
 					rootDir: launcherDir,
 					recommendedJava: launcherOptions.manifest.javaVersion,
 					externalJava: launcherOptions.installation.javaPath || launcherOptions.java.javaPath
