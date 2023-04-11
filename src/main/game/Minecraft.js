@@ -212,12 +212,16 @@ class Minecraft extends EventEmitter {
             return assetPath;
         };
         if (this.overrides.checkHash) {
+            console.time("assets:sync_check");
             for (const number in Object.keys(index.objects)) {
                 const asset = Object.keys(index.objects)[number];
                 await assetProcessor(asset, number);
             }
+            console.timeEnd("assets:sync_check");
         } else {
+            console.time('assets:async_process');
             await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
+            console.timeEnd('assets:async_process');
         }
         if (assetsToLoad.length > 0) {
             await Promise.all(assetsToLoad.map(async asset => await asset()));
