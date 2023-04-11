@@ -13,6 +13,15 @@ const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 
+const JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"));
+console.time('java.worker.start');
+JavaWorker.once('online', () => {
+	console.timeEnd('java.worker.start');
+});
+JavaWorker.once('exit', (code) => {
+	console.warn("JavaWorker exit with code:", code);
+});
+
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
 
@@ -40,7 +49,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		runCallbacks();
 	};
 
-	var JavaWorker = undefined;
 	var MainWorker = undefined;
 
 	controller.signal.addEventListener('abort', () => {
@@ -49,9 +57,9 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			type: 'aborting',
 			progress: 0,
 		});
-		JavaWorker != void 0 && JavaWorker.terminate();
+		// JavaWorker != void 0 && JavaWorker.terminate();
 		MainWorker != void 0 && MainWorker.terminate();
-		if (JavaWorker == void 0 && MainWorker == void 0) {
+		if (MainWorker == void 0) {
 			return terminateInstance();
 		}
 	}, { once: true });
@@ -94,37 +102,34 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				type: 'load:java',
 				progress: 0.1,
 			});
-			JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"), {
-				workerData: {
+			console.time("load:java");
+			const JavaHandler = ({ type, payload }) => {
+				if (!controller.signal.aborted) {
+					if (type == 'download-progress') {
+						return emit('progress', {
+							type: 'load:java',
+							progress: payload,
+						});
+					}
+					if (type == 'javaPath') {
+						console.timeEnd("load:java");
+						javaController.resolve(payload);
+						emit('progress', {
+							type: 'load:java',
+							progress: 1,
+						});
+					}
+				}
+				JavaWorker.off('message', JavaHandler);
+			}
+			JavaWorker.on('message', JavaHandler);
+			JavaWorker.postMessage({
+				type: 'start',
+				payload: {
 					rootDir: launcherDir,
 					recommendedJava: launcherOptions.manifest.javaVersion,
 					externalJava: launcherOptions.installation.javaPath || launcherOptions.java.javaPath
 				}
-			});
-			JavaWorker.on('message', async ({ type, payload }) => {
-				if (controller.signal.aborted) return;
-				if (type != 'download-progress') return;
-				emit('progress', {
-					type: 'load:java',
-					progress: payload,
-				});
-			});
-			console.time("get:java");
-			JavaWorker.on('message', async ({ type, payload }) => {
-				if (controller.signal.aborted) return;
-				if (type != 'javaPath') return;
-				console.timeEnd("get:java");
-				javaController.resolve(payload);
-				JavaWorker.terminate();
-				emit('progress', {
-					type: 'load:java',
-					progress: 1,
-				});
-			});
-			JavaWorker.on('exit', (code) => {
-				console.warn("JavaWorker exit with code:", code);
-				JavaWorker = undefined;
-				if (controller.signal.aborted) return terminateInstance();
 			});
 		}
 		const javaPath = await promiseRequest(javaController);
