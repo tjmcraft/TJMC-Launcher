@@ -42,13 +42,14 @@ if (!isMainThread) {
 
 			const checkExternal = async () => checkJava(externalJava, 'external');
 			const checkRecommended = async () => {
-				const java = instance.getRecommendedJava({ javaVersion: recommendedJava });
-				parentPort.postMessage({
-					type: 'download-progress',
-					payload: 0.5,
-				})
-				let javaPath = await instance.downloadJava(java.component, controller.signal);
-				return await checkJava(javaPath, 'recommended');
+				const recommended = instance.pickRecommended({ javaVersion: recommendedJava });
+				const cachedJava = () => instance.getRecommendedJava(recommended.component);
+				const downloadJava = () => instance.downloadJava(recommended.component, controller.signal);
+				for (const task of [cachedJava, downloadJava]) {
+					const java = await task();
+					if (await checkJava(java, 'recommended')) return java;
+				}
+				return undefined;
 			}
 			const checkInternal = async () => checkJava('java', 'internal');
 
