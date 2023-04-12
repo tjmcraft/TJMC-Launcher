@@ -102,6 +102,10 @@ exports.createInstallation = async function (options = {}) {
     return undefined;
 }
 
+/**
+ * Get all known Installations from config
+ * @returns {Object.<string,Installation>}
+ */
 exports.getInstallations = async function () {
     return config.getOption("profiles");
 }
