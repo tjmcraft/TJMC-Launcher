@@ -190,8 +190,11 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 					});
 				}
 			});
-
 		}
+
+		InstallationsManager.modifyInstallation(version_hash, {
+			lastUsed: new Date().toISOString()
+		});
 
 	} catch (error) {
 		logger.error(error);

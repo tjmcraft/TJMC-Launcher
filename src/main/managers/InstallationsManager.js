@@ -170,8 +170,15 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
 /**
  * Modify the installation with given hash
  * @param {string} hash The hash of the installation
- * @param {object} nextProps Props to modify
+ * @param {Installation|object} nextProps Props to modify
  */
 exports.modifyInstallation = async function (hash, nextProps) {
-
+    const installations = config.getOption("profiles");
+    if (hash && Object(installations).hasOwnProperty(hash)) {
+        const installation = installations[hash];
+        Object.assign(installation, nextProps);
+        config.setOption("profiles", installations);
+        return hash;
+    }
+    return undefined;
 }
