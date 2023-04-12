@@ -6,6 +6,10 @@ const { getOfflineUUID, buildUrl } = require('../util/Tools');
 const { randomString } = require('../util/Random');
 const { launcherDir } = require('../Paths');
 
+const API_HOST = "https://app.tjmc.ru/api/";
+const OAUTH_HOST = "https://oauth.tjmc.ru/";
+const CLIENT_ID = "1";
+const CLIENT_SECRET = "client1.secret";
 const KEYTAR_KEY = 'ru.tjmc.launcher.auth';
 
 const config = new Config({
@@ -28,8 +32,22 @@ class AuthManager extends EventEmitter {
 	currentUserId = undefined;
 
 	/**
-	 * Current access token
-	 * @type {string}
+	 * @typedef TJMCToken
+	 * @type {object}
+	 * @property {string} type Auth type
+	 * @property {string} accessToken Access token
+	 * @property {string} accessTokenExpiresAt Access token expiry date
+	 * @property {string} refreshToken Refresh token
+	 * @property {string} refreshTokenExpiresAt Refresh token date
+	 * @property {string} scope Auth scope
+	 * @property {object} user Auth user object
+	 * @property {number} user.id User id
+	 * @property {string} user.username User realname
+	 */
+
+	/**
+	 * Current token
+	 * @type {TJMCToken}
 	 */
 	token = undefined;
 
@@ -63,21 +81,28 @@ class AuthManager extends EventEmitter {
 		} catch (e) {}
 		if (!storedToken) return;
 		if (this.matchUserId(this.currentUserId)['type'] == 'tjmc') {
-			this.token = storedToken.accessToken;
+			console.debug('[currentToken]', storedToken);
+			this.token = storedToken;
 		}
 	}
 
-	getCurrentUser = async (token = undefined) => {
+	getCurrentUser = async (token = undefined, try_refresh = true) => {
 		if (this.currentUserId && this.matchUserId(this.currentUserId)['type'] == 'offline') {
 			return this.createMockedOfflineUser(this.matchUserId(this.currentUserId)['username']);
 		}
 		token = token ?? this.token;
+		console.debug('[getCurrentUser]', '[token]', token);
 		if (token == void 0) return;
-		const { response } = await downloadFile("https://app.tjmc.ru/api/user?access_token=" + token);
+		const { response } = await downloadFile(API_HOST + "user?access_token=" + token.accessToken);
 		if (response?.user == undefined) {
+			if (try_refresh) {
+				this.token = undefined;
+				return await this.handleRefreshToken(token.refreshToken);
+			}
 			this.logoutCurrentUser();
 			return undefined;
 		}
+		console.debug('[currentUser]', response.user);
 		return response.user;
 	};
 
@@ -109,6 +134,7 @@ class AuthManager extends EventEmitter {
 
 	logoutCurrentUser = async () => {
 		if (!this.currentUserId) return;
+		console.debug('[logout]', this.currentUserId);
 		await keytar.deletePassword(KEYTAR_KEY, this.currentUserId);
 		config.setOption('currentUserId', '');
 		this.currentUserId = undefined;
@@ -129,9 +155,9 @@ class AuthManager extends EventEmitter {
 	}
 
 	handleTJMCAuth = () => {
-		return buildUrl('https://oauth.tjmc.ru/authorize', {
+		return buildUrl(OAUTH_HOST + "authorize", {
 			response_type: 'code',
-			client_id: 1,
+			client_id: CLIENT_ID,
 			scope: 'read,write',
 			redirect_uri: 'tjmc://authorize',
 			state: randomString(8),
@@ -139,25 +165,44 @@ class AuthManager extends EventEmitter {
 	}
 
 	handleCode = async (code) => {
-
 		this.emit('handle-code');
-
-		const response = await postBody("https://oauth.tjmc.ru/token", {
+		console.debug(">>", "handleCode");
+		const response = await postBody(OAUTH_HOST + "token", {
 			grant_type: 'authorization_code',
-			client_id: 1,
-			client_secret: 'client1.secret',
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
 			code: code,
 		});
-
 		console.debug(">>", response);
-
 		if (response.accessToken) {
-			this.token = response.accessToken;
-			const user = await this.getCurrentUser();
+			await this.handleTokenResponse(response);
+		}
+	}
+
+	handleRefreshToken = async (refreshToken) => {
+		this.emit('handle-refresh');
+		console.debug(">>", "handleRefreshToken");
+		const response = await postBody(OAUTH_HOST + "token", {
+			grant_type: 'refresh_token',
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+			refresh_token: refreshToken,
+		});
+		console.debug(">>", response);
+		if (response.accessToken) {
+			return await this.handleTokenResponse(response);
+		}
+	}
+
+	handleTokenResponse = async (response, silent = true) => {
+		if (response.accessToken) {
+			const user = await this.getCurrentUser(response);
 			const userId = this.createUserId('tjmc', user.realname);
 			try {
-				config.setOption('currentUserId', userId);
-				keytar.setPassword(KEYTAR_KEY, userId, JSON.stringify({
+				/**
+				 * @type {TJMCToken}
+				 */
+				const token = {
 					type: 'tjmc.auth',
 					accessToken: response.accessToken,
 					accessTokenExpiresAt: response.accessTokenExpiresAt,
@@ -165,17 +210,20 @@ class AuthManager extends EventEmitter {
 					refreshTokenExpiresAt: response.refreshTokenExpiresAt,
 					scope: response.scope,
 					user: { id: response.user.id, username: user.realname },
-				}));
+				};
+				config.setOption('currentUserId', userId);
 				this.currentUserId = userId;
+				keytar.setPassword(KEYTAR_KEY, userId, JSON.stringify(token));
+				this.token = token;
 			} catch (e) {}
-			if (user?.id != undefined) {
+			if (!silent && user?.id != undefined) {
 				this.emit('user-switch', {
 					user: user
 				});
 			}
+			return user;
 		}
-
-	}
+	};
 
 };
 
