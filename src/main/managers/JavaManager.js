@@ -5,6 +5,7 @@ const { promisify } = require('node:util');
 const exec = promisify(child.exec);
 const EventEmitter = require('node:events');
 const { downloadFile, downloadToFile } = require('../util/download');
+const { checkFileHash } = require('../util/Crypto');
 const logger = require("../util/loggerutil")('%c[JavaManager]', 'color: #beb600; font-weight: bold');
 
 class JavaManager extends EventEmitter {
@@ -58,17 +59,35 @@ class JavaManager extends EventEmitter {
   }
 
   /**
+   * @typedef RecommendedJava
+   * @type {object}
+   * @property {string} component Java component code
+   * @property {number} majorVersion Major version java code
+   */
+
+  /**
+   * Pick recommended java from version manifest
+   * @param {object} manifest Manifest object
+   * @returns {RecommendedJava}
+   */
+  pickRecommended = (manifest) =>
+    manifest.javaVersion || { component: 'jre-legacy', majorVersion: 8 };
+
+  getJavaPath = (javaVersionCode) => {
+    const javaDir = path.join(this.rootDir, "java", javaVersionCode);
+    const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle", "Contents", "Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
+    return { javaDir, javaPath };
+  }
+
+  /**
    * Download mojang jre by component code
    * @param {string} javaVersionCode
    * @param {AbortSignal} [signal]
    * @returns
    */
   downloadJava = async (javaVersionCode, signal = undefined) => {
-    const javaDir = path.join(this.rootDir, "java", javaVersionCode);
-    const javaPath = path.join(javaDir, ...(process.platform == "darwin" ? ["jre.bundle","Contents","Home"] : []), "bin", `java${process.platform == "win32" ? ".exe" : ""}`);
-    if (fs.existsSync(javaPath) && (await this.checkJava(javaPath))['run'] != false) {
-      return javaPath;
-    }
+    const { javaDir, javaPath } = this.getJavaPath(javaVersionCode);
+    this.emit('download-progress', { current: 0, total: 1 });
     logger.debug("Download Java:", javaVersionCode);
     const runtimeManifest = await this.fetchRuntimeManifest(javaVersionCode);
     const currentPlatformManifest = this.pickCurrentPlatform(runtimeManifest, javaVersionCode);
@@ -106,27 +125,38 @@ class JavaManager extends EventEmitter {
       }
 
       await Promise.all(filesToDownload.map(async file => {
-        const fileName = path.join(javaDir, file.name);
-        if (!fs.existsSync(path.join(fileName, '..'))) fs.mkdirSync(path.join(fileName, '..'), { recursive: true });
+        const filePath = path.join(javaDir, file.name);
+        if (!fs.existsSync(path.join(filePath, '..'))) fs.mkdirSync(path.join(filePath, '..'), { recursive: true });
         const handleProgress = useProgressCounter();
-        await downloadToFile(file.downloads["raw"].url, fileName, false, handleProgress, signal);
-        if (file.executable && process.platform != "win32") {
-          await exec(`chmod +x "${fileName}"`);
-          await exec(`chmod 755 "${fileName}"`);
+        if (!fs.existsSync(filePath) || !await checkFileHash(filePath, file.downloads["raw"].sha1)) {
+          await downloadToFile(file.downloads["raw"].url, filePath, true, handleProgress, signal);
+          if (file.executable && process.platform != "win32") {
+            await exec(`chmod +x "${filePath}"`);
+            await exec(`chmod 755 "${filePath}"`);
+          }
+        } else {
+          handleProgress({ percent: 1 });
         }
       }));
 
       if (signal?.aborted) return undefined;
       logger.debug("Downloaded Java:", javaVersionCode, "=>", javaPath);
-
-      return javaPath;
+      if ((await this.checkJava(javaPath))['run'] != false) {
+        return javaPath;
+      }
+      return undefined;
     } catch (e) {
       throw e;
     }
   }
 
-  getRecommendedJava = (manifest) =>
-    manifest.javaVersion || { component: 'jre-legacy', majorVersion: 8 };
+  getRecommendedJava = (javaVersionCode) => {
+    const { javaDir, javaPath } = this.getJavaPath(javaVersionCode)
+    if (fs.existsSync(javaPath)) {
+      this.emit('download-progress', { current: 0.5, total: 1 });
+      return javaPath;
+    }
+  }
 
 }
 
