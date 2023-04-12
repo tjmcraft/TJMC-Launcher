@@ -19,15 +19,7 @@ class Minecraft extends EventEmitter {
      * @property {string} overrides.path.gameDirectory - Path to game directory
      * @property {string} mcPath - Path to main jar
      * @property {string} java.javaPath - Path to java executable
-     * @property {object} installation - Installation object
-     * @property {boolean} installation.checkHash - Installation check hash
-     * @property {boolean} installation.checkFiles - Installation check files
-     * @property {object} installation.resolution - Installation resolution object
-     * @property {string | number} installation.resolution.width - Installation width
-     * @property {string | number} installation.resolution.height - Installation height
-     * @property {boolean} installation.resolution.fullscreen - Installation fullscreen mode
-     * @property {string} installation.lastVersionId - ID of current version
-     * @property {string} installation.type - Type of current version
+     * @property {import('../managers/InstallationsManager').Installation} installation - Installation object
      * @property {object} java - Minecraft java options
      * @property {object} java.memory - Minecraft java memory options
      * @property {number} java.memory.min - Minecraft minimum java memory
