@@ -62,7 +62,13 @@ exports.downloadFile = async (url, progressHandler = (e) => void 0) => {
  * @param {AbortSignal} [signal] - abort signal
  * @returns
  */
-exports.downloadToFile = (url, filePath, force = false, progressHandler = (e) => void 0, signal = undefined) => new Promise((resolve, reject) => {
+exports.downloadToFile = (
+  url,
+  filePath,
+  force = false,
+  progressHandler = (e) => void 0,
+  signal = undefined
+) => new Promise((resolve, reject) => {
   if (!url.includes('http')) return resolve(false);
   if (!force && (fs.existsSync(filePath) && fs.readFileSync(filePath).length > 0)) {
     typeof progressHandler == 'function' && progressHandler({
