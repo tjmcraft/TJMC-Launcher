@@ -1,3 +1,4 @@
+const fs = require('node:fs');
 const Config = require('../libs/Config');
 const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
@@ -22,6 +23,32 @@ module.exports.load = () => config.load();
 module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 
+/**
+ * @typedef Installation
+ * @type {object}
+ * @property {Date} created The date when installation is created
+ * @property {string} icon Icon of installation (feature)
+ * @property {'custom'} type Type of installation
+ * @property {fs.PathLike} gameDir Game directory
+ * @property {fs.PathLike} versionDir Version directory
+ * @property {fs.PathLike} mcPath Path when main jar is located
+ * @property {fs.PathLike} javaPath Path when java executable is located
+ * @property {string} javaArgs Additional arguments for java
+ * @property {Date} lastUsed lastUsed time
+ * @property {string} lastVersionId Version id
+ * @property {string} name Name of Installation
+ * @property {object} resolution Resolution object
+ * @property {number} resolution.width Resolution width
+ * @property {number} resolution.height Resolution height
+ * @property {boolean} resolution.fullscreen Resolution fullscreen mode
+ * @property {boolean} checkHash Check hash of installation files
+ * @property {boolean} checkFiles Check files in installation directories
+ */
+
+/**
+ * Default installation scheme
+ * @type {Installation}
+ */
 const DEFAULT_PROFILE = {
     created: new Date().toISOString(),
     icon: undefined,
@@ -54,7 +81,7 @@ const DEFAULT_PROFILE = {
  * @param {Object} options.resolution - Resolution of the game window
  * @param {Object} options.resolution.width - Width of the game window
  * @param {Object} options.resolution.height - Height of the game window
- * @returns {String} - Hash of the created installation profile
+ * @returns {string} - Hash of the created installation profile
  */
 exports.createInstallation = async function (options = {}) {
     const current_date = new Date().toISOString();
@@ -81,8 +108,8 @@ exports.getInstallations = async function () {
 
 /**
  * Returns the installation with the given hash
- * @param {*} hash - The hash of the installation
- * @returns {Object} - The installation's object
+ * @param {string} hash - The hash of the installation
+ * @returns {Installation} - The installation's object
  */
 exports.getInstallation = async function (hash) {
     return exports.getInstallationSync(hash);
@@ -90,8 +117,8 @@ exports.getInstallation = async function (hash) {
 
 /**
  * Returns the installation with the given hash (SYNC)
- * @param {*} hash - The hash of the installation
- * @returns {Object} - The installation's object
+ * @param {string} hash - The hash of the installation
+ * @returns {Installation} - The installation's object
  */
 exports.getInstallationSync = function (hash) {
     const path = require('node:path');
@@ -121,9 +148,9 @@ exports.getInstallationSync = function (hash) {
 
 /**
  * Delete the installation with given hash
- * @param {String} hash - The hash of the installation
- * @param {Boolean} forceDeps - Should we delete all dependencies
- * @returns {Boolean} - Whether the deletion is success
+ * @param {string} hash - The hash of the installation
+ * @param {boolean} forceDeps - Should we delete all dependencies
+ * @returns {boolean} - Whether the deletion is success
  */
 exports.removeInstallation = async function (hash, forceDeps = false) {
     const { removeVersion } = require('./VersionManager');
@@ -138,4 +165,13 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
         return hash;
     }
     return undefined;
+}
+
+/**
+ * Modify the installation with given hash
+ * @param {string} hash The hash of the installation
+ * @param {object} nextProps Props to modify
+ */
+exports.modifyInstallation = async function (hash, nextProps) {
+
 }
