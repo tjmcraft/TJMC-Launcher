@@ -20,7 +20,7 @@ const httpAgent = new http.Agent({ maxSockets: maxSockets, keepAlive: false });
 exports.postBody = async (url, body) => {
   try {
     const promise = got(url, { method: 'POST', form: body });
-    console.debug("->", url, body);
+    console.debug("[postBody]", url, "<-", body);
     const response = await promise;
     if (response.statusCode && response.statusCode != 200) throw new Error('Invalid status code <' + response.statusCode + '>');
     return JSON.parse(response.body);
