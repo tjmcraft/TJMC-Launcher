@@ -248,7 +248,7 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 	if (!user) return MainWindow.restore();
 	Object.assign(params, {
 		auth: {
-			username: user.realname,
+			username: user,
 			uuid: "",
 			access_token: "",
 			user_properties: {}
