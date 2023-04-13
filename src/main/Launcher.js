@@ -236,3 +236,4 @@ const runCallbacks = () => {
 	const filteredInstances = Object.entries(Object.fromEntries(instances)).map(([k, v]) => k);
 	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances) : null);
 };
+
