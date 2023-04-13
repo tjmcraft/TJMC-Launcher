@@ -63,9 +63,10 @@ class Minecraft extends EventEmitter {
 
     /**
      * Loads main client jar
-     * @param version Main version JSON
+     * @param {object} version Main version JSON
+     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async loadClient(version) {
+    async loadClient(version, signal) {
         this.debug && logg.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
         const handleProgress = ({ percent }) => {
             this.emit('progress', {
@@ -78,7 +79,7 @@ class Minecraft extends EventEmitter {
             !fs.existsSync(this.options.mcPath) ||
             (this.overrides.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
-            await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress);
+            await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
         }
         this.debug && logg.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
@@ -88,16 +89,16 @@ class Minecraft extends EventEmitter {
      * Collect cp of libraries
      * @param {Object} classJson - version JSON
      */
-    async getClasses(classJson) {
+    async getClasses(classJson, signal) {
         const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
-        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
+        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven', signal);
         const parsed = classJson.libraries.filter(lib => {
             const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
             const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
             const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
             if (lib_ex) return lib;
         });
-        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
+        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes', signal);
         this.debug && logg.log(`Collected Class Path's! (count: ${libs.length})`);
         return libs;
     }
@@ -110,9 +111,10 @@ class Minecraft extends EventEmitter {
 
     /**
      * Function get and download natives
-     * @param version Main version JSON
+     * @param {object} version Main version JSON
+     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async getNatives(version) {
+    async getNatives(version, signal) {
         let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         this.debug && logg.debug(`Set natives directory to ${nativeDirectory}`)
@@ -130,7 +132,7 @@ class Minecraft extends EventEmitter {
                             : (lib_clfs[`natives-${this.getOS()}`])
                     return native;
                 });
-
+            if (signal?.aborted) return;
             this.emit('progress', {
                 type: 'natives',
                 task: 0,
@@ -147,6 +149,7 @@ class Minecraft extends EventEmitter {
                     (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
                 }
+                if (signal?.aborted) return;
                 try {
                     new Zip(native_path).extractAllTo(nativeDirectory, true);
                 } catch (e) { this.debug && logg.warn(e) }
@@ -167,8 +170,9 @@ class Minecraft extends EventEmitter {
     /**
      * Function getting and download assets
      * @param version Main version JSON
+     * @param {AbortSignal} signal Aborting signal
      */
-    async getAssets(version) {
+    async getAssets(version, signal) {
         let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
@@ -184,6 +188,7 @@ class Minecraft extends EventEmitter {
 
         const assetsToLoad = [];
         const assetProcessor = async (asset, number) => {
+            if (signal?.aborted) return;
             const hash = index.objects[asset].hash;
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
@@ -194,6 +199,7 @@ class Minecraft extends EventEmitter {
             )) {
                 (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
+                    if (signal?.aborted) return;
                     await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
                     count++;
                     this.emit('progress', {
@@ -213,6 +219,7 @@ class Minecraft extends EventEmitter {
             }
             return assetPath;
         };
+        if (signal?.aborted) return;
         if (this.overrides.checkFiles && this.overrides.checkHash) {
             console.time("assets:sync_check");
             for (const number in Object.keys(index.objects)) {
@@ -236,8 +243,9 @@ class Minecraft extends EventEmitter {
      * @param {String} directory - directory
      * @param {Array.<Object>} libraries - libraries array
      * @param {String} type - Meta library type
+     * @param {AbortSignal} signal Aborting signal
      */
-    async downloadLibrary(directory, libraries, type = 'classes') {
+    async downloadLibrary(directory, libraries, type = 'classes', signal) {
         let totalProgress = 0;
         const useProgressCounter = () => {
           let prev = 0;
@@ -294,7 +302,8 @@ class Minecraft extends EventEmitter {
                     (library.url ? library.url : '') + jar_name
                 ];
                 for (const url of urls) {
-                    const loaded = await downloadToFile(url, jarFile, true, handleProgress);
+                    if (signal?.aborted) return;
+                    const loaded = await downloadToFile(url, jarFile, true, handleProgress, signal);
                     // logg.debug(">>", "downloaded", name);
                     if (loaded) break;
                 }
