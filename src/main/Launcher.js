@@ -184,6 +184,9 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			jvm.on('close', (code) => {
 				if (![null, 0, 143].includes(code)) {
 					emit('close', { error: logg_out });
+					InstallationsManager.modifyInstallation(version_hash, {
+						lastSync: undefined
+					});
 				}
 			});
 			performanceMarks.createInstance = performance.now() - performanceMarks.createInstance;
