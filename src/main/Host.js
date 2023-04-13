@@ -84,14 +84,11 @@ const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
-const { buildUrl } = require('./util/Tools');
 
 /**
 * Init reducers for TCHost
 */
 const initHandlers = async () => {
-
-	await AuthManager.load();
 
 	// add sender to main window web contents
 	WSSHost.addSender(WSSHost.updateTypes.ACK, (type, payload) => MainWindow.send(type, payload));

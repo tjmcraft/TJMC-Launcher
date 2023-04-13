@@ -1,10 +1,12 @@
 'use strict';
+const startTime = performance.now();
 const { app } = require('electron');
 
 console.time("> require");
 
 const logger = require('./util/loggerutil')('%c[Main-Core]', 'color: #ff2119; font-weight: bold;');
 
+const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
@@ -55,20 +57,25 @@ if (gotTheLock) {
         console.time("> init managers");
         try {
             {
-                console.time("> init vm");
+                console.time("> init AuthManager");
+                await AuthManager.load();
+                console.timeEnd("> init AuthManager");
+            }
+            {
+                console.time("> init VersionManager");
                 VersionManager.load(ConfigManager.getVersionsDirectory()); // set versions dir
-                console.timeEnd("> init vm");
+                console.timeEnd("> init VersionManager");
             }
             {
-                console.time("> init im");
+                console.time("> init InstallationsManager");
                 InstallationsManager.load(); // load installations
-                console.timeEnd("> init im");
+                console.timeEnd("> init InstallationsManager");
             }
             {
-                console.time("> init hm");
+                console.time("> init HostBridge");
                 const Host = require('./Host');
                 await Host.start(); // start socket and ipc servers
-                console.timeEnd("> init hm");
+                console.timeEnd("> init HostBridge");
             }
         } catch (e) {
             logger.error("[Startup]", "Error:", e);
@@ -86,6 +93,7 @@ if (gotTheLock) {
         }
 
         console.timeEnd("> init ready");
+        logger.debug("Total startup time:", performance.now() - startTime, "ms");
     });
 
     app.on("window-all-closed", () => { });
