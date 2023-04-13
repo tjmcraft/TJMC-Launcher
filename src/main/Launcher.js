@@ -1,4 +1,3 @@
-const { createInstance } = require('./managers/InstanceManager');
 
 const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; font-weight: bold;');
 
@@ -7,11 +6,16 @@ const path = require('node:path');
 const { promiseControl, promiseRequest } = require('./util/Shedulers');
 const { launcherDir } = require('./Paths');
 
+const MainWindow = require('./MainWindow');
+
 const instances = new Map();
 
+const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
+const { createInstance } = require('./managers/InstanceManager');
 const InstallationsManager = require('./managers/InstallationsManager');
+const { Bridge, ackChannels } = require('./Host');
 
 const JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"));
 console.time('java.worker.start');
@@ -237,3 +241,36 @@ const runCallbacks = () => {
 	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances) : null);
 };
 
+exports.launchWithEmit = async (version_hash, params = {}) => {
+	if (!version_hash) return;
+	const user = await AuthManager.getCurrentUserName();
+	if (!user) return MainWindow.restore();
+	Object.assign(params, {
+		auth: {
+			username: user.realname,
+			uuid: "",
+			access_token: "",
+			user_properties: {}
+		}
+	});
+	const eventListener = (event, args) => {
+		args = Object.assign({ version_hash }, args);
+		switch (event) {
+			case 'progress': {
+				MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
+				Bridge.emit(ackChannels.gameProgressLoad, args);
+			}; break;
+			case 'close': {
+				MainWindow.setProgressBar(-1);
+				Bridge.emit(ackChannels.gameStartupError, args);
+			}; break;
+			case 'error': {
+				MainWindow.setProgressBar(-1);
+				Bridge.emit(ackChannels.gameError, args);
+			}; break;
+			default: break;
+		}
+	}
+	this.startLaunch(version_hash, params, eventListener);
+	return true;
+};
