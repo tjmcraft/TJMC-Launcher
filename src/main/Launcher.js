@@ -135,7 +135,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
-			performanceMarks.constructArgs = performance.now();
+			performanceMarks.constructArgs = performance.now(); // @TODO: Move worker to global scope and create queue
 			MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
 				workerData: launcherOptions
 			});
