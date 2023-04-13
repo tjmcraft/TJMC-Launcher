@@ -23,6 +23,15 @@ JavaWorker.once('exit', (code) => {
 	console.warn("JavaWorker exit with code:", code);
 });
 
+const MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"));
+console.time('launch.worker.start');
+MainWorker.once('online', () => {
+	console.timeEnd('launch.worker.start');
+});
+MainWorker.once('exit', (code) => {
+	console.warn("LaunchWorker exit with code:", code);
+});
+
 const instances = new Map();
 
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
@@ -51,17 +60,13 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	}
 
 	const controller = new AbortController();
-	var MainWorker = undefined;
 
 	controller.signal.addEventListener('abort', () => {
 		logger.warn("Aborting..");
 		emit('progress', { type: 'aborting', progress: 0 });
-		// JavaWorker != void 0 && JavaWorker.terminate();
 		JavaWorker.postMessage({ type: 'abort', payload: { label: version_hash } });
-		MainWorker != void 0 && MainWorker.terminate();
-		if (MainWorker == void 0) {
-			return terminateInstance();
-		}
+		MainWorker.postMessage({ type: 'abort', payload: { version_hash } });
+		return terminateInstance();
 	}, { once: true });
 
 	performanceMarks.startup = performance.now() - performanceMarks.startup;
@@ -136,9 +141,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		const argsController = promiseControl();
 		{
 			performanceMarks.constructArgs = performance.now(); // @TODO: Move worker to global scope and create queue
-			MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
-				workerData: launcherOptions
-			});
 			MainWorker.on('message', async ({ type, payload }) => {
 				if (controller.signal.aborted) return;
 				if (type != 'progress') return;
@@ -150,12 +152,13 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				if (type != 'args') return;
 				performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
 				argsController.resolve(payload);
-				MainWorker.terminate();
 			});
-			MainWorker.on('exit', (code) => {
-				console.warn("MainWorker exit with code:", code);
-				MainWorker = undefined;
-				if (controller.signal.aborted) return terminateInstance();
+			MainWorker.postMessage({
+				type: 'start',
+				payload: {
+					version_hash,
+					launcherOptions,
+				}
 			});
 		}
 		const javaArgs = await promiseRequest(argsController);
