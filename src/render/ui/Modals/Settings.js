@@ -89,17 +89,17 @@ const InfoBox = memo(() => {
 	);
 });
 
-const SettingContainer = ({ id, action, header, note, checked }) => {
+const SettingContainer = ({ id, action, header, note, checked, disabled = false }) => {
 	id = id || randomString(5);
 	const onCheck = useCallback(() => {
-		if (typeof action === "function") action.call(this, !checked, id);
-	}, [id, action, checked]);
+		if (typeof action === "function" && !disabled) action.call(this, !checked, id);
+	}, [id, action, checked, disabled]);
 	return (
-		<div className={style.settingContainer}>
+		<div className={buildClassName(style.settingContainer, disabled && style.disabled)}>
 			<div className={style.labelRow}>
 				<label htmlFor={id} className={style.title}>{header || ""}</label>
 				<div className={style.control}>
-					<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} />
+					<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} disabled={disabled} />
 				</div>
 			</div>
 			<div className={style.note}>
@@ -404,15 +404,16 @@ const MinecraftSettingsTab = memo(() => {
 						<h5>Параметры загрузки</h5>
 						<div className={style.settingGroup}>
 							<SettingContainer id="overrides.checkHash"
-								header="Проверять Hash файлов"
+								header="Требовать проверку целостности файлов"
 								note={"Эта опция позволяет вам отключать проверку хеша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачаны автоматически!"}
 								checked={config.overrides.checkHash}
+								disabled={!config.overrides.checkFiles}
 								action={(s) => {
 									setConfig({ key: "overrides.checkHash", value: s });
 								}}
 							/>
 							<SettingContainer id="overrides.checkFiles"
-								header="Проверять наличие файлов"
+								header="Требовать проверку наличия файлов"
 								note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!\n(Ускоряет запуск)"}
 								checked={config.overrides.checkFiles}
 								action={(s) => {
