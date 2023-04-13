@@ -198,7 +198,10 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		}
 
 		InstallationsManager.modifyInstallation(version_hash, {
-			lastUsed: new Date().toISOString()
+			lastUsed: new Date().toISOString(),
+			...(currentInstallation.checkHash ? {
+				lastSync: new Date().toISOString()
+			} : {})
 		});
 
 	} catch (error) {

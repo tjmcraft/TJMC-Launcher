@@ -34,7 +34,8 @@ module.exports.removeCallback = config.removeCallback;
  * @property {fs.PathLike} mcPath Path when main jar is located
  * @property {fs.PathLike} javaPath Path when java executable is located
  * @property {string} javaArgs Additional arguments for java
- * @property {Date} lastUsed lastUsed time
+ * @property {Date} lastUsed Last used time
+ * @property {Date} lastSync Last success file sync time
  * @property {string} lastVersionId Version id
  * @property {string} name Name of Installation
  * @property {object} resolution Resolution object
@@ -59,6 +60,7 @@ const DEFAULT_PROFILE = {
     javaPath: undefined,
     javaArgs: undefined,
     lastUsed: undefined,
+    lastSync: undefined,
     lastVersionId: undefined,
     name: undefined,
     resolution: {
@@ -106,7 +108,7 @@ exports.createInstallation = async function (options = {}) {
  * Get all known Installations from config
  * @returns {Object.<string,Installation>}
  */
-exports.getInstallations = async function () {
+exports.getInstallations = () => {
     return config.getOption("profiles");
 }
 
@@ -115,7 +117,7 @@ exports.getInstallations = async function () {
  * @param {string} hash - The hash of the installation
  * @returns {Installation} - The installation's object
  */
-exports.getInstallation = async function (hash) {
+exports.getInstallation = async (hash) => {
     return exports.getInstallationSync(hash);
 }
 
@@ -124,9 +126,9 @@ exports.getInstallation = async function (hash) {
  * @param {string} hash - The hash of the installation
  * @returns {Installation} - The installation's object
  */
-exports.getInstallationSync = function (hash) {
+exports.getInstallationSync = (hash) => {
     const path = require('node:path');
-    const installations = config.getOption("profiles");
+    const installations = this.getInstallations();
     if (hash && Object(installations).hasOwnProperty(hash)) {
         let installation = installations[hash];
         installation = Object.assign({}, DEFAULT_PROFILE, {
@@ -140,6 +142,12 @@ exports.getInstallationSync = function (hash) {
             path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
         installation.checkHash = installation.checkHash ?? getOption('overrides.checkHash');
         installation.checkFiles = installation.checkFiles ?? getOption('overrides.checkFiles');
+        if (!installation.lastSync ||
+            (new Date().getTime() - new Date(installation.lastSync).getTime()) > (1e3 * 3600)
+        ) { // force sync if expired
+            installation.checkHash = true;
+            installation.checkFiles = true;
+        }
         installation.resolution = {
             width: installation.resolution.width ?? getOption('minecraft.launch.width'),
             height: installation.resolution.height ?? getOption('minecraft.launch.height'),
@@ -174,7 +182,7 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
 /**
  * Modify the installation with given hash
  * @param {string} hash The hash of the installation
- * @param {Installation|object} nextProps Props to modify
+ * @param {Installation} nextProps Props to modify
  */
 exports.modifyInstallation = async function (hash, nextProps) {
     const installations = config.getOption("profiles");
