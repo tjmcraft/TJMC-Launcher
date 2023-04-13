@@ -7,15 +7,12 @@ const { promiseControl, promiseRequest } = require('./util/Shedulers');
 const { launcherDir } = require('./Paths');
 
 const MainWindow = require('./MainWindow');
-
-const instances = new Map();
-
+const { Bridge, ackChannels } = require('./Host');
 const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
 const { createInstance } = require('./managers/InstanceManager');
 const InstallationsManager = require('./managers/InstallationsManager');
-const { Bridge, ackChannels } = require('./Host');
 
 const JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"));
 console.time('java.worker.start');
@@ -25,6 +22,8 @@ JavaWorker.once('online', () => {
 JavaWorker.once('exit', (code) => {
 	console.warn("JavaWorker exit with code:", code);
 });
+
+const instances = new Map();
 
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
@@ -45,14 +44,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	}
 
 	const controller = new AbortController();
-	if (!instances.get(version_hash)) {
-		const instance = Object.seal({
-			controller: controller,
-		});
-		instances.set(version_hash, instance);
-		runCallbacks();
-	};
-
 	var MainWorker = undefined;
 
 	controller.signal.addEventListener('abort', () => {
@@ -69,7 +60,17 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		}
 	}, { once: true });
 
-	console.timeEnd('startup')
+	console.timeEnd('startup');
+
+	if (!instances.get(version_hash)) {
+		const instance = Object.seal({
+			controller: controller,
+		});
+		instances.set(version_hash, instance);
+		runCallbacks();
+	} else {
+		return controller.abort("Same installation is already launching");
+	}
 
 	console.time('getInstallation')
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
