@@ -30,13 +30,21 @@ if (!isMainThread) {
             fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
         logger.log('Attempting to load client');
+        console.time("> client");
         const client = await instance.loadClient(options.manifest);
+        console.timeEnd("> client");
         logger.log('Attempting to load natives');
+        console.time("> natives");
         const nativePath = await instance.getNatives(options.manifest);
+        console.timeEnd("> natives");
         logger.log('Attempting to load classes');
+        console.time("> classes");
         const classes = await instance.getClasses(options.manifest);
+        console.timeEnd("> classes");
         logger.log('Attempting to load assets');
+        console.time("> assets");
         const assets = await instance.getAssets(options.manifest);
+        console.timeEnd("> assets");
 
         const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 
