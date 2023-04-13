@@ -7,6 +7,7 @@ const instances = new Map();
 if (!isMainThread) {
 	parentPort.on('message', async ({ type, payload }) => {
 		if (type == 'start') {
+			if (!payload) return;
 			const { label, rootDir, externalJava, recommendedJava } = payload;
 			if (instances.get(label)) return;
 			const controller = new AbortController();
@@ -15,7 +16,7 @@ if (!isMainThread) {
 			});
 
 			controller.signal.addEventListener('abort', () => {
-				logger.debug("Aborted!");
+				logger.debug("Aborting...");
 			})
 
 			const instance = new JavaManager(rootDir);
