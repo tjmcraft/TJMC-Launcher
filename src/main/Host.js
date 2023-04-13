@@ -77,7 +77,7 @@ const { ipcMain, dialog, shell } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
-const { startLaunch, abortLaunch } = require('./Launcher');
+const Launcher = require('./Launcher');
 
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -195,42 +195,11 @@ const initHandlers = async () => {
 	{ // Launching
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
-			console.debug(">>>", "invokeLaunch");
-			let { version_hash, params = {} } = data;
-			const user = await AuthManager.getCurrentUserName();
-			if (!user) return MainWindow.restore();
-			Object.assign(params, {
-				auth: {
-					username: user.realname,
-					uuid: "",
-					access_token: "",
-					user_properties: {}
-				}
-			});
-			const eventListener = (event, args) => {
-				args = Object.assign({ version_hash }, args);
-				switch (event) {
-					case 'progress': {
-						MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
-						WSSHost.emit(ackChannels.gameProgressLoad, args);
-					}; break;
-					case 'close': {
-						MainWindow.setProgressBar(-1);
-						WSSHost.emit(ackChannels.gameStartupError, args);
-					}; break;
-					case 'error': {
-						MainWindow.setProgressBar(-1);
-						WSSHost.emit(ackChannels.gameError, args);
-					}; break;
-					default: break;
-				}
-			}
-			setImmediate(() => startLaunch(version_hash, params, eventListener));
-			return true;
+			return await Launcher.launchWithEmit(data.version_hash, data.params);
 		});
 		WSSHost.addReducer(requestChannels.revokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
-			return abortLaunch(data.version_hash);
+			return Launcher.abortLaunch(data.version_hash);
 		});
 	}
 

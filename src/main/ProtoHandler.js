@@ -1,8 +1,10 @@
-const logger = require('./util/loggerutil')('%c[ProtoHandler]', 'color: #ff2119; font-weight: bold;');
 const { app } = require('electron');
-const { startLaunch } = require('./Launcher');
 const path = require('node:path');
+
 const { handleCode } = require('./managers/AuthManager');
+const Launcher = require('./Launcher');
+
+const logger = require('./util/loggerutil')('%c[ProtoHandler]', 'color: #ff2119; font-weight: bold;');
 
 const DEFAULT_PROTOCOL_HANDLER = "tjmc";
 
@@ -45,7 +47,7 @@ const protoHandler = (link) => {
 
 		case "launch": {
 			const version_hash = args[0];
-			startLaunch(version_hash);
+			Launcher.launchWithEmit(version_hash);
 		}; break;
 
 		case "authorize": {
