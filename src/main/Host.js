@@ -226,7 +226,7 @@ const initHandlers = async () => {
 			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
-			const installations = await InstallationsManager.getInstallations();
+			const installations = InstallationsManager.getInstallations();
 			return { installations };
 		});
 		WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
