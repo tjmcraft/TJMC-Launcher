@@ -28,18 +28,25 @@ const instances = new Map();
 exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
 	if (!version_hash) throw new Error("version_hash is required");
 
+	const performanceMarks = Object.seal({
+		startup: 0,
+		getInstallation: 0,
+		getVersionManifest: 0,
+		collectOptions: 0,
+		loadJava: 0,
+		constructArgs: 0,
+		createInstance: 0,
+	});
+
 	console.debug(">>", "startLaunch");
 
-	console.time('startup')
+	performanceMarks.startup = performance.now();
 
 	const emit = (eventName, args) => eventListener(eventName, args);
 	const terminateInstance = () => {
 		instances.delete(version_hash);
 		runCallbacks();
-		emit('progress', {
-			type: 'terminated',
-			progress: 0,
-		});
+		emit('progress', { type: 'terminated', progress: 0 });
 		return void 0;
 	}
 
@@ -48,10 +55,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 	controller.signal.addEventListener('abort', () => {
 		logger.warn("Aborting..");
-		emit('progress', {
-			type: 'aborting',
-			progress: 0,
-		});
+		emit('progress', { type: 'aborting', progress: 0 });
 		// JavaWorker != void 0 && JavaWorker.terminate();
 		JavaWorker.postMessage({ type: 'abort', payload: { label: version_hash } });
 		MainWorker != void 0 && MainWorker.terminate();
@@ -60,7 +64,8 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		}
 	}, { once: true });
 
-	console.timeEnd('startup');
+	performanceMarks.startup = performance.now() - performanceMarks.startup;
+
 
 	if (!instances.get(version_hash)) {
 		const instance = Object.seal({
@@ -72,25 +77,20 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		return controller.abort("Same installation is already launching");
 	}
 
-	console.time('getInstallation')
+	performanceMarks.getInstallation = performance.now();
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
 	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
-	console.timeEnd('getInstallation')
+	performanceMarks.getInstallation = performance.now() - performanceMarks.getInstallation;
 
-	console.time('getVersionManifest')
-	emit('progress', {
-		type: 'load:version-manifest',
-		progress: 0.1,
-	});
+	performanceMarks.getVersionManifest = performance.now();
+	emit('progress', { type: 'load:version-manifest', progress: 0.1 });
 	const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ progress }) => {
-		emit('progress', {
-			type: 'load:version-manifest',
-			progress: progress,
-		});
+		emit('progress', { type: 'load:version-manifest', progress: progress });
 	});
-	console.timeEnd('getVersionManifest')
+	performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
 	try {
+		performanceMarks.collectOptions = performance.now();
 		const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
 			manifest: versionFile,
 			installation: currentInstallation,
@@ -101,29 +101,21 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				uuid: undefined,
 			}
 		}, params);
+		performanceMarks.collectOptions = performance.now() - performanceMarks.collectOptions;
 		if (controller.signal.aborted) return terminateInstance();
 		const javaController = promiseControl();
 		{
-			emit('progress', {
-				type: 'load:java',
-				progress: 0.1,
-			});
-			console.time("load:java");
+			performanceMarks.loadJava = performance.now();
+			emit('progress', { type: 'load:java', progress: 0.1 });
 			const JavaHandler = ({ type, payload }) => {
 				if (!controller.signal.aborted) {
 					if (type == 'download-progress') {
-						return emit('progress', {
-							type: 'load:java',
-							progress: payload,
-						});
+						return emit('progress', { type: 'load:java', progress: payload });
 					}
 					if (type == 'javaPath') {
-						console.timeEnd("load:java");
+						performanceMarks.loadJava = performance.now() - performanceMarks.loadJava;
 						javaController.resolve(payload);
-						emit('progress', {
-							type: 'load:java',
-							progress: 1,
-						});
+						emit('progress', { type: 'load:java', progress: 1 });
 					}
 				}
 				JavaWorker.off('message', JavaHandler);
@@ -143,6 +135,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
+			performanceMarks.constructArgs = performance.now();
 			MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"), {
 				workerData: launcherOptions
 			});
@@ -150,14 +143,12 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				if (controller.signal.aborted) return;
 				if (type != 'progress') return;
 				const progress = (payload.task / payload.total);
-				emit('progress', {
-					type: payload.type,
-					progress: progress,
-				});
+				emit('progress', { type: payload.type, progress: progress });
 			});
 			MainWorker.on('message', async ({ type, payload }) => {
 				if (controller.signal.aborted) return;
 				if (type != 'args') return;
+				performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
 				argsController.resolve(payload);
 				MainWorker.terminate();
 			});
@@ -170,6 +161,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		const javaArgs = await promiseRequest(argsController);
 		if (controller.signal.aborted) return terminateInstance();
 		{
+			performanceMarks.createInstance = performance.now();
 			logger.debug(javaPath, javaArgs.join(" "));
 			const jvm = createInstance(version_hash, javaPath, javaArgs, {
 				cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.minecraft,
@@ -177,24 +169,21 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			});
 
 			let error_out = null,
-				std_out = null,
-				logg_out = null;
+					std_out = null,
+					logg_out = null;
 
 			jvm.stderr.on('data', (data) => {
 				logg_out = error_out = data.toString('utf-8');
 			});
-
 			jvm.stdout.on('data', (data) => {
 				logg_out = std_out = data.toString('utf-8');
 			});
-
 			jvm.on('close', (code) => {
 				if (![null, 0, 143].includes(code)) {
-					emit('close', {
-						error: logg_out,
-					});
+					emit('close', { error: logg_out });
 				}
 			});
+			performanceMarks.createInstance = performance.now() - performanceMarks.createInstance;
 		}
 
 		InstallationsManager.modifyInstallation(version_hash, {
@@ -204,13 +193,15 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 			} : {})
 		});
 
+		logger.debug("Performance marks:");
+		// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
+		Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
+
 	} catch (error) {
 		logger.error(error);
 		instances.delete(version_hash);
 		runCallbacks();
-		emit('error', {
-			error: error.message || error,
-		});
+		emit('error', { error: error.message || error });
 	}
 	return terminateInstance();
 }
