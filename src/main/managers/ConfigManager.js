@@ -24,8 +24,8 @@ const DEFAULT_CONFIG = Object.seal({
             versions: path.join(launcherDir, 'minecraft', 'versions'),
             gameDirectory: path.join(launcherDir, 'minecraft')
         },
-        checkHash: true,
-        checkFiles: true,
+        checkHash: false,
+        checkFiles: false,
     },
     minecraft: {
         launch: {
