@@ -9,6 +9,10 @@
     border: unset;
     background: transparent;
 }
+.settingContainer.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
 .settingContainer {
     --inp-background-normal: var(--background-secondary-alt);
     --inp-background-disabled: var(--background-tertiary);
