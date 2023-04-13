@@ -27,9 +27,9 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [x] Fix Forge and other *modded* builds startup issues
 - [x] Fix directories bug and create directories setting
 - [ ] Installations:
-  - [ ] Prevent loading same installation as a second instance in host launcher (strict)
-  - [ ] Implement installations load queue
-  - [ ] Implement *last-used* time on **Installation**
+  - [x] Prevent loading same installation as a second instance in host launcher (strict)
+  - [ ] Implement installations load queue #34
+  - [x] Implement *last-used* time on **Installation**
 - [ ] Auth improvements:
   - [x] Update **Auth** system (move to host as auth server + oauth on web)
   - [x] Offline account support
