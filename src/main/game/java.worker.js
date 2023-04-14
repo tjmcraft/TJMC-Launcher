@@ -1,5 +1,5 @@
 const { parentPort, isMainThread } = require("node:worker_threads");
-const JavaManager = require("../managers/JavaManager");
+const JavaManager = require("./JavaManager");
 const logger = require("../util/loggerutil")('%c[JavaWorker]', 'color: #feb600; font-weight: bold');
 
 const instances = new Map();
