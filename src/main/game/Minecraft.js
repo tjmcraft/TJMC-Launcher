@@ -5,7 +5,7 @@ const Zip = require('adm-zip')
 const EventEmitter = require('events')
 const { downloadToFile } = require('../util/download')
 const { checkFileHash } = require('../util/Crypto')
-const logg = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
+const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 class Minecraft extends EventEmitter {
 
@@ -44,6 +44,7 @@ class Minecraft extends EventEmitter {
         super();
 
         this.debug = false;
+        logger.disabled = !this.debug;
         this.options = options;
         this.javaSeparator = process.platform === 'win32' ? ';' : ':';
         this.checkHash = this.options.installation.checkHash ?? true;
@@ -67,7 +68,7 @@ class Minecraft extends EventEmitter {
      * @param {AbortSignal} signal Signal for aborting loading
      */
     async loadClient(version, signal) {
-        this.debug && logg.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
+        logger.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
         const handleProgress = ({ percent }) => {
             this.emit('progress', {
                 type: 'load:version-jar',
@@ -81,7 +82,7 @@ class Minecraft extends EventEmitter {
         )) {
             await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
         }
-        this.debug && logg.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
+        logger.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
     }
 
@@ -99,7 +100,7 @@ class Minecraft extends EventEmitter {
             if (lib_ex) return lib;
         });
         const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes', signal);
-        this.debug && logg.log(`Collected Class Path's! (count: ${libs.length})`);
+        logger.log(`Collected Class Path's! (count: ${libs.length})`);
         return libs;
     }
 
@@ -117,7 +118,7 @@ class Minecraft extends EventEmitter {
     async getNatives(version, signal) {
         let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-        this.debug && logg.debug(`Set natives directory to ${nativeDirectory}`)
+        logger.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true });
 
@@ -146,13 +147,13 @@ class Minecraft extends EventEmitter {
                     !fs.existsSync(native_path) ||
                     (this.checkHash && !await checkFileHash(native_path, native.sha1))
                 )) {
-                    (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
+                    (index <= 0) && logger.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
                 }
                 if (signal?.aborted) return;
                 try {
                     new Zip(native_path).extractAllTo(nativeDirectory, true);
-                } catch (e) { this.debug && logg.warn(e) }
+                } catch (e) { logger.warn(e) }
                 fs.unlinkSync(native_path);
                 count++;
                 this.emit('progress', {
@@ -161,9 +162,9 @@ class Minecraft extends EventEmitter {
                     total: stat.length,
                 });
             }));
-            this.debug && logg.debug(`Downloaded and extracted natives! ${stat.length}`);
+            logger.debug(`Downloaded and extracted natives! ${stat.length}`);
         }
-        this.debug && logg.debug(`Natives Collected!`);
+        logger.debug(`Natives Collected!`);
         return nativeDirectory;
     }
 
@@ -197,7 +198,7 @@ class Minecraft extends EventEmitter {
                 !fs.existsSync(assetPath) ||
                 (this.checkHash && !await checkFileHash(assetPath, hash))
             )) {
-                (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
+                (number <= 0) && logger.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
                     if (signal?.aborted) return;
                     await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
@@ -235,7 +236,7 @@ class Minecraft extends EventEmitter {
         if (assetsToLoad.length > 0) {
             await Promise.all(assetsToLoad.map(async asset => await asset()));
         }
-        this.debug && logg.debug('Collected assets');
+        logger.debug('Collected assets');
     }
 
     /**
@@ -269,7 +270,7 @@ class Minecraft extends EventEmitter {
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
             const jarFile = path.join(jarPath, name);
-            this.debug && logg.debug(">>", "load", name);
+            logger.debug(">>", "load", name);
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
@@ -277,7 +278,7 @@ class Minecraft extends EventEmitter {
                 !fs.existsSync(jarFile) ||
                 (this.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
             )) {
-                // logg.debug("<<", "download", name);
+                // logger.debug("<<", "download", name);
                 const lib_url = ((library) => {
                     if (isValidUrl(library.downloads?.artifact?.url))
                         return library.downloads.artifact.url;
@@ -304,7 +305,7 @@ class Minecraft extends EventEmitter {
                 for (const url of urls) {
                     if (signal?.aborted) return;
                     const loaded = await downloadToFile(url, jarFile, true, handleProgress, signal);
-                    // logg.debug(">>", "downloaded", name);
+                    // logger.debug(">>", "downloaded", name);
                     if (loaded) break;
                 }
             } else {
@@ -345,7 +346,7 @@ class Minecraft extends EventEmitter {
      */
     getMemory() {
         if (!this.options.java.memory) {
-            this.debug && logg.debug('Memory not set! Setting 1GB as MAX!')
+            logger.debug('Memory not set! Setting 1GB as MAX!')
             this.options.java.memory = {
                 min: 512,
                 max: 1024
@@ -353,7 +354,7 @@ class Minecraft extends EventEmitter {
         }
         if (!isNaN(this.options.java.memory.max) && !isNaN(this.options.java.memory.min)) {
             if (this.options.java.memory.max < this.options.java.memory.min) {
-                this.debug && logg.debug('MIN memory is higher then MAX! Resetting!')
+                logger.debug('MIN memory is higher then MAX! Resetting!')
                 this.options.java.memory.max = 1024
                 this.options.java.memory.min = 512
             }
