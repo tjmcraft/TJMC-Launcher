@@ -45,19 +45,19 @@ class Minecraft extends EventEmitter {
 
         this.debug = false;
         this.options = options;
+        this.javaSeparator = process.platform === 'win32' ? ';' : ':';
+        this.checkHash = this.options.installation.checkHash ?? true;
+        this.checkFiles = this.options.installation.checkFiles ?? true;
         this.overrides = {
-            javaSep: process.platform === 'win32' ? ';' : ':',
             resolution: {
                 width: this.options.installation.resolution.width ?? 854,
                 height: this.options.installation.resolution.height ?? 480,
                 fullscreen: this.options.installation.resolution.fullscreen ?? false,
             },
             version: {
-                id: this.options.installation.lastVersionId,
+                name: this.options.installation.lastVersionId,
                 type: this.options.installation.type,
             },
-            checkHash: this.options.installation.checkHash ?? true,
-            checkFiles: this.options.installation.checkFiles ?? true,
         };
     }
 
@@ -75,9 +75,9 @@ class Minecraft extends EventEmitter {
                 total: 1,
             });
         }
-        if (this.overrides.checkFiles && (
+        if (this.checkFiles && (
             !fs.existsSync(this.options.mcPath) ||
-            (this.overrides.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
+            (this.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
             await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
         }
@@ -142,9 +142,9 @@ class Minecraft extends EventEmitter {
                 if (!native) return
                 const name = native.path.split('/').pop()
                 const native_path = path.join(nativeDirectory, name);
-                if (this.overrides.checkFiles && (
+                if (this.checkFiles && (
                     !fs.existsSync(native_path) ||
-                    (this.overrides.checkHash && !await checkFileHash(native_path, native.sha1))
+                    (this.checkHash && !await checkFileHash(native_path, native.sha1))
                 )) {
                     (index <= 0) && this.debug && logg.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
@@ -193,9 +193,9 @@ class Minecraft extends EventEmitter {
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
-            if (this.overrides.checkFiles && (
+            if (this.checkFiles && (
                 !fs.existsSync(assetPath) ||
-                (this.overrides.checkHash && !await checkFileHash(assetPath, hash))
+                (this.checkHash && !await checkFileHash(assetPath, hash))
             )) {
                 (number <= 0) && this.debug && logg.debug(`Downloading assets...`);
                 assetsToLoad.push(async () => {
@@ -210,7 +210,7 @@ class Minecraft extends EventEmitter {
                 });
             } else {
                 count++;
-                this.overrides.checkFiles && // no emit when check files is off (causes lagging)
+                this.checkFiles && // no emit when check files is off (causes lagging)
                 this.emit('progress', {
                     type: 'assets',
                     task: count,
@@ -220,7 +220,7 @@ class Minecraft extends EventEmitter {
             return assetPath;
         };
         if (signal?.aborted) return;
-        if (this.overrides.checkFiles && this.overrides.checkHash) {
+        if (this.checkFiles && this.checkHash) {
             console.time("assets:sync_check");
             for (const number in Object.keys(index.objects)) {
                 const asset = Object.keys(index.objects)[number];
@@ -273,9 +273,9 @@ class Minecraft extends EventEmitter {
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
 
-            if (this.overrides.checkFiles && (
+            if (this.checkFiles && (
                 !fs.existsSync(jarFile) ||
-                (this.overrides.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
+                (this.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
             )) {
                 // logg.debug("<<", "download", name);
                 const lib_url = ((library) => {
@@ -367,7 +367,7 @@ class Minecraft extends EventEmitter {
     constructJVMArguments(versionFile, tempNativePath, cp) {
         const assetRoot = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         const assetPath = path.join(assetRoot)
-        const jar = this.overrides.javaSep + this.options.mcPath;
+        const jar = this.javaSeparator + this.options.mcPath;
         this.fields = {
             '${auth_access_token}': this.options.auth.access_token || this.options.auth.uuid,
             '${auth_session}': this.options.auth.access_token || this.options.auth.uuid,
@@ -376,7 +376,7 @@ class Minecraft extends EventEmitter {
             '${auth_xuid}': this.options.auth.uuid,
             '${user_properties}': JSON.stringify(this.options.auth.user_properties) || `{}`,
             '${user_type}': 'mojang',
-            '${version_name}': this.overrides.version.id,
+            '${version_name}': this.overrides.version.name,
             '${assets_index_name}': versionFile.assetIndex.id,
             '${game_directory}': this.options.overrides.path.gameDirectory,
             '${assets_root}': assetPath,
@@ -385,7 +385,7 @@ class Minecraft extends EventEmitter {
             '${clientid}': this.options.auth.access_token,
             '${resolution_width}': this.overrides.resolution.width,
             '${resolution_height}': this.overrides.resolution.height,
-            '${classpath}': `${cp.join(this.overrides.javaSep) + jar}`,
+            '${classpath}': `${cp.join(this.javaSeparator) + jar}`,
             '${natives_directory}': tempNativePath,
             '${game_libraries_directory}': this.options.overrides.path.versions,
             '${launcher_name}': 'TJMC',
@@ -405,7 +405,7 @@ class Minecraft extends EventEmitter {
     getJVMArgs112(versionFile, tempNativePath, cp) {
 
         let args = []
-        const jar = (this.overrides.javaSep) + this.options.mcPath;
+        const jar = (this.javaSeparator) + this.options.mcPath;
 
         // Java Arguments
         if (process.platform === 'darwin') {
@@ -418,7 +418,7 @@ class Minecraft extends EventEmitter {
 
         // Classpath Argument
         args.push('-cp')
-        args.push(`${cp.join(this.overrides.javaSep) + jar}`)
+        args.push(`${cp.join(this.javaSeparator) + jar}`)
 
         // Main Java Class
         args.push(versionFile.mainClass)
