@@ -14,7 +14,7 @@ const VersionManager = require('./managers/VersionManager');
 const { createInstance } = require('./managers/InstanceManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 
-const MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"));
+const MainWorker = new Worker(path.resolve(__dirname, "game/main.worker.js"));
 console.time('launch.worker.start');
 MainWorker.once('online', () => {
 	console.timeEnd('launch.worker.start');
