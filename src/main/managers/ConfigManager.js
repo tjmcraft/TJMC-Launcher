@@ -50,6 +50,10 @@ module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 module.exports.watchOption = config.watchOption;
 
+/**
+ *
+ * @returns {DEFAULT_CONFIG}
+ */
 exports.getAllOptionsSync = () => config.getOption();
 exports.getAllOptions = async () => config.getOption();
 exports.setOption = (key, value) => config.setOption(key, value);
