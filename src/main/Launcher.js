@@ -137,7 +137,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		performanceMarks.loadJava = performance.now();
 		const javaPath = await promiseRequest(javaController);
-		performanceMarks.constructArgs = performance.now(); // @TODO: Move worker to global scope and create queue
+		performanceMarks.constructArgs = performance.now(); // @TODO: create queue
 		const javaArgs = await promiseRequest(argsController);
 
 		if (controller.signal.aborted) return terminateInstance();
