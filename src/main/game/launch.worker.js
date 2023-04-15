@@ -2,6 +2,7 @@ const { parentPort, isMainThread } = require("node:worker_threads");
 const fs = require('node:fs');
 const path = require('node:path');
 
+const JavaManager = require("./JavaManager");
 const Minecraft = require('./Minecraft');
 const { getOfflineUUID } = require('../util/Tools');
 const LoggerUtil = require('../util/loggerutil');
@@ -9,10 +10,13 @@ const LoggerUtil = require('../util/loggerutil');
 const instances = new Map();
 
 if (!isMainThread) {
+	const logger = LoggerUtil('%c[MainWorker]', 'color: #ff9119; font-weight: bold;');
 	parentPort.on('message', async ({ type, payload }) => {
-		if (type == 'start') {
-			if (!payload) return;
-			const { version_hash, launcherOptions } = payload;
+		if (type != 'start') return;
+		if (!payload) return;
+		const { version_hash, launcherOptions } = payload;
+		if (instances.get(version_hash)) return;
+		try {
 
 			const controller = new AbortController();
 			instances.set(version_hash, {
@@ -24,6 +28,7 @@ if (!isMainThread) {
 
 			controller.signal.addEventListener('abort', () => {
 				logger.debug("Aborting...");
+				instances.delete(version_hash);
 			})
 
 			options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
@@ -36,10 +41,58 @@ if (!isMainThread) {
 			logger.debug("Launcher compiled options:", options);
 			if (controller.signal.aborted) return;
 
-			const instance = new Minecraft(options);
-			instance.on('progress', (e) => parentPort.postMessage({ type: 'progress', payload: e }));
+			const javaPath = await new Promise(async (resolve, reject) => {
+				const externalJava = launcherOptions.installation.javaPath || launcherOptions.java.javaPath;
+				const recommendedJava = launcherOptions.manifest.javaVersion;
 
-			(async () => {
+				const instance = new JavaManager(launcherOptions.overrides.path.root);
+				instance.on('download-progress', (e) => {
+					const progress = (e.current / e.total);
+					parentPort.postMessage({ type: 'java:progress', payload: progress });
+				});
+
+				const checkJava = async (javaPath, type = 'external') => {
+					if (!["", undefined].includes(javaPath)) {
+						const java = await instance.checkJava(javaPath);
+						if (!java.run) {
+							logger.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
+						} else {
+							logger.debug(`Using Java (${javaPath}) version ${java.version} ${java.arch}`);
+							return javaPath;
+						}
+					}
+					return undefined;
+				};
+
+				const checkExternal = async () => checkJava(externalJava, 'external');
+				const checkRecommended = async () => {
+					const recommended = instance.pickRecommended({ javaVersion: recommendedJava });
+					const cachedJava = () => instance.getRecommendedJava(recommended.component);
+					const downloadJava = () => instance.downloadJava(recommended.component, controller.signal);
+					for (const task of [cachedJava, downloadJava]) {
+						const java = await task();
+						if (await checkJava(java, 'recommended')) return java;
+					}
+					return undefined;
+				}
+				const checkInternal = async () => checkJava('java', 'internal');
+
+				for (const task of [checkExternal, checkRecommended, checkInternal]) {
+					if (controller.signal.aborted) break;
+					const java = await task();
+					if (java != void 0) {
+						return resolve(java);
+					}
+				}
+				return reject("No valid java found");
+				// return parentPort.postMessage({ type: 'error', payload: "No java found!" });
+			});
+			parentPort.postMessage({ type: 'javaPath', payload: javaPath });
+
+			const javaArgs = await new Promise(async (resolve, reject) => {
+				const instance = new Minecraft(options);
+				instance.on('progress', (e) => parentPort.postMessage({ type: 'args:progress', payload: e }));
+
 				if (!fs.existsSync(options.overrides.path.version))
 					fs.mkdirSync(options.overrides.path.version, { recursive: true });
 				if (!fs.existsSync(options.overrides.path.gameDirectory))
@@ -65,22 +118,25 @@ if (!isMainThread) {
 				const assets = await instance.getAssets(options.manifest, controller.signal);
 				console.timeEnd("> assets");
 				if (controller.signal.aborted) return;
-
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 				if (controller.signal.aborted) return;
+				return resolve(args);
+			});
+			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
 
-				instances.delete(version_hash);
-				parentPort.postMessage({ type: 'args', payload: args });
-			})();
+		} catch (e) {
+			logger.error(e);
+			parentPort.postMessage({ type: 'error', payload: e });
+		} finally {
+			instances.delete(version_hash);
 		}
 	});
 	parentPort.on('message', async ({ type, payload }) => {
-		if (type == 'abort') {
-			const { version_hash } = payload;
-			if (!instances.get(version_hash)) return;
-			const { controller } = instances.get(version_hash);
-			controller.abort();
-			instances.delete(version_hash);
-		}
+		if (type != 'abort') return;
+		const { version_hash } = payload;
+		if (!instances.get(version_hash)) return;
+		const { controller } = instances.get(version_hash);
+		controller.abort();
+		instances.delete(version_hash);
 	});
 }

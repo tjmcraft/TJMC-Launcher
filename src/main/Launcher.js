@@ -14,15 +14,6 @@ const VersionManager = require('./managers/VersionManager');
 const { createInstance } = require('./managers/InstanceManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 
-const JavaWorker = new Worker(path.resolve(__dirname, "game/java.worker.js"));
-console.time('java.worker.start');
-JavaWorker.once('online', () => {
-	console.timeEnd('java.worker.start');
-});
-JavaWorker.once('exit', (code) => {
-	console.warn("JavaWorker exit with code:", code);
-});
-
 const MainWorker = new Worker(path.resolve(__dirname, "game/launch.worker.js"));
 console.time('launch.worker.start');
 MainWorker.once('online', () => {
@@ -56,6 +47,11 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		instances.delete(version_hash);
 		runCallbacks();
 		emit('progress', { type: 'terminated', progress: 0 });
+
+		logger.debug("Performance marks:");
+		// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
+		Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
+		logger.debug("total", '=>', Object.values(performanceMarks).reduce((c, v) => c = c + v, 0) + 'ms')
 		return void 0;
 	}
 
@@ -64,7 +60,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	controller.signal.addEventListener('abort', () => {
 		logger.warn("Aborting..");
 		emit('progress', { type: 'aborting', progress: 0 });
-		JavaWorker.postMessage({ type: 'abort', payload: { label: version_hash } });
 		MainWorker.postMessage({ type: 'abort', payload: { version_hash } });
 		return terminateInstance();
 	}, { once: true });
@@ -106,15 +101,19 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				uuid: undefined,
 			}
 		}, params);
+		Object.assign(launcherOptions.overrides.path, {
+			root: launcherDir
+		});
 		performanceMarks.collectOptions = performance.now() - performanceMarks.collectOptions;
 		if (controller.signal.aborted) return terminateInstance();
+		MainWorker.postMessage({ type: 'start', payload: { version_hash, launcherOptions } });
 		const javaController = promiseControl();
 		{
 			performanceMarks.loadJava = performance.now();
 			emit('progress', { type: 'load:java', progress: 0.1 });
 			const JavaHandler = ({ type, payload }) => {
 				if (!controller.signal.aborted) {
-					if (type == 'download-progress') {
+					if (type == 'java:progress') {
 						return emit('progress', { type: 'load:java', progress: payload });
 					}
 					if (type == 'javaPath') {
@@ -123,43 +122,29 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 						emit('progress', { type: 'load:java', progress: 1 });
 					}
 				}
-				JavaWorker.off('message', JavaHandler);
+				MainWorker.off('message', JavaHandler);
 			}
-			JavaWorker.on('message', JavaHandler);
-			JavaWorker.postMessage({
-				type: 'start',
-				payload: {
-					label: version_hash,
-					rootDir: launcherDir,
-					recommendedJava: launcherOptions.manifest.javaVersion,
-					externalJava: launcherOptions.installation.javaPath || launcherOptions.java.javaPath
-				}
-			});
+			MainWorker.on('message', JavaHandler);
 		}
 		const javaPath = await promiseRequest(javaController);
 		if (controller.signal.aborted) return terminateInstance();
 		const argsController = promiseControl();
 		{
 			performanceMarks.constructArgs = performance.now(); // @TODO: Move worker to global scope and create queue
-			MainWorker.on('message', async ({ type, payload }) => {
-				if (controller.signal.aborted) return;
-				if (type != 'progress') return;
-				const progress = (payload.task / payload.total);
-				emit('progress', { type: payload.type, progress: progress });
-			});
-			MainWorker.on('message', async ({ type, payload }) => {
-				if (controller.signal.aborted) return;
-				if (type != 'args') return;
-				performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
-				argsController.resolve(payload);
-			});
-			MainWorker.postMessage({
-				type: 'start',
-				payload: {
-					version_hash,
-					launcherOptions,
+			const ArgsHandler = async ({ type, payload }) => {
+				if (!controller.signal.aborted) {
+					if (type == 'args:progress') {
+						const progress = (payload.task / payload.total);
+						return emit('progress', { type: payload.type, progress: progress });
+					}
+					if (type == 'javaArgs') {
+						performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
+						argsController.resolve(payload);
+					}
 				}
-			});
+				MainWorker.off('message', ArgsHandler);
+			}
+			MainWorker.on('message', ArgsHandler);
 		}
 		const javaArgs = await promiseRequest(argsController);
 		if (controller.signal.aborted) return terminateInstance();
@@ -198,10 +183,6 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 				lastSync: new Date().toISOString()
 			} : {})
 		});
-
-		logger.debug("Performance marks:");
-		// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
-		Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
 
 	} catch (error) {
 		logger.error(error);
