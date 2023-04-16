@@ -59,6 +59,7 @@ class Minecraft extends EventEmitter {
                 name: this.options.installation.lastVersionId,
                 type: this.options.installation.type,
             },
+            autoConnect: this.options.installation.autoConnect ?? false,
         };
     }
 
@@ -424,6 +425,10 @@ class Minecraft extends EventEmitter {
         // Main Java Class
         args.push(versionFile.mainClass)
 
+        if (this.overrides.autoConnect) {
+            args.push('--server=' + 'play.tjmc.ru');
+        }
+
         // Forge Arguments
         args = args.concat(this.resolveArgs(versionFile))
 
@@ -451,6 +456,10 @@ class Minecraft extends EventEmitter {
 
         // Main Java Class
         args.push(versionFile.mainClass)
+
+        if (this.overrides.autoConnect) {
+            args.push('--server=' + 'play.tjmc.ru');
+        }
 
         // Vanilla Arguments
         args = args.concat(versionFile.arguments.game)

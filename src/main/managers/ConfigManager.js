@@ -32,7 +32,8 @@ const DEFAULT_CONFIG = Object.seal({
             fullscreen: false,
             width: 1280,
             height: 720
-        }
+        },
+        autoConnect: false,
     },
 });
 
