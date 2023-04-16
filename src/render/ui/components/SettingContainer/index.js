@@ -20,7 +20,7 @@ const SettingContainer = ({
 		);
 	}
 	return (
-		<div className={style.settingContainer}>
+		<div className={buildClassName(style.settingContainer, disabled && style.disabled)}>
 			<div className={style.labelRow}>
 				{title && <label htmlFor={forId} className={style.title}>{title || ""}</label>}
 				<div className={style.control}>
