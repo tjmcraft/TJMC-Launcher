@@ -145,6 +145,7 @@ exports.getInstallationSync = (hash) => {
         installation.checkHash = installation.checkHash ?? getOption('overrides.checkHash');
         installation.checkFiles = installation.checkFiles ?? getOption('overrides.checkFiles');
         installation.autoConnect = installation.autoConnect ?? getOption('minecraft.autoConnect');
+        installation.javaArgs = installation.javaArgs ?? getOption('java.args');
         if (!installation.lastSync ||
             (new Date().getTime() - new Date(installation.lastSync).getTime()) > (1e3 * 3600)
         ) { // force sync if expired

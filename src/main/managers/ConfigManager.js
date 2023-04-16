@@ -10,7 +10,8 @@ const DEFAULT_CONFIG = Object.seal({
             min: 512
         },
         detached: true,
-        cwd: ''
+        cwd: '',
+        args: '',
     },
     launcher: {
         checkUpdates: true,
