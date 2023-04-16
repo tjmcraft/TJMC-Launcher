@@ -187,6 +187,9 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		instances.delete(version_hash);
 		runCallbacks();
 		emit('error', { error: error.message || error });
+		InstallationsManager.modifyInstallation(version_hash, {
+			lastSync: undefined
+		});
 	}
 	return terminateInstance();
 }
