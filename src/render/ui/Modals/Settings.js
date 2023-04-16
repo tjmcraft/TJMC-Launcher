@@ -20,7 +20,7 @@ import RangeSlider from "UI/components/Slider.js";
 import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
-import { PathInput } from "UI/components/Input";
+import { InputGroup, PathInput } from "UI/components/Input";
 import Button from "UI/components/Button";
 
 import iconImage from "IMG/icon.png";
@@ -80,7 +80,7 @@ const InfoBox = memo(() => {
 			{APP_ENV == "development" && (
 				<Fragment>
 					<span className={buildClassName(style.line, style.size12)}>Packages:</span>
-					{Object.entries(window.tjmcNative.versions).map(([k,v]) =>
+					{Object.entries(window.tjmcNative.versions).map(([k, v]) =>
 						(<span key={k} className={buildClassName(style.line, style.size12)}>{`${k}\xa0${v}`}</span>)
 					)}
 				</Fragment>
@@ -437,9 +437,17 @@ const JavaSettingsTab = memo(() => {
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
+	const [javaArgs, setJavaArgs] = useState("");
+
+	useEffect(() => setJavaArgs(config?.java?.args), [config?.java?.args]);
+
 	const handleChangeJavaPath = useCallback((javaPath) => {
 		setConfig({ key: "java.javaPath", value: javaPath });
 	}, [setConfig]);
+
+	const handleSaveJavaArgs = useCallback(() => {
+		setConfig({ key: "java.args", value: javaArgs });
+	}, [setConfig, javaArgs]);
 
 	return (
 		<TabItem id="java-settings">
@@ -448,14 +456,24 @@ const JavaSettingsTab = memo(() => {
 				<div className="children">
 					<div className={style.settingGroupContainer}>
 						<h5>Исполняемый файл</h5>
-						<div className={""}>
-							<PathInput
-								type="file"
-								placeholder="<java>"
-								onChange={handleChangeJavaPath}
-								value={config?.java?.javaPath}
-							/>
-						</div>
+						<PathInput
+							type="file"
+							placeholder="<java:path>"
+							onChange={handleChangeJavaPath}
+							value={config?.java?.path}
+						/>
+					</div>
+					<div className={style.settingGroupContainer}>
+						<h5>Дополнительные аргументы</h5>
+						<InputGroup htmlFor="settings.java.args.input">
+							<input id="settings.java.args.input"
+								type="text"
+								name="settings-java-args"
+								value={javaArgs}
+								onChange={(e) => setJavaArgs(e.target.value)}
+								onBlur={handleSaveJavaArgs}
+								placeholder="<java:args>" />
+						</InputGroup>
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
@@ -810,7 +828,7 @@ const UpdatesContainer = memo(() => {
 			"not-available": updateCheck,
 			available: updateDownload,
 			loaded: updateInstall,
-		})[updateStatus] || (() => {}))();
+		})[updateStatus] || (() => { }))();
 	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
 
 	function renderProgress(value) {
