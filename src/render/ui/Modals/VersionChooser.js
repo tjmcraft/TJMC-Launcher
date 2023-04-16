@@ -16,6 +16,7 @@ import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 
 import "./VersionChooser.css";
+import ToggleSwitch from "UI/components/ToggleSwitch";
 
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
@@ -237,7 +238,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 						</div>
 					</InputGroup>
 				</div>
-				<div className="children-zx1" style={{display: "none"}}>
+				<div className="children-zx1" style={{ display: "none" }}>
 					<JavaSelector
 						title="Путь к java"
 						items={fakeJavas}
@@ -265,6 +266,14 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 							value={javaArgs}
 							onChange={(e) => setJavaArgs(e.target.value)}
 							placeholder="Java Arguments" />
+					</InputGroup>
+				</div>
+				<div className="children-zx1">
+					<InputGroup title="Switch Test" htmlFor="installation.switch.test">
+						<ToggleSwitch id="installation.switch.test"
+							checked={false}
+							onChange={() => void 0}
+						/>
 					</InputGroup>
 				</div>
 			</div>

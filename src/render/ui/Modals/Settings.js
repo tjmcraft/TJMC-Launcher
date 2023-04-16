@@ -26,6 +26,9 @@ import Button from "UI/components/Button";
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
 import "CSS/markdown.css";
+import SettingSwitch from "UI/components/SettingSwitch";
+import SettingButton from "UI/components/SettingButton";
+import SettingContainer from "UI/components/SettingContainer";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
@@ -89,87 +92,6 @@ const InfoBox = memo(() => {
 	);
 });
 
-const SettingContainer = ({ id, action, header, note, checked, disabled = false }) => {
-	id = id || randomString(5);
-	const onCheck = useCallback(() => {
-		if (typeof action === "function" && !disabled) action.call(this, !checked, id);
-	}, [id, action, checked, disabled]);
-	return (
-		<div className={buildClassName(style.settingContainer, disabled && style.disabled)}>
-			<div className={style.labelRow}>
-				<label htmlFor={id} className={style.title}>{header || ""}</label>
-				<div className={style.control}>
-					<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} disabled={disabled} />
-				</div>
-			</div>
-			<div className={style.note}>
-				<div className={style.description}>{note || ""}</div>
-			</div>
-			{/* <div className={buildClassName(style.divider, style.dividerDefault)} /> */}
-		</div>
-	);
-};
-
-const SettingContainerTwo = ({
-	note = undefined,
-	children,
-}) => {
-	return (
-		<div className={style.settingContainer}>
-			<div className={style.labelRow}>
-				{children}
-			</div>
-			{note && (
-				<div className={style.note}>
-					<div className={style.description}>{note}</div>
-				</div>
-			)}
-		</div>
-	);
-};
-
-const SettingSwitch = ({
-	id = undefined,
-	title,
-	note = undefined,
-	action = void 0,
-	checked = false,
-}) => {
-	id = id || randomString(5);
-	const onCheck = useCallback(() => {
-		if (typeof action === "function") action.call(this, !checked, id);
-	}, [id, action, checked]);
-	return (
-		<SettingContainerTwo note={note}>
-			<label htmlFor={id} className={style.title}>{title || ""}</label>
-			<div className={style.control}>
-				<ToggleSwitch id={id} checked={Boolean(checked)} onChange={onCheck} />
-			</div>
-		</SettingContainerTwo>
-	);
-};
-
-const SettingButton = ({
-	id = undefined,
-	title,
-	note = undefined,
-	name,
-	action = void 0,
-}) => {
-	id = id || randomString(5);
-	const handleClick = useCallback(() => {
-		if (typeof action === "function") action.call(this, id);
-	}, [id, action]);
-	return (
-		<SettingContainerTwo note={note}>
-			<label htmlFor={id} className={style.title}>{title || ""}</label>
-			<div className={style.control}>
-				<button id={id} className={buildClassName("filled", "small")} onClick={handleClick}>{name || "click"}</button>
-			</div>
-		</SettingContainerTwo>
-	);
-};
-
 const TabItem = (({ id, children }) => {
 	return <div className="tab" id={id}>{children}</div>;
 });
@@ -194,8 +116,7 @@ const TestContainer = memo(() => {
 		<div className={style.settingGroupContainer}>
 			<h5>Debug container</h5>
 			<div className={buildClassName(style.settingGroup, style.withBorder)}>
-				<div className={style.settingContainer}>
-					<div className={style.description}>{"You can use selectable menu"}</div>
+				<SettingContainer note={"You can use selectable menu"} inputMode>
 					<div className={"test"}>
 						<Select title="Select item" value={items[selectedIndex]}>
 							{items.map((e, i) => (
@@ -207,7 +128,7 @@ const TestContainer = memo(() => {
 							))}
 						</Select>
 					</div>
-				</div>
+				</SettingContainer>
 				<SettingSwitch
 					id={"tjmc.app.example.switch"}
 					checked={checked}
@@ -234,9 +155,7 @@ const TestContainer = memo(() => {
 					name={"Click"}
 					action={() => setCount(s => s + 1)}
 				/>
-				<div className={style.settingContainer}>
-					<div className={style.description}>{"You can easily write single description text"}</div>
-				</div>
+				<SettingContainer inputMode note={"You can easily write single description text"} />
 			</div>
 		</div>
 	);
@@ -377,8 +296,8 @@ const MinecraftSettingsTab = memo(() => {
 								placeholder={"<auto>"} />
 						</div>
 						<div className={style.settingGroup}>
-							<SettingContainer id="minecraft.launch.fullscreen"
-								header="Запускать в полноэкранном режиме"
+							<SettingSwitch id="minecraft.launch.fullscreen"
+								title="Запускать в полноэкранном режиме"
 								note="Принудительно использовать режим fullscreen для нового окна"
 								checked={config.minecraft.launch.fullscreen}
 								action={(s) => {
@@ -390,8 +309,8 @@ const MinecraftSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Параметры запуска</h5>
 						<div className={style.settingGroup}>
-							<SettingContainer id="overrides.autoConnect"
-								header="Автоматически подключаться к серверу ТюменьCraft"
+							<SettingSwitch id="overrides.autoConnect"
+								title="Автоматически подключаться к серверу ТюменьCraft"
 								note="Подключаться к серверу автоматически, при запуске игры"
 								checked={config.minecraft.autoConnect}
 								action={(s) => {
@@ -403,8 +322,8 @@ const MinecraftSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Параметры загрузки</h5>
 						<div className={style.settingGroup}>
-							<SettingContainer id="overrides.checkHash"
-								header="Требовать проверку целостности файлов"
+							<SettingSwitch id="overrides.checkHash"
+								title="Требовать проверку целостности файлов"
 								note={"Эта опция позволяет вам отключать проверку хеша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачаны автоматически!"}
 								checked={config.overrides.checkHash}
 								disabled={!config.overrides.checkFiles}
@@ -412,8 +331,8 @@ const MinecraftSettingsTab = memo(() => {
 									setConfig({ key: "overrides.checkHash", value: s });
 								}}
 							/>
-							<SettingContainer id="overrides.checkFiles"
-								header="Требовать проверку наличия файлов"
+							<SettingSwitch id="overrides.checkFiles"
+								title="Требовать проверку наличия файлов"
 								note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!\n(Ускоряет запуск)"}
 								checked={config.overrides.checkFiles}
 								action={(s) => {
@@ -478,7 +397,7 @@ const JavaSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Использование памяти</h5>
 						<div className={style.settingGroup}>
-							<div className={buildClassName(style.settingContainer)}>
+							<SettingContainer inputMode>
 								<div className={buildClassName("flex-group", "vertical")}>
 									<div className={buildClassName("flex-child", "flex-group", "vertical")}>
 										<h5>Максимальное использование памяти</h5>
@@ -507,14 +426,14 @@ const JavaSettingsTab = memo(() => {
 										/>
 									</div>
 								</div>
-							</div>
+							</SettingContainer>
 						</div>
 					</div>
 					<div className={style.settingGroupContainer}>
 						<h5>Дополнительно</h5>
 						<div className={style.settingGroup}>
-							<SettingContainer id="java.detached"
-								header="Независимый процесс"
+							<SettingSwitch id="java.detached"
+								title="Независимый процесс"
 								note="Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры"
 								checked={config.java.detached}
 								action={(s) => {
@@ -548,27 +467,24 @@ const LauncherSettingsTab = memo(() => {
 					<div className={style.settingGroupContainer}>
 						<h5>Настройки клиента</h5>
 						<div className={style.settingGroup}>
-							<SettingContainer
-								id="launcher.checkUpdates"
-								header="Проверять обновления"
+							<SettingSwitch id="launcher.checkUpdates"
+								title="Проверять обновления"
 								note="Отключение этого параметра позволяет пропускать проверку обновлений при холодном запуске."
 								checked={config.launcher.checkUpdates}
 								action={(s) => {
 									setConfig({ key: "launcher.checkUpdates", value: s });
 								}}
 							/>
-							<SettingContainer
-								id="launcher.hideOnClose"
-								header="Скрывать при закрытии"
+							<SettingSwitch id="launcher.hideOnClose"
+								title="Скрывать при закрытии"
 								note="Включение этого параметра позволяет скрывать лаунчер в трей при нажатии на кнопку закрыть."
 								checked={config.launcher.hideOnClose}
 								action={(s) => {
 									setConfig({ key: "launcher.hideOnClose", value: s });
 								}}
 							/>
-							<SettingContainer
-								id="launcher.disableHardwareAcceleration"
-								header="Отключить программную акселерацию"
+							<SettingSwitch id="launcher.disableHardwareAcceleration"
+								title="Отключить программную акселерацию"
 								note="Включение этого параметра позволяет отключить программное ускорение. Может вызвать проблемы на некоторых системах!"
 								checked={config.launcher.disableHardwareAcceleration}
 								action={(s) => {
@@ -595,9 +511,8 @@ const LauncherSettingsTab = memo(() => {
 
 								}}
 							/>
-							<SettingContainer
-								id="launcher.openDevTools"
-								header="Открывать средства разработчика"
+							<SettingSwitch id="launcher.openDevTools"
+								title="Открывать средства разработчика"
 								note="Включение этого параметра позволяет скрывать и показывать средства разработчика"
 								checked={config.launcher.openDevTools}
 								action={(s) => {
@@ -610,9 +525,8 @@ const LauncherSettingsTab = memo(() => {
 				<div className={style.settingGroupContainer}>
 					<h5>Базовая Отладка</h5>
 					<div className={style.settingGroup}>
-						<SettingContainer
-							id="app.debug.mode"
-							header="Использование режима отладки"
+						<SettingSwitch id="app.debug.mode"
+							title="Использование режима отладки"
 							note="Включение этого параметра позволяет разработчикам получать больше данных об ошибках в консоли приложения."
 							checked={settings.debug_mode}
 							action={(s) => {
@@ -643,9 +557,8 @@ const LauncherSettingsTab = memo(() => {
 				<div className={style.settingGroupContainer}>
 					<h5>Отладка сетевых данных</h5>
 					<div className={style.settingGroup}>
-						<SettingContainer
-							id="app.debug.host"
-							header="Высерание данных для отладки хоста"
+						<SettingSwitch id="app.debug.host"
+							title="Высерание данных для отладки хоста"
 							note="Эта настройка позволяет разработчикам получать дополнительную информацию о взаимодействии клиента с хостом через IPC или TCHost соединение"
 							checked={settings.debug_host}
 							action={(s) => {
@@ -671,9 +584,8 @@ const LauncherSettingsTab = memo(() => {
 								});
 							}}
 						/>
-						<SettingContainer
-							id="app.debug.api"
-							header="Высерание данных для отладки API"
+						<SettingSwitch id="app.debug.api"
+							title="Высерание данных для отладки API"
 							note="Этот параметр позволяет разработчикам получать необязательную информацию о запросах происходящих между клиентом и TJMC API"
 							checked={settings.debug_api}
 							action={(s) => {
@@ -731,9 +643,8 @@ const LauncherAppearanceTab = memo(() => {
 						}}
 					/>
 					<div className={style.settingGroup}>
-						<SettingContainer
-							id="exp.settings.more_border"
-							header="Режим чётких границ"
+						<SettingSwitch id="exp.settings.more_border"
+							title="Режим чётких границ"
 							note="Включение этого параметра позволяет использовать экспериментальный режим повышенной чёткости границ."
 							checked={settings.exp_more_border}
 							action={(s) => {
@@ -745,18 +656,16 @@ const LauncherAppearanceTab = memo(() => {
 				<div className={style.settingGroupContainer}>
 					<h5>Общие</h5>
 					<div className={style.settingGroup}>
-						<SettingContainer
-							id="app.settings.fullmode"
-							header="Использовать настройки в полноэкранном режиме"
+						<SettingSwitch id="app.settings.fullmode"
+							title="Использовать настройки в полноэкранном режиме"
 							note="Включение этого параметра позволяет использовать настройки в полноэкранном режиме"
 							checked={settings.full_settings}
 							action={(s) => {
 								setSettings({ full_settings: Boolean(s) });
 							}}
 						/>
-						<SettingContainer
-							id="app.chooser.fullmode"
-							header="Использовать установщик версии в полноэкранном режиме"
+						<SettingSwitch id="app.chooser.fullmode"
+							title="Использовать установщик версии в полноэкранном режиме"
 							note="Включение этого параметра позволяет использовать установщик версии в полноэкранном режиме"
 							checked={settings.full_chooser}
 							action={(s) => {
@@ -768,9 +677,8 @@ const LauncherAppearanceTab = memo(() => {
 				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
 					<div className={style.settingGroup}>
-						<SettingContainer
-							id="app.preloader.mode"
-							header="Использовать прелоадер"
+						<SettingSwitch id="app.preloader.mode"
+							title="Использовать прелоадер"
 							note="Выключение этого параметра позволяет принудительно отключать анимацию первоначальной загрузки приложения"
 							checked={settings.enable_preloader}
 							action={(s) => {
@@ -778,9 +686,8 @@ const LauncherAppearanceTab = memo(() => {
 							}}
 						/>
 						{APP_ENV == "development" && (
-							<SettingContainer
-								id="app.dev.faloc_disable"
-								header="Отключить сообщение о предварительной версии"
+							<SettingSwitch id="app.dev.faloc_disable"
+								title="Отключить сообщение о предварительной версии"
 								note="Включение этого параметра отключает появление сообщение о предварительной версии при запуске UI"
 								checked={settings.dev_disable_faloc}
 								action={(s) => {
@@ -837,19 +744,16 @@ const UpdatesContainer = memo(() => {
 
 	return (
 		<div className={buildClassName(style.settingGroup, style.withBorder)}>
-			<SettingContainerTwo note={renderProgress(updateProgress)}>
-				<label className={style.title}>{titleName}</label>
-				<div className={style.control}>
-					<Button
-						onClick={updateAction}
-						className={buildClassName("filled", "small")}
-						isLoading={updateStatus == "loading" || updateStatus == "checking"}
-						isPrimary={updateStatus == "available"}
-						isRed={updateStatus == "loaded"}
-						disabled={updateStatus == "loading" || updateStatus == "checking"}
-					>{buttonName}</Button>
-				</div>
-			</SettingContainerTwo>
+			<SettingContainer note={renderProgress(updateProgress)} title={titleName}>
+				<Button
+					onClick={updateAction}
+					className={buildClassName("filled", "small")}
+					isLoading={updateStatus == "loading" || updateStatus == "checking"}
+					isPrimary={updateStatus == "available"}
+					isRed={updateStatus == "loaded"}
+					disabled={updateStatus == "loading" || updateStatus == "checking"}
+				>{buttonName}</Button>
+			</SettingContainer>
 		</div>
 	);
 });
