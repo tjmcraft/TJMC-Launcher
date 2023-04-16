@@ -29,6 +29,10 @@
 	height: 1px;
 }
 
+:global(.children-zx1) .settingContainer {
+	padding: 0;
+}
+
 .settingContainer .labelRow {
 	display: flex;
 	align-items: center;
