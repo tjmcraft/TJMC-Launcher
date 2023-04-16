@@ -442,7 +442,7 @@ const JavaSettingsTab = memo(() => {
 	useEffect(() => setJavaArgs(config?.java?.args), [config?.java?.args]);
 
 	const handleChangeJavaPath = useCallback((javaPath) => {
-		setConfig({ key: "java.javaPath", value: javaPath });
+		setConfig({ key: "java.path", value: javaPath });
 	}, [setConfig]);
 
 	const handleSaveJavaArgs = useCallback(() => {
