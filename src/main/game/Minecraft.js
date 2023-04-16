@@ -149,12 +149,12 @@ class Minecraft extends EventEmitter {
                 )) {
                     (index <= 0) && logger.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
+                    if (signal?.aborted) return;
+                    try {
+                        new Zip(native_path).extractAllTo(nativeDirectory, true);
+                    } catch (e) { logger.warn(e) }
+                    // fs.unlinkSync(native_path);
                 }
-                if (signal?.aborted) return;
-                try {
-                    new Zip(native_path).extractAllTo(nativeDirectory, true);
-                } catch (e) { logger.warn(e) }
-                fs.unlinkSync(native_path);
                 count++;
                 this.emit('progress', {
                     type: 'natives',
