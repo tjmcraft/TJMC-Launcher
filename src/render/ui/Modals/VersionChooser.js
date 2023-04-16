@@ -16,7 +16,7 @@ import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 
 import "./VersionChooser.css";
-import ToggleSwitch from "UI/components/ToggleSwitch";
+import SettingSwitch from "UI/components/SettingSwitch";
 
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
@@ -132,6 +132,8 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	const [height, setHeight] = useState(undefined);
 	const [javaPath, setJavaPath] = useState(undefined);
 	const [javaArgs, setJavaArgs] = useState(undefined);
+	const [checkHash, setCheckHash] = useState(undefined);
+	const [checkFiles, setCheckFiles] = useState(undefined);
 
 	const version_opts_default = useMemo(() => Object.seal({
 		name: version.id ? `Версия ${version.id}` : 'Версия без имени',
@@ -155,6 +157,8 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			gameDir: gameDir || undefined,
 			javaPath: javaPath || undefined,
 			javaArgs: javaArgs || undefined,
+			checkHash: checkHash || undefined,
+			checkFiles: checkFiles || undefined,
 		}));
 		console.debug(">> createVersion", version.id, data);
 		hostOnline && createInstallation({ version: version.id, options: data });
@@ -269,12 +273,19 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 					</InputGroup>
 				</div>
 				<div className="children-zx1">
-					<InputGroup title="Switch Test" htmlFor="installation.switch.test">
-						<ToggleSwitch id="installation.switch.test"
-							checked={false}
-							onChange={() => void 0}
-						/>
-					</InputGroup>
+					<SettingSwitch id={"installation.overrides.checkHash"}
+						checked={checkHash}
+						action={(s) => setCheckHash(s)}
+						title={"Force check hash"}
+						disabled={!checkFiles}
+					/>
+				</div>
+				<div className="children-zx1">
+					<SettingSwitch id={"installation.overrides.checkFiles"}
+						checked={checkFiles}
+						action={(s) => setCheckFiles(s)}
+						title={"Force check files"}
+					/>
 				</div>
 			</div>
 			<ModalFooter>
