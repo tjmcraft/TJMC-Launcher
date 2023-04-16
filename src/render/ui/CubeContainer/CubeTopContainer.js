@@ -1,7 +1,7 @@
 import { memo, createElement } from "react";
 import CubeTopToolbar from "./CubeTopToolbar";
 
-const imageLink = false ? "https://cdn.tjmc.ru/images/waves-of-blue.jpg" :
+const imageLink = true ? "https://cdn.tjmc.ru/images/waves-of-blue.jpg" :
 	"https://cdn.tjmc.ru/images/1042-1920x1080.jpg";
 
 const CubeTopContainer = ({ hash }) => {
