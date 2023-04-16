@@ -15,7 +15,7 @@ if (!isMainThread) {
 		if (type != 'start') return;
 		if (!payload) return;
 		const { version_hash, launcherOptions } = payload;
-		if (instances.get(version_hash)) return;
+		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!" });
 		try {
 
 			const controller = new AbortController();
