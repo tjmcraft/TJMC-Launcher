@@ -96,12 +96,14 @@ exports.downloadToFile = (
     })
     .on("error", (error) => {
       console.error(`Download failed: ${error.message}`);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       resolve(false);
     });
 
   fileWriterStream
     .on("error", (error) => {
       console.error(`Could not write file to system: ${error.message}`);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       resolve(false);
     })
     .on("finish", () => {
