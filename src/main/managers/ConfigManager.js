@@ -4,7 +4,7 @@ const path = require('path');
 
 const DEFAULT_CONFIG = Object.seal({
     java: {
-        javaPath: '',
+        path: '',
         memory: {
             max: 1024,
             min: 512

@@ -42,7 +42,7 @@ if (!isMainThread) {
 			if (controller.signal.aborted) return;
 
 			const javaPath = await new Promise(async (resolve, reject) => {
-				const externalJava = launcherOptions.installation.javaPath || launcherOptions.java.javaPath;
+				const externalJava = launcherOptions.installation.javaPath;
 				const recommendedJava = launcherOptions.manifest.javaVersion;
 
 				const instance = new JavaManager(launcherOptions.overrides.path.root);
