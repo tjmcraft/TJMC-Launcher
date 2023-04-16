@@ -121,12 +121,14 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 						return emit('progress', { type: payload.type, progress: progress });
 					}
 					if (type == 'javaPath') {
-						performanceMarks.loadJava = performance.now() - performanceMarks.loadJava;
 						javaController.resolve(payload);
 						return emit('progress', { type: 'load:java', progress: 1 });
 					}
+					if (type == 'error') {
+						javaController.reject(payload);
+						argsController.reject(payload);
+					}
 					if (type == 'javaArgs') {
-						performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
 						argsController.resolve(payload);
 					}
 				}
@@ -137,8 +139,10 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 		performanceMarks.loadJava = performance.now();
 		const javaPath = await promiseRequest(javaController);
+		performanceMarks.loadJava = performance.now() - performanceMarks.loadJava;
 		performanceMarks.constructArgs = performance.now(); // @TODO: create queue
 		const javaArgs = await promiseRequest(argsController);
+		performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
 
 		if (controller.signal.aborted) return terminateInstance();
 
