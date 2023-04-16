@@ -437,7 +437,7 @@ class Minecraft extends EventEmitter {
         // Forge Arguments
         args = args.concat(this.resolveArgs(versionFile))
 
-        return args
+        return args.filter(Boolean);
     }
 
     /**
@@ -540,7 +540,7 @@ class Minecraft extends EventEmitter {
             return arg != null
         })
 
-        return args
+        return args.filter(Boolean);
     }
 
     /**
