@@ -393,9 +393,9 @@ const MinecraftSettingsTab = memo(() => {
 							<SettingContainer id="overrides.autoConnect"
 								header="Автоматически подключаться к серверу ТюменьCraft"
 								note="Подключаться к серверу автоматически, при запуске игры"
-								checked={false}
-								action={(s, n) => {
-									console.debug(n, "=>", s);
+								checked={config.minecraft.autoConnect}
+								action={(s) => {
+									setConfig({ key: "minecraft.autoConnect", value: s });
 								}}
 							/>
 						</div>

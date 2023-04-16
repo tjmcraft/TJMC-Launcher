@@ -44,6 +44,7 @@ module.exports.removeCallback = config.removeCallback;
  * @property {boolean} resolution.fullscreen Resolution fullscreen mode
  * @property {boolean} checkHash Check hash of installation files
  * @property {boolean} checkFiles Check files in installation directories
+ * @property {boolean} autoConnect Connect to TJMC server automatically
  */
 
 /**
@@ -70,6 +71,7 @@ const DEFAULT_PROFILE = {
     },
     checkHash: undefined,
     checkFiles: undefined,
+    autoConnect: undefined,
 };
 
 /**
@@ -142,6 +144,7 @@ exports.getInstallationSync = (hash) => {
             path.join(getOption('overrides.path.versions'), installation.lastVersionId, `${installation.lastVersionId}.jar`);
         installation.checkHash = installation.checkHash ?? getOption('overrides.checkHash');
         installation.checkFiles = installation.checkFiles ?? getOption('overrides.checkFiles');
+        installation.autoConnect = installation.autoConnect ?? getOption('minecraft.autoConnect');
         if (!installation.lastSync ||
             (new Date().getTime() - new Date(installation.lastSync).getTime()) > (1e3 * 3600)
         ) { // force sync if expired
