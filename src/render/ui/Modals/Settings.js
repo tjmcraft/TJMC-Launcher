@@ -333,7 +333,7 @@ const MinecraftSettingsTab = memo(() => {
 							/>
 							<SettingSwitch id="overrides.checkFiles"
 								title="Требовать проверку наличия файлов"
-								note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!\n(Ускоряет запуск)"}
+								note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!"}
 								checked={config.overrides.checkFiles}
 								action={(s) => {
 									setConfig({ key: "overrides.checkFiles", value: s });

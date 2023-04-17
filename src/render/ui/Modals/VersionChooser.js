@@ -132,6 +132,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	const [height, setHeight] = useState(undefined);
 	const [javaPath, setJavaPath] = useState(undefined);
 	const [javaArgs, setJavaArgs] = useState(undefined);
+	const [forceOverrides, setForceOverrides] = useState(false);
 	const [checkHash, setCheckHash] = useState(undefined);
 	const [checkFiles, setCheckFiles] = useState(undefined);
 
@@ -142,6 +143,8 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 		gameDir: undefined,
 		javaPath: undefined,
 		javaArgs: undefined,
+		checkHash: undefined,
+		checkFiles: undefined,
 	}), [version]);
 
 	if (!version) return null;
@@ -157,8 +160,10 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			gameDir: gameDir || undefined,
 			javaPath: javaPath || undefined,
 			javaArgs: javaArgs || undefined,
-			checkHash: checkHash || undefined,
-			checkFiles: checkFiles || undefined,
+			...(forceOverrides ? {
+				checkHash: checkHash || undefined,
+				checkFiles: checkFiles || undefined,
+			} : {})
 		}));
 		console.debug(">> createVersion", version.id, data);
 		hostOnline && createInstallation({ version: version.id, options: data });
@@ -272,19 +277,33 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 							placeholder="Java Arguments" />
 					</InputGroup>
 				</div>
+				<div className="separator children-zx1" />
 				<div className="children-zx1">
-					<SettingSwitch id={"installation.overrides.checkHash"}
-						checked={checkHash}
-						action={(s) => setCheckHash(s)}
-						title={"Force check hash"}
-						disabled={!checkFiles}
+					<SettingSwitch id={"installation.overrides.enable"}
+						checked={forceOverrides}
+						action={(s) => setForceOverrides(s)}
+						title={"Использовать переопределения"}
+						note={"Переопределения позволяют вам принудительно использовать дополнительные опции в обход глобальных настроек."}
 					/>
 				</div>
+				<div className="separator children-zx1" />
+				<div className="children-zx1">
+					<SettingSwitch id={"installation.overrides.checkHash"}
+						disabled={!forceOverrides || !checkFiles}
+						checked={checkHash}
+						action={(s) => setCheckHash(s)}
+						title={"Требовать проверку целостности файлов"}
+						note={"Эта опция позволяет вам отключать проверку хеша файлов. \nНе рекомендуется отключать, так как обновления файлов не будут скачаны автоматически!"}
+					/>
+				</div>
+				<div className="separator children-zx1" />
 				<div className="children-zx1">
 					<SettingSwitch id={"installation.overrides.checkFiles"}
+						disabled={!forceOverrides}
 						checked={checkFiles}
 						action={(s) => setCheckFiles(s)}
-						title={"Force check files"}
+						title={"Требовать проверку наличия файлов"}
+						note={"Эта опция позволяет вам отключать проверку файлов. \nНе рекомендуется отключать, так как отсутствие файлов не будет зарегистрировано!"}
 					/>
 				</div>
 			</div>
