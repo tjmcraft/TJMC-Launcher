@@ -343,7 +343,7 @@ const VersionChooser = (props) => {
 				</div>
 				<div className="middleColumn">
 					{selectedVersion ? (
-						<VersionChooserContent version={selectedVersion} onCancel={handleCancel} onBack={handleBack} isLeftOpen={leftOpen} />
+						<VersionChooserContent version={selectedVersion} onCancel={handleCancel} onBack={handleBack} isLeftOpen={leftOpen} key={selectedVersion.id} />
 					) : (
 						<div className={buildClassName("main-content", "d-flex", "vertical", "centred")}>
 							<h1>{"Выберите версию"}</h1>
