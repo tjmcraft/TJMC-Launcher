@@ -1,4 +1,5 @@
 const fs = require('node:fs');
+const path = require('node:path');
 const Config = require('../libs/Config');
 const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
@@ -129,7 +130,6 @@ exports.getInstallation = async (hash) => {
  * @returns {Installation} - The installation's object
  */
 exports.getInstallationSync = (hash) => {
-    const path = require('node:path');
     const installations = this.getInstallations();
     if (hash && Object(installations).hasOwnProperty(hash)) {
         let installation = installations[hash];
@@ -154,9 +154,9 @@ exports.getInstallationSync = (hash) => {
             installation.checkFiles = true;
         }
         installation.resolution = {
-            width: installation.resolution.width ?? getOption('minecraft.launch.width'),
-            height: installation.resolution.height ?? getOption('minecraft.launch.height'),
-            fullscreen: installation.resolution.fullscreen ?? getOption('minecraft.launch.fullscreen'),
+            width: installation.resolution?.width ?? getOption('minecraft.launch.width'),
+            height: installation.resolution?.height ?? getOption('minecraft.launch.height'),
+            fullscreen: installation.resolution?.fullscreen ?? getOption('minecraft.launch.fullscreen'),
         };
         return installation;
     }
