@@ -32,6 +32,9 @@
 :global(.children-zx1) .settingContainer {
 	padding: 0;
 }
+:global(.children-zx1) .settingContainer .note {
+	margin: 0;
+}
 
 .settingContainer .labelRow {
 	display: flex;
