@@ -13,6 +13,7 @@ export {
 	fetchInstallations,
 	fetchVersions,
 	createInstallation,
+	editInstallation,
 	removeInstallation
 } from './installation';
 export {

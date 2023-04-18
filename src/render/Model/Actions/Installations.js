@@ -36,7 +36,8 @@ addReducer("createInstallation", async (global, actions, payload) => {
 });
 addReducer("editInstallation", async (global, actions, payload) => {
 	if (!payload) return;
-	return;
+	let { hash, options } = payload;
+	await callHost("editInstallation", hash, options);
 });
 
 addReducer("removeInstallation", (global, actions, payload) => {
