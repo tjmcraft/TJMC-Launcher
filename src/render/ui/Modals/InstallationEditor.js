@@ -48,19 +48,17 @@ const InstallationForm = ({ version, onCancel }) => {
 			name: name || version_opts_default.name,
 			type: version.type,
 			resolution: {
-				width: width,
-				height: height,
+				width: width || undefined,
+				height: height || undefined,
 			},
-			gameDir: gameDir,
-			javaPath: javaPath,
-			javaArgs: javaArgs,
+			gameDir: gameDir || undefined,
+			javaPath: javaPath || undefined,
+			javaArgs: javaArgs || undefined,
 			...(forceOverrides ? {
 				checkHash: checkHash,
 				checkFiles: checkFiles,
 			} : {})
 		});
-		console.debug(">> editInstallation", version.hash, data);
-		console.debug(">> editInstallation > ", version.hash, cleanObject(data));
 		if (hostOnline) {
 			editInstallation({ hash: version.hash, options: data });
 			closeModal();
