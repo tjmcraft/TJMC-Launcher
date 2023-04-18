@@ -17,6 +17,7 @@ const requestChannels = Object.seal({
 	killAllInstances: 'killAllInstances',
 	fetchVersions: 'fetchVersions',
 	createInstallation: 'createInstallation',
+	editInstallation: 'editInstallation',
 	removeInstallation: 'removeInstallation',
 	fetchConfiguration: 'fetchConfiguration',
 	setConfiguration: 'setConfiguration',
@@ -231,6 +232,9 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
 			await InstallationsManager.createInstallation(data)
+		);
+		WSSHost.addReducer(requestChannels.editInstallation, async (data) =>
+			await InstallationsManager.modifyInstallation(data.hash, data.installation)
 		);
 		WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
 			await InstallationsManager.removeInstallation(hash, forceDeps)
