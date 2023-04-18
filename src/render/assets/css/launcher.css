@@ -2,6 +2,7 @@
 @import "./fonts.css";
 @import "./colors.css";
 @import "./animations.css";
+@import "./icons.css";
 
 /*******************************************************************************
  *                                                                             *
@@ -2355,7 +2356,7 @@ a:hover {
     align-items: center;
     position: relative;
     overflow: hidden;
-    line-height: 1;
+    line-height: 1.5rem;
     font-weight: 500;
     white-space: nowrap;
     color: var(--text-normal);
@@ -2375,10 +2376,19 @@ a:hover {
 
 .menu .menuItem.compact {
     font-size: .875rem;
-    padding: 0.5rem 0.6rem;
+    padding: 0.25rem;
     transform: scale(1);
 }
 .menu .menuItem.selected {
     background-color: var(--background-modifier-hover);
     color: inherit;
+}
+.menu .menuItem.destructive {
+    color: var(--text-negative);
+}
+.menuItem.compact i {
+    max-width: 1.25em;
+    font-size: 1.25em;
+    margin-left: 0.5em;
+    margin-right: 0.7em;
 }
