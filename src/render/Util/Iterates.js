@@ -200,7 +200,12 @@ export const cleanObject = function (obj) {
 	const emptyObject = {};
 	Object.keys(obj).forEach(key => {
 		if (obj[key] && typeof obj[key] === 'object') {
-			emptyObject[key] = cleanObject(obj[key]);
+			let next = cleanObject(obj[key]);
+			if (next == undefined) {
+				delete emptyObject[key];
+			} else {
+				emptyObject[key] = next;
+			}
 		} else if (obj[key] != null && obj[key] != undefined) {
 			emptyObject[key] = obj[key];
 		}
