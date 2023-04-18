@@ -94,12 +94,11 @@ exports.createInstallation = async function (options = {}) {
         created: current_date,
     }, options);
     const profile = cleanObject(options);
-
     const installations = config.getOption("profiles");
     if (profile) {
         const hash = generateIdFor(installations);
         Object.assign(installations, {
-            [hash]: cleanObject(profile)
+            [hash]: profile
         });
         config.setOption("profiles", installations);
         return hash;
@@ -190,10 +189,18 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
  * @param {Installation} nextProps Props to modify
  */
 exports.modifyInstallation = async function (hash, nextProps) {
+    console.debug("next", nextProps);
     const installations = config.getOption("profiles");
     if (hash && Object(installations).hasOwnProperty(hash)) {
         const installation = installations[hash];
-        Object.assign(installation, nextProps);
+        Object.assign(installation, nextProps, {
+            resolution: {
+                ...installation?.resolution,
+                ...nextProps?.resolution,
+            },
+        });
+        installations[hash] = cleanObject(installation);
+        console.debug("ii", installations[hash]);
         config.setOption("profiles", installations);
         return hash;
     }
