@@ -121,7 +121,7 @@ const JavaSelector = ({ items, onChange, selectedIndex, title }) => {
 
 const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 
-	const { createInstallation } = getDispatch();
+	const { createInstallation, closeModal } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 	const hostOnline = useHostOnline();
 
@@ -166,7 +166,10 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			} : {})
 		}));
 		console.debug(">> createVersion", version.id, data);
-		hostOnline && createInstallation({ version: version.id, options: data });
+		if (hostOnline) {
+			createInstallation({ version: version.id, options: data });
+			closeModal();
+		}
 	};
 
 	const fakeJavas = [
