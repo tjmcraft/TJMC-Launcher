@@ -14,7 +14,7 @@ import { cleanObject, compareObjects, getObjectDiff } from "Util/Iterates";
 
 const InstallationForm = ({ version, onCancel }) => {
 
-	const { editInstallation } = getDispatch();
+	const { editInstallation, closeModal } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 	const hostOnline = useHostOnline();
 
@@ -61,7 +61,10 @@ const InstallationForm = ({ version, onCancel }) => {
 		});
 		console.debug(">> editInstallation", version.hash, data);
 		console.debug(">> editInstallation > ", version.hash, cleanObject(data));
-		hostOnline && editInstallation({ hash: version.hash, options: data });
+		if (hostOnline) {
+			editInstallation({ hash: version.hash, options: data });
+			closeModal();
+		}
 	};
 
 	return (
