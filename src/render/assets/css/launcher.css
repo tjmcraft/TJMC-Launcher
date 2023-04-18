@@ -1546,7 +1546,7 @@ a.anchor:hover {
     font-size: initial;
     width: 100%;
     text-align: initial;
-    padding: 10px;
+    padding: 10px max(1.2rem, env(safe-area-inset-left)) 10px max(1.2rem, env(safe-area-inset-right));
 }
 
 .VT-flex-box input {
@@ -1564,12 +1564,12 @@ a.anchor:hover {
 .VT-flex-box .children-zx1 {
     position: relative;
     margin: 1rem auto;
-    min-width: 330px;
-    max-width: 450px;
+    /* min-width: 330px; */
+    max-width: 525px;
 }
 
 .VT-flex-box .separator {
-    max-width: calc(450px - 12px);
+    max-width: calc(525px - 12px);
 }
 
 .VT-footer {

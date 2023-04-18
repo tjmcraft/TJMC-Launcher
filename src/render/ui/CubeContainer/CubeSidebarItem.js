@@ -40,7 +40,8 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		invokeLaunch,
 		revokeLaunch,
 		alert,
-		removeInstallation
+		removeInstallation,
+		openInstallationEditor,
 	} = getDispatch();
 
 	const { name, type, isProcessing } = useGlobal(global => {
@@ -106,6 +107,8 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		});
 	}, [alert, name, removeInstallation, hash]);
 
+	const handleEditClick = useCallback(() => openInstallationEditor({ hash }), [openInstallationEditor, hash]);
+
 	return hash && (
 		createElement(
 			'div', {
@@ -132,6 +135,9 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 						</MenuItem>
 						<MenuItem compact onClick={handleLaunchClick}>
 							<span className="">{!isProcessing ? 'Запустить' : 'Остановить'}</span>
+						</MenuItem>
+						<MenuItem compact onClick={handleEditClick}>
+							<span className="">{'Edit'}</span>
 						</MenuItem>
 						<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}>
 							<span className="color-red">{'Удалить'}</span>

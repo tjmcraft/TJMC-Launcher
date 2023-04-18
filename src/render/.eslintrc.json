@@ -37,6 +37,7 @@
         "no-prototype-builtins": "off",
         "no-await-in-loop": "off",
         "no-nested-ternary": "off",
+        "no-lonely-if": "off",
         "function-paren-newline": [
             "warn", "consistent"
         ],
