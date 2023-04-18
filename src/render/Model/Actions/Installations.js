@@ -3,6 +3,7 @@ import { callHost } from "../../api/host";
 import { updateInstallations, updateInstallationProgress } from "Model/Reducers/installations";
 import { updateVersions } from "Model/Reducers/versions";
 import { updateInstances } from "Model/Reducers/instances";
+import { cleanObject } from "Util/Iterates";
 
 addReducer("hostUpdate", (global, actions, update) => {
 	// console.debug(">>> HOST UPDATE:", update);
@@ -20,23 +21,15 @@ addReducer("createInstallation", async (global, actions, payload) => {
 	if (!payload) return;
 	let { version, options } = payload;
 	options = Object.assign({}, {
-		icon: undefined,
-		name: version,
 		lastVersionId: version,
-		type: undefined,
-		gameDir: undefined,
-		javaPath: undefined,
-		javaArgs: undefined,
-		resolution: {
-			width: 0,
-			height: 0,
-		},
 	}, options);
+	options = cleanObject(options);
 	await callHost("createInstallation", options);
 });
 addReducer("editInstallation", async (global, actions, payload) => {
 	if (!payload) return;
 	let { hash, options } = payload;
+	options = cleanObject(options);
 	await callHost("editInstallation", hash, options);
 });
 
