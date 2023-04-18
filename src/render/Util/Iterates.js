@@ -196,14 +196,11 @@ export const keySort = (array, key, order) => {
  * Clean object (remove null and undefined)
  */
 export const cleanObject = function (obj) {
-	obj = obj || this;
 	const emptyObject = {};
 	Object.keys(obj).forEach(key => {
 		if (obj[key] && typeof obj[key] === 'object') {
 			let next = cleanObject(obj[key]);
-			if (next == undefined) {
-				delete emptyObject[key];
-			} else {
+			if (next != undefined) {
 				emptyObject[key] = next;
 			}
 		} else if (obj[key] != null && obj[key] != undefined) {
