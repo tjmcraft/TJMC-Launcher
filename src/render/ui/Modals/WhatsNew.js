@@ -16,7 +16,7 @@ import "CSS/markdown.css";
 const WhatsNewContent = (({latestRelease}) => {
 	return (
 		<div>
-			<img src="https://www.tjmc.ru/nav_cr.png" style={{ height: "25em" }} />
+			<img src="https://cdn.tjmc.ru/images/1501915239_image.gif" style={{ height: "25em" }} />
 			<div className={buildClassName("colorStandart", "size14")}>
 				<span className="markdown">
 					<Markdown remarkPlugins={[remarkGfm]} children={latestRelease.body} />
