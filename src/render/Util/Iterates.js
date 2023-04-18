@@ -107,6 +107,35 @@ export function shallowEqual(objA, objB) {
 	return true;
 }
 
+export const getObjectDiff = (obj1, obj2) => {
+	const combinedObject = { ...obj1, ...obj2 };
+
+	const diff = Object.entries(combinedObject).reduce((acc, [key, value]) => {
+		if (
+			!Object.values(obj1).includes(value) ||
+			!Object.values(obj2).includes(value)
+		)
+			acc[key] = value;
+
+		return acc;
+	}, {});
+
+	return diff;
+};
+
+export function compareObjects(original, copy) {
+	for (let [k, v] of Object.entries(original)) {
+		if (typeof v === "object" && v !== null) {
+			compareObjects(v, copy?.[k]);
+		} else {
+			if (Object.is(v, copy?.[k])) {
+				delete copy?.[k];
+			}
+		}
+	}
+	return copy;
+}
+
 const stacksNotEqual = (a1, a2) => (
 	Array.isArray(a1) && Array.isArray(a2) &&
 	(
@@ -153,12 +182,12 @@ function naturalCompare(a, b) {
 export const keySort = (array, key, order) => {
 	array = [...array];
 	const sort = {
-		asc (a, b) {
+		asc(a, b) {
 			a = a[key].replace(/^\S+\W+/g, '');
 			b = b[key].replace(/^\S+\W+/g, '');
 			return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 		},
-		desc (a, b) { return sort.asc(b, a); },
+		desc(a, b) { return sort.asc(b, a); },
 	};
 	return array.sort(sort[order] || sort.asc);
 };
@@ -166,7 +195,7 @@ export const keySort = (array, key, order) => {
 /**
  * Clean object (remove null and undefined)
  */
-export const cleanObject = function(obj) {
+export const cleanObject = function (obj) {
 	obj = obj || this;
 	const emptyObject = {};
 	Object.keys(obj).forEach(key => {

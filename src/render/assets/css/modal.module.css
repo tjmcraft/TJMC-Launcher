@@ -127,7 +127,11 @@
     max-width: 90vw;
     max-height: 90vh;
     width: 35em;
-    height: auto;
+    /* height: auto; */
+}
+.layer > .modal.small.mini {
+    height: 80vh;
+    max-height: 40em;
 }
 .layer > .modal.full {
     width: 100vw;

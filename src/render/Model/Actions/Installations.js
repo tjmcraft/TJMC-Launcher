@@ -35,6 +35,10 @@ addReducer("createInstallation", async (global, actions, payload) => {
 	await callHost("createInstallation", options);
 	actions.closeModal();
 });
+addReducer("editInstallation", async (global, actions, payload) => {
+	if (!payload) return;
+	return;
+});
 
 addReducer("removeInstallation", (global, actions, payload) => {
 	if (!payload) return;

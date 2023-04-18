@@ -14,9 +14,9 @@ import { Modal, ModalFooter } from "UI/Modals";
 import { InputGroup, PathInput } from "UI/components/Input.js";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
+import SettingSwitch from "UI/components/SettingSwitch";
 
 import "./VersionChooser.css";
-import SettingSwitch from "UI/components/SettingSwitch";
 
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {

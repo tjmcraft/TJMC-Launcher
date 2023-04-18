@@ -1,24 +1,26 @@
 import { createElement, memo, useEffect, useState } from "react";
 
-import useShowTransition from "Hooks/useShowTransition";
-import captureEscKeyListener from "Util/captureEscKeyListener";
 import buildClassName from "Util/buildClassName";
 import { getDispatch, getState } from "Store/Global";
+import useGlobal from "Hooks/useGlobal";
+import useShowTransition from "Hooks/useShowTransition";
+import captureEscKeyListener from "Util/captureEscKeyListener";
 import { SVG } from "./svg";
 
 import Settings from "./Modals/Settings";
 import VersionChooser from "./Modals/VersionChooser";
 import Alert from "./Modals/Alert";
+import WhatsNew from "./Modals/WhatsNew";
+import InstallationEditor from "./Modals/InstallationEditor";
 
 import style from "CSS/modal.module.css";
-import WhatsNew from "./Modals/WhatsNew";
-import useGlobal from "Hooks/useGlobal";
 
 const MODAL_STORE = {
 	settings: Settings,
 	versionChooser: VersionChooser,
 	alert: Alert,
 	"whats-new": WhatsNew,
+	"installation-editor": InstallationEditor
 };
 
 const ModalLayer = ({ isShown, children }) => {

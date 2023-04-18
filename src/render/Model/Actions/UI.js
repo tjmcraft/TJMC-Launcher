@@ -115,6 +115,15 @@ addReducer("openVersionChooserModal", (_global, _actions, _update) => {
 		allowOutsideClick: true,
 	});
 });
+addReducer("openInstallationEditor", (_global, _actions, update) => {
+	void addModal({
+		layer: "installation-editor",
+		label: "installation-editor",
+		closeButton: false,
+		allowOutsideClick: true,
+		hash: update.hash,
+	});
+});
 
 addReducer("openWhatsNewModal", (global, _actions, _update) => {
 	void addModal({
