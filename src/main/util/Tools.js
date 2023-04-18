@@ -31,18 +31,20 @@ exports.keySort = function (array, key, order) {
 /**
  * Clean object (remove null and undefined)
  */
-exports.cleanObject = function(obj) {
-    obj = obj || this;
-    const emptyObject = {};
-    Object.keys(obj).forEach(key => {
-        if (obj[key] && typeof obj[key] === 'object') {
-            emptyObject[key] = exports.cleanObject(obj[key]);
-        } else if (obj[key] != null && obj[key] != undefined) {
-            emptyObject[key] = obj[key];
-        }
-    })
-    return Object.keys(emptyObject)?.length > 0 ? emptyObject : undefined;
-}
+exports.cleanObject = (obj) => {
+	const emptyObject = {};
+	Object.keys(obj).forEach(key => {
+		if (obj[key] && typeof obj[key] === 'object') {
+			let next = this.cleanObject(obj[key]);
+			if (next != undefined) {
+				emptyObject[key] = next;
+			}
+		} else if (obj[key] != null && obj[key] != undefined) {
+			emptyObject[key] = obj[key];
+		}
+	});
+	return Object.keys(emptyObject)?.length > 0 ? emptyObject : undefined;
+};
 
 function naturalCompare(a, b) {
     var ax = [], bx = [];
