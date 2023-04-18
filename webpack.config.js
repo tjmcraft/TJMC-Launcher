@@ -37,8 +37,6 @@ const optimization = () => {
 	return config;
 };
 
-const filename = (ext) => `assets/${isDev ? `[name].${ext}` : `[contenthash].${ext}`}`;
-
 module.exports = {
 	entry: {
 		main: path.resolve(basePath, 'index.js')
@@ -63,14 +61,13 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve(basePath, "dist"),
-		filename: filename("js"),
-		chunkFilename: filename("js"),
-		assetModuleFilename: 'assets/[hash][ext][query]',
-		publicPath: './',
+		filename: '[name].[contenthash].js',
+		chunkFilename: '[id].[chunkhash].js',
+		assetModuleFilename: '[name].[contenthash][ext]',
 		clean: true,
 	},
 	mode: isDev ? "development" : "production",
-	devtool: isDev ? 'source-map' : false,
+	devtool: 'source-map',
 	// target: 'electron-renderer',
 	devServer: {
 		historyApiFallback: true,
@@ -87,17 +84,9 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.svg$/,
-				use: [
-					{
-						loader: 'svg-url-loader',
-						options: {
-							limit: 10000,
-							name: '[hash].[ext]',
-							outputPath: 'assets/svg/'
-						},
-					}
-				],
+				test: /\.(ts|jsx|js)$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader',
 			},
 			{
 				test: /\.css$/,
@@ -136,24 +125,6 @@ module.exports = {
 				exclude: [/\.module\.css$/]
 			},
 			{
-				test: /\.(js)$/,
-				exclude: /node_modules/,
-				use: [{
-					loader: 'babel-loader',
-					options: {
-						presets: [
-							'@babel/preset-env'
-						],
-						plugins: [
-							'@babel/plugin-proposal-class-properties',
-							'@babel/plugin-syntax-dynamic-import',
-							"@babel/plugin-proposal-export-namespace-from",
-							"@babel/plugin-proposal-throw-expressions"
-						]
-					}
-				}]
-			},
-			{
 				test: /\.(woff(2)?|ttf|eot|svg|png|jpg|tgs)(\?v=\d+\.\d+\.\d+)?$/,
 				type: 'asset/resource'
 			},
@@ -162,8 +133,9 @@ module.exports = {
 
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: filename("css"),
-			chunkFilename: filename("css"),
+			filename: '[name].[contenthash].css',
+			chunkFilename: '[name].[chunkhash].css',
+			ignoreOrder: true,
 		}),
 		new HtmlWebpackPlugin({
 			appName: "TJMC-Launcher",
