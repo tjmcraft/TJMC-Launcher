@@ -154,29 +154,9 @@ module.exports = {
 				}]
 			},
 			{
-				test: /\.(woff|woff2|eot|ttf|otf)$/,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							name: '[hash].[ext]',
-							outputPath: 'assets/fonts/'
-						}
-					}
-				],
+				test: /\.(woff(2)?|ttf|eot|svg|png|jpg|tgs)(\?v=\d+\.\d+\.\d+)?$/,
 				type: 'asset/resource'
 			},
-			{
-				test: /\.(png|jpg|gif)$/,
-				use: [{
-					loader: 'file-loader',
-					options: {
-						name: '[hash].[ext]',
-						outputPath: 'assets/images/'
-					}
-				}],
-				//type: 'asset/resource',
-			}
 		]
 	},
 

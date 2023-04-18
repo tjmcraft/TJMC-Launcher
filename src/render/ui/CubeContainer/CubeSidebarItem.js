@@ -131,16 +131,20 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 						transformOriginX={transformOriginX} transformOriginY={transformOriginY}
 					>
 						<MenuItem compact onClick={handleClick}>
-							<span className="">{'Выбрать'}</span>
+							<i className="icon-select" />
+							{'Выбрать'}
 						</MenuItem>
 						<MenuItem compact onClick={handleLaunchClick}>
-							<span className="">{!isProcessing ? 'Запустить' : 'Остановить'}</span>
+							<i className={!isProcessing ? "icon-play" : "icon-stop"} />
+							{!isProcessing ? 'Запустить' : 'Остановить'}
 						</MenuItem>
 						<MenuItem compact onClick={handleEditClick}>
-							<span className="">{'Edit'}</span>
+							<i className="icon-edit" />
+							{'Редактировать'}
 						</MenuItem>
-						<MenuItem compact onClick={handleRemoveClick} disabled={isProcessing}>
-							<span className="color-red">{'Удалить'}</span>
+						<MenuItem compact destructive onClick={handleRemoveClick} disabled={isProcessing}>
+							<i className="icon-delete" />
+							{'Удалить'}
 						</MenuItem>
 					</Menu>
 				</Portal>
