@@ -16,12 +16,13 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 ### UI improvements:
 - [x] Implement **Context Menu** on **Installations**
 - [x] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
-- [ ] Implement **Edit** action on **Installations**
+- [x] Implement **Edit** action on **Installations**
 - [ ] Implement open current installation folder
 - [ ] Fix accessibility issues (aria tags + tab navigation)
 - [ ] Implement font resize + *accent color change*
-- [x] Fix non-centred main window on first start
-- [x] Fix fullscreen after reloading UI
+- [x] Fix non-centred main window on first start #28
+- [x] Fix fullscreen after reloading UI #27
+- [ ] Move **Settings** to separate layer (not modal)
 ### Host improvements:
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
@@ -29,12 +30,13 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [ ] Installations:
   - [x] Prevent loading same installation as a second instance in host launcher (strict)
   - [ ] Implement installations load queue #34
-  - [x] Implement *last-used* time on **Installation**
+  - [x] Implement *last-used* time on **Installation** #31
 - [ ] Auth improvements:
   - [x] Update **Auth** system (move to host as auth server + oauth on web)
   - [x] Offline account support
   - [x] Connect to keytar store
   - [x] Implement multi-account store
+  - [x] Refresh token support #33
   - [ ] Implement next **TCHost** (WebRTC) under Host (need for host auth system to authorize in signaling server)
 
 ## Developing 💻
