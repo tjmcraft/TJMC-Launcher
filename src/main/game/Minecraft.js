@@ -213,11 +213,11 @@ class Minecraft extends EventEmitter {
             } else {
                 count++;
                 this.checkFiles && // no emit when check files is off (causes lagging)
-                this.emit('progress', {
-                    type: 'assets',
-                    task: count,
-                    total: Object.keys(index.objects).length,
-                })
+                    this.emit('progress', {
+                        type: 'assets',
+                        task: count,
+                        total: Object.keys(index.objects).length,
+                    })
             }
             return assetPath;
         };
@@ -250,16 +250,16 @@ class Minecraft extends EventEmitter {
     async downloadLibrary(directory, libraries, type = 'classes', signal) {
         let totalProgress = 0;
         const useProgressCounter = () => {
-          let prev = 0;
-          return ({ percent }) => {
-            totalProgress += percent - prev;
-            this.emit('progress', {
-                type: type,
-                task: totalProgress,
-                total: libraries.length,
-            });
-            prev = percent;
-          }
+            let prev = 0;
+            return ({ percent }) => {
+                totalProgress += percent - prev;
+                this.emit('progress', {
+                    type: type,
+                    task: totalProgress,
+                    total: libraries.length,
+                });
+                prev = percent;
+            }
         }
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
@@ -295,9 +295,9 @@ class Minecraft extends EventEmitter {
                 const urls = [
                     lib_url,
                     'https://libraries.minecraft.net/' + jar_name,
-                    'https://tlauncherrepo.com/repo/libraries/' + jar_name,
+                    'https://tlaun.ch/repo/libraries/' + jar_name,
                     'https://files.minecraftforge.net/maven/' + jar_name,
-                    'http://dl.liteloader.com/versions/' + jar_name,
+                    'https://dl.liteloader.com/versions/' + jar_name,
                     'https://repo1.maven.org/maven2/' + jar_name,
                     'https://maven.minecraftforge.net/' + jar_name,
                     'https://search.maven.org/remotecontent?filepath=' + jar_name,
@@ -306,7 +306,7 @@ class Minecraft extends EventEmitter {
                 for (const url of urls) {
                     if (signal?.aborted) return;
                     const loaded = await downloadToFile(url, jarFile, true, handleProgress, signal);
-                    // logger.debug(">>", "downloaded", name);
+                    // console.debug(">>", loaded ? "downloaded" : "failed", name, "->", url);
                     if (loaded) break;
                 }
             } else {
