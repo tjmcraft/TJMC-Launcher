@@ -1,20 +1,48 @@
+// @ts-nocheck
 import { memo, createElement, useEffect } from "react";
 
 import useShowTransition from "Hooks/useShowTransition";
 import buildClassName from "Util/buildClassName";
 
 import Main from "UI/Main.js";
-import { getDispatch } from "Store/Global";
+import { getDispatch, getState } from "Store/Global";
+import { selectCurrentVersionHash } from "Model/Selectors/installations";
 
 
 const AppContainer = ({ isShown }) => {
 
-	const { openSettingsModal } = getDispatch();
+	const {
+		openSettingsModal,
+		invokeLaunch,
+		openInstallationEditor,
+		openVersionChooserModal,
+	} = getDispatch();
 
 	useEffect(() => {
-		// @ts-ignore
-		electron.on('open-settings', (e, data) => openSettingsModal()); // Send global event to open settings [electron]
-	}, [openSettingsModal]);
+		electron.on('open-settings', (e, data) => {
+			openSettingsModal();
+		});
+		electron.on('installation.run.current', (e, data) => {
+			const hash = getState(selectCurrentVersionHash);
+			invokeLaunch({ hash: hash });
+		});
+		electron.on('installation.run.force', (e, data) => {
+			const hash = getState(selectCurrentVersionHash);
+			invokeLaunch({ hash: hash });
+		});
+		electron.on('installation.edit.current', (e, data) => {
+			const hash = getState(selectCurrentVersionHash);
+			openInstallationEditor({ hash: hash });
+		});
+		electron.on('installation.create.new', (e, data) => {
+			openVersionChooserModal();
+		});
+	}, [
+		openSettingsModal,
+		invokeLaunch,
+		openInstallationEditor,
+		openVersionChooserModal
+	]);
 
 	const {
 		shouldRender,
