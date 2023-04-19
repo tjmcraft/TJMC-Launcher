@@ -113,8 +113,8 @@
 .layer > .modal {
     width: 75vw;
     height: 80vh;
-    max-width: 70em;
-    max-height: 40em;
+    max-width: 75em;
+    max-height: 50em;
 }
 
 .layer > .modal.mini {
@@ -127,11 +127,11 @@
     max-width: 90vw;
     max-height: 90vh;
     width: 35em;
-    /* height: auto; */
+    height: auto;
 }
 .layer > .modal.small.mini {
-    height: 80vh;
-    max-height: 40em;
+    height: 85vh;
+    max-height: 50em;
 }
 .layer > .modal.full {
     width: 100vw;
@@ -348,24 +348,25 @@
 
 /* === MEDIA QUERIES === */
 
-@media (max-width: 75em) {
+@media (max-width: 85rem) {
     .layer > .modal {
-        width: 80vw;
+        width: 85vw;
         max-width: none;
     }
 }
-@media (max-width: 65em) {
+
+@media (max-width: 70rem) {
     .layer > .modal {
         width: 90vw;
     }
 }
-@media (max-width: 55em) {
+@media (max-width: 55rem) {
     .layer > .modal {
         width: 95vw;
     }
 }
 
-@media (max-height: 50em) {
+@media (max-height: 50rem) {
     .layer > .modal {
         height: 85vh;
         max-height: none;
@@ -375,7 +376,7 @@
     }
 }
 
-@media (max-height: 40em) {
+@media (max-height: 40rem) {
     .layer > .modal {
         height: 90vh;
     }
