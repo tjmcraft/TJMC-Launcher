@@ -17,7 +17,7 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [x] Implement **Context Menu** on **Installations**
 - [x] Implement **Full Delete** action on **Installations** (deep delete -> all dependencies)
 - [x] Implement **Edit** action on **Installations**
-- [ ] Implement open current installation folder
+- [x] Implement open current installation folder
 - [ ] Fix accessibility issues (aria tags + tab navigation)
 - [ ] Implement font resize + *accent color change*
 - [x] Fix non-centred main window on first start #28
