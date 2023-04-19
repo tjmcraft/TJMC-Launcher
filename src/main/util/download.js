@@ -1,6 +1,11 @@
 const got = require('got');
 const fs = require('fs');
 const path = require('node:path');
+
+const { promisify } = require('util');
+const stream = require('node:stream');
+const pipeline = promisify(stream.pipeline);
+
 const events = require('node:events');
 events.setMaxListeners(500);
 const https = require('https');
@@ -84,32 +89,23 @@ exports.downloadToFile = (
   const downloadStream = got.stream(url, { signal: signal, agent: { https: httpsAgent, http: httpAgent } });
   const fileWriterStream = fs.createWriteStream(filePath);
 
-  downloadStream
-    .on("downloadProgress", ({ transferred, total, percent }) => {
-      // const percentage = Math.round(percent * 100) / 100;
-      typeof progressHandler == 'function' && progressHandler({
-        total: total,
-        current: transferred,
-        percent: percent,
-      });
-      // console.debug(`progress: ${transferred}/${total} (${percentage}%)`);
-    })
-    .on("error", (error) => {
-      console.error(`Download failed: ${error.message}`);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      resolve(false);
+  downloadStream.on("downloadProgress", ({ transferred, total, percent }) => {
+    typeof progressHandler == 'function' && progressHandler({
+      total: total,
+      current: transferred,
+      percent: percent,
     });
+  })
 
-  fileWriterStream
-    .on("error", (error) => {
-      console.error(`Could not write file to system: ${error.message}`);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      resolve(false);
-    })
-    .on("finish", () => {
-      // console.log(`File downloaded to ${filePath}`);
+  pipeline(downloadStream, fileWriterStream)
+    .then(() => {
       resolve(true);
+    })
+    .catch((error) => {
+      console.error(`Something went wrong: (${url}) -> ${error.message}`);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      resolve(false);
     });
 
-  downloadStream.pipe(fileWriterStream);
+
 })
