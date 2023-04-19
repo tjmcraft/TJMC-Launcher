@@ -357,7 +357,7 @@ const VersionChooser = (props) => {
 	}, [selectedVersion]);
 
 	return (
-		<Modal mini={props.mini} small={props.small} full={shouldFull}>
+		<Modal mini={false} small={false} full={shouldFull}>
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector items={versionTypes} onSelect={handleTypeSelect} />
