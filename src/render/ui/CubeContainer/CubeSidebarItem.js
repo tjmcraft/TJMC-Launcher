@@ -42,6 +42,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		alert,
 		removeInstallation,
 		openInstallationEditor,
+		openInstallationFolder,
 	} = getDispatch();
 
 	const { name, type, isProcessing } = useGlobal(global => {
@@ -108,6 +109,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	}, [alert, name, removeInstallation, hash]);
 
 	const handleEditClick = useCallback(() => openInstallationEditor({ hash }), [openInstallationEditor, hash]);
+	const handleOpenFolderClick = useCallback(() => openInstallationFolder({ hash }), [openInstallationFolder, hash]);
 
 	return hash && (
 		createElement(
@@ -137,6 +139,10 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 						<MenuItem compact onClick={handleEditClick}>
 							<i className="icon-edit" />
 							{'Редактировать'}
+						</MenuItem>
+						<MenuItem compact onClick={handleOpenFolderClick}>
+							<i className="icon-folder" />
+							{'Открыть папку'}
 						</MenuItem>
 						<MenuItem compact onClick={handleClick}>
 							<i className="icon-select" />

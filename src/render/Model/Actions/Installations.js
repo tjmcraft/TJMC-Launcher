@@ -38,6 +38,11 @@ addReducer("removeInstallation", (global, actions, payload) => {
 	let { hash, forceDeps } = payload;
 	void callHost("removeInstallation", { hash, forceDeps });
 });
+addReducer("openInstallationFolder", (global, actions, payload) => {
+	if (!payload) return;
+	let { hash } = payload;
+	void callHost("openInstallationFolder", hash);
+});
 
 addReducer("killInstance", (global, actions, payload) => {
 	if (!payload) return;
