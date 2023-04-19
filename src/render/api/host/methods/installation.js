@@ -81,3 +81,16 @@ export async function removeInstallation(options = {}) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function openInstallationFolder(hash) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "openInstallationFolder",
+			data: { hash: hash },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}

@@ -31,6 +31,7 @@ const requestChannels = Object.seal({
 	updateInstall: 'updateInstall',
 	openMinecraftFolder: 'openMinecraftFolder',
 	openVersionsFolder: 'openVersionsFolder',
+	openInstallationFolder: 'openInstallationFolder',
 });
 exports.requestChannels = requestChannels;
 
@@ -242,6 +243,11 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 			const versions = await VersionManager.getGlobalVersions();
 			return { versions };
+		});
+		WSSHost.addReducer(requestChannels.openInstallationFolder, async ({ hash }) => {
+			const installation = await InstallationsManager.getInstallation(hash);
+			console.debug(">>", installation.versionDir);
+			shell.openPath(installation.versionDir);
 		});
 	}
 
