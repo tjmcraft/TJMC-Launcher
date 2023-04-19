@@ -246,7 +246,6 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.openInstallationFolder, async ({ hash }) => {
 			const installation = await InstallationsManager.getInstallation(hash);
-			console.debug(">>", installation.versionDir);
 			shell.openPath(installation.versionDir);
 		});
 	}
