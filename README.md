@@ -25,6 +25,7 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [ ] Move **Settings** to separate layer (not modal)
 - [ ] Add versions search
 - [ ] Add Installations search
+- [ ] Full support hot keys
 ### Host improvements:
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
