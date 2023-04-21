@@ -175,7 +175,7 @@ class AuthManager extends EventEmitter {
 		});
 		console.debug(">>", response);
 		if (response.accessToken) {
-			await this.handleTokenResponse(response);
+			await this.handleTokenResponse(response, false);
 		}
 	}
 
@@ -190,7 +190,7 @@ class AuthManager extends EventEmitter {
 		});
 		console.debug(">>", response);
 		if (response.accessToken) {
-			return await this.handleTokenResponse(response);
+			return await this.handleTokenResponse(response, true);
 		}
 	}
 
