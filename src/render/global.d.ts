@@ -26,6 +26,13 @@ interface TJMCNative {
 	versions: Object;
 };
 
+interface ElectronExpose {
+	on: Function;
+	off: Function;
+	invoke: Function;
+	send: Function;
+}
+
 interface Window {
 	GLOBAL_ENV: any;
 	buildInfo: any;
@@ -35,4 +42,5 @@ interface Window {
 	__STANDALONE__: boolean;
 	system: TJMCSystem;
 	tjmcNative: TJMCNative;
+	electron: ElectronExpose;
 };
