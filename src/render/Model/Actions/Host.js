@@ -29,11 +29,11 @@ addReducer("initHost", (global, actions) => {
 	const createInstallation = (e, data) => {
 		return actions.openVersionChooserModal();
 	};
-	electron.on('open-settings', withAuth(openSettings));
-	electron.on('installation.run.current', withAuth(runCurrentInstallation));
-	electron.on('installation.run.force', withAuth(runInstallationForce));
-	electron.on('installation.edit.current', withAuth(editInstallation));
-	electron.on('installation.create.new', withAuth(createInstallation));
+	window.electron.on('open-settings', withAuth(openSettings));
+	window.electron.on('installation.run.current', withAuth(runCurrentInstallation));
+	window.electron.on('installation.run.force', withAuth(runInstallationForce));
+	window.electron.on('installation.edit.current', withAuth(editInstallation));
+	window.electron.on('installation.create.new', withAuth(createInstallation));
 	void initHost(actions.hostUpdate);
 });
 
