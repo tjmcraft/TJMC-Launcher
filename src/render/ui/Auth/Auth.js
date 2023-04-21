@@ -25,7 +25,7 @@ const Authentication = () => {
 
 	const [login, setLogin] = useState('');
 
-	const canSubmit = login.length > 0;
+	const canSubmit = login.length >= 3;
 
 	const onLoginChange = (e) => {
 		const { value } = e.target;
