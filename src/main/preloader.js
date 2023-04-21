@@ -40,6 +40,7 @@ contextBridge.exposeInMainWorld('__STANDALONE__', true);
 contextBridge.exposeInMainWorld('system', { os: currentOS });
 contextBridge.exposeInMainWorld('electron', {
   on: (channel, listener) => ipcRenderer.on(channel, listener),
+  off: (channel, listener) => ipcRenderer.off(channel, listener),
   invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
   send: (channel, ...args) => ipcRenderer.send(channel, ...args),
 });

@@ -4,12 +4,36 @@ import { updateGameError, updateGameStartupError, updateHostInfo, updateProgress
 import { updateAuthState, updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
-import { addReducer } from "Store/Global";
+import { addReducer, getState } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { updateCurrentUser } from "Model/Reducers/user";
+import { selectCurrentVersionHash } from "Model/Selectors/installations";
 
 addReducer("initHost", (global, actions) => {
+	const withAuth = (fn = (...args) => args) => (...args) =>
+		getState(global => ["ready"].includes(global.auth_state)) ? fn(...args) : () => void 0;
+	const openSettings = (e, data) => actions.openSettingsModal();
+	const runCurrentInstallation = (e, data) => {
+		const hash = getState(selectCurrentVersionHash);
+		return actions.invokeLaunch({ hash: hash });
+	};
+	const runInstallationForce = (e, data) => {
+		const hash = getState(selectCurrentVersionHash);
+		return actions.invokeLaunch({ hash: hash });
+	};
+	const editInstallation = (e, data) => {
+		const hash = getState(selectCurrentVersionHash);
+		return actions.openInstallationEditor({ hash: hash });
+	};
+	const createInstallation = (e, data) => {
+		return actions.openVersionChooserModal();
+	};
+	electron.on('open-settings', withAuth(openSettings));
+	electron.on('installation.run.current', withAuth(runCurrentInstallation));
+	electron.on('installation.run.force', withAuth(runInstallationForce));
+	electron.on('installation.edit.current', withAuth(editInstallation));
+	electron.on('installation.create.new', withAuth(createInstallation));
 	void initHost(actions.hostUpdate);
 });
 
