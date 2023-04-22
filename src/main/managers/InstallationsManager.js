@@ -117,7 +117,7 @@ exports.getInstallations = () => {
 /**
  * Returns the installation with the given hash
  * @param {string} hash - The hash of the installation
- * @returns {Installation} - The installation's object
+ * @returns {Promise<Installation>} - The installation's object
  */
 exports.getInstallation = async (hash) => {
     return exports.getInstallationSync(hash);
