@@ -79,8 +79,15 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 	performanceMarks.getInstallation = performance.now();
 	const currentInstallation = await InstallationsManager.getInstallation(version_hash);
-	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 	performanceMarks.getInstallation = performance.now() - performanceMarks.getInstallation;
+	if (!currentInstallation) throw new Error("Installation does not exist on given hash");
+
+	if (params.forceCheck) {
+		Object.assign(currentInstallation, {
+			checkHash: true,
+			checkFiles: true,
+		})
+	}
 
 	performanceMarks.getVersionManifest = performance.now();
 	emit('progress', { type: 'load:version-manifest', progress: 0.1 });

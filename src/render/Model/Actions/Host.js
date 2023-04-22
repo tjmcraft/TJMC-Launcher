@@ -20,7 +20,7 @@ addReducer("initHost", (global, actions) => {
 	};
 	const runInstallationForce = (e, data) => {
 		const hash = getState(selectCurrentVersionHash);
-		return actions.invokeLaunch({ hash: hash });
+		return actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
 	};
 	const editInstallation = (e, data) => {
 		const hash = getState(selectCurrentVersionHash);
@@ -91,9 +91,9 @@ addReducer("setConfig", async (global, actions, payload) => {
 addReducer("invokeLaunch", (global, actions, payload) => {
 
 	if (!payload) return;
-	const { hash } = payload;
+	const { hash, params } = payload;
 
-	void callHost("invokeLaunch", hash);
+	void callHost("invokeLaunch", hash, params);
 
 	ProgressStore.setState({
 		...ProgressStore.getState(),
