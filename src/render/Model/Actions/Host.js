@@ -18,6 +18,10 @@ addReducer("initHost", (global, actions) => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.invokeLaunch({ hash: hash });
 	};
+	const stopCurrentInstallation = (e, data) => {
+		const hash = getState(selectCurrentVersionHash);
+		return actions.revokeLaunch({ hash: hash });
+	};
 	const runInstallationForce = (e, data) => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
@@ -31,6 +35,7 @@ addReducer("initHost", (global, actions) => {
 	};
 	window.electron.on('open-settings', withAuth(openSettings));
 	window.electron.on('installation.run.current', withAuth(runCurrentInstallation));
+	window.electron.on('installation.stop.current', withAuth(stopCurrentInstallation));
 	window.electron.on('installation.run.force', withAuth(runInstallationForce));
 	window.electron.on('installation.edit.current', withAuth(editInstallation));
 	window.electron.on('installation.create.new', withAuth(createInstallation));

@@ -144,7 +144,7 @@ const createMenu = async () => {
             label: 'Installation',
             submenu: [
                 {
-                    label: 'Run current',
+                    label: 'Start Launching',
                     accelerator: 'F5',
                     click: () => {
                         MainWindow.restore();
@@ -152,15 +152,23 @@ const createMenu = async () => {
                     }
                 },
                 {
-                    label: 'Run with force',
-                    accelerator: 'Shift+F5',
+                    label: 'Start With Force',
+                    accelerator: 'Ctrl+F5',
                     click: () => {
                         MainWindow.restore();
                         MainWindow.send('installation.run.force');
                     }
                 },
                 {
-                    label: 'Edit current',
+                    label: 'Stop Launching',
+                    accelerator: 'Shift+F5',
+                    click: () => {
+                        MainWindow.restore();
+                        MainWindow.send('installation.stop.current');
+                    }
+                },
+                {
+                    label: 'Edit Current',
                     accelerator: 'F4',
                     click: () => {
                         MainWindow.restore();
