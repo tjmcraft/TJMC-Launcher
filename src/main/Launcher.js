@@ -74,7 +74,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 		instances.set(version_hash, instance);
 		runCallbacks();
 	} else {
-		return controller.abort("Same installation is already launching");
+		throw new Error("Same installation is already launching");
 	}
 
 	performanceMarks.getInstallation = performance.now();
