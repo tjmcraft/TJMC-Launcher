@@ -8,7 +8,7 @@ import { addReducer, getState } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { updateCurrentUser } from "Model/Reducers/user";
-import { selectCurrentVersionHash } from "Model/Selectors/installations";
+import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
 
 addReducer("initHost", (global, actions) => {
 	const withAuth = (fn = (...args) => args) => (...args) =>
@@ -92,6 +92,9 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 
 	if (!payload) return;
 	const { hash, params } = payload;
+
+	const current = selectInstallation(global, hash);
+	if (current.isProcessing) return;
 
 	void callHost("invokeLaunch", hash, params);
 
