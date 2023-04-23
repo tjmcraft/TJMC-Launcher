@@ -34,10 +34,13 @@ export function updateInstallations(global, update) {
 	}
 	return {
 		...global,
-		installations: {
-			//...global.installations,
-			...update.installations,
-		}
+		installations: Object.fromEntries(Object.entries(update.installations).map(([key, value]) => {
+			const current = global.installations[key];
+			if (current != void 0) {
+				value = Object.assign({}, current, value);
+			}
+			return [key, value];
+		}))
 	};
 }
 
