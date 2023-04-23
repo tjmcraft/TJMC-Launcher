@@ -244,6 +244,10 @@ const InstanceController = new function () {
 
 	this.push = (unit) => {
 		if (!unit.version_hash) throw new Error("version_hash is required");
+		if (this.get(unit.version_hash)) throw new Error("Same installation is already launching");
+		Object.assign(unit, {
+			controller: new AbortController()
+		});
 		instances.set(unit.version_hash, unit);
 		if (nextUnitOfWork == null) workLoop();
 		return unit.version_hash;
@@ -257,25 +261,11 @@ const InstanceController = new function () {
 
 }
 
-exports.startLaunch = async (version_hash, params = {}) => {
-	if (!version_hash) throw new Error("version_hash is required");
+exports.startLaunch = async (version_hash, params = {}) =>
+	InstanceController.push({ version_hash, params });
 
-	const controller = new AbortController();
-
-	if (!InstanceController.get(version_hash)) {
-		const instance = Object.seal({
-			version_hash,
-			controller,
-			params,
-		});
-		InstanceController.push(instance);
-	} else {
-		throw new Error("Same installation is already launching");
-	}
-
-}
-
-exports.abortLaunch = async (instanceId) => InstanceController.abort(instanceId);
+exports.abortLaunch = async (instanceId) =>
+	InstanceController.abort(instanceId);
 
 exports.launchWithEmit = async (version_hash, params = {}) => {
 	if (!version_hash) return;
