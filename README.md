@@ -25,14 +25,14 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [ ] Move **Settings** to separate layer (not modal)
 - [ ] Add versions search
 - [ ] Add Installations search
-- [ ] Full support hot keys
+- [x] Full support hot keys
 ### Host improvements:
 - [x] Create **JavaManager**, that can **install** required java and also scan **installed** versions
 - [x] Fix Forge and other *modded* builds startup issues
 - [x] Fix directories bug and create directories setting
-- [ ] Installations:
+- [x] Installations:
   - [x] Prevent loading same installation as a second instance in host launcher (strict)
-  - [ ] Implement installations load queue #34
+  - [x] Implement installations load queue #34
   - [x] Implement *last-used* time on **Installation** #31
 - [ ] Auth improvements:
   - [x] Update **Auth** system (move to host as auth server + oauth on web)
