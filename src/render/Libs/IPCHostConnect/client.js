@@ -39,12 +39,7 @@ export default class IPCClient {
 		for (attempt = 0; attempt < this._requestRetries; attempt++) {
 			const promise = sender.sendWithInvoke(request);
 			//console.debug(">> IPC PROM", promise)
-			try {
-				const result = await promise;
-				return result;
-			} catch (e) {
-				throw e;
-			}
+			return await promise;
 		}
 		throw new Error(`Request was unsuccessful ${attempt} time(s)`);
 	}
