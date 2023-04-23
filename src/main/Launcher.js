@@ -130,7 +130,6 @@ const InstanceController = new function () {
 			});
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
-
 			try {
 				performanceMarks.collectOptions = performance.now();
 				const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
