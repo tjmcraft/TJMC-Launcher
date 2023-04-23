@@ -12,7 +12,6 @@ export default class IPCHostSender {
 		this._updateCallback = args.updateCallback;
 
 		this._handlers = {
-			pong: this._handlePong.bind(this),
 			ack: this._handleAck.bind(this),
 		};
 	}
@@ -33,8 +32,6 @@ export default class IPCHostSender {
 	_handleUpdate(message) {
 		if (this._updateCallback) this._updateCallback(message);
 	}
-
-	_handlePong(message) { }
 
 	_handleAck(message) {
 		// console.debug("[handleAck]", message.data);
