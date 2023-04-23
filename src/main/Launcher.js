@@ -25,7 +25,25 @@ MainWorker.once('exit', (code) => {
 
 const instances = new Map();
 
-exports.startLaunch = async (version_hash, params = {}, eventListener = (event, ...args) => void 0) => {
+const eventListener = (event, args) => {
+	switch (event) {
+		case 'progress': {
+			MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
+			Bridge.emit(ackChannels.gameProgressLoad, args);
+		}; break;
+		case 'close': {
+			MainWindow.setProgressBar(-1);
+			Bridge.emit(ackChannels.gameStartupError, args);
+		}; break;
+		case 'error': {
+			MainWindow.setProgressBar(-1);
+			Bridge.emit(ackChannels.gameError, args);
+		}; break;
+		default: break;
+	}
+}
+
+exports.startLaunch = async (version_hash, params = {}) => {
 	if (!version_hash) throw new Error("version_hash is required");
 
 	const performanceMarks = Object.seal({
@@ -42,7 +60,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 
 	performanceMarks.startup = performance.now();
 
-	const emit = (eventName, args) => eventListener(eventName, args);
+	const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
 	const terminateInstance = () => {
 		instances.delete(version_hash);
 		runCallbacks();
@@ -70,6 +88,7 @@ exports.startLaunch = async (version_hash, params = {}, eventListener = (event, 
 	if (!instances.get(version_hash)) {
 		const instance = Object.seal({
 			controller: controller,
+			params, eventListener
 		});
 		instances.set(version_hash, instance);
 		runCallbacks();
@@ -243,24 +262,5 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 			user_properties: {}
 		}
 	});
-	const eventListener = (event, args) => {
-		args = Object.assign({ version_hash }, args);
-		switch (event) {
-			case 'progress': {
-				MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
-				Bridge.emit(ackChannels.gameProgressLoad, args);
-			}; break;
-			case 'close': {
-				MainWindow.setProgressBar(-1);
-				Bridge.emit(ackChannels.gameStartupError, args);
-			}; break;
-			case 'error': {
-				MainWindow.setProgressBar(-1);
-				Bridge.emit(ackChannels.gameError, args);
-			}; break;
-			default: break;
-		}
-	}
-	this.startLaunch(version_hash, params, eventListener);
-	return true;
+	void this.startLaunch(version_hash, params);
 };
