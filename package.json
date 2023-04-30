@@ -207,7 +207,6 @@
     },
     "dmg": {
       "sign": false
-    },
-    "remoteBuild": false
+    }
   }
 }
