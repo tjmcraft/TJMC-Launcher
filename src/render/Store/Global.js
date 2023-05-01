@@ -26,7 +26,7 @@ const INITIAL_STATE = {
 	modals: [],
 	configuration: undefined,
 	releases: [],
-	currentMainScreen: "home",
+	currentMainScreen: "cube",
 	currentSettingsScreen: "my-account",
 	lastAppVersionId: undefined,
 	update: {
