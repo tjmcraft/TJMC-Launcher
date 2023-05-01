@@ -2137,6 +2137,10 @@ a:hover {
 .categoryItem.selected .innerItem{
     background: var(--brand-color);
 }
+.categoryItem h2 {
+    line-height: 1;
+    text-transform: uppercase;
+}
 /* -------------------- */
 
 .pageWrapper {
