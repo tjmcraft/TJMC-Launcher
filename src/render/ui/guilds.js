@@ -2,14 +2,6 @@ import { createElement } from "react";
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
-export const Guilds = ({children}) => {
-	return createElement('nav', { class: 'guilds' },
-		createElement('ul', { class: 'tree' },
-			createElement('div', {
-				class: buildClassName('scroller', 'no-scrollbar'),
-			}, children)));
-};
-
 export const Guild = ({
 	id = undefined,
 	type,
@@ -23,14 +15,14 @@ export const Guild = ({
 		// console.debug("sel", id)
 		if (typeof onClick === 'function') onClick.call(this, e);
 	};
-	return createElement('div', {
-		class: buildClassName('listItem', selected && "selected"),
-		'data-id': id,
-	},
-	type == 'separator' ?
-		createElement('div', { class: 'guildSeparator' }) :
-		createElement('div', { class: 'wrapper', onclick },
-			image ?
-				createElement('img', { src: image }) :
-				createElement('div', { class: 'singleIconBtn' }, svg || id)));
+	return (
+		<div className={buildClassName('listItem', selected && "selected")}>
+			{type == 'separator' ?
+				<div className="guildSeparator" /> :
+				<div className="wrapper" onClick={onclick}>
+					{image ? <img src={image} alt="image" /> : <div className="singleIconBtn">{svg || id}</div>}
+				</div>
+			}
+		</div>
+	);
 };

@@ -7,25 +7,28 @@ import { SVG } from "./svg";
 import Route from "UI/components/Route";
 import CubeContainer from "UI/CubeContainer";
 import { Guild, Guilds } from "UI/guilds";
-import MainContainer from "UI/MainContainer";
+import MapContainer from "./MapContainer";
+import buildClassName from "Util/buildClassName";
 
 
-const Main = memo(() => {
+const Main = () => {
 
 	const { selectMainScreen } = getDispatch();
 	const currentScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
 		<div className="container">
-			<Guilds>
-				<Guild type="item" svg={SVG('home')} onClick={() => selectMainScreen('home')} selected={currentScreen == 'home'} />
-				<Guild type="separator" />
-				<Guild type="item" svg={SVG('cube')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
-			</Guilds>
-			<Route path="home"><MainContainer /></Route>
+			<div className="guilds">
+				<div className={buildClassName("scroller", "no-scrollbar")}>
+					<Guild type="item" svg={SVG('cube')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
+					<Guild type="separator" />
+					<Guild type="item" svg={SVG('map')} onClick={() => selectMainScreen('map')} selected={currentScreen == 'map'} />
+				</div>
+			</div>
+			<Route path="map"><MapContainer /></Route>
 			<Route path="cube"><CubeContainer /></Route>
 		</div>
 	);
-});
+};
 
-export default Main;
+export default memo(Main);
