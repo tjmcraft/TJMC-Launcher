@@ -168,7 +168,7 @@ const MyAccountTab = memo(() => {
 	const user = useGlobal(selectCurrentUser);
 
 	const handleChangeClick = useCallback(() => {
-		window.open(`https://www.tjmc.ru/login/main.php`);
+		window.open(`https://id.tjmc.ru/client/email-change`);
 	}, []);
 
 	const onLogoutClick = useCallback(() => {
