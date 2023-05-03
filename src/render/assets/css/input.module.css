@@ -48,6 +48,12 @@
     margin: 0.125rem 0;
 }
 
+.inputWrapper.small input, select {
+    padding: 0.4rem 0.45rem;
+    height: 32px;
+    font-size: 14px;
+}
+
 .inputWrapper {
     position: relative;
     display: flex;

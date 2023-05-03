@@ -11,27 +11,66 @@ import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations.js";
 
 import { Modal, ModalFooter } from "UI/Modals";
-import { InputGroup, PathInput } from "UI/components/Input.js";
+import { InputGroup, InputText, PathInput } from "UI/components/Input.js";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 import SettingSwitch from "UI/components/SettingSwitch";
 
 import "./VersionChooser.css";
 
+function levenshteinDistance(s, t) {
+	if (!s.length) return t.length;
+	if (!t.length) return s.length;
+
+	return Math.min(
+		levenshteinDistance(s.substr(1), t) + 1,
+		levenshteinDistance(t.substr(1), s) + 1,
+		levenshteinDistance(s.substr(1), t.substr(1)) + (s.charAt(0).toLowerCase() !== t.charAt(0).toLowerCase() ? 1 : 0)
+	);
+}
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
 
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
-	const handleSelect = (item) => {
+	const handleSelect = useCallback((item) => {
 		return e => {
 			e.stopPropagation();
 			if (typeof onSelect === 'function') onSelect(item);
 		};
+	}, [onSelect]);
+
+	const [searchParam, setSearchParam] = useState("");
+
+	const search = (item) => !searchParam || item.id.toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1;
+	const sort = (a, b) => {
+		if (searchParam) {
+			if (a.id.toLowerCase().indexOf(searchParam.toLowerCase()) > b.id.toLowerCase().indexOf(searchParam.toLowerCase())) {
+				return 1;
+			} else if (a.id.toLowerCase().indexOf(searchParam.toLowerCase()) < b.id.toLowerCase().indexOf(searchParam.toLowerCase())) {
+				return -1;
+			}
+		}
+		return 0;
 	};
+
+	const handleInput = useCallback((e) => {
+		e.stopPropagation();
+		const value = e.target.value;
+		console.debug(">>", value);
+		setSearchParam(value);
+	}, []);
 
 	return (
 		<div className="sidebar-region">
+			<div className="topbar">
+				<InputText id="versions-search"
+					autoFocus
+					placeholder="Введите название версии"
+					onInput={handleInput}
+					value={searchParam}
+					small />
+			</div>
 			<div className="sidebar">
 				{versions.length <= 0 && (
 					[...Array(12)].map((v, k) =>
@@ -39,7 +78,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 							className={buildClassName('item', 'navItem', 'bgL')} />)
 				)}
 				{versions.length > 0 && (
-					versions.map((item, i) =>
+					versions.filter(search).sort(sort).map((item, i) =>
 						<div key={i}
 							className={buildClassName('item', 'navItem', selected?.id == item.id && 'selected')}
 							onClick={handleSelect(item)}
