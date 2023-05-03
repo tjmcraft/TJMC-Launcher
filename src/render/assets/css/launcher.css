@@ -514,6 +514,15 @@ p {
     padding: 60px 6px 60px 20px;
 }
 
+.sidebar-region .topbar {
+    width: 100%;
+    padding: 5px 5px 0 10px;
+}
+
+.sidebar-region input, select {
+    background-color: var(--background-tertiary);
+}
+
 .sidebar .item,
 .content .item {
     display: flex;

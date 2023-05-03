@@ -10,12 +10,26 @@ import style from "CSS/input.module.css";
 
 
 export function InputText({
-	ref, id, className, name,
-	value, label, error,
-	disabled, readOnly,
-	placeholder, autoComplete, maxLength, autoFocus, required,
-	onChange, onInput,
+	ref = undefined,
+	id = undefined,
+	className = undefined,
+	name = undefined,
+	value = undefined,
+	label = undefined,
+	error = undefined,
+	disabled = false,
+	readOnly = false,
+	placeholder = undefined,
+	autoComplete = undefined,
+	maxLength = undefined,
+	autoFocus = false,
+	required = false,
+	onChange = void 0,
+	onInput = void 0,
+	small = false,
 }) {
+
+	id = id || `inp-${randomString(5)}`;
 
 	const fullClassName = buildClassName(
 		className,
@@ -33,7 +47,7 @@ export function InputText({
 					{error && <span> - {error}</span>}
 				</label>
 			)}
-			<span className={style.inputWrapper}>
+			<span className={buildClassName(style.inputWrapper, small && style.small)}>
 				<input
 					ref={ref}
 					id={id}
