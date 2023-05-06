@@ -159,7 +159,6 @@ module.exports = {
 			APP_COPYRIGHT: JSON.stringify(pkg['build']['copyright']),
 			AUTHOR: JSON.stringify(pkg['author']),
 			HTML_TIMESTAMP: JSON.stringify(Date.now()),
-			API_URL: JSON.stringify(isDev ? "https://appdev.tjmc.ru" : "https://app.tjmc.ru"),
 		}),
 	],
 };

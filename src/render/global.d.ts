@@ -10,7 +10,6 @@ declare const APP_VERSION: string;
 declare const APP_COPYRIGHT: string;
 declare const AUTHOR: string;
 declare const HTML_TIMESTAMP: string;
-declare const API_URL: string;
 
 interface TJMCSystem {
 	os: 'linux' | 'osx' | 'windows' | 'web'
