@@ -6,7 +6,7 @@ const { getOfflineUUID, buildUrl } = require('../util/Tools');
 const { randomString } = require('../util/Random');
 const { launcherDir } = require('../Paths');
 
-const API_HOST = "https://app.tjmc.ru/api/";
+const API_HOST = "https://api.tjmc.ru/v2/";
 const OAUTH_HOST = "https://oauth.tjmc.ru/";
 const CLIENT_ID = "1";
 const CLIENT_SECRET = "client1.secret";
