@@ -18,6 +18,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "allowJs": true,
+        "resolveJsonModule": true,
         "paths": {
             "Libs/*": ["Libs/*"],
             "Util/*": ["Util/*"],
