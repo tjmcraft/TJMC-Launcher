@@ -156,3 +156,5 @@ Temporary Items
 package-lock.json
 .vs
 *.pfx
+built
+compiled

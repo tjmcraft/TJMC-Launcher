@@ -1,0 +1,22 @@
+
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"outDir": "dist",
+			"target": "ES5",
+			"moduleResolution": "node",
+			"pretty": true,
+			"allowSyntheticDefaultImports": true,
+			"strict": true,
+			"noUnusedLocals": true,
+			"noUnusedParameters": true,
+			"sourceMap": true,
+			"skipLibCheck": true,
+			"allowJs": true,
+	},
+	"include": ["./**/*"],
+	"exclude": [
+		"node_modules",
+		"./dist/**/*"
+	]
+}

@@ -6,6 +6,8 @@ autoUpdater.allowPrerelease = true;
 autoUpdater.autoInstallOnAppQuit = true;
 autoUpdater.autoDownload = false;
 
+updateLogger.disabled = true;
+
 autoUpdater.setFeedURL({
 	provider: "github",
 	owner: "tjmcraft",

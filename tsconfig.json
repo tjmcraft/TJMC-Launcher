@@ -1,0 +1,19 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"outDir": "compiled",
+		"target": "ES5",
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"pretty": true,
+		"allowSyntheticDefaultImports": true,
+		"strict": false,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"sourceMap": true,
+		"skipLibCheck": true,
+		"allowJs": true,
+	},
+  "include": ["src/main/**/*"],
+  "exclude": ["src/render", "node_modules"]
+}
