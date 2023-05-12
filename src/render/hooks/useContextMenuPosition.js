@@ -39,7 +39,8 @@ export default function useContextMenuPosition(
 			extraTopPadding = 0,
 			marginSides = 0,
 			extraMarginTop = 0,
-			withPortal = false
+			withPortal = false,
+			noRight = true,
 		} = getLayout?.() || {};
 
 		const marginTop = menuEl ? parseInt(getComputedStyle(menuEl).marginTop, 10) + extraMarginTop : undefined;
@@ -53,15 +54,12 @@ export default function useContextMenuPosition(
 
 		let horizontalPosition;
 		let verticalPosition;
-		if (x + menuRect.width + extraPaddingX < rootRect.width + rootRect.left) {
+		if (x + menuRect.width + extraPaddingX < rootRect.width + rootRect.left || noRight) {
 			x += 3;
 			horizontalPosition = 'left';
-		} else if (x - menuRect.width > 0) {
+		} else {
 			horizontalPosition = 'right';
 			x -= 3;
-		} else {
-			horizontalPosition = 'left';
-			x = 16;
 		}
 		setPositionX(horizontalPosition);
 
@@ -95,7 +93,7 @@ export default function useContextMenuPosition(
 		const addedYForPortalPositioning = (withPortal ? triggerRect.top : 0);
 		const addedXForPortalPositioning = (withPortal ? triggerRect.left : 0);
 
-		const leftWithPossibleNegative = Math.min(
+		const leftWithPossibleNegative = noRight ? x - triggerRect.left : Math.min(
 			x - triggerRect.left,
 			rootRect.width - menuRect.width - MENU_POSITION_VISUAL_COMFORT_SPACE_PX,
 		);
