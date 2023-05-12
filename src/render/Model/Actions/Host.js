@@ -14,6 +14,7 @@ addReducer("initHost", (global, actions) => {
 	const withAuth = (fn = (...args) => args) => (...args) =>
 		getState(global => ["ready"].includes(global.auth_state)) ? fn(...args) : () => void 0;
 	const openSettings = (e, data) => actions.openSettingsModal();
+	const openMap = (e, data) => actions.openMapModal();
 	const runCurrentInstallation = (e, data) => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.invokeLaunch({ hash: hash });
@@ -34,6 +35,7 @@ addReducer("initHost", (global, actions) => {
 		return actions.openVersionChooserModal();
 	};
 	window.electron.on('open-settings', withAuth(openSettings));
+	window.electron.on('open-map', withAuth(openMap));
 	window.electron.on('installation.run.current', withAuth(runCurrentInstallation));
 	window.electron.on('installation.stop.current', withAuth(stopCurrentInstallation));
 	window.electron.on('installation.run.force', withAuth(runInstallationForce));

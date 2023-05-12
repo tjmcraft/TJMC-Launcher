@@ -13,7 +13,7 @@ import buildClassName from "Util/buildClassName";
 
 const Main = () => {
 
-	const { selectMainScreen } = getDispatch();
+	const { selectMainScreen, openMapModal } = getDispatch();
 	const currentScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
@@ -22,10 +22,9 @@ const Main = () => {
 				<div className={buildClassName("scroller", "no-scrollbar")}>
 					<Guild type="item" svg={SVG('cube')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
 					<Guild type="separator" />
-					<Guild type="item" svg={SVG('map')} onClick={() => selectMainScreen('map')} selected={currentScreen == 'map'} />
+					<Guild type="item" svg={SVG('map')} onClick={() => openMapModal()} />
 				</div>
 			</div>
-			<Route path="map"><MapContainer /></Route>
 			<Route path="cube"><CubeContainer /></Route>
 		</div>
 	);

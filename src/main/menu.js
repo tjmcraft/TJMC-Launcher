@@ -32,6 +32,14 @@ const createMenu = async () => {
                     }
                 },
                 {
+                    label: 'Map',
+                    accelerator: 'Ctrl+Shift+M',
+                    click: () => {
+                        MainWindow.restore();
+                        MainWindow.send('open-map');
+                    }
+                },
+                {
                     label: 'Root Directory',
                     accelerator: 'Ctrl+Shift+D',
                     click: () => openDir(ConfigManager.getMinecraftDirectory())
