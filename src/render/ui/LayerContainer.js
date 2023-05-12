@@ -12,6 +12,7 @@ import VersionChooser from "./Modals/VersionChooser";
 import Alert from "./Modals/Alert";
 import WhatsNew from "./Modals/WhatsNew";
 import InstallationEditor from "./Modals/InstallationEditor";
+import MapModal from "./Modals/MapModal";
 
 import style from "CSS/modal.module.css";
 
@@ -20,7 +21,8 @@ const MODAL_STORE = {
 	versionChooser: VersionChooser,
 	alert: Alert,
 	"whats-new": WhatsNew,
-	"installation-editor": InstallationEditor
+	"installation-editor": InstallationEditor,
+	"map-modal": MapModal,
 };
 
 const ModalLayer = ({ isShown, children }) => {

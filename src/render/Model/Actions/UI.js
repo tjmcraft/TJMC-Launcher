@@ -140,6 +140,15 @@ addReducer("openWhatsNewModal", (global, _actions, _update) => {
 	setState(global);
 });
 
+addReducer("openMapModal", (_global, _actions, update) => {
+	void addModal({
+		layer: "map-modal",
+		label: "map-modal",
+		closeButton: true,
+		allowOutsideClick: true,
+	});
+});
+
 addReducer("setTheme", (global, _actions, payload) => {
 	return {
 		...global,
