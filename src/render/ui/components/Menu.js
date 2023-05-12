@@ -1,13 +1,29 @@
-import { createElement, useEffect, useRef, forwardRef } from "react";
+import { createElement, useEffect, useRef, memo, forwardRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useShowTransition from "Hooks/useShowTransition";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 
+/**
+ * @typedef {Object} Props
+ * @property {boolean|undefined} full
+ * @property {boolean|undefined} isOpen
+ * @property {React.Component} children
+ * @property {Function|undefined} onClose
+ * @property {Function|undefined} onCloseEnd
+ * @property {React.RefObject|undefined} containerRef
+ * @property {React.StyleHTMLAttributes|undefined} style
+ * @property {'left'|'right'} positionX
+ * @property {'top'|'bottom'} positionY
+ * @property {number} transformOriginX
+ * @property {number} transformOriginY
+ */
 
-const Menu = ({
-	ref = undefined,
+/**
+ * @type React.ForwardRefExoticComponent<?,Props>
+ */
+const Menu = forwardRef(({
 	full = false,
 	isOpen = false,
 	children,
@@ -17,7 +33,7 @@ const Menu = ({
 	style = undefined,
 	positionX = undefined, positionY = undefined,
 	transformOriginX = undefined, transformOriginY = undefined,
-}) => {
+}, ref) => {
 
 	let menuRef = useRef(null);
 	if (ref) {
@@ -52,6 +68,6 @@ const Menu = ({
 			</div>
 		</div>
 	);
-};
+});
 
-export default Menu;
+export default memo(Menu);
