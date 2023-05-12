@@ -1,19 +1,18 @@
-import { createElement, useEffect, useRef } from "react";
+import { createElement, useEffect, useRef, forwardRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useShowTransition from "Hooks/useShowTransition";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import captureEscKeyListener from "Util/captureEscKeyListener";
-import { createPortal } from "react-dom";
 
 
 const Menu = ({
+	ref = undefined,
 	full = false,
 	isOpen = false,
 	children,
 	onClose = void 0,
 	onCloseEnd = void 0,
-	ref = undefined,
 	containerRef = undefined,
 	style = undefined,
 	positionX = undefined, positionY = undefined,
@@ -34,6 +33,9 @@ const Menu = ({
 
 	const handleClose = (e) => { e.stopPropagation(); onClose(); };
 
+	const transformOriginYStyle = transformOriginY !== undefined ? `${transformOriginY}px` : undefined;
+	const transformOriginXStyle = transformOriginX !== undefined ? `${transformOriginX}px` : undefined;
+
 	return (
 		<div className={buildClassName("menu", full && "full")} style={style}>
 			<div ref={menuRef}
@@ -44,7 +46,7 @@ const Menu = ({
 					"thin-s",
 					transitionClassNames,
 				)}
-				style={{ transformOrigin: `${transformOriginX || positionX} ${transformOriginY || positionY}` }}
+				style={{ transformOrigin: `${transformOriginXStyle || positionX} ${transformOriginYStyle || positionY}` }}
 				onClick={handleClose}>
 				{children}
 			</div>

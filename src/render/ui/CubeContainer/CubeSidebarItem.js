@@ -55,6 +55,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	}, [hash]);
 
 	const containerRef = useRef();
+	const menuRef = useRef();
 
 	const {
 		isContextMenuOpen, contextMenuPosition,
@@ -62,14 +63,16 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
+	const getTriggerElement = useCallback(() => containerRef.current, []);
 	const getRootElement = useCallback(() => containerRef.current.closest('.scroller'), []);
-	const getMenuElement = useCallback(() => undefined, []);
+	const getMenuElement = useCallback(() => menuRef.current, []);
 
 	const {
 		positionX, positionY, style: menuStyle, transformOriginX, transformOriginY,
 	} = useContextMenuPosition(contextMenuPosition,
+		getTriggerElement,
 		getRootElement,
-		getMenuElement);
+		getMenuElement, () => ({ withPortal: true }));
 
 	const handleClick = useCallback(() => setVersionHash(hash), [hash, setVersionHash]);
 
@@ -125,6 +128,7 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 			contextMenuPosition != undefined && (
 				<Portal>
 					<Menu
+						ref={menuRef}
 						isOpen={isContextMenuOpen}
 						onClose={handleContextMenuClose}
 						onCloseEnd={handleContextMenuHide}

@@ -8,6 +8,7 @@ const EMPTY_RECT = {
 
 export default function useContextMenuPosition(
 	anchor,
+	getTriggerElement,
 	getRootElement,
 	getMenuElement,
 	getLayout = undefined,
@@ -21,7 +22,8 @@ export default function useContextMenuPosition(
 	const [menuStyle, setMenuStyle] = useState('opacity: 0;');
 
 	useEffect(() => {
-		if (!anchor) {
+		const triggerEl = getTriggerElement();
+		if (!anchor || !triggerEl) {
 			return;
 		}
 
@@ -37,6 +39,7 @@ export default function useContextMenuPosition(
 			extraTopPadding = 0,
 			marginSides = 0,
 			extraMarginTop = 0,
+			withPortal = false
 		} = getLayout?.() || {};
 
 		const marginTop = menuEl ? parseInt(getComputedStyle(menuEl).marginTop, 10) + extraMarginTop : undefined;
@@ -62,8 +65,9 @@ export default function useContextMenuPosition(
 		}
 		setPositionX(horizontalPosition);
 
-		if (marginSides
-			&& horizontalPosition === 'right' && (x + extraPaddingX + marginSides >= rootRect.width + rootRect.left)) {
+		if (marginSides && horizontalPosition === 'right' &&
+			(x + extraPaddingX + marginSides >= rootRect.width + rootRect.left)
+		) {
 			x -= marginSides;
 		}
 
@@ -81,25 +85,38 @@ export default function useContextMenuPosition(
 			verticalPosition = 'bottom';
 
 			if (y - menuRect.height < rootRect.top + extraTopPadding) {
-				// y = rootRect.top + rootRect.height;
+				y = rootRect.top + rootRect.height;
 			}
 		}
 		setPositionY(verticalPosition);
 
-		const left = x;
-		const top = y;
+		const triggerRect = triggerEl.getBoundingClientRect();
+
+		const addedYForPortalPositioning = (withPortal ? triggerRect.top : 0);
+		const addedXForPortalPositioning = (withPortal ? triggerRect.left : 0);
+
+		const leftWithPossibleNegative = Math.min(
+			x - triggerRect.left,
+			rootRect.width - menuRect.width - MENU_POSITION_VISUAL_COMFORT_SPACE_PX,
+		);
+		const left = (horizontalPosition === 'left'
+			? (withPortal
+				? Math.max(MENU_POSITION_VISUAL_COMFORT_SPACE_PX, leftWithPossibleNegative)
+				: leftWithPossibleNegative)
+			: (x - triggerRect.left)) + addedXForPortalPositioning;
+		const top = y - triggerRect.top + addedYForPortalPositioning;
 
 		const menuMaxHeight = rootRect.height - MENU_POSITION_BOTTOM_MARGIN - (marginTop || 0);
 
 		setWithScroll(menuMaxHeight < menuRect.height);
 		setMenuStyle(`max-height: ${menuMaxHeight}px;`);
 		setStyle(`left: ${left}px; top: ${top}px`);
-		const offsetX = (anchorX) - left;
-		const offsetY = (anchorY) - top - (marginTop || 0);
+		const offsetX = (anchorX + addedXForPortalPositioning - triggerRect.left) - left;
+		const offsetY = (anchorY + addedYForPortalPositioning - triggerRect.top) - top - (marginTop || 0);
 		setTransformOriginX(horizontalPosition === 'left' ? offsetX : menuRect.width + offsetX);
 		setTransformOriginY(verticalPosition === 'bottom' ? menuRect.height + offsetY : offsetY);
 	}, [
-		anchor, getMenuElement, getRootElement, getLayout,
+		anchor, getMenuElement, getRootElement, getLayout, getTriggerElement
 	]);
 
 	return {
