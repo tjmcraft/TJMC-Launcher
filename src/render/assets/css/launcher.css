@@ -2300,8 +2300,6 @@ a:hover {
 
 .menu {
     position: absolute;
-    width: 100%;
-    /* height: 125%; */
 }
 
 .menu > .backdrop {
@@ -2349,6 +2347,15 @@ a:hover {
 }
 .menu.full > .menu-container {
     width: 100%;
+}
+.menu > .menu-container.bottom {
+    bottom: 100%;
+}
+.menu > .menu-container.left {
+    left: 0;
+}
+.menu > .menu-container.right {
+    right: 0;
 }
 
 .menu .menuItem {
