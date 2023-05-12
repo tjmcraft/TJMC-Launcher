@@ -1020,6 +1020,7 @@ body {
     cursor: pointer;
     border-radius: 50%;
     overflow: auto;
+    transition: border-radius .15s ease-out;
 }
 
 
@@ -1040,9 +1041,9 @@ body {
     box-sizing: border-box;
     width: 48px;
     height: 48px;
-    transition: color .15s ease-out, background-color .15s ease-out;
     color: var(--interactive-normal);
     background-color: var(--background-primary);
+    transition: color .15s ease-out, background-color .15s ease-out;
 }
 
 .listItem > .wrapper > .singleIconBtn svg {
