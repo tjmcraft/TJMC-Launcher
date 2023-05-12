@@ -55,8 +55,8 @@ const eventListener = (event, args) => {
 
 const InstanceController = new function () {
 
-	instances = new Map();
-	nextUnitOfWork = null;
+	const instances = new Map();
+	let nextUnitOfWork = null;
 
 	const workLoop = async () => {
 		nextUnitOfWork = instances.entries().next();
@@ -66,7 +66,7 @@ const InstanceController = new function () {
 			} catch (e) {
 				console.error(e);
 			} finally {
-				remove(nextUnitOfWork.value[0]);
+				this.remove(nextUnitOfWork.value[0]);
 			}
 		}
 		if (instances.size > 0) return workLoop();
@@ -240,7 +240,7 @@ const InstanceController = new function () {
 	});
 
 	this.get = (key) => instances.get(key);
-	remove = (key) => instances.delete(key);
+	this.remove = (key) => instances.delete(key);
 
 	this.push = (unit) => {
 		if (!unit.version_hash) throw new Error("version_hash is required");
