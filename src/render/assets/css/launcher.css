@@ -486,7 +486,7 @@ p {
     display: flex;
     flex-direction: row;
     user-select: none;
-    overflow: hidden scroll;
+    overflow: hidden overlay;
 }
 
 .sidebarView .sidebar-region {
@@ -516,7 +516,11 @@ p {
 
 .sidebar-region .topbar {
     width: 100%;
-    padding: 5px 5px 0 10px;
+    padding: 5px 10px;
+    z-index: 1;
+    background-color: var(--background-secondary);
+    position: fixed;
+    bottom: 0;
 }
 
 .sidebar-region input, select {
