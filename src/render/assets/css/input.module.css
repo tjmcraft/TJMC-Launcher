@@ -184,3 +184,9 @@ input:disabled, select:disabled {
 .select {
     position: relative;
 }
+.select :global(.menu) {
+    width: 100%;
+}
+.select :global(.menu .bubble) {
+    transform-origin: 50% 0;
+}
