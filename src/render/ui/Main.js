@@ -7,7 +7,6 @@ import { SVG } from "./svg";
 import Route from "UI/components/Route";
 import CubeContainer from "UI/CubeContainer";
 import { Guild } from "UI/guilds";
-import MapContainer from "./MapContainer";
 import buildClassName from "Util/buildClassName";
 
 
