@@ -44,7 +44,7 @@ export function InputText({
 		readOnly && style.disabled,
 	);
 
-	const canClear = value?.length > 0;
+	const canClear = typeof onClear === 'function' && value?.length > 0;
 
 	return (
 		<div className={fullClassName}>
