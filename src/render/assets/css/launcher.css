@@ -514,16 +514,14 @@ p {
     padding: 60px 6px 60px 20px;
 }
 
-.sidebar-region .topbar {
+.sidebar-bottom {
     width: 100%;
     padding: 5px 10px;
     z-index: 1;
     background-color: var(--background-secondary);
-    position: fixed;
-    bottom: 0;
 }
 
-.sidebar-region input, select {
+.sidebar-bottom input, select {
     background-color: var(--background-tertiary);
 }
 
@@ -562,6 +560,7 @@ p {
     min-height: 28px;
     margin-bottom: 1px;
     margin-left: 8px;
+    margin-right: 8px;
     visibility: visible;
 }
 
@@ -885,7 +884,7 @@ body {
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 4px;
-    overflow: hidden scroll;
+    overflow: hidden overlay;
     background: var(--background-secondary);
 }
 

@@ -1,5 +1,5 @@
 
-import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
 
 import buildClassName from "Util/buildClassName.js";
 import { getDispatch } from "Store/Global.js";
@@ -61,31 +61,38 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 		setSearchParam(value);
 	}, []);
 
+	const handleClear = useCallback(() => {
+		setSearchParam(null);
+	}, []);
+
 	return (
-		<div className="sidebar-region">
-			<div className="topbar">
+		<Fragment>
+			<div className="sidebar-region">
+				<div className="sidebar">
+					{versions.length <= 0 && (
+						[...Array(12)].map((v, k) =>
+							<div key={k}
+								className={buildClassName('item', 'navItem', 'bgL')} />)
+					)}
+					{versions.length > 0 && (
+						versions.filter(search).sort(sort).map((item, i) =>
+							<div key={i}
+								className={buildClassName('item', 'navItem', selected?.id == item.id && 'selected')}
+								onClick={handleSelect(item)}
+							>{item.id}</div>)
+					)}
+				</div>
+			</div>
+			<div className="sidebar-bottom">
 				<InputText id="versions-search"
-					autoFocus
+					autoFocus={true}
 					placeholder="Введите название версии"
-					onInput={handleInput}
+					onChange={handleInput}
+					onClear={handleClear}
 					value={searchParam}
 					small />
 			</div>
-			<div className="sidebar">
-				{versions.length <= 0 && (
-					[...Array(12)].map((v, k) =>
-						<div key={k}
-							className={buildClassName('item', 'navItem', 'bgL')} />)
-				)}
-				{versions.length > 0 && (
-					versions.filter(search).sort(sort).map((item, i) =>
-						<div key={i}
-							className={buildClassName('item', 'navItem', selected?.id == item.id && 'selected')}
-							onClick={handleSelect(item)}
-						>{item.id}</div>)
-				)}
-			</div>
-		</div>
+		</Fragment>
 	);
 };
 
