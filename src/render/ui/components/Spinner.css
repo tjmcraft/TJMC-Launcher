@@ -13,9 +13,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 4px;
 
   width: var(--spinner-size);
   height: var(--spinner-size);
+}
+
+.Spinner.size1 {
+  --spinner-size: 1rem;
+}
+.Spinner.size2 {
+  --spinner-size: 2rem;
+}
+.Spinner.size3 {
+  --spinner-size: 3rem;
 }
 
 .Spinner > div {
