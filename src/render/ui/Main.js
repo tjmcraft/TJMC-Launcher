@@ -19,7 +19,7 @@ const Main = () => {
 		<div className="container">
 			<div className="guilds">
 				<div className={buildClassName("scroller", "no-scrollbar")}>
-					<Guild type="item" svg={SVG('cube')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
+					<Guild type="item" svg={SVG('home')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
 					<Guild type="separator" />
 					<Guild type="item" svg={SVG('map')} onClick={() => openMapModal()} />
 				</div>
