@@ -26,10 +26,15 @@ export function InputText({
 	required = false,
 	onChange = void 0,
 	onInput = void 0,
+	onClear = void 0,
 	small = false,
 }) {
 
 	id = id || `inp-${randomString(5)}`;
+	let inputRef = useRef(undefined);
+	if (ref) {
+		inputRef = ref;
+	}
 
 	const fullClassName = buildClassName(
 		className,
@@ -38,6 +43,8 @@ export function InputText({
 		disabled && style.disabled,
 		readOnly && style.disabled,
 	);
+
+	const canClear = value?.length > 0;
 
 	return (
 		<div className={fullClassName}>
@@ -49,7 +56,7 @@ export function InputText({
 			)}
 			<span className={buildClassName(style.inputWrapper, small && style.small)}>
 				<input
-					ref={ref}
+					ref={inputRef}
 					id={id}
 					name={name}
 					className={""}
@@ -65,6 +72,21 @@ export function InputText({
 					onChange={onChange}
 					onInput={onInput}
 				/>
+				<div
+					className={style.toggleIcon}
+					role="button"
+					tabIndex={0}
+					onClick={onClear}
+					style={{ ...(!canClear ? { display: 'none' } : {} )}}
+				>
+					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", "open")}>
+						<g fill="none" fill-rule="evenodd">
+							<path d="M0 0h18v18H0" />
+							<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
+							<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+						</g>
+					</svg>
+				</div>
 			</span>
 		</div>
 	);
