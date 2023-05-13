@@ -911,7 +911,7 @@ body {
     z-index: 1;
     display: flex;
     align-items: center;
-    padding: 18px 8px 4px 18px;
+    padding: 18px 12px 4px 18px;
     height: 40px;
     color: var(--interactive-normal);
     background-color: var(--background-secondary);
