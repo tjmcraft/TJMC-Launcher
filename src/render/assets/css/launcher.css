@@ -1278,6 +1278,10 @@ body {
     box-shadow: 0 0 8px #555;
 }
 
+.main-content h1,h2,h3,h4,h5 {
+    transition: .15s ease;
+}
+
 .main-content h1 {
     color: var(--header-primary);
     font-size: 1.5em;
@@ -1295,6 +1299,11 @@ body {
 }
 
 .main-content iframe {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
     height: 100%;
 }
