@@ -83,6 +83,7 @@ class Minecraft extends EventEmitter {
         )) {
             await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
         }
+        handleProgress({ percent: 1 });
         logger.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
     }
@@ -165,6 +166,11 @@ class Minecraft extends EventEmitter {
             }));
             logger.debug(`Downloaded and extracted natives! ${stat.length}`);
         }
+        this.emit('progress', {
+            type: 'natives',
+            task: 1,
+            total: 1,
+        });
         logger.debug(`Natives Collected!`);
         return nativeDirectory;
     }
@@ -237,6 +243,11 @@ class Minecraft extends EventEmitter {
         if (assetsToLoad.length > 0) {
             await Promise.all(assetsToLoad.map(async asset => await asset()));
         }
+        this.emit('progress', {
+            type: 'assets',
+            task: Object.keys(index.objects).length,
+            total: Object.keys(index.objects).length,
+        })
         logger.debug('Collected assets');
     }
 
