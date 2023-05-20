@@ -23,7 +23,7 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 - [x] Fix non-centred main window on first start #28
 - [x] Fix fullscreen after reloading UI #27
 - [ ] Move **Settings** to separate layer (not modal)
-- [ ] Add versions search
+- [x] Add versions search
 - [ ] Add Installations search
 - [x] Full support hot keys
 ### Host improvements:
