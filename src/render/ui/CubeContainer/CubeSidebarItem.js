@@ -22,7 +22,7 @@ const StatusContainer = ({ hash, isProcessing }) => {
 	const { progress } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
-			progress: version.progress || 0,
+			progress: version.totalProgress || 0,
 		};
 	}, [hash]);
 	return createElement('div', { class: 'status-container' },
