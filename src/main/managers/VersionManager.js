@@ -75,7 +75,7 @@ exports.getVersionManifest = async function (version, progressHandler = (e) => v
         fs.mkdirSync(versionPath, { recursive: true });
         fs.writeFileSync(versionJsonPath, JSON.stringify(c_version, null, 2));
     }
-    progressHandler({ progress: 1 });
+    progressHandler({ percent: 1 });
     return c_version;
 }
 
