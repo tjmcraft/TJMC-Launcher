@@ -44,6 +44,7 @@ export function updater(update) {
 			hash: payload.version_hash,
 			progress: payload.progress,
 			progressType: payload.type,
+			totalProgress: payload.totalProgress,
 		});
 	} else if (type == "game.startup.error") {
 		payload?.version_hash && onUpdate({

@@ -60,7 +60,7 @@ const useTotalProgress = (emit) => {
 		if (!prev[type]) prev[type] = 0;
 		totalProgress += progress - prev[type];
 		typeof emit === 'function' && emit({
-			type, progress, totalProgress
+			type, progress, totalProgress: (Math.round(totalProgress * 100) / 100) / 6
 		});
 		prev[type] = progress;
 	}
@@ -139,8 +139,8 @@ const InstanceController = new function () {
 
 			performanceMarks.getVersionManifest = performance.now();
 			handleProgress({ type: 'load:version-manifest', progress: 0.1 });
-			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ progress }) => {
-				handleProgress({ type: 'load:version-manifest', progress: progress });
+			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ percent }) => {
+				handleProgress({ type: 'load:version-manifest', progress: percent });
 			});
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 

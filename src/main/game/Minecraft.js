@@ -136,11 +136,12 @@ class Minecraft extends EventEmitter {
                     return native;
                 });
             if (signal?.aborted) return;
-            this.emit('progress', {
-                type: 'natives',
-                task: 0,
-                total: stat.length,
-            });
+            stat.length &&
+                this.emit('progress', {
+                    type: 'natives',
+                    task: 0,
+                    total: stat.length,
+                });
             await Promise.all(stat.map(async (native, index) => {
                 if (!native) return
                 const name = native.path.split('/').pop()

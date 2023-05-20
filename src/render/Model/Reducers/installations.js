@@ -45,14 +45,14 @@ export function updateInstallations(global, update) {
 }
 
 export function updateInstallationProgress(global, update) {
-	const { hash, progress, progressType } = update;
+	const { hash, progress, progressType, totalProgress } = update;
 	if (progressType == 'terminated') {
 		setState(updateInstallation(global, hash, {
 			isProcessing: false,
 		}));
 		ProgressStore.setState({
 			...ProgressStore.getState(),
-			[hash]: { progress: 0 }
+			[hash]: { progress: 0, totalProgress: 0 }
 		});
 	} else {
 		if (!getState(global => selectInstallation(global, hash)).isProcessing) {
@@ -60,7 +60,7 @@ export function updateInstallationProgress(global, update) {
 		}
 		ProgressStore.setState({
 			...ProgressStore.getState(),
-			[hash]: { progress: progress, progressType: progressType }
+			[hash]: { progress: progress, progressType: progressType, totalProgress: totalProgress }
 		});
 	}
 	return void 0;
