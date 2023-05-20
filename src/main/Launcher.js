@@ -53,6 +53,19 @@ const eventListener = (event, args) => {
 	}
 }
 
+const useTotalProgress = (emit) => {
+	let totalProgress = 0;
+	let prev = {};
+	return ({ type, progress }) => {
+		if (!prev[type]) prev[type] = 0;
+		totalProgress += progress - prev[type];
+		typeof emit === 'function' && emit({
+			type, progress, totalProgress
+		});
+		prev[type] = progress;
+	}
+}
+
 const InstanceController = new function () {
 
 	const instances = new Map();
@@ -94,17 +107,18 @@ const InstanceController = new function () {
 
 			const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
 			const terminateInstance = () => {
-				emit('progress', { type: 'terminated', progress: 0 });
+				handleProgress({ type: 'terminated', progress: 0 });
 				logger.debug("Performance marks:");
 				// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
 				Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
 				logger.debug("total", '=>', Object.values(performanceMarks).reduce((c, v) => c = c + v, 0) + 'ms')
 				resolve(void 0);
 			}
+			const handleProgress = useTotalProgress((e) => emit('progress', e));
 
 			controller.signal.addEventListener('abort', () => {
 				logger.warn("Aborting..");
-				emit('progress', { type: 'aborting', progress: 0 });
+				handleProgress({ type: 'aborting', progress: 0 });
 				MainWorker.postMessage({ type: 'abort', payload: { version_hash } });
 				terminateInstance();
 			}, { once: true });
@@ -124,9 +138,9 @@ const InstanceController = new function () {
 			}
 
 			performanceMarks.getVersionManifest = performance.now();
-			emit('progress', { type: 'load:version-manifest', progress: 0.1 });
+			handleProgress({ type: 'load:version-manifest', progress: 0.1 });
 			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ progress }) => {
-				emit('progress', { type: 'load:version-manifest', progress: progress });
+				handleProgress({ type: 'load:version-manifest', progress: progress });
 			});
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
@@ -155,15 +169,15 @@ const InstanceController = new function () {
 					const EventHandler = async ({ type, payload }) => {
 						if (!controller.signal.aborted) {
 							if (type == 'java:progress') {
-								return emit('progress', { type: 'load:java', progress: payload });
+								return handleProgress({ type: 'load:java', progress: payload });
 							}
 							if (type == 'args:progress') {
 								const progress = (payload.task / payload.total);
-								return emit('progress', { type: payload.type, progress: progress });
+								return handleProgress({ type: payload.type, progress: progress });
 							}
 							if (type == 'javaPath') {
 								javaController.resolve(payload);
-								return emit('progress', { type: 'load:java', progress: 1 });
+								return handleProgress({ type: 'load:java', progress: 1 });
 							}
 							if (type == 'error') {
 								javaController.reject(payload);
@@ -181,7 +195,7 @@ const InstanceController = new function () {
 				performanceMarks.loadJava = performance.now();
 				const javaPath = await promiseRequest(javaController);
 				performanceMarks.loadJava = performance.now() - performanceMarks.loadJava;
-				performanceMarks.constructArgs = performance.now(); // @TODO: create queue
+				performanceMarks.constructArgs = performance.now();
 				const javaArgs = await promiseRequest(argsController);
 				performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
 
