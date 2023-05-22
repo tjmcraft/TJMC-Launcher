@@ -138,6 +138,12 @@ const initHandlers = async () => {
 			});
 		});
 
+		setInterval(() => {
+			if (ConfigManager.getOption("launcher.checkUpdates")) {
+				checkForUpdates();
+			}
+		}, 1e3 * 60 * 1); // once a minute
+
 		WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
 		WSSHost.addReducer(requestChannels.updateDownload, () => {
 			WSSHost.emit(ackChannels.updateProgress, { percent: 0 });
