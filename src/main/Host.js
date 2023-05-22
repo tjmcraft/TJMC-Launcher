@@ -138,11 +138,17 @@ const initHandlers = async () => {
 			});
 		});
 
-		setInterval(() => {
-			if (ConfigManager.getOption("launcher.checkUpdates")) {
-				checkForUpdates();
-			}
-		}, 1e3 * 60 * 1); // once a minute
+		let interval = undefined;
+		const initInterval = () => {
+			interval && clearInterval(interval);
+			interval = setInterval(() => {
+				if (ConfigManager.getOption("launcher.checkUpdates")) {
+					checkForUpdates();
+				}
+			}, 1e3 * 60 * ConfigManager.getOption("launcher.checkUpdatesInterval"));
+		}
+		ConfigManager.watchOption("launcher.checkUpdatesInterval")(state => initInterval());
+		queueMicrotask(initInterval);
 
 		WSSHost.addReducer(requestChannels.updateCheck, () => checkForUpdates());
 		WSSHost.addReducer(requestChannels.updateDownload, () => {
