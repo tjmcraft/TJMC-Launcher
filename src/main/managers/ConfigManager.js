@@ -15,6 +15,7 @@ const DEFAULT_CONFIG = Object.seal({
     },
     launcher: {
         checkUpdates: true,
+        checkUpdatesInterval: 60 * 24, // every 24 hours
         disableHardwareAcceleration: false,
         hideOnClose: true,
         openDevTools: false,
