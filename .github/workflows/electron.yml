@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - v*
+      - v0.*
 
 jobs:
   release:
@@ -28,7 +28,7 @@ jobs:
       run: npm run build-render:prod
         
     - name: Build Electron app
-      uses: tjmcraft/action-electron-builder@latest
+      uses: tjmcraft/action-electron-builder@1.0.2
       with:
         gh_token: ${{ secrets.gh_token }}
         release: ${{ true }}
