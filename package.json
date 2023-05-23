@@ -152,9 +152,7 @@
         }
       ],
       "icon": "icons/icon.ico",
-      "publisherName": "MakAndJo",
-      "certificateFile": "MakAndJo.pfx",
-      "certificatePassword": ""
+      "publisherName": "MakAndJo"
     },
     "linux": {
       "target": [
