@@ -1,6 +1,11 @@
 name: Build Electron
 
-on: push
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
 
 jobs:
   release:
