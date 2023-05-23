@@ -23,7 +23,7 @@ jobs:
       run: npm run build-render:prod
         
     - name: Build Electron app
-      uses: tjmcraft/action-electron-builder@1.0.2
+      uses: tjmcraft/action-electron-builder@main
       with:
         gh_token: ${{ secrets.gh_token }}
         release: ${{ true }}
