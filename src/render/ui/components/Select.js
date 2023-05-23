@@ -15,7 +15,8 @@ const Select = ({
 	onInput = void 0,
 	onOpen = void 0,
 	onClose = void 0,
-	title,
+	onBlur = void 0,
+	title = undefined,
 	value,
 }) => {
 	id = id || randomString(5);
@@ -48,6 +49,7 @@ const Select = ({
 	const handleClose = useCallback(() => {
 		setIsOpen(false);
 		if (onClose) onClose();
+		inputRef.current?.blur();
 	}, [onClose]);
 
 
@@ -62,6 +64,7 @@ const Select = ({
 					onClick={handleTrigger}
 					onFocus={handleTrigger}
 					onInput={handleInput}
+					onBlur={onBlur}
 					value={value}
 				/>
 				<div
