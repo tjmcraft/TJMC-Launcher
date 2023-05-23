@@ -805,17 +805,7 @@ const UpdatesContainer = memo(() => {
 
 	return (
 		<div className={buildClassName(style.settingGroup, style.withBorder)}>
-			<SettingContainer note={renderProgress(updateProgress)} title={titleName}>
-				<Button
-					onClick={updateAction}
-					className={buildClassName("filled", "small")}
-					isLoading={updateStatus == "loading" || updateStatus == "checking"}
-					isPrimary={updateStatus == "available"}
-					isRed={updateStatus == "loaded"}
-					disabled={updateStatus == "loading" || updateStatus == "checking"}
-				>{buttonName}</Button>
-			</SettingContainer>
-			<SettingContainer note={"Вы можете установить как частно необходимо выполнять проверку наличия обновлений"} title={"Период проверки обновлений"}>
+			<SettingContainer title={"Период проверки обновлений"}>
 				<Select value={item.name}>
 					{items.map((e, i) => (
 						<MenuItem compact
@@ -825,6 +815,16 @@ const UpdatesContainer = memo(() => {
 						>{e.name}</MenuItem>
 					))}
 				</Select>
+			</SettingContainer>
+			<SettingContainer note={renderProgress(updateProgress)} title={titleName}>
+				<Button
+					onClick={updateAction}
+					className={buildClassName("filled", "small")}
+					isLoading={updateStatus == "loading" || updateStatus == "checking"}
+					isPrimary={updateStatus == "available"}
+					isRed={updateStatus == "loaded"}
+					disabled={updateStatus == "loading" || updateStatus == "checking"}
+				>{buttonName}</Button>
 			</SettingContainer>
 		</div>
 	);
