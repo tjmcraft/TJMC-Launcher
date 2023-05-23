@@ -19,7 +19,7 @@ jobs:
         node-version: 18.x
         
     - name: Build Electron app
-      uses: tjmcraft/action-electron-builder@v1
+      uses: tjmcraft/action-electron-builder@v1.0.1
       with:
         github_token: ${{ secrets.gh_token }}
         build_script_name: build-render:prod
