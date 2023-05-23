@@ -21,6 +21,6 @@ jobs:
     - name: Build Electron app
       uses: tjmcraft/action-electron-builder@v1.0.1
       with:
-        github_token: ${{ secrets.gh_token }}
+        gh_token: ${{ secrets.gh_token }}
         build_script_name: build-render:prod
         release: ${{ startsWith(github.ref, 'refs/tags/v') }}
