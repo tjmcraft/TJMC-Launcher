@@ -15,13 +15,13 @@ autoUpdater.setFeedURL({
 const checkForUpdates = () => {
 	const Host = require('./Host');
 	autoUpdater.checkForUpdates().then(updates => {
-			updateLogger.debug("-> Updates:", updates);
-			if (!updates) autoUpdater.emit('update-not-available');
+		updateLogger.debug("-> Updates:", updates);
+		if (!updates) autoUpdater.emit('update-not-available');
 	}).catch(err => {
-			updateLogger.error("-> Error:", err);
-			autoUpdater.emit('update-not-available');
+		updateLogger.error("-> Error:", err);
+		autoUpdater.emit('update-not-available');
 	});
 	Host.Bridge.emit(Host.ackChannels.updateStatus, { status: Host.updateStatus.checking });
-}
+};
 
 exports.checkForUpdates = checkForUpdates;

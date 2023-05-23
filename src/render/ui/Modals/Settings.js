@@ -8,6 +8,7 @@ import { randomString } from "Util/Random.js";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
+import useEffectAfterMount from "Hooks/useEffectAfterMount";
 import { selectCurrentUser } from "Model/Selectors/user.js";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
@@ -712,7 +713,8 @@ const LauncherAppearanceTab = memo(() => {
 
 const UpdatesContainer = memo(() => {
 
-	const { updateCheck, updateDownload, updateInstall } = getDispatch();
+	const config = useGlobal(global => global.configuration);
+	const { updateCheck, updateDownload, updateInstall, setConfig } = getDispatch();
 	const {
 		status: updateStatus,
 		progress: updateProgress,
@@ -750,8 +752,70 @@ const UpdatesContainer = memo(() => {
 		return updateStatus == "loading" && (<progress className="w100" max={100} value={value} />);
 	}
 
+	const [selectedIndex, selectIndex] = useState(0);
+	const items = useMemo(() => [
+		{
+			name: '30 минут',
+			value: 30,
+		},
+		{
+			name: '1 час',
+			value: 60,
+		},
+		{
+			name: '6 часов',
+			value: 60 * 6,
+		},
+		{
+			name: '12 часов',
+			value: 60 * 12,
+		},
+		{
+			name: '1 день',
+			value: 60 * 24,
+		},
+		{
+			name: '3 дня',
+			value: 60 * 24 * 3,
+		},
+		{
+			name: '1 неделя',
+			value: 60 * 24 * 7,
+		},
+		{
+			name: '1 месяц',
+			value: 60 * 24 * 7 * 30,
+		},
+	], []);
+
+	useEffect(() => {
+		selectIndex(items.findIndex(e => e.value == config?.launcher?.checkUpdatesInterval));
+	}, [config?.launcher?.checkUpdatesInterval, items]);
+
+	useEffectAfterMount(() => {
+		const item = items[selectedIndex];
+		if (!item) return;
+		setConfig({ key: "launcher.checkUpdatesInterval", value: item.value });
+	}, [selectedIndex]);
+
+	const item = items[selectedIndex] || (config?.launcher?.checkUpdatesInterval ? {
+		name: `${config.launcher.checkUpdatesInterval} min`,
+		value: config.launcher.checkUpdatesInterval,
+	} : items[0]);
+
 	return (
 		<div className={buildClassName(style.settingGroup, style.withBorder)}>
+			<SettingContainer title={"Период проверки обновлений"}>
+				<Select value={item.name}>
+					{items.map((e, i) => (
+						<MenuItem compact
+							key={i}
+							selected={selectedIndex == i}
+							onClick={() => selectIndex(i)}
+						>{e.name}</MenuItem>
+					))}
+				</Select>
+			</SettingContainer>
 			<SettingContainer note={renderProgress(updateProgress)} title={titleName}>
 				<Button
 					onClick={updateAction}
