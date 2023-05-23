@@ -2,10 +2,8 @@ name: Build Electron
 
 on:
   push:
-    branches:
-      - main
     tags:
-      - v0.*
+      - v*
 
 jobs:
   release:
