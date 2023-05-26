@@ -17,6 +17,10 @@ This project was originally created by [MakAndJo](https://github.com/MakAndJo) a
 ## Download 💿
 If you are looking to install **TJMC-Launcher** without setting up a development environment, you can consume our binary [releases](https://github.com/tjmcraft/TJMC-Launcher/releases).
 
+| Windows 8.1+ ([x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.exe)) | MacOS 10.15+ ([x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.dmg), [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.dmg)) | Linux deb ([x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-amd64.deb), [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.deb)) | Linux zip ([x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.zip), [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.zip)) | Linux tar ([x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.tar.gz), [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.tar.gz)) |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+
+
 ## Tasks 📑
 ### UI improvements:
 - [x] Implement **Context Menu** on **Installations**
