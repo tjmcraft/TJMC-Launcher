@@ -29,3 +29,4 @@ jobs:
         release: ${{ true }}
         mac_cert: ${{ secrets.mac_certs }}
         mac_cert_password: ${{ secrets.mac_certs_password }}
+        win_cert: ${{ secrets.win_certs }}
