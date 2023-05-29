@@ -3,6 +3,7 @@ import { getPos } from "Libs/ElementEx.js";
 import { PopupEl } from "../popup-element.js";
 import style from "CSS/slider.module.css";
 import { randomString } from "Util/Random.js";
+import { toFixedNumber } from "Util/Numbers.js";
 
 export default class RangeSlider extends Component {
 
@@ -44,14 +45,11 @@ export default class RangeSlider extends Component {
 	handleMousemove = (e) => {
 		const pos = getPos(this.track.current);
 		const diff = e.pageX - pos.left;
-		const perc = Math.max(Math.min(Number((diff / this.track.current.offsetWidth) * 100).toFixed(1), 100), 0);
-		const notch = Math.max(Math.min(Number(perc / this.meta.inc).toFixed(0) * this.meta.inc, 100), 0);
-		// console.debug("[RangeSlider]", "move", diff, perc);
-		if (Math.abs(perc - notch) < this.meta.inc / 2) {
+		const percent = Math.max(Math.min(toFixedNumber((diff / this.track.current.offsetWidth) * 100, 1), 100), 0);
+		const notch = Math.max(Math.min(toFixedNumber(percent / this.meta.inc, 0) * this.meta.inc, 100), 0);
+		if (Math.abs(percent - notch) < this.meta.inc / 2) {
 			const value = Math.round((this.meta.min + (this.meta.step * (notch / this.meta.inc))) * 100) / 100;
 			const event = new MouseEvent("change", {
-				target: this.track.current,
-				type: "change",
 				bubbles: false,
 				cancelable: true
 			});
@@ -64,7 +62,7 @@ export default class RangeSlider extends Component {
 		}
 	};
 
-	handleMouseup = (e) => {
+	handleMouseup = () => {
 		document.removeEventListener("mouseup", this.handleMouseup);
 		document.removeEventListener("mousemove", this.handleMousemove);
 		this.grabber.current.onmouseenter = this.showPopup.bind(this);
