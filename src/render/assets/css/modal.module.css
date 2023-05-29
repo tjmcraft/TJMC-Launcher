@@ -177,8 +177,6 @@
 }
 
 .layer > .modal .content {
-    line-height: normal;
-    font-size: 1em;
     overflow: auto scroll;
     position: relative;
     z-index: 0;
@@ -304,7 +302,7 @@
 /* === Primary Button for overlay === */
 
 .layer > .modal > p {
-    margin: 1em 0 1em 0;
+    margin: 1em 0;
     line-height: normal;
     font-size: 1em;
 }
@@ -317,7 +315,7 @@
     border: 0;
     height: 1px;
     background: #333;
-    margin: 1em 1em;
+    margin: 1em;
 }
 
 
