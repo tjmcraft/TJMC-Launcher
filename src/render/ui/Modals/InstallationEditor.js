@@ -164,7 +164,7 @@ const InstallationForm = ({ version, onCancel }) => {
 			</ModalFooter>
 		</div>
 	);
-}
+};
 
 const InstallationEditor = (props) => {
 	const { closeModal } = getDispatch();

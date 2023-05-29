@@ -85,8 +85,7 @@ const InfoBox = memo(() => {
 				<Fragment>
 					<span className={buildClassName(style.line, style.size12)}>Packages:</span>
 					{Object.entries(window.tjmcNative.versions).map(([k, v]) =>
-						(<span key={k} className={buildClassName(style.line, style.size12)}>{`${k}\xa0${v}`}</span>)
-					)}
+						(<span key={k} className={buildClassName(style.line, style.size12)}>{`${k}\xa0${v}`}</span>))}
 				</Fragment>
 			)}
 		</div>

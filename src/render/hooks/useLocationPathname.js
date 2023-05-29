@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 
 const useLocatonPathname = () => {
-  const [path, setPath] = useState(window.location.pathname);
+	const [path, setPath] = useState(window.location.pathname);
 
-  const navigate = useCallback(() => {
-    setPath(window.location.pathname);
-  });
+	const navigate = useCallback(() => {
+		setPath(window.location.pathname);
+	}, [setPath]);
 
-  useEffect(() => {
-    window.addEventListener("navigate", navigate);
-    return () => window.removeEventListener("navigate", navigate);
-  }, []);
+	useEffect(() => {
+		window.addEventListener("navigate", navigate);
+		return () => window.removeEventListener("navigate", navigate);
+	});
 
-  return path;
+	return path;
 };
 
 export default useLocatonPathname;

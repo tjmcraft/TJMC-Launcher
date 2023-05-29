@@ -1,5 +1,5 @@
 import { setState } from "Store/Global";
-import ProgressStore from "Store/Progress"
+import ProgressStore from "Store/Progress";
 import { updateInstallation } from "./installations";
 
 export function updateHostInfo(global, update) {
