@@ -9,24 +9,24 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js Setup
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18.x
-        
-    - name: NPM Install
-      run: npm install
-        
-    - name: Build Webpack
-      run: npm run build-render:prod
-        
-    - name: Build Electron app
-      uses: tjmcraft/action-electron-builder@main
-      with:
-        gh_token: ${{ secrets.gh_token }}
-        release: ${{ true }}
-        mac_cert: ${{ secrets.mac_certs }}
-        mac_cert_password: ${{ secrets.mac_certs_password }}
-        win_cert: ${{ secrets.win_certs }}
+      - name: Use Node.js Setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+
+      - name: NPM Install
+        run: npm install
+
+      - name: Build Webpack
+        run: npm run build-render:prod
+
+      - name: Build Electron app
+        uses: tjmcraft/action-electron-builder@main
+        with:
+          gh_token: ${{ secrets.gh_token }}
+          release: ${{ true }}
+          mac_cert: ${{ secrets.mac_certs }}
+          mac_cert_password: ${{ secrets.mac_certs_password }}
+          win_cert: ${{ secrets.win_certs }}
