@@ -283,4 +283,4 @@ export const PathInput = ({
 		</div>
 	);
 
-}
+};

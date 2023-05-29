@@ -6,12 +6,12 @@
  * Created for TJMC-Company, Inc. by MakAndJo
  */
 
-'use strict';
+
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 		typeof define === 'function' && define.amd ? define(['exports'], factory) :
 			(global = global || self, factory(global.GreenTree = {}));
-}(this, (function (exports) {
+}(this, ((exports) => {
 	/**
 	 * Abstract element implementation
 	 */
@@ -87,7 +87,7 @@
 						if (this.#root.childNodes.length > 0) {
 							this.#root.childNodes.forEach((node) => {
 								if (!new_element.contains(node)) node._gtr._unmount();
-							})
+							});
 						}
 						this.#root && this.#root.replaceWith(new_element);
 					}
@@ -153,7 +153,7 @@
 		 * Remove element method
 		 */
 		remove() {
-			this.#root.remove()
+			this.#root.remove();
 		}
 
 	}
@@ -166,14 +166,14 @@
 	 * @returns {Element} instance of element
 	 */
 	function createElement(type = "div", attributes = null, children = null) {
-		var propName;
-		var props = {};
-		var key = null;
-		var ref = null;
-		var self = null;
-		var source = null;
-		var unsafeHTML = false;
-		var namespaceURI = null;
+		let propName;
+		let props = {};
+		let key = null;
+		let ref = null;
+		let self = null;
+		let source = null;
+		let unsafeHTML = false;
+		let namespaceURI = null;
 
 		if (attributes != null) {
 			if (hasValidRef(attributes)) {
@@ -188,13 +188,13 @@
 			}
 		}
 
-		var childrenLength = arguments.length - 2;
+		let childrenLength = arguments.length - 2;
 
 		if (childrenLength === 1) {
 			props.children = children;
 		} else if (childrenLength > 1) {
-			var childArray = Array(childrenLength);
-			for (var i = 0; i < childArray.length; i++) {
+			let childArray = Array(childrenLength);
+			for (let i = 0; i < childArray.length; i++) {
 				childArray[i] = arguments[i + 2];
 			}
 			{
@@ -221,7 +221,7 @@
 
 				if (this.props) for (const prop in this.props) {
 					if (prop && this.props.hasOwnProperty(prop) && !RESERVED_PROPS.hasOwnProperty(prop)) {
-						let value = this.props[prop]
+						let value = this.props[prop];
 						if (value instanceof Object) {
 							if (value instanceof Array) // if array
 								dom_element.setAttribute(prop, value.filter(e => e).join(' '));
@@ -250,7 +250,7 @@
 				}
 
 				return dom_element;
-			}
+			};
 			//console.debug('StringEl:', element_instance);
 		} else if (type.__proto__ === Component) {
 			element_instance = new type(props);
@@ -263,8 +263,8 @@
 
 		if (element_instance.content) {
 			if (ref) {
-				if (typeof ref === 'function') ref.call(this, element_instance.content)
-				else if (typeof ref === 'object') ref.current = element_instance.content
+				if (typeof ref === 'function') ref.call(this, element_instance.content);
+				else if (typeof ref === 'object') ref.current = element_instance.content;
 				//else if (typeof attributes.ref === 'string') this.refs[attributes.ref] = element_instance.content
 			}
 			return element_instance.content;
@@ -275,14 +275,14 @@
 
 	}
 
-	var hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+	let hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 	const RESERVED_PROPS = { children: true, ref: true, unsafeHTML: true, ns: true };
 	const GREEN_ELEMENT_TYPE = Symbol('green.element');
 
 	function hasValidRef(config) {
 		{
 			if (hasOwnProperty$1.call(config, 'ref')) {
-				var getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
+				let getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
 				if (getter && getter.isGreenWarning) {
 					return false;
 				}
@@ -294,7 +294,7 @@
 
 
 	function createRef() {
-		var refObject = { current: null };
+		let refObject = { current: null };
 		Object.seal(refObject);
 		return refObject;
 	}
@@ -304,7 +304,7 @@
 		if (!target instanceof HTMLElement) throw new Error('Target is not instance of HTMLElement');
 		target.removeAllChildNodes();
 		if (element instanceof Array) {
-			element = element.filter(e => !!e?.nodeType)
+			element = element.filter(e => Boolean(e?.nodeType));
 			target.append(...element);
 		} else {
 			target.append(...[element]);

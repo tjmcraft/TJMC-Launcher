@@ -20,7 +20,7 @@ const RadioGroup = ({
 		return (e) => {
 			typeof action === "function" &&
 			action.call(this, i);
-		}
+		};
 	};
 
 	const fullClassName = buildClassName(

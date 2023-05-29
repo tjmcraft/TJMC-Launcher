@@ -110,6 +110,6 @@ const AuthContainer = ({ isShown }) => {
 			<Authentication />
 		</div>
 	);
-}
+};
 
 export default memo(AuthContainer);

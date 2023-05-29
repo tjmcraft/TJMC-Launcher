@@ -76,8 +76,7 @@ const InstanceScroller = memo(() => {
 				<InstanceItem
 					key={instanceId}
 					instanceId={instanceId}
-				/>
-			)}
+				/>)}
 		</div>
 	);
 });

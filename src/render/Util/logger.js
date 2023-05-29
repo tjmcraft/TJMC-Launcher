@@ -1,28 +1,28 @@
 export default class LoggerUtil {
 
-    constructor(prefix, style) {
-        this.prefix = prefix
-        this.style = style
-    }
+	constructor(prefix, style) {
+		this.prefix = prefix;
+		this.style = style;
+	}
 
-    log() {
-        console.log.apply(null, [this.prefix, this.style, ...arguments, "\r\n"])
-    }
+	log(...args) {
+		console.log.apply(null, [this.prefix, this.style, ...args, "\r\n"]);
+	}
 
-    info() {
-        console.info.apply(null, [this.prefix, this.style, ...arguments, "\r\n"])
-    }
+	info(...args) {
+		console.info.apply(null, [this.prefix, this.style, ...args, "\r\n"]);
+	}
 
-    warn() {
-        console.warn.apply(null, [this.prefix, this.style, ...arguments, "\r\n"])
-    }
+	warn(...args) {
+		console.warn.apply(null, [this.prefix, this.style, ...args, "\r\n"]);
+	}
 
-    debug() {
-        console.debug.apply(null, [this.prefix, this.style, ...arguments, "\r\n"])
-    }
+	debug(...args) {
+		console.debug.apply(null, [this.prefix, this.style, ...args, "\r\n"]);
+	}
 
-    error() {
-        console.error.apply(null, [this.prefix, this.style, ...arguments, "\r\n"])
-    }
+	error(...args) {
+		console.error.apply(null, [this.prefix, this.style, ...args, "\r\n"]);
+	}
 
 }
