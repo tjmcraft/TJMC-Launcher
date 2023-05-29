@@ -24,7 +24,7 @@ const MapContainer = memo(() => {
 			<iframe src="https://map.tjmc.ru" seamless={true} onLoad={handleLoad} style={{ borderRadius: '0px' }} />
 		</div>
 	);
-})
+});
 
 const MapModal = memo(() => {
 	return (

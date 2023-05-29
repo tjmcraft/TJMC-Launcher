@@ -1,12 +1,12 @@
 
 window.getCookie = function (name) {
-    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    if (match) return match[2];
-}
+	let match = document.cookie.match(new RegExp(`(^| )${  name  }=([^;]+)`));
+	if (match) return match[2];
+};
 
 export function getQueryParams() {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    return Object.fromEntries(urlSearchParams.entries());
+	const urlSearchParams = new URLSearchParams(window.location.search);
+	return Object.fromEntries(urlSearchParams.entries());
 }
 
 /*function verifyScope(scope) {
@@ -18,10 +18,10 @@ export function getQueryParams() {
 }*/
 
 function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-        if ((new Date().getTime() - start) > milliseconds) {
-            break;
-        }
-    }
+	let start = new Date().getTime();
+	for (let i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+	}
 }

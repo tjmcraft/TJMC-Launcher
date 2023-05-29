@@ -1,5 +1,4 @@
 const fs = require('node:fs');
-const path = require('node:path');
 const crypto = require('node:crypto');
 
 /**
@@ -8,7 +7,7 @@ const crypto = require('node:crypto');
  * @param {string} hash - Compare hash string
  * @returns
  */
-exports.checkFileHash = (file, hash) => new Promise((resolve, reject) => {
+exports.checkFileHash = (file, hash) => new Promise((resolve) => {
 	const sha1 = crypto.createHash('sha1');
 	fs.createReadStream(file).on('data', data => sha1.update(data)).on('end', () => resolve(sha1.digest('hex') == hash));
 })

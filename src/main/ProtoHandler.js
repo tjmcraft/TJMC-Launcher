@@ -48,14 +48,14 @@ const protoHandler = (link) => {
 		case "launch": {
 			const version_hash = args[0];
 			Launcher.launchWithEmit(version_hash);
-		}; break;
+		} break;
 
 		case "authorize": {
 			logger.debug(params.code);
 			if (params.code) {
 				handleCode(params.code);
 			}
-		}; break;
+		} break;
 
 		default: return false;
 	}
