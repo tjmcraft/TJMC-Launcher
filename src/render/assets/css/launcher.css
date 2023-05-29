@@ -1664,10 +1664,8 @@ a.anchor:hover {
     text-align: start;
     -webkit-appearance: textfield;
     appearance: textfield;
-    background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59));
     -webkit-rtl-ordering: logical;
     cursor: text;
-    margin: 0em;
     font: 400 13.3333px Arial;
     border-width: 2px;
     border-style: inset;
@@ -1677,7 +1675,6 @@ a.anchor:hover {
     background-color: var(--background-secondary-alt);
     outline: none;
     height: 32px;
-    width: 184px;
     color: #eee;
     font-size: 14px;
     font-family: var(--font-primary);
@@ -2364,7 +2361,6 @@ a:hover {
 }
 
 .menu .menuItem {
-    width: 100%;
     margin: 0;
     padding: 0.75rem 1rem;
     background: none;
