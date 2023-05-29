@@ -710,7 +710,7 @@ h5 {
 
 
 .divider {
-    margin: 20px 0 0 0 !important;
+    margin: 20px 0 0 !important;
 }
 
 .mr8 {
@@ -912,7 +912,7 @@ body {
     z-index: 1;
     display: flex;
     align-items: center;
-    padding: 18px 18px 4px 18px;
+    padding: 18px 18px 4px;
     height: 40px;
     color: var(--interactive-normal);
     background-color: var(--background-secondary);
@@ -1187,7 +1187,6 @@ body {
     font-weight: 800;
     padding: 8px 16px;
     min-width: 10rem;
-    border-radius: 0;
     color: #fdfdfd;
     border-radius: 4px;
     line-height: 1;
@@ -1233,7 +1232,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
 }
 
 .avatar img {
@@ -1664,7 +1662,6 @@ a.anchor:hover {
 
 .input-wrapper .input {
     text-rendering: auto;
-    color: -internal-light-dark(black, white);
     letter-spacing: normal;
     word-spacing: normal;
     text-transform: none;
@@ -1679,13 +1676,11 @@ a.anchor:hover {
     cursor: text;
     margin: 0em;
     font: 400 13.3333px Arial;
-    padding: 1px 2px;
     border-width: 2px;
     border-style: inset;
     border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
     border-image: initial;
     border: 1px solid gray;
-    border-width: 0px 0px 1px 0px;
     background-color: var(--background-secondary-alt);
     outline: none;
     height: 32px;
@@ -1790,7 +1785,6 @@ a.anchor:hover {
     justify-content: space-evenly;
     width: 100%;
     column-gap: 8px;
-    padding: 8px;
     border-radius: 8px;
     background-color: var(--background-primary);
     padding: 16px;
@@ -2336,10 +2330,9 @@ a:hover {
     display: block;
     list-style: none;
     margin: 0;
-    padding: 0.1rem 0.1rem;
+    padding: 0.1rem;
     position: absolute;
     box-shadow: 0 0.25rem 0.5rem 0.125rem var(--color-shadow);
-    /* border-radius: 0.75rem; */
     min-width: 10rem;
     z-index: 21;
     overscroll-behavior: contain;
@@ -2347,7 +2340,6 @@ a:hover {
     transform-origin: 0px 0px;
     transition: opacity .2s cubic-bezier(0.2, 0, 0.2, 1),transform .2s cubic-bezier(0.2, 0, 0.2, 1) !important;
     opacity: 0;
-
     border-style: solid;
     border-color: transparent;
     border-width: 2px;
