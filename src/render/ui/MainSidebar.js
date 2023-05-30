@@ -4,8 +4,6 @@ import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
 import { SVG } from "./svg";
-import useTooltip from "Hooks/useTooltip";
-import useTooltipPosition from "Hooks/useTooltipPosition";
 import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "./components/Tooltip";
@@ -17,12 +15,6 @@ const UserPanel = memo(() => {
 
 	const addVersionButton = useRef();
 	const settingsButton = useRef();
-
-	const tooltipRef = useRef();
-	const { isTooltipOpen, handleMouseEnter, handleMouseLeave } = useTooltip();
-	const getTriggerElement = useCallback(() => addVersionButton.current, []);
-	const getTooltipElement = useCallback(() => tooltipRef.current, []);
-	const { positionX, style: tooltipStyle } = useTooltipPosition(getTriggerElement, getTooltipElement);
 
 	if (!user) return null;
 
@@ -43,10 +35,8 @@ const UserPanel = memo(() => {
 					<div className="title">{user.realname || user.username}</div>
 					<div className="subtitle">{`#${user.discriminator}`}</div>
 				</div>
-				<div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
-				<Portal>
-					<Tooltip isOpen={isTooltipOpen} style={tooltipStyle} positionX={positionX} ref={tooltipRef}>Добавить версию {isTooltipOpen}</Tooltip>
-				</Portal>
+				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
+				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}>{SVG('settings-gear')}</div>
 			</div>
 		</div>

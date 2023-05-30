@@ -13,6 +13,7 @@
 	pointer-events: none;
 	transition: .1s opacity;
 }
+
 .tooltip.open {
 	opacity: 1;
 }
