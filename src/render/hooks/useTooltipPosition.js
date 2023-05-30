@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+const BOTTOM_MARGIN = 12;
+const EMPTY_RECT = {
+	width: 0, left: 0, height: 0, top: 0,
+};
+
 export default function useTooltipPosition(
 	getTriggerElement,
 	getTooltipElement,
@@ -13,18 +18,25 @@ export default function useTooltipPosition(
 		const triggerEl = getTriggerElement();
 		const tooltipEl = getTooltipElement();
 
-		const triggerRect = triggerEl.getBoundingClientRect();
+		if (!triggerEl) return;
 
-		const anchorX = triggerRect.left;
-		const anchorY = triggerRect.top;
+		// console.debug(">>", triggerEl);
+
+		const triggerRect = triggerEl.getBoundingClientRect();
+		const tooltipRect = tooltipEl ? {
+			width: tooltipEl.offsetWidth,
+			height: tooltipEl.offsetHeight,
+		} : EMPTY_RECT;
+
+		console.debug(">>", tooltipRect);
 
 		let horizontalPosition;
 
-		let x1 = ((triggerEl.offsetWidth - tooltipEl.offsetWidth) / 2) + triggerRect.left;
+		let x1 = ((triggerEl.offsetWidth - tooltipRect.width) / 2) + triggerRect.left;
 		const left = x1 > 0 ? x1 : 0;
 
 		let y = 0;
-		let yt = triggerRect.top - margin - tooltipEl.offsetHeight;
+		let yt = triggerRect.top - margin - tooltipRect.height;
 		let yb = triggerRect.top + triggerEl.offsetHeight + margin;
 		if (yt - 25 > 0) {
 			horizontalPosition = 'top';
