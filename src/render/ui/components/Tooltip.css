@@ -38,13 +38,13 @@
 	transition: none !important;
 }
 
-.tooltip[position='top'] .pointer {
+.tooltip.top .pointer {
 	top: 100%;
 	left: 50%;
 	border-top-color: var(--background-floating);
 }
 
-.tooltip[position='bottom'] .pointer {
+.tooltip.bottom .pointer {
 	top: -10px;
 	left: 50%;
 	border-bottom-color: var(--background-floating);
