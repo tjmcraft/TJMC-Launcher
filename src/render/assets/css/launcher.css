@@ -1450,53 +1450,7 @@ body {
 }
 
 
-/* ========= Tooltip ========= */
 
-.tooltip {
-    position: absolute;
-    z-index: 10001;
-    background-color: var(--background-floating);
-    max-width: 190px;
-    width: auto;
-    display: block;
-    box-shadow: 0px 8px 16px var(--color-shadow);
-    border-radius: 5px;
-    pointer-events: none;
-    transition: .1s opacity;
-}
-
-.tooltip .content {
-    font-family: Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-normal);
-    line-height: 16px;
-    padding: 8px 12px;
-    overflow: hidden;
-}
-
-.tooltip .pointer {
-    border: 5px solid transparent;
-    margin-left: -5px;
-    position: absolute;
-    pointer-events: none;
-    outline: 0;
-    width: 0;
-    height: 0;
-    transition: none !important;
-}
-
-.tooltip[position='top'] .pointer {
-    top: 100%;
-    left: 50%;
-    border-top-color: var(--background-floating);
-}
-
-.tooltip[position='bottom'] .pointer {
-    top: -10px;
-    left: 50%;
-    border-bottom-color: var(--background-floating);
-}
 
 *[data-tooltip]>* {
     pointer-events: none;
