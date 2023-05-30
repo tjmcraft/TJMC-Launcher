@@ -4,8 +4,11 @@ import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
 import { SVG } from "./svg";
-import { tooltip } from "../scripts/tooltip";
+import useTooltip from "Hooks/useTooltip";
 import useGlobal from "Hooks/useGlobal";
+
+import Tooltip from "./components/Tooltip";
+import Portal from "./components/Portal";
 
 const UserPanel = memo(() => {
 	const { openVersionChooserModal, openSettingsModal } = getDispatch();
@@ -14,10 +17,7 @@ const UserPanel = memo(() => {
 	const addVersionButton = useRef();
 	const settingsButton = useRef();
 
-	useEffect(() => {
-		tooltip.call(addVersionButton.current, "Добавить версию");
-		tooltip.call(settingsButton.current, "Настройки");
-	}, [addVersionButton, settingsButton]);
+	const { isTooltipOpen, tooltipPosition, handleMouseEnter, handleMouseLeave } = useTooltip();
 
 	if (!user) return null;
 
@@ -38,7 +38,10 @@ const UserPanel = memo(() => {
 					<div className="title">{user.realname || user.username}</div>
 					<div className="subtitle">{`#${user.discriminator}`}</div>
 				</div>
-				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
+				<div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
+				<Portal>
+					<Tooltip isOpen={isTooltipOpen} style={{ top: `${tooltipPosition.y}px`, left: `${tooltipPosition.x}px` }}>Добавить версию {isTooltipOpen}</Tooltip>
+				</Portal>
 				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}>{SVG('settings-gear')}</div>
 			</div>
 		</div>

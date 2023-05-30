@@ -1,6 +1,7 @@
 /* ========= Tooltip ========= */
 
 .tooltip {
+	opacity: 0;
 	position: absolute;
 	z-index: 10001;
 	background-color: var(--background-floating);
@@ -11,6 +12,9 @@
 	border-radius: 5px;
 	pointer-events: none;
 	transition: .1s opacity;
+}
+.tooltip.open {
+	opacity: 1;
 }
 
 .tooltip .content {
