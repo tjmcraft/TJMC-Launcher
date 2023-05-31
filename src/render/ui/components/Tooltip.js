@@ -1,25 +1,40 @@
 import { createElement, forwardRef, memo, useCallback, useRef, useEffect } from "react";
 
-import './Tooltip.css';
-import useShowTransition from "Hooks/useShowTransition";
 import buildClassName from "Util/buildClassName";
 import useTooltip from "Hooks/useTooltip";
 import useTooltipPosition from "Hooks/useTooltipPosition";
-import Portal from "./Portal";
+import useShowTransition from "Hooks/useShowTransition";
 
+import Portal from "./Portal";
+import './Tooltip.css';
+
+/**
+ * @typedef {Object} Props
+ * @property {boolean|undefined} isOpen
+ * @property {React.Component} children
+ * @property {Function|undefined} onCloseEnd
+ * @property {React.StyleHTMLAttributes|undefined} style
+ * @property {'left'|'right'} positionX
+ */
+
+/**
+ * @type React.ForwardRefExoticComponent<?,Props>
+ */
 const Tooltip = forwardRef(({
-	children,
-	style = undefined,
 	isOpen = false,
+	children,
 	onCloseEnd = void 0,
-	positionX,
+	style = undefined,
+	positionX = undefined,
 }, ref) => {
 	const { transitionClassNames, shouldRender } = useShowTransition(isOpen, onCloseEnd, false, undefined, false, undefined, 100);
 	return shouldRender && (
-		<div className={buildClassName("tooltip", positionX, transitionClassNames)} style={style} ref={ref}>
-			<div className="pointer" />
-			<div className="content">{children}</div>
-		</div>
+		<Portal>
+			<div className={buildClassName("tooltip", positionX, transitionClassNames)} style={style} ref={ref}>
+				<div className="pointer" />
+				<div className="content">{children}</div>
+			</div>
+		</Portal>
 	);
 });
 
@@ -43,9 +58,7 @@ const TooltipWrapper = ({ forRef, children }) => {
 	}, [forRef, handleMouseEnter, handleMouseLeave]);
 
 	return (
-		<Portal>
-			<Tooltip isOpen={isTooltipOpen} style={style} positionX={positionX} ref={tooltipRef}>{children}</Tooltip>
-		</Portal>
+		<Tooltip isOpen={isTooltipOpen} style={style} positionX={positionX} ref={tooltipRef}>{children}</Tooltip>
 	);
 };
 
