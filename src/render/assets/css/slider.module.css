@@ -30,6 +30,7 @@
     height: 24px;
     top: 50%;
     margin-top: -12px;
+    margin-left: -5px;
     border-radius: 3px;
     transition: inherit;
     background-color: #fff;
