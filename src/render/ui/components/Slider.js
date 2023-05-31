@@ -30,7 +30,7 @@ export default function RangeSlider({
 
 	const valRef = useRef(value);
 	const [currentNotch, setCurrentNotch] = useState(((value - meta.min) / meta.step) * meta.inc);
-	// const [popupOpen, setPopupOpen] = useState(false);
+	const [popupOpen, setPopupOpen] = useState(false);
 
 	const trackRef = useRef(undefined);
 	const grabberRef = useRef(undefined);
@@ -50,6 +50,7 @@ export default function RangeSlider({
 			if (!cancelled) {
 				valRef.current = value;
 				setCurrentNotch(notch);
+				setPopupOpen(true);
 			}
 		}
 	}, [meta]);
@@ -57,6 +58,7 @@ export default function RangeSlider({
 	const handleMouseup = useCallback(() => {
 		document.removeEventListener("mouseup", handleMouseup);
 		document.removeEventListener("mousemove", handleMousemove);
+		setPopupOpen(false);
 		if (typeof onChange === "function") {
 			onChange.call(this, valRef.current);
 			console.debug(">>>", valRef.current);
@@ -75,7 +77,7 @@ export default function RangeSlider({
 			<div className={style.track} onMouseDown={handleMousedown} onMouseUp={handleMouseup} ref={trackRef}>
 				<div className={style.grabber} ref={grabberRef} style={{ left: `${currentNotch}%` }} />
 			</div>
-			<Tooltip forRef={grabberRef}>{valRef.current + unit}</Tooltip>
+			<Tooltip forRef={grabberRef} isOpen={popupOpen}>{valRef.current + unit}</Tooltip>
 		</div>
 	);
 
