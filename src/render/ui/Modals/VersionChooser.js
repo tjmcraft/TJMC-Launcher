@@ -41,7 +41,6 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	}, [onSelect]);
 
 	const [searchParam, setSearchParam] = useState("");
-
 	const search = (item) => !searchParam || item.id.toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1;
 	const sort = (a, b) => {
 		if (searchParam) {
@@ -53,17 +52,16 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 		}
 		return 0;
 	};
-
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
 		const value = e.target.value;
 		console.debug(">>", value);
 		setSearchParam(value);
 	}, []);
-
 	const handleClear = useCallback(() => {
 		setSearchParam(null);
 	}, []);
+	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
 
 	return (
 		<Fragment>
