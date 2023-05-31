@@ -20,15 +20,11 @@ export default function useTooltipPosition(
 
 		if (!triggerEl) return;
 
-		// console.debug(">>", triggerEl);
-
 		const triggerRect = triggerEl.getBoundingClientRect();
 		const tooltipRect = tooltipEl ? {
 			width: tooltipEl.offsetWidth,
 			height: tooltipEl.offsetHeight,
 		} : EMPTY_RECT;
-
-		console.debug(">>", tooltipRect);
 
 		let horizontalPosition;
 

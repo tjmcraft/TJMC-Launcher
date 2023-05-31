@@ -1,7 +1,7 @@
 import { createElement, forwardRef, memo, useCallback, useRef, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
-import useTooltip from "Hooks/useTooltip";
+import useFlag from "Hooks/useFlag";
 import useTooltipPosition from "Hooks/useTooltipPosition";
 import useShowTransition from "Hooks/useShowTransition";
 
@@ -40,7 +40,7 @@ const Tooltip = forwardRef(({
 
 const TooltipWrapper = ({ forRef, children }) => {
 	const tooltipRef = useRef();
-	const { isTooltipOpen, handleMouseEnter, handleMouseLeave } = useTooltip();
+	const [isTooltipOpen, handleMouseEnter, handleMouseLeave] = useFlag();
 	const getTriggerElement = () => forRef.current;
 	const getTooltipElement = () => tooltipRef.current;
 	const { positionX, style } = useTooltipPosition(getTriggerElement, getTooltipElement);
