@@ -38,6 +38,7 @@ const UserPanel = memo(() => {
 				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
 				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}>{SVG('settings-gear')}</div>
+				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
 		</div>
 	);
