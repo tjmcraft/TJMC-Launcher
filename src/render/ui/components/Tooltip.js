@@ -38,16 +38,16 @@ const Tooltip = forwardRef(({
 	);
 });
 
-const TooltipWrapper = ({ forRef, children }) => {
+const TooltipWrapper = ({ forRef, children, isOpen = false }) => {
 	const tooltipRef = useRef();
-	const [isTooltipOpen, handleMouseEnter, handleMouseLeave] = useFlag();
+	const [isTooltipOpen, handleMouseEnter, handleMouseLeave] = useFlag(false);
 	const getTriggerElement = () => forRef.current;
 	const getTooltipElement = () => tooltipRef.current;
 	const { positionX, style } = useTooltipPosition(getTriggerElement, getTooltipElement);
 
 	useEffect(() => {
-		let ref = null;
 		if (!forRef.current) return;
+		let ref = null;
 		ref = forRef.current;
 		forRef.current.addEventListener('mouseenter', handleMouseEnter);
 		forRef.current.addEventListener('mouseleave', handleMouseLeave);
@@ -58,7 +58,7 @@ const TooltipWrapper = ({ forRef, children }) => {
 	}, [forRef, handleMouseEnter, handleMouseLeave]);
 
 	return (
-		<Tooltip isOpen={isTooltipOpen} style={style} positionX={positionX} ref={tooltipRef}>{children}</Tooltip>
+		<Tooltip isOpen={isOpen || isTooltipOpen} style={style} positionX={positionX} ref={tooltipRef}>{children}</Tooltip>
 	);
 };
 
