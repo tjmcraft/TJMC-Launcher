@@ -1,9 +1,9 @@
 import { Component, createElement, createRef } from "react";
 import { getPos } from "Libs/ElementEx.js";
-import { PopupEl } from "../popup-element.js";
 import style from "CSS/slider.module.css";
 import { randomString } from "Util/Random.js";
 import { toFixedNumber } from "Util/Numbers.js";
+import Tooltip from "./Tooltip.js";
 
 export default class RangeSlider extends Component {
 
@@ -17,6 +17,7 @@ export default class RangeSlider extends Component {
 		this.state = {
 			value: props.value,
 			notch: ((props.value - this.meta.min) / this.meta.step) * this.meta.inc,
+			popupOpen: false,
 		};
 		this.track = createRef();
 		this.grabber = createRef();
@@ -37,8 +38,6 @@ export default class RangeSlider extends Component {
 	handleMousedown = (e) => {
 		document.addEventListener("mouseup", this.handleMouseup);
 		document.addEventListener("mousemove", this.handleMousemove);
-		this.grabber.current.onmouseenter = null;
-		this.grabber.current.onmouseout = null;
 		this.handleMousemove(e);
 	};
 
@@ -55,9 +54,7 @@ export default class RangeSlider extends Component {
 			});
 			let cancelled = !this.track.current.dispatchEvent(event);
 			if (!cancelled) {
-				this.setState({ notch, value }, () => {
-					this.popup.update(value + this.props.unit);
-				});
+				this.setState({ notch, value });
 			}
 		}
 	};
@@ -65,9 +62,6 @@ export default class RangeSlider extends Component {
 	handleMouseup = () => {
 		document.removeEventListener("mouseup", this.handleMouseup);
 		document.removeEventListener("mousemove", this.handleMousemove);
-		this.grabber.current.onmouseenter = this.showPopup.bind(this);
-		this.grabber.current.onmouseout = this.hidePopup.bind(this);
-		this.hidePopup();
 		if (typeof this.props.onChange === "function") {
 			this.props.onChange.call(this, this.state.value);
 		}
@@ -75,42 +69,14 @@ export default class RangeSlider extends Component {
 
 	render(props, state) {
 		return (
-			createElement("div", {
-				class: style.slider,
-				id: props.id,
-				value: state.value,
-				min: props.min,
-				max: props.max,
-				step: props.step,
-			},
-			createElement("div", { class: style.bar, style: `width:${state.notch}%` }),
-			createElement("div", { class: style.track, onMouseDown: this.handleMousedown, ref: this.track },
-				createElement("div", { class: style.grabber, ref: this.grabber, style: `left:${state.notch}%` })))
+			<div className={style.slider} id={props.id}>
+				<div className={style.bar} style={{ width: `${state.notch}%` }} />
+				<div className={style.track} onMouseDown={this.handleMousedown} ref={this.track}>
+					<div className={style.grabber} ref={this.grabber} style={{ left: `${state.notch}%` }} />
+				</div>
+				<Tooltip forRef={this.grabber}>{state.value + this.props.unit}</Tooltip>
+			</div>
 		);
-	}
-
-	showPopup() {
-		this.popup.show();
-	}
-	hidePopup() {
-		this.popup.hide();
-	}
-
-	componentDidMount() {
-		// console.debug("> slider mount");
-		this.popup = new PopupEl({
-			parent: this.grabber.current,
-			margin: 8,
-			fadeTime: 50
-		});
-		this.grabber.current.onmouseenter = this.showPopup.bind(this);
-		this.grabber.current.onmouseout = this.hidePopup.bind(this);
-		this.popup.update(this.state.value + this.props.unit);
-		this.popup.hide();
-	}
-
-	componentWillUnmount() {
-		this.popup.destroy();
 	}
 
 }

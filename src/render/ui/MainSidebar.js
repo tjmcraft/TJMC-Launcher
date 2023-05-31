@@ -1,11 +1,13 @@
-import { createElement, memo, useEffect, useRef } from "react";
+import { createElement, memo, useCallback, useEffect, useRef } from "react";
 
 import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
 import { SVG } from "./svg";
-import { tooltip } from "../scripts/tooltip";
 import useGlobal from "Hooks/useGlobal";
+
+import Tooltip from "./components/Tooltip";
+import Portal from "./components/Portal";
 
 const UserPanel = memo(() => {
 	const { openVersionChooserModal, openSettingsModal } = getDispatch();
@@ -13,11 +15,6 @@ const UserPanel = memo(() => {
 
 	const addVersionButton = useRef();
 	const settingsButton = useRef();
-
-	useEffect(() => {
-		tooltip.call(addVersionButton.current, "Добавить версию");
-		tooltip.call(settingsButton.current, "Настройки");
-	}, [addVersionButton, settingsButton]);
 
 	if (!user) return null;
 
@@ -39,7 +36,9 @@ const UserPanel = memo(() => {
 					<div className="subtitle">{`#${user.discriminator}`}</div>
 				</div>
 				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
+				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}>{SVG('settings-gear')}</div>
+				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
 		</div>
 	);
