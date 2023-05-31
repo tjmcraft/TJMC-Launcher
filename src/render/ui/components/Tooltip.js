@@ -1,4 +1,4 @@
-import { createElement, forwardRef, memo, useCallback, useRef } from "react";
+import { createElement, forwardRef, memo, useCallback, useRef, useEffect } from "react";
 
 import './Tooltip.css';
 import useShowTransition from "Hooks/useShowTransition";
@@ -6,7 +6,6 @@ import buildClassName from "Util/buildClassName";
 import useTooltip from "Hooks/useTooltip";
 import useTooltipPosition from "Hooks/useTooltipPosition";
 import Portal from "./Portal";
-import { useEffect } from "react";
 
 const Tooltip = forwardRef(({
 	children,
@@ -16,7 +15,7 @@ const Tooltip = forwardRef(({
 	positionX,
 }, ref) => {
 	const { transitionClassNames, shouldRender } = useShowTransition(isOpen, onCloseEnd, false, undefined, false, undefined, 100);
-	return (
+	return shouldRender && (
 		<div className={buildClassName("tooltip", positionX, transitionClassNames)} style={style} ref={ref}>
 			<div className="pointer" />
 			<div className="content">{children}</div>
@@ -27,8 +26,8 @@ const Tooltip = forwardRef(({
 const TooltipWrapper = ({ forRef, children }) => {
 	const tooltipRef = useRef();
 	const { isTooltipOpen, handleMouseEnter, handleMouseLeave } = useTooltip();
-	const getTriggerElement = useCallback(() => forRef.current, [forRef]);
-	const getTooltipElement = useCallback(() => tooltipRef.current, []);
+	const getTriggerElement = () => forRef.current;
+	const getTooltipElement = () => tooltipRef.current;
 	const { positionX, style } = useTooltipPosition(getTriggerElement, getTooltipElement);
 
 	useEffect(() => {
