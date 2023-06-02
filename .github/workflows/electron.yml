@@ -29,5 +29,3 @@ jobs:
           release: ${{ true }}
           mac_cert: ${{ secrets.mac_certs }}
           mac_cert_password: ${{ secrets.mac_certs_password }}
-          windows_cert: ${{ secrets.win_certs }}
-          windows_cert_password: ${{ secrets.win_certs_password }}
