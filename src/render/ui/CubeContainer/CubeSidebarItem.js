@@ -147,6 +147,7 @@ const CubeSidebarItem = ({
 	isSelected = false,
 	isDragOver = false,
 	onDragStart = undefined,
+	onDragEnter = undefined,
 	onDragOver = undefined,
 	onDragEnd = undefined,
 }) => {
@@ -189,8 +190,9 @@ const CubeSidebarItem = ({
 			onContextMenu={handleContextMenu}
 			draggable={true}
 			onDragStart={onDragStart}
-			onDragEnd={onDragEnd}
+			onDragEnter={onDragEnter}
 			onDragOver={onDragOver}
+			onDragEnd={onDragEnd}
 		>
 			<span>{name || hash}</span>
 			<StatusContainer isProcessing={isProcessing} hash={hash} />
