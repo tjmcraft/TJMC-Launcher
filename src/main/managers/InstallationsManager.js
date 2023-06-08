@@ -207,10 +207,14 @@ exports.modifyInstallation = async function (hash, nextProps) {
 
 exports.moveInstallationPosition = async function (startHash, endHash) {
     const installations = config.getOption("profiles");
+    if (!startHash || !endHash) return;
+    if (startHash === endHash) return;
     if (Object(installations).hasOwnProperty(startHash) && Object(installations).hasOwnProperty(endHash)) {
         const items = [...Object.entries(installations)];
-        const [draggedItem] = items.splice(items.findIndex(e => e[0] == startHash), 1);
-        items.splice(items.findIndex(e => e[0] == endHash), 0, draggedItem);
+        const startIndex = items.findIndex(e => e[0] == startHash);
+        const endIndex = items.findIndex(e => e[0] == endHash);
+        const [draggedItem] = items.splice(startIndex, 1);
+        items.splice(endIndex, 0, draggedItem);
         const next = Object.fromEntries(items);
         config.setOption("profiles", next);
         return endHash;
