@@ -52,7 +52,7 @@ module.exports.removeCallback = config.removeCallback;
  * Default installation scheme
  * @type {Installation}
  */
-const DEFAULT_PROFILE = {
+const DEFAULT_PROFILE = Object.seal({
     created: new Date().toISOString(),
     icon: undefined,
     type: 'custom',
@@ -73,7 +73,7 @@ const DEFAULT_PROFILE = {
     checkHash: undefined,
     checkFiles: undefined,
     autoConnect: undefined,
-};
+});
 
 /**
  * Create new installation
@@ -97,10 +97,10 @@ exports.createInstallation = async function (options = {}) {
     const installations = config.getOption("profiles");
     if (profile) {
         const hash = generateIdFor(installations);
-        Object.assign(installations, {
+        const next = Object.assign({}, {
             [hash]: profile
-        });
-        config.setOption("profiles", installations);
+        }, installations);
+        config.setOption("profiles", next);
         return hash;
     }
     return undefined;
