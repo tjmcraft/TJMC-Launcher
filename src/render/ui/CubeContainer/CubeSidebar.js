@@ -11,6 +11,8 @@ import InstanceItem from "./InstanceItem";
 
 
 const CubeSidebarItems = memo(() => {
+	const { moveInstallationPosition } = getDispatch();
+
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
 
@@ -26,9 +28,8 @@ const CubeSidebarItems = memo(() => {
 	};
 
 	const handleDragEnd = () => {
-
 		console.debug("[drag]", dragItem.current, ">>", dragOverItem);
-
+		moveInstallationPosition({ startHash: dragItem.current, endHash: dragOverItem });
 		dragItem.current = undefined;
 		setDragOverItem(undefined);
 	};

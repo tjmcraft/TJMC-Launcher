@@ -15,6 +15,7 @@ export {
 	createInstallation,
 	editInstallation,
 	removeInstallation,
+	moveInstallationPosition,
 	openInstallationFolder,
 } from './installation';
 export {
