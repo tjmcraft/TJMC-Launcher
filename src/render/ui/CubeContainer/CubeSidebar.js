@@ -14,12 +14,13 @@ const CubeSidebarItems = memo(() => {
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
 	return installations.length ? (
-		installations.map((hash) =>
-			createElement(CubeSidebarItem, {
-				key: hash,
-				hash,
-				isSelected: currentHash == hash,
-			}))
+		installations.map((hash) => (
+			<CubeSidebarItem
+				key={hash}
+				hash={hash}
+				isSelected={currentHash == hash}
+			/>
+		))
 	) : (
 		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
 			<h1>{'Добавьте версию'}</h1>
