@@ -24,7 +24,8 @@ addReducer("createInstallation", async (global, actions, payload) => {
 		lastVersionId: version,
 	}, options);
 	options = cleanObject(options);
-	await callHost("createInstallation", options);
+	const { hash } = await callHost("createInstallation", options);
+	hash && actions.setVersionHash(hash);
 });
 addReducer("editInstallation", async (global, actions, payload) => {
 	if (!payload) return;

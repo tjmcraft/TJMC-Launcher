@@ -243,9 +243,10 @@ const initHandlers = async () => {
 			const installations = InstallationsManager.getInstallations();
 			return { installations };
 		});
-		WSSHost.addReducer(requestChannels.createInstallation, async (data) =>
-			await InstallationsManager.createInstallation(data)
-		);
+		WSSHost.addReducer(requestChannels.createInstallation, async (data) => {
+			const hash = await InstallationsManager.createInstallation(data);
+			return { hash };
+		});
 		WSSHost.addReducer(requestChannels.editInstallation, async (data) =>
 			await InstallationsManager.modifyInstallation(data.hash, data.installation)
 		);
