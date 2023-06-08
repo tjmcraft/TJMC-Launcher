@@ -142,7 +142,12 @@ const ContextMenu = ({
 	);
 };
 
-const CubeSidebarItem = ({ hash, isSelected }) => {
+const CubeSidebarItem = ({
+	hash, isSelected,
+	onDragStart = undefined,
+	onDragOver = undefined,
+	onDragEnd = undefined,
+}) => {
 
 	const { setVersionHash } = getDispatch();
 
@@ -168,11 +173,14 @@ const CubeSidebarItem = ({ hash, isSelected }) => {
 	return hash && (
 		<div
 			ref={containerRef}
+			version-hash={hash}
 			className={buildClassName('item', 'navItem', isSelected && "selected", isProcessing && "processing")}
 			onClick={handleClick}
 			onContextMenu={handleContextMenu}
 			draggable={true}
-			version-hash={hash}
+			onDragStart={onDragStart}
+			onDragEnd={onDragEnd}
+			onDragOver={onDragOver}
 		>
 			<span>{name || hash}</span>
 			<StatusContainer isProcessing={isProcessing} hash={hash} />
