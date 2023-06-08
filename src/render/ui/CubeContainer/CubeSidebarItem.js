@@ -143,7 +143,9 @@ const ContextMenu = ({
 };
 
 const CubeSidebarItem = ({
-	hash, isSelected,
+	hash,
+	isSelected = false,
+	isDragOver = false,
 	onDragStart = undefined,
 	onDragOver = undefined,
 	onDragEnd = undefined,
@@ -162,19 +164,27 @@ const CubeSidebarItem = ({
 
 	const containerRef = useRef();
 
-	const handleClick = useCallback(() => setVersionHash(hash), [hash, setVersionHash]);
-
 	const {
 		isContextMenuOpen, contextMenuPosition,
 		handleContextMenu,
 		handleContextMenuClose, handleContextMenuHide,
 	} = useContextMenu(containerRef, false);
 
+	const handleClick = useCallback(() => setVersionHash(hash), [hash, setVersionHash]);
+
+	const fullClassName = buildClassName(
+		'item',
+		'navItem',
+		isSelected && "selected",
+		isProcessing && "processing",
+		isDragOver && "dragOver",
+	);
+
 	return hash && (
 		<div
 			ref={containerRef}
 			version-hash={hash}
-			className={buildClassName('item', 'navItem', isSelected && "selected", isProcessing && "processing")}
+			className={fullClassName}
 			onClick={handleClick}
 			onContextMenu={handleContextMenu}
 			draggable={true}

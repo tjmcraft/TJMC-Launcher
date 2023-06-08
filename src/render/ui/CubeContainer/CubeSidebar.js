@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useCallback, useEffect, useRef } from "react";
+import { memo, createElement, Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -15,22 +15,22 @@ const CubeSidebarItems = memo(() => {
 	const currentHash = useGlobal(selectCurrentVersionHash);
 
 	const dragItem = useRef(undefined);
-	const dragOverItem = useRef(undefined);
+	const [dragOverItem, setDragOverItem] = useState(undefined);
 
 	const handleDragStart = (hash) => {
 		dragItem.current = hash;
 	};
 
 	const handleDragOver = (hash) => {
-		dragOverItem.current = hash;
+		setDragOverItem(hash);
 	};
 
 	const handleDragEnd = () => {
 
-		console.debug("[drag]", dragItem.current, ">>", dragOverItem.current);
+		console.debug("[drag]", dragItem.current, ">>", dragOverItem);
 
 		dragItem.current = undefined;
-		dragOverItem.current = undefined;
+		setDragOverItem(undefined);
 	};
 
 	return installations.length ? (
@@ -39,6 +39,7 @@ const CubeSidebarItems = memo(() => {
 				key={hash}
 				hash={hash}
 				isSelected={currentHash == hash}
+				isDragOver={dragOverItem == hash}
 				onDragStart={() => handleDragStart(hash)}
 				onDragOver={() => handleDragOver(hash)}
 				onDragEnd={handleDragEnd}
