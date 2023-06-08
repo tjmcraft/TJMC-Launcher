@@ -19,14 +19,8 @@ const CubeSidebarItems = memo(() => {
 	const dragItem = useRef(undefined);
 	const [dragOverItem, setDragOverItem] = useState(undefined);
 
-	const handleDragStart = (hash) => {
-		dragItem.current = hash;
-	};
-
-	const handleDragOver = (hash) => {
-		setDragOverItem(hash);
-	};
-
+	const handleDragStart = (hash) => dragItem.current = hash;
+	const handleDragEnter = (hash) => setDragOverItem(hash);
 	const handleDragEnd = () => {
 		console.debug("[drag]", dragItem.current, ">>", dragOverItem);
 		moveInstallationPosition({ startHash: dragItem.current, endHash: dragOverItem });
@@ -42,7 +36,8 @@ const CubeSidebarItems = memo(() => {
 				isSelected={currentHash == hash}
 				isDragOver={dragOverItem == hash}
 				onDragStart={() => handleDragStart(hash)}
-				onDragOver={() => handleDragOver(hash)}
+				onDragEnter={() => handleDragEnter(hash)}
+				onDragOver={(e) => e.preventDefault()}
 				onDragEnd={handleDragEnd}
 			/>
 		))
