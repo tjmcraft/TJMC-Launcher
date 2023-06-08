@@ -33,12 +33,17 @@ addReducer("editInstallation", async (global, actions, payload) => {
 	options = cleanObject(options);
 	await callHost("editInstallation", hash, options);
 });
-
 addReducer("removeInstallation", (global, actions, payload) => {
 	if (!payload) return;
 	let { hash, forceDeps } = payload;
 	void callHost("removeInstallation", { hash, forceDeps });
 });
+addReducer("moveInstallationPosition", (global, actions, payload) => {
+	if (!payload) return;
+	let { startHash, endHash } = payload;
+	void callHost("moveInstallationPosition", { startHash, endHash });
+});
+
 addReducer("openInstallationFolder", (global, actions, payload) => {
 	if (!payload) return;
 	let { hash } = payload;
