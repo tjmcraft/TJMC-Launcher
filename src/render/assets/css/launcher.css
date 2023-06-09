@@ -239,7 +239,7 @@ button {
     font-family: var(--font-primary);
     font-weight: 500;
     font-size: 16px;
-    line-height: 1;
+    line-height: normal;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1187,11 +1187,11 @@ body {
     box-sizing: border-box;
     font-size: 20px;
     font-weight: 800;
-    padding: 8px 16px;
+    padding: 4px 16px;
     min-width: 10rem;
     color: #fdfdfd;
     border-radius: 4px;
-    line-height: 1;
+    line-height: normal;
 }
 
 .button {
