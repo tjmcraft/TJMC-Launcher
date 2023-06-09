@@ -33,6 +33,7 @@ const INITIAL_STATE = {
 		status: "not-available",
 		progress: 0,
 		next: undefined,
+		popupLock: false,
 	}
 };
 

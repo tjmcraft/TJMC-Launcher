@@ -71,45 +71,48 @@ export function updateStatus(global, actions, payload) {
 		...(update != undefined ? { next: update } : {})
 	}));
 
-	if (status == "available" && update != void 0) {
-		actions.alert({
-			title: `Доступно обновление до версии:\n${update.releaseName}`,
-			content: `Вы можете скачать обновление прямо сейчас!`,
-			type: "info",
-			buttons: [
-				{
-					name: "Позже",
-					closeOverlay: true,
-				},
-				{
-					name: "Загрузить",
-					class: ["filled", "colorBrand"],
-					closeOverlay: true,
-					callback: () => actions.updateDownload(),
-				}
-			],
-			mini: true
-		});
-	}
-	if (status == "loaded" && update != void 0) {
-		actions.alert({
-			title: `Обновление до версии:\n${update.releaseName}`,
-			content: `Вам необходимо перезагрузить хост, чтобы установить обновление!`,
-			type: "warn",
-			buttons: [
-				{
-					name: "Позже",
-					closeOverlay: true,
-				},
-				{
-					name: "Перезагрузить",
-					class: ["filled", "colorRed"],
-					closeOverlay: true,
-					callback: () => actions.updateInstall(),
-				}
-			],
-			mini: true
-		});
+	if (update != void 0) {
+		if (status == "available") {
+			!global.update.popupLock &&
+			actions.alert({
+				title: `Доступно обновление до версии:\n${update.releaseName}`,
+				content: `Вы можете скачать обновление прямо сейчас!`,
+				type: "info",
+				buttons: [
+					{
+						name: "Позже",
+						closeOverlay: true,
+					},
+					{
+						name: "Загрузить",
+						class: ["filled", "colorBrand"],
+						closeOverlay: true,
+						callback: () => actions.updateDownload(),
+					}
+				],
+				mini: true
+			});
+		} else if (status == "loaded") {
+			!global.update.popupLock &&
+			actions.alert({
+				title: `Обновление до версии:\n${update.releaseName}`,
+				content: `Вам необходимо перезагрузить хост, чтобы установить обновление!`,
+				type: "warn",
+				buttons: [
+					{
+						name: "Позже",
+						closeOverlay: true,
+					},
+					{
+						name: "Перезагрузить",
+						class: ["filled", "colorRed"],
+						closeOverlay: true,
+						callback: () => actions.updateInstall(),
+					}
+				],
+				mini: true
+			});
+		}
 	}
 }
 

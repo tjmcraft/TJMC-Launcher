@@ -1,6 +1,7 @@
 import { addReducer } from "Store/Global";
+import { updateUpdate } from "Model/Reducers/host";
 
-addReducer("setSettings", (global, actions, payload) => {
+addReducer("setSettings", (global, _actions, payload) => {
 	window.__debug__ && console.debug(">>", "[setSettings]", payload);
 	return {
 		...global,
@@ -9,4 +10,10 @@ addReducer("setSettings", (global, actions, payload) => {
 			...payload
 		}
 	};
+});
+
+addReducer("setUpdatePopupLock", (global, _actions, payload) => {
+	return updateUpdate(global, {
+		popupLock: Boolean(payload)
+	});
 });
