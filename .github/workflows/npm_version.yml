@@ -31,4 +31,4 @@ jobs:
       run: npm version ${{ github.event.inputs.newversion }}
 
     - name: Commit
-      run: git push
+      run: git push --force
