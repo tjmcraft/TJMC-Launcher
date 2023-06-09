@@ -733,24 +733,22 @@ const UpdatesContainer = memo(() => {
 		error: "Ошибка обновления",
 		loading: `Загрузка обновления...${total != void 0 ? `\xa0${bytesToSize(transferred)} из ${bytesToSize(total)}\xa0(${bytesToSize(bytesPerSecond, true)})\xa0` : ""}`,
 		loaded: `Загружено обновление${nextUpdate != void 0 ? `:\xa0${nextUpdate.releaseName}` : ""}`,
-	}[updateStatus] || "Unknown update status";
+	}[updateStatus] || `Ошибка:\xa0${updateStatus}`;
 
 	const buttonName = {
-		"not-available": "Проверить",
 		available: "Скачать",
 		checking: "Подождите...",
 		error: "Ошибка",
 		loaded: "Перезапустить",
 		loading: "Загрузка...",
-	}[updateStatus] || "Action";
+	}[updateStatus] || "Проверить";
 
-	const updateAction = useCallback(() => {
-		return (({
-			"not-available": updateCheck,
+	const updateAction = useCallback(() => (
+		({
 			available: updateDownload,
 			loaded: updateInstall,
-		})[updateStatus] || (() => { }))();
-	}, [updateStatus, updateCheck, updateDownload, updateInstall]);
+		})[updateStatus] || updateCheck
+	), [updateStatus, updateCheck, updateDownload, updateInstall]);
 
 	function renderProgress(value) {
 		return updateStatus == "loading" && (<progress className="w100" max={100} value={value} />);
