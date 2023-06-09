@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useCallback, useEffect } from "react";
+import { memo, createElement, Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -11,18 +11,48 @@ import InstanceItem from "./InstanceItem";
 
 
 const CubeSidebarItems = memo(() => {
+	const { moveInstallationPosition } = getDispatch();
+
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
-	return installations.length ? (
-		installations.map((hash) =>
-			createElement(CubeSidebarItem, {
-				key: hash,
-				hash,
-				isSelected: currentHash == hash,
-			}))
-	) : (
-		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
-			<h1>{'Добавьте версию'}</h1>
+
+	const [dragOverItem, setDragOverItem] = useState(undefined);
+
+	const handleDragStart = (e, hash) => e.dataTransfer.setData("text", hash);
+	const handleDragEnd = (e) => {
+		const endHash = e.target.getAttribute('version-hash');
+		const startHash = e.dataTransfer.getData("text");
+		e.dataTransfer.clearData();
+		window.__debug__ && console.debug("[drag]", startHash, ">>", endHash);
+		moveInstallationPosition({ startHash: startHash, endHash: endHash });
+	};
+
+	return (
+		<div
+			className="installations"
+			onDragLeave={() => setDragOverItem(undefined)}
+			onDragEnd={() => setDragOverItem(undefined)}
+			onDragOver={e => e.preventDefault()}
+			onDrop={handleDragEnd}
+		>
+			{
+				installations.length ? (
+					installations.map((hash) => (
+						<CubeSidebarItem
+							key={hash}
+							hash={hash}
+							isSelected={currentHash == hash}
+							isDragOver={dragOverItem == hash}
+							onDragStart={(e) => handleDragStart(e, hash)}
+							onDragOver={() => setDragOverItem(hash)}
+						/>
+					))
+				) : (
+					<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
+						<h1>{'Добавьте версию'}</h1>
+					</div>
+				)
+			}
 		</div>
 	);
 });

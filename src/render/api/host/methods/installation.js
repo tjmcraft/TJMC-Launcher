@@ -81,6 +81,19 @@ export async function removeInstallation(options = {}) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function moveInstallationPosition(options = {}) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "moveInstallationPosition",
+			data: options,
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
 export async function openInstallationFolder(hash) {
 	let result;
 	try {

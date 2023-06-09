@@ -97,6 +97,10 @@ ol,ul {
     }
 }
 
+[draggable] * {
+    pointer-events: none;
+}
+
 strong {
     font-weight: 600
 }
@@ -578,6 +582,11 @@ p {
 
 .navItem.processing {
     /* color: var(--brand-color) !important; */
+}
+
+.navItem.dragOver {
+    color: var(--text-disabled);
+    background-color: var(--background-modifier-hover);
 }
 
 .navItem.noAction {
