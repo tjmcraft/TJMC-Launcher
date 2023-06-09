@@ -148,8 +148,11 @@ const CubeSidebarItem = ({
 	isDragOver = false,
 	onDragStart = undefined,
 	onDragEnter = undefined,
+	onDragLeave = undefined,
+	onDragExit = undefined,
 	onDragOver = undefined,
 	onDragEnd = undefined,
+	onDrop = undefined,
 }) => {
 
 	const { setVersionHash } = getDispatch();
@@ -191,8 +194,11 @@ const CubeSidebarItem = ({
 			draggable={true}
 			onDragStart={onDragStart}
 			onDragEnter={onDragEnter}
+			onDragLeave={onDragLeave}
+			onDragExit={onDragExit}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
+			onDrop={onDrop}
 		>
 			<span>{name || hash}</span>
 			<StatusContainer isProcessing={isProcessing} hash={hash} />
