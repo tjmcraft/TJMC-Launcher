@@ -1,6 +1,6 @@
 import { addReducer } from "Store/Global";
 
-addReducer("setSettings", (global, actions, payload) => {
+addReducer("setSettings", (global, _actions, payload) => {
 	window.__debug__ && console.debug(">>", "[setSettings]", payload);
 	return {
 		...global,
@@ -8,5 +8,14 @@ addReducer("setSettings", (global, actions, payload) => {
 			...global.settings,
 			...payload
 		}
+	};
+});
+
+addReducer("setUpdatePopupLock", (global, _actions, payload) => {
+	return {
+		...global,
+		update: {
+			popupLock: Boolean(payload)
+		},
 	};
 });

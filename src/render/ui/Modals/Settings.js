@@ -713,13 +713,18 @@ const LauncherAppearanceTab = memo(() => {
 const UpdatesContainer = memo(() => {
 
 	const config = useGlobal(global => global.configuration);
-	const { updateCheck, updateDownload, updateInstall, setConfig } = getDispatch();
+	const { updateCheck, updateDownload, updateInstall, setConfig, setUpdatePopupLock } = getDispatch();
 	const {
 		status: updateStatus,
 		progress: updateProgress,
 		next: nextUpdate,
 		total, transferred, bytesPerSecond
 	} = useGlobal(global => global.update);
+
+	useEffect(() => {
+		setUpdatePopupLock(true);
+		return () => setUpdatePopupLock(false);
+	}, [setUpdatePopupLock]);
 
 	const titleName = {
 		"not-available": "Нет обновлений",
