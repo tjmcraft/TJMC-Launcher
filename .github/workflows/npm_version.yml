@@ -1,0 +1,27 @@
+name: NPM Version Patch
+
+on: 
+  workflow_dispatch:
+    inputs:
+          newversion:
+            description: 'Semantic Version Bump Type (major minor patch)'
+            required: true
+            default: 'patch'
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18.x
+
+    - name: Patch
+      run: npm version ${{ github.event.inputs.newversion }}
+
+    - name: Commit
+      run: git push
