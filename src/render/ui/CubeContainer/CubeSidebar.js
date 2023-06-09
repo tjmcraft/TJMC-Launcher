@@ -20,17 +20,18 @@ const CubeSidebarItems = memo(() => {
 
 	const handleDragStart = (e, hash) => e.dataTransfer.setData("text", hash);
 	const handleDragEnd = (e) => {
+		const endHash = e.target.getAttribute('version-hash');
 		const startHash = e.dataTransfer.getData("text");
-		window.__debug__ && console.debug("[drag]", startHash, ">>", dragOverItem);
-		moveInstallationPosition({ startHash: startHash, endHash: dragOverItem });
-		setDragOverItem(undefined);
 		e.dataTransfer.clearData();
+		window.__debug__ && console.debug("[drag]", startHash, ">>", endHash);
+		moveInstallationPosition({ startHash: startHash, endHash: endHash });
 	};
 
 	return (
 		<div
 			className="installations"
 			onDragLeave={() => setDragOverItem(undefined)}
+			onDragEnd={() => setDragOverItem(undefined)}
 			onDragOver={e => e.preventDefault()}
 			onDrop={handleDragEnd}
 		>
