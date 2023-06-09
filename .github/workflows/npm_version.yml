@@ -21,6 +21,11 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 18.x
+        
+    - name: Setup Vals
+      run: |
+        git config --global user.email "makandjo@outlook.com"
+        git config --global user.name "MakAndJo"
 
     - name: Patch
       run: npm version ${{ github.event.inputs.newversion }}
