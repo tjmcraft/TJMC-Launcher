@@ -16,34 +16,42 @@ const CubeSidebarItems = memo(() => {
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const currentHash = useGlobal(selectCurrentVersionHash);
 
-	const dragItem = useRef(undefined);
 	const [dragOverItem, setDragOverItem] = useState(undefined);
 
-	const handleDragStart = (hash) => dragItem.current = hash;
-	const handleDragEnter = (hash) => setDragOverItem(hash);
-	const handleDragEnd = () => {
-		console.debug("[drag]", dragItem.current, ">>", dragOverItem);
-		moveInstallationPosition({ startHash: dragItem.current, endHash: dragOverItem });
-		dragItem.current = undefined;
+	const handleDragStart = (e, hash) => e.dataTransfer.setData("text", hash);
+	const handleDragEnd = (e) => {
+		const startHash = e.dataTransfer.getData("text");
+		console.debug("[drag]", startHash, ">>", dragOverItem);
+		moveInstallationPosition({ startHash: startHash, endHash: dragOverItem });
 		setDragOverItem(undefined);
+		e.dataTransfer.clearData();
 	};
 
-	return installations.length ? (
-		installations.map((hash) => (
-			<CubeSidebarItem
-				key={hash}
-				hash={hash}
-				isSelected={currentHash == hash}
-				isDragOver={dragOverItem == hash}
-				onDragStart={() => handleDragStart(hash)}
-				onDragEnter={() => handleDragEnter(hash)}
-				onDragOver={(e) => e.preventDefault()}
-				onDragEnd={handleDragEnd}
-			/>
-		))
-	) : (
-		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
-			<h1>{'Добавьте версию'}</h1>
+	return (
+		<div
+			className="installations"
+			onDragLeave={() => setDragOverItem(undefined)}
+			onDragOver={e => e.preventDefault()}
+			onDrop={handleDragEnd}
+		>
+			{
+				installations.length ? (
+					installations.map((hash) => (
+						<CubeSidebarItem
+							key={hash}
+							hash={hash}
+							isSelected={currentHash == hash}
+							isDragOver={dragOverItem == hash}
+							onDragStart={(e) => handleDragStart(e, hash)}
+							onDragOver={() => setDragOverItem(hash)}
+						/>
+					))
+				) : (
+					<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
+						<h1>{'Добавьте версию'}</h1>
+					</div>
+				)
+			}
 		</div>
 	);
 });

@@ -97,6 +97,10 @@ ol,ul {
     }
 }
 
+[draggable] * {
+    pointer-events: none;
+}
+
 strong {
     font-weight: 600
 }
