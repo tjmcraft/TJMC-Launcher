@@ -13,5 +13,7 @@ A clear and concise description of what the problem is. Ex. I'm always frustrate
 ### Solution you'd like 🥰
 A clear and concise description of what you want to happen.
 
-### What alternatives? ⏩
-A clear and concise description of any alternative solutions or features you've considered.
+### Tasks 📃
+ - [ ] Task 1
+ - [ ] Task 2
+ - [ ] Task 3
