@@ -46,9 +46,10 @@ const DownloadQueue = function (progressHandler = () => void 0) {
     /**
      * Async work on unit
      * @param {DownloadUnit} unit download unit
+     * @param {AbortSignal} signal - abort signal
      * @returns {void}
      */
-    const workOnUnit = async (unit) => {
+    const workOnUnit = async (unit, signal) => {
         const handleProgress = useProgressCounter();
         if (typeof unit.url === 'string') {
             await downloadToFile(unit.url, unit.filePath, true, handleProgress, signal);
@@ -95,7 +96,8 @@ const DownloadQueue = function (progressHandler = () => void 0) {
     this.load = async (signal = undefined) => {
         startTime = new Date().getTime();
         totalBytes = queue.length;
-        let promises = queue.map(unit => workOnUnit(unit));
+        console.debug("[DQ]", totalBytes);
+        let promises = queue.map(async unit => await workOnUnit(unit, signal));
         return await Promise.all(promises);
     };
 
@@ -157,7 +159,7 @@ class Minecraft extends EventEmitter {
             javaArgs: this.options.installation.javaArgs ?? '',
         };
 
-        const handleProgress = ({ task, total }) => this.emit({
+        const handleProgress = ({ task, total }) => this.emit('progress', {
             type: 'download',
             task: task,
             total: total,
@@ -360,8 +362,6 @@ class Minecraft extends EventEmitter {
                     url: urls,
                     filePath: jarFile,
                 })
-            } else {
-                handleProgress({ percent: 1 });
             }
 
             if (library.mod || library.downloadOnly) return false;

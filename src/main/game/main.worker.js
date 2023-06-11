@@ -105,6 +105,8 @@ if (!isMainThread) {
 					instance.getAssets(options.manifest, controller.signal),
 				]);
 				if (controller.signal.aborted) return;
+				await instance.downloadQueue.load(controller.signal);
+				if (controller.signal.aborted) return;
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 				if (controller.signal.aborted) return;
 				return resolve(args);
