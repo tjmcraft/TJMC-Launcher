@@ -14,10 +14,9 @@ const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be160
 /**
  * Download queue manager
  * @param {Function} progressHandler - progress handler
- * @param {AbortSignal} [signal] - abort signal
  * @returns {ClassDecorator}
  */
-const DownloadQueue = function (progressHandler = () => void 0, signal = undefined) {
+const DownloadQueue = function (progressHandler = () => void 0) {
 
     progressHandler = typeof progressHandler === 'function' ? progressHandler : () => void 0;
 
@@ -52,11 +51,11 @@ const DownloadQueue = function (progressHandler = () => void 0, signal = undefin
     const workOnUnit = async (unit) => {
         const handleProgress = useProgressCounter();
         if (typeof unit.url === 'string') {
-            await downloadToFile(unit.url, path.join(unit.path, unit.name), true, handleProgress, signal);
+            await downloadToFile(unit.url, unit.filePath, true, handleProgress, signal);
         } else if (Array.isArray(unit.url)) {
             for (const url of unit.url) {
                 if (signal?.aborted) return;
-                const loaded = await downloadToFile(url, path.join(unit.path, unit.name), true, handleProgress, signal);
+                const loaded = await downloadToFile(url, unit.filePath, true, handleProgress, signal);
                 // console.debug("[DQ]", loaded ? "downloaded" : "failed", unit.name, "->", url);
                 if (loaded) break;
             }
@@ -75,8 +74,7 @@ const DownloadQueue = function (progressHandler = () => void 0, signal = undefin
      * @type {object}
      * @property {FileType} type - file type mark
      * @property {number} size - expected file size
-     * @property {string} name - file name
-     * @property {import('fs').PathLike} path - file path
+     * @property {import('fs').PathLike} filePath - file path
      * @property {string|Array.<string>} url - file url
      */
 
@@ -89,7 +87,12 @@ const DownloadQueue = function (progressHandler = () => void 0, signal = undefin
         return queue.push(unit);
     };
 
-    this.load = async () => {
+    /**
+     * Start queue loading
+     * @param {AbortSignal} [signal] - abort signal
+     * @returns {Promise.<void>}
+     */
+    this.load = async (signal = undefined) => {
         startTime = new Date().getTime();
         totalBytes = queue.length;
         let promises = queue.map(unit => workOnUnit(unit));
@@ -153,14 +156,20 @@ class Minecraft extends EventEmitter {
             autoConnect: this.options.installation.autoConnect ?? false,
             javaArgs: this.options.installation.javaArgs ?? '',
         };
+
+        const handleProgress = ({ task, total }) => this.emit({
+            type: 'download',
+            task: task,
+            total: total,
+        });
+        this.downloadQueue = new DownloadQueue(handleProgress);
     }
 
     /**
      * Loads main client jar
      * @param {object} version Main version JSON
-     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async loadClient(version, signal) {
+    async loadClient(version) {
         logger.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
         const handleProgress = ({ percent }) => {
             this.emit('progress', {
@@ -173,11 +182,112 @@ class Minecraft extends EventEmitter {
             !fs.existsSync(this.options.mcPath) ||
             (this.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
-            await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
+            this.downloadQueue.push({
+                url: version.downloads.client.url,
+                filePath: this.options.mcPath
+            });
         }
         handleProgress({ percent: 1 });
         logger.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
+    }
+
+    popString(path) {
+        const tempArray = path.split('/')
+        tempArray.pop()
+        return tempArray.join('/')
+    }
+
+    /**
+     * Function get and download natives
+     * @param {object} version Main version JSON
+     * @param {AbortSignal} signal Signal for aborting loading
+     */
+    async getNatives(version, signal) {
+        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
+        logger.debug(`Set natives directory to ${nativeDirectory}`)
+        if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
+            fs.mkdirSync(nativeDirectory, { recursive: true });
+            const stat = version.libraries
+                .filter(lib => {
+                    if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
+                }).map((lib) => {
+                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || {};
+                    const native =
+                        this.getOS() === 'osx'
+                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
+                            : (lib_clfs[`natives-${this.getOS()}`])
+                    return native;
+                });
+            if (signal?.aborted) return;
+            await Promise.all(stat.map(async (native, index) => {
+                if (!native) return
+                const name = native.path.split('/').pop()
+                const native_path = path.join(nativeDirectory, name);
+                if (this.checkFiles && (
+                    !fs.existsSync(native_path) ||
+                    (this.checkHash && !await checkFileHash(native_path, native.sha1))
+                )) {
+                    (index <= 0) && logger.debug(`Downloading natives...`);
+                    await downloadToFile(native.url, native_path, true);
+                    if (signal?.aborted) return;
+                    try {
+                        new Zip(native_path).extractAllTo(nativeDirectory, true);
+                    } catch (e) { logger.warn(e) }
+                    // fs.unlinkSync(native_path);
+                }
+            }));
+            logger.debug(`Downloaded and extracted natives! ${stat.length}`);
+        }
+        logger.debug(`Natives Collected!`);
+        return nativeDirectory;
+    }
+
+    /**
+     * Function getting and download assets
+     * @param version Main version JSON
+     * @param {AbortSignal} signal Aborting signal
+     */
+    async getAssets(version, signal) {
+        const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
+        if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
+            await downloadToFile(version.assetIndex.url, path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), true);
+        }
+        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
+        const res_url = "https://resources.download.minecraft.net";
+
+        const assetProcessor = async (asset, number) => {
+            if (signal?.aborted) return;
+            const hash = index.objects[asset].hash;
+            const subHash = hash.substring(0, 2);
+            const subAsset = path.join(assetDirectory, 'objects', subHash);
+            const assetPath = path.join(subAsset, hash);
+            if (this.checkFiles && (
+                !fs.existsSync(assetPath) ||
+                (this.checkHash && !await checkFileHash(assetPath, hash))
+            )) {
+                (number <= 0) && logger.debug(`Downloading assets...`);
+                this.downloadQueue.push({
+                    url: `${res_url}/${subHash}/${hash}`,
+                    filePath: assetPath,
+                })
+            }
+            return assetPath;
+        };
+        if (signal?.aborted) return;
+        if (this.checkFiles && this.checkHash) {
+            console.time("assets:sync_check");
+            for (const number in Object.keys(index.objects)) {
+                const asset = Object.keys(index.objects)[number];
+                await assetProcessor(asset, number);
+            }
+            console.timeEnd("assets:sync_check");
+        } else {
+            console.time('assets:async_process');
+            await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
+            console.timeEnd('assets:async_process');
+        }
+        logger.debug('Collected assets');
     }
 
     /**
@@ -198,152 +308,6 @@ class Minecraft extends EventEmitter {
         return libs;
     }
 
-    popString(path) {
-        const tempArray = path.split('/')
-        tempArray.pop()
-        return tempArray.join('/')
-    }
-
-    /**
-     * Function get and download natives
-     * @param {object} version Main version JSON
-     * @param {AbortSignal} signal Signal for aborting loading
-     */
-    async getNatives(version, signal) {
-        let count = 0;
-        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-        logger.debug(`Set natives directory to ${nativeDirectory}`)
-        if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
-            fs.mkdirSync(nativeDirectory, { recursive: true });
-
-            const stat = version.libraries
-                .filter(lib => {
-                    if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
-                }).map((lib) => {
-                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || {};
-                    const native =
-                        this.getOS() === 'osx'
-                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                            : (lib_clfs[`natives-${this.getOS()}`])
-                    return native;
-                });
-            if (signal?.aborted) return;
-            stat.length &&
-                this.emit('progress', {
-                    type: 'natives',
-                    task: 0,
-                    total: stat.length,
-                });
-            await Promise.all(stat.map(async (native, index) => {
-                if (!native) return
-                const name = native.path.split('/').pop()
-                const native_path = path.join(nativeDirectory, name);
-                if (this.checkFiles && (
-                    !fs.existsSync(native_path) ||
-                    (this.checkHash && !await checkFileHash(native_path, native.sha1))
-                )) {
-                    (index <= 0) && logger.debug(`Downloading natives...`);
-                    await downloadToFile(native.url, native_path, true);
-                    if (signal?.aborted) return;
-                    try {
-                        new Zip(native_path).extractAllTo(nativeDirectory, true);
-                    } catch (e) { logger.warn(e) }
-                    // fs.unlinkSync(native_path);
-                }
-                count++;
-                this.emit('progress', {
-                    type: 'natives',
-                    task: count,
-                    total: stat.length,
-                });
-            }));
-            logger.debug(`Downloaded and extracted natives! ${stat.length}`);
-        }
-        this.emit('progress', {
-            type: 'natives',
-            task: 1,
-            total: 1,
-        });
-        logger.debug(`Natives Collected!`);
-        return nativeDirectory;
-    }
-
-    /**
-     * Function getting and download assets
-     * @param version Main version JSON
-     * @param {AbortSignal} signal Aborting signal
-     */
-    async getAssets(version, signal) {
-        let count = 0;
-        const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
-        if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
-            await downloadToFile(version.assetIndex.url, path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), true);
-        }
-        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
-        const res_url = "https://resources.download.minecraft.net";
-        this.emit('progress', {
-            type: 'assets',
-            task: 0.0001,
-            total: Object.keys(index.objects).length,
-        });
-
-        const assetsToLoad = [];
-        const assetProcessor = async (asset, number) => {
-            if (signal?.aborted) return;
-            const hash = index.objects[asset].hash;
-            const subHash = hash.substring(0, 2);
-            const subAsset = path.join(assetDirectory, 'objects', subHash);
-            const assetPath = path.join(subAsset, hash);
-            if (this.checkFiles && (
-                !fs.existsSync(assetPath) ||
-                (this.checkHash && !await checkFileHash(assetPath, hash))
-            )) {
-                (number <= 0) && logger.debug(`Downloading assets...`);
-                assetsToLoad.push(async () => {
-                    if (signal?.aborted) return;
-                    await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
-                    count++;
-                    this.emit('progress', {
-                        type: 'assets',
-                        task: count,
-                        total: Object.keys(index.objects).length,
-                    });
-                });
-            } else {
-                count++;
-                this.checkFiles && // no emit when check files is off (causes lagging)
-                    this.emit('progress', {
-                        type: 'assets',
-                        task: count,
-                        total: Object.keys(index.objects).length,
-                    })
-            }
-            return assetPath;
-        };
-        if (signal?.aborted) return;
-        if (this.checkFiles && this.checkHash) {
-            console.time("assets:sync_check");
-            for (const number in Object.keys(index.objects)) {
-                const asset = Object.keys(index.objects)[number];
-                await assetProcessor(asset, number);
-            }
-            console.timeEnd("assets:sync_check");
-        } else {
-            console.time('assets:async_process');
-            await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
-            console.timeEnd('assets:async_process');
-        }
-        if (assetsToLoad.length > 0) {
-            await Promise.all(assetsToLoad.map(async asset => await asset()));
-        }
-        this.emit('progress', {
-            type: 'assets',
-            task: Object.keys(index.objects).length,
-            total: Object.keys(index.objects).length,
-        })
-        logger.debug('Collected assets');
-    }
-
     /**
      * Download library to directory
      * @param {String} directory - directory
@@ -352,24 +316,9 @@ class Minecraft extends EventEmitter {
      * @param {AbortSignal} signal Aborting signal
      */
     async downloadLibrary(directory, libraries, type = 'classes', signal) {
-        let totalProgress = 0;
-        const useProgressCounter = () => {
-            let prev = 0;
-            return ({ percent }) => {
-                totalProgress += percent - prev;
-                this.emit('progress', {
-                    type: type,
-                    task: totalProgress,
-                    total: libraries.length,
-                });
-                prev = percent;
-            }
-        }
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
             if (!library) return false;
-
-            const handleProgress = useProgressCounter();
 
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
@@ -407,12 +356,10 @@ class Minecraft extends EventEmitter {
                     'https://search.maven.org/remotecontent?filepath=' + jar_name,
                     (library.url ? library.url : '') + jar_name
                 ];
-                for (const url of urls) {
-                    if (signal?.aborted) return;
-                    const loaded = await downloadToFile(url, jarFile, true, handleProgress, signal);
-                    // console.debug(">>", loaded ? "downloaded" : "failed", name, "->", url);
-                    if (loaded) break;
-                }
+                this.downloadQueue.push({
+                    url: urls,
+                    filePath: jarFile,
+                })
             } else {
                 handleProgress({ percent: 1 });
             }
