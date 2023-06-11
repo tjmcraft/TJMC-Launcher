@@ -98,25 +98,12 @@ if (!isMainThread) {
 				if (!fs.existsSync(options.overrides.path.gameDirectory))
 					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
-				// logger.log('Attempting to load client');
-				// console.time("> client");
-				const client = await instance.loadClient(options.manifest, controller.signal);
-				// console.timeEnd("> client");
-				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load natives');
-				// console.time("> natives");
-				const nativePath = await instance.getNatives(options.manifest, controller.signal);
-				// console.timeEnd("> natives");
-				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load classes');
-				// console.time("> classes");
-				const classes = await instance.getClasses(options.manifest, controller.signal);
-				// console.timeEnd("> classes");
-				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load assets');
-				// console.time("> assets");
-				const assets = await instance.getAssets(options.manifest, controller.signal);
-				// console.timeEnd("> assets");
+				const [client, nativePath, classes, assets] = await Promise.all([
+					instance.loadClient(options.manifest),
+					instance.getNatives(options.manifest, controller.signal),
+					instance.getClasses(options.manifest, controller.signal),
+					instance.getAssets(options.manifest, controller.signal),
+				]);
 				if (controller.signal.aborted) return;
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 				if (controller.signal.aborted) return;
