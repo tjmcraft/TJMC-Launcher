@@ -7,6 +7,98 @@ const { downloadToFile } = require('../util/download')
 const { checkFileHash } = require('../util/Crypto')
 const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
+/**
+ * @typedef {string} FileType
+ */
+
+/**
+ * Download queue manager
+ * @param {Function} progressHandler - progress handler
+ * @param {AbortSignal} [signal] - abort signal
+ * @returns {ClassDecorator}
+ */
+const DownloadQueue = function (progressHandler = () => void 0, signal = undefined) {
+
+    progressHandler = typeof progressHandler === 'function' ? progressHandler : () => void 0;
+
+    let totalBytes = 0;
+    let loadedBytes = 0;
+    let startTime = new Date().getTime();
+
+    const isValidUrl = (url) => url != void 0 && url.includes('http');
+
+    const useProgressCounter = () => {
+        let prev = 0;
+        return ({ percent }) => {
+            const duration = (new Date().getTime() - startTime) / 1000;
+            const bps = loadedBytes / duration;
+            const time = (totalBytes - loadedBytes) / bps;
+            loadedBytes += percent - prev;
+            progressHandler && progressHandler({
+                task: loadedBytes,
+                total: totalBytes,
+                percent: loadedBytes / totalBytes,
+                time: time % 60
+            });
+            prev = percent;
+        }
+    }
+
+    /**
+     * Async work on unit
+     * @param {DownloadUnit} unit download unit
+     * @returns {void}
+     */
+    const workOnUnit = async (unit) => {
+        const handleProgress = useProgressCounter();
+        if (typeof unit.url === 'string') {
+            await downloadToFile(unit.url, path.join(unit.path, unit.name), true, handleProgress, signal);
+        } else if (Array.isArray(unit.url)) {
+            for (const url of unit.url) {
+                if (signal?.aborted) return;
+                const loaded = await downloadToFile(url, path.join(unit.path, unit.name), true, handleProgress, signal);
+                // console.debug("[DQ]", loaded ? "downloaded" : "failed", unit.name, "->", url);
+                if (loaded) break;
+            }
+        }
+        return undefined;
+    };
+
+    /**
+     * Queue of units
+     * @type {Array.<DownloadUnit>}
+     */
+    const queue = [];
+
+    /**
+     * @typedef DownloadUnit
+     * @type {object}
+     * @property {FileType} type - file type mark
+     * @property {number} size - expected file size
+     * @property {string} name - file name
+     * @property {import('fs').PathLike} path - file path
+     * @property {string|Array.<string>} url - file url
+     */
+
+    /**
+     * Push new unit to download queue
+     * @param {DownloadUnit} unit
+     */
+    this.push = async (unit) => {
+        if (queue.find(e => e.url == unit.url && e.path == unit.path)) return;
+        return queue.push(unit);
+    };
+
+    this.load = async () => {
+        startTime = new Date().getTime();
+        totalBytes = queue.length;
+        let promises = queue.map(unit => workOnUnit(unit));
+        return await Promise.all(promises);
+    };
+
+    return this;
+}
+
 class Minecraft extends EventEmitter {
 
     /**
