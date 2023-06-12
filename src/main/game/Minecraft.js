@@ -35,7 +35,7 @@ const DownloadQueue = function (progressHandler = () => void 0) {
         return ({ percent, total, current }) => {
             const duration = (new Date().getTime() - startTime) / 1000;
             if (size <= 0) {
-                // totalBytes += total - prevTotalBytes;
+                totalBytes += total - prevTotalBytes;
             }
             if (prevTotalBytes != total) debugTotal(totalBytes);
             prevTotalBytes = total;
