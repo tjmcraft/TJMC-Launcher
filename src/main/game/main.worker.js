@@ -98,14 +98,30 @@ if (!isMainThread) {
 				if (!fs.existsSync(options.overrides.path.gameDirectory))
 					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
-				const [client, nativePath, classes, assets] = await Promise.all([
+				console.time('>>+stage1');
+				parentPort.postMessage({ type: 'args:progress', payload: {
+					type: 'load',
+					task: 1,
+					total: 1,
+				}})
+				const [client, classes, assets] = await Promise.all([
 					instance.loadClient(options.manifest),
-					instance.getNatives(options.manifest, controller.signal),
-					instance.getClasses(options.manifest, controller.signal),
-					instance.getAssets(options.manifest, controller.signal),
+					instance.getClasses(options.manifest),
+					instance.getAssets(options.manifest),
 				]);
+				console.timeEnd('>>+stage1');
 				if (controller.signal.aborted) return;
-				await instance.downloadQueue.load(controller.signal);
+				console.time('>>+stage2');
+				parentPort.postMessage({ type: 'args:progress', payload: {
+					type: 'download',
+					task: 0,
+					total: 1,
+				}})
+				const [nativePath, downloadStatus] = await Promise.all([
+					instance.getNatives(options.manifest, controller.signal),
+					instance.downloadQueue.load(controller.signal),
+				]);
+				console.timeEnd('>>+stage2');
 				if (controller.signal.aborted) return;
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 				if (controller.signal.aborted) return;
