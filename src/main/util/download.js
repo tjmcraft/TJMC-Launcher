@@ -7,7 +7,7 @@ const stream = require('node:stream');
 const pipeline = promisify(stream.pipeline);
 
 const events = require('node:events');
-events.setMaxListeners(500);
+events.setMaxListeners(8000);
 const https = require('https');
 const http = require('http');
 
