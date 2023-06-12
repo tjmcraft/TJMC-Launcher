@@ -45,7 +45,7 @@ export function updateInstallations(global, update) {
 }
 
 export function updateInstallationProgress(global, update) {
-	const { hash, progress, progressType, totalProgress } = update;
+	const { hash, progress, progressType, totalProgress, time } = update;
 	if (progressType == 'terminated') {
 		setState(updateInstallation(global, hash, {
 			isProcessing: false,
@@ -60,7 +60,7 @@ export function updateInstallationProgress(global, update) {
 		}
 		ProgressStore.setState({
 			...ProgressStore.getState(),
-			[hash]: { progress: progress, progressType: progressType, totalProgress: totalProgress }
+			[hash]: { progress: progress, progressType: progressType, totalProgress: totalProgress, time: time }
 		});
 	}
 	return void 0;

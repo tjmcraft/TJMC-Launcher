@@ -5,6 +5,7 @@ const Zip = require('adm-zip')
 const EventEmitter = require('events')
 const { downloadToFile } = require('../util/download')
 const { checkFileHash } = require('../util/Crypto')
+const { debounce, throttle } = require('../util/Shedulers')
 const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
 /**
@@ -26,20 +27,32 @@ const DownloadQueue = function (progressHandler = () => void 0) {
 
     const isValidUrl = (url) => url != void 0 && url.includes('http');
 
-    const useProgressCounter = () => {
-        let prev = 0;
-        return ({ percent }) => {
+    const debugTotal = throttle((e) => console.debug("[DQ]", "total:", e), 100, false);
+    const useProgressCounter = (size) => {
+        let prevBytes = 0;
+        let prevTotalBytes = 0;
+        // if (size > 0) totalBytes += size;
+        return ({ percent, total, current }) => {
             const duration = (new Date().getTime() - startTime) / 1000;
+            if (size <= 0) {
+                // totalBytes += total - prevTotalBytes;
+            }
+            if (prevTotalBytes != total) debugTotal(totalBytes);
+            prevTotalBytes = total;
+            if (current > 0) {
+                loadedBytes += current - prevBytes;
+            }
+            prevBytes = current;
+
             const bps = loadedBytes / duration;
             const time = (totalBytes - loadedBytes) / bps;
-            loadedBytes += percent - prev;
+            debugTotal(loadedBytes + "/" + totalBytes);
             progressHandler && progressHandler({
                 task: loadedBytes,
                 total: totalBytes,
                 percent: loadedBytes / totalBytes,
-                time: time % 60
+                time: time
             });
-            prev = percent;
         }
     }
 
@@ -50,7 +63,7 @@ const DownloadQueue = function (progressHandler = () => void 0) {
      * @returns {void}
      */
     const workOnUnit = async (unit, signal) => {
-        const handleProgress = useProgressCounter();
+        const handleProgress = useProgressCounter(unit.size);
         if (typeof unit.url === 'string') {
             await downloadToFile(unit.url, unit.filePath, true, handleProgress, signal);
         } else if (Array.isArray(unit.url)) {
@@ -85,7 +98,10 @@ const DownloadQueue = function (progressHandler = () => void 0) {
      */
     this.push = async (unit) => {
         if (queue.find(e => e.url == unit.url && e.path == unit.path)) return;
-        return queue.push(unit);
+        return queue.push(Object.assign({
+            type: 'file',
+            size: 0,
+        }, unit));
     };
 
     /**
@@ -95,9 +111,8 @@ const DownloadQueue = function (progressHandler = () => void 0) {
      */
     this.load = async (signal = undefined) => {
         startTime = new Date().getTime();
-        totalBytes = queue.length;
-        console.debug("[DQ]", totalBytes);
-        let promises = queue.map(async unit => await workOnUnit(unit, signal));
+        totalBytes = queue.reduce((a, c) => a + c.size, 0);
+        let promises = queue.map(unit => workOnUnit(unit, signal));
         return await Promise.all(promises);
     };
 
@@ -159,10 +174,11 @@ class Minecraft extends EventEmitter {
             javaArgs: this.options.installation.javaArgs ?? '',
         };
 
-        const handleProgress = ({ task, total }) => this.emit('progress', {
+        const handleProgress = ({ task, total, time }) => this.emit('progress', {
             type: 'download',
             task: task,
             total: total,
+            time: time,
         });
         this.downloadQueue = new DownloadQueue(handleProgress);
     }
@@ -173,23 +189,17 @@ class Minecraft extends EventEmitter {
      */
     async loadClient(version) {
         logger.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
-        const handleProgress = ({ percent }) => {
-            this.emit('progress', {
-                type: 'load:version-jar',
-                task: percent,
-                total: 1,
-            });
-        }
         if (this.checkFiles && (
             !fs.existsSync(this.options.mcPath) ||
             (this.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
             this.downloadQueue.push({
+                type: 'version-jar',
+                size: version.downloads.client.size,
                 url: version.downloads.client.url,
                 filePath: this.options.mcPath
             });
         }
-        handleProgress({ percent: 1 });
         logger.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
     }
@@ -260,7 +270,7 @@ class Minecraft extends EventEmitter {
 
         const assetProcessor = async (asset, number) => {
             if (signal?.aborted) return;
-            const hash = index.objects[asset].hash;
+            const { hash, size } = index.objects[asset];
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
@@ -270,6 +280,8 @@ class Minecraft extends EventEmitter {
             )) {
                 (number <= 0) && logger.debug(`Downloading assets...`);
                 this.downloadQueue.push({
+                    type: 'assets',
+                    size: size,
                     url: `${res_url}/${subHash}/${hash}`,
                     filePath: assetPath,
                 })
@@ -329,6 +341,7 @@ class Minecraft extends EventEmitter {
             logger.debug(">>", "load", name);
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
+            const size = library.downloads?.artifact?.size || library?.size || library?.artifact?.size || 0;
 
             if (this.checkFiles && (
                 !fs.existsSync(jarFile) ||
@@ -359,6 +372,8 @@ class Minecraft extends EventEmitter {
                     (library.url ? library.url : '') + jar_name
                 ];
                 this.downloadQueue.push({
+                    type: 'library',
+                    size: size,
                     url: urls,
                     filePath: jarFile,
                 })

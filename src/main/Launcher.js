@@ -56,11 +56,11 @@ const eventListener = (event, args) => {
 const useTotalProgress = (emit) => {
 	let totalProgress = 0;
 	let prev = {};
-	return ({ type, progress }) => {
+	return ({ type, progress, time }) => {
 		if (!prev[type]) prev[type] = 0;
 		totalProgress += progress - prev[type];
 		typeof emit === 'function' && emit({
-			type, progress, totalProgress: (Math.round(totalProgress * 100) / 100) / 6
+			type, progress, totalProgress: (Math.round(totalProgress * 100) / 100) / 6, time: time
 		});
 		prev[type] = progress;
 	}
@@ -173,7 +173,7 @@ const InstanceController = new function () {
 							}
 							if (type == 'args:progress') {
 								const progress = (payload.task / payload.total);
-								return handleProgress({ type: payload.type, progress: progress });
+								return handleProgress({ type: payload.type, progress: progress, time: payload.time });
 							}
 							if (type == 'javaPath') {
 								javaController.resolve(payload);

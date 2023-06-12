@@ -7,6 +7,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
 
 import Button from "UI/components/Button";
+import { toFixedNumber } from "Util/Numbers";
 
 
 const CubeTopToolbar = ({ hash }) => {
@@ -15,11 +16,12 @@ const CubeTopToolbar = ({ hash }) => {
 
 	const hostOnline = useHostOnline();
 
-	const { progress, progressType } = useGlobalProgress(global => {
+	const { progress, progressType, time } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
 			progress: version.progress * 100 || 0,
 			progressType: version.progressType || undefined,
+			time: version.time || 0,
 		};
 	}, [hash]);
 
@@ -49,10 +51,10 @@ const CubeTopToolbar = ({ hash }) => {
 				'load:version-jar': 'loading main jar',
 				aborting: 'aborting',
 				terminated: 'terminated',
-			})[progressType] || "loading"}\xa0-\xa0${Math.round(progress * 100)/100}%`;
+			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0-\xa0${toFixedNumber(time/60, 0)}m\xa0${toFixedNumber(time%60, 0)}s`;
 		}
 		return type;
-	}, [type, progressType, isLoading, progress]);
+	}, [type, progressType, isLoading, progress, time]);
 
 	return hash && (
 		// @ts-ignore
