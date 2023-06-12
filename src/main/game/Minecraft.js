@@ -31,10 +31,11 @@ const DownloadQueue = function (progressHandler = () => void 0) {
     const useProgressCounter = (size) => {
         let prevBytes = 0;
         let prevTotalBytes = 0;
-        // if (size > 0) totalBytes += size;
+        if (size > 0) totalBytes += size;
         return ({ percent, total, current }) => {
             const duration = (new Date().getTime() - startTime) / 1000;
             if (size <= 0) {
+                total = total ?? 0;
                 totalBytes += total - prevTotalBytes;
             }
             if (prevTotalBytes != total) debugTotal(totalBytes);
@@ -111,7 +112,7 @@ const DownloadQueue = function (progressHandler = () => void 0) {
      */
     this.load = async (signal = undefined) => {
         startTime = new Date().getTime();
-        totalBytes = queue.reduce((a, c) => a + c.size, 0);
+        // totalBytes = queue.reduce((a, c) => a + c.size, 0);
         let promises = queue.map(unit => workOnUnit(unit, signal));
         return await Promise.all(promises);
     };
