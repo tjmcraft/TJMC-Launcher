@@ -28,7 +28,7 @@ const DownloadQueue = function (progressHandler = () => void 0) {
     const isValidUrl = (url) => url != void 0 && url.includes('http');
 
     const debugTotal = throttle((e) => console.debug("[DQ]", "total:", e), 100, false);
-    const useProgressCounter = (size) => {
+    const useProgressCounter = (size, type) => {
         let prevBytes = 0;
         let prevTotalBytes = 0;
         if (size > 0) totalBytes += size;
@@ -52,7 +52,8 @@ const DownloadQueue = function (progressHandler = () => void 0) {
                 task: loadedBytes,
                 total: totalBytes,
                 percent: loadedBytes / totalBytes,
-                time: time
+                time: time,
+                type: type,
             });
         }
     }
@@ -64,7 +65,7 @@ const DownloadQueue = function (progressHandler = () => void 0) {
      * @returns {void}
      */
     const workOnUnit = async (unit, signal) => {
-        const handleProgress = useProgressCounter(unit.size);
+        const handleProgress = useProgressCounter(unit.size, unit.type);
         if (typeof unit.url === 'string') {
             return await downloadToFile(unit.url, unit.filePath, true, handleProgress, signal);
         } else if (Array.isArray(unit.url)) {
@@ -176,11 +177,12 @@ class Minecraft extends EventEmitter {
             javaArgs: this.options.installation.javaArgs ?? '',
         };
 
-        const handleProgress = ({ task, total, time }) => this.emit('progress', {
+        const handleProgress = ({ task, total, time, type }) => this.emit('progress', {
             type: 'download',
             task: task,
             total: total,
             time: time,
+            loadType: type,
         });
         this.downloadQueue = new DownloadQueue(handleProgress);
     }
@@ -202,12 +204,6 @@ class Minecraft extends EventEmitter {
             });
         }
         return this.options.mcPath;
-    }
-
-    popString(path) {
-        const tempArray = path.split('/')
-        tempArray.pop()
-        return tempArray.join('/')
     }
 
     /**
