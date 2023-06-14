@@ -51,7 +51,8 @@ const CubeTopToolbar = ({ hash }) => {
 				'load:version-jar': 'loading main jar',
 				aborting: 'aborting',
 				terminated: 'terminated',
-			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0-\xa0${Math.floor(time/60)}m\xa0${Math.floor(time%60)}s`;
+				download: 'downloading resources'
+			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time/60)}m\xa0${Math.floor(time%60)}s` : ''}`;
 		}
 		return type;
 	}, [type, progressType, isLoading, progress, time]);
