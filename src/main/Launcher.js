@@ -59,7 +59,6 @@ const useTotalProgress = (emit) => {
 	return ({ type, progress, time }) => {
 		if (!prev[type]) prev[type] = 0;
 		totalProgress += progress - prev[type];
-		console.debug(">>", type, progress);
 		typeof emit === 'function' && emit({
 			type, progress, time,
 			totalProgress: (Math.round(totalProgress * 100) / 100) / 3,
