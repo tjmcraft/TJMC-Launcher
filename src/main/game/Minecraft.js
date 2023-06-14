@@ -284,7 +284,7 @@ class Minecraft extends EventEmitter {
                 });
             }
             count++;
-            emitProgress({
+            this.checkFiles && emitProgress({
                 task: count,
                 total: Object.keys(index.objects).length,
             });
@@ -385,12 +385,11 @@ class Minecraft extends EventEmitter {
             }
 
             count++;
-            this.emit('progress', {
+            this.checkFiles && this.emit('progress', {
                 type: 'classes',
                 task: count,
                 total: libraries.length,
             });
-
 
             if (library.mod || library.downloadOnly) return false;
 
