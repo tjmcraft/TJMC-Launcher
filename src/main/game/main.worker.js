@@ -91,7 +91,30 @@ if (!isMainThread) {
 
 			const javaArgs = await new Promise(async (resolve, reject) => {
 				const instance = new Minecraft(options);
-				instance.on('progress', (e) => parentPort.postMessage({ type: 'args:progress', payload: e }));
+				const handleProgress = (() => {
+					var totalProgress = 0;
+					let prev = {};
+					return ({ progress, type }) => {
+						if (!prev[type]) prev[type] = 0;
+						totalProgress += progress - prev[type];
+						prev[type] = progress;
+						return totalProgress;
+					};
+				})();
+				instance.on('progress', ({task, total,type}) => {
+					const current = handleProgress({
+						progress: task / total,
+						type: type,
+					});
+					parentPort.postMessage({
+						type: 'args:progress',
+						payload: {
+							task: current,
+							total: 2,
+						},
+					});
+				});
+				instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
 
 				if (!fs.existsSync(options.overrides.path.version))
 					fs.mkdirSync(options.overrides.path.version, { recursive: true });
@@ -99,11 +122,6 @@ if (!isMainThread) {
 					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
 				console.time('>>+stage1');
-				parentPort.postMessage({ type: 'args:progress', payload: {
-					type: 'load',
-					task: 1,
-					total: 1,
-				}})
 				const [client, classes, assets] = await Promise.all([
 					instance.loadClient(options.manifest),
 					instance.getClasses(options.manifest),
@@ -112,11 +130,6 @@ if (!isMainThread) {
 				console.timeEnd('>>+stage1');
 				if (controller.signal.aborted) return;
 				console.time('>>+stage2');
-				parentPort.postMessage({ type: 'args:progress', payload: {
-					type: 'download',
-					task: 0,
-					total: 1,
-				}})
 				const [nativePath, downloadStatus] = await Promise.all([
 					instance.getNatives(options.manifest, controller.signal),
 					instance.downloadQueue.load(controller.signal),

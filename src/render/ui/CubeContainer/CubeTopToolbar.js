@@ -45,13 +45,10 @@ const CubeTopToolbar = ({ hash }) => {
 				'load:java': 'loading java',
 				natives: 'loading natives',
 				indexes: 'loading asset manifest',
-				assets: 'loading assets',
-				classes: 'loading libraries',
-				'classes-maven': 'loading maven libraries',
-				'load:version-jar': 'loading main jar',
+				'args:progress': 'loading resources',
+				download: 'downloading resources',
 				aborting: 'aborting',
 				terminated: 'terminated',
-				download: 'downloading resources'
 			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time/60)}m\xa0${Math.floor(time%60)}s` : ''}`;
 		}
 		return type;

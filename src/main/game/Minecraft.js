@@ -49,9 +49,8 @@ const DownloadQueue = function (progressHandler = () => void 0) {
             const time = (totalBytes - loadedBytes) / bps;
             debugTotal(loadedBytes + "/" + totalBytes);
             progressHandler && progressHandler({
-                task: loadedBytes,
+                current: loadedBytes,
                 total: totalBytes,
-                percent: loadedBytes / totalBytes,
                 time: time,
                 type: type,
             });
@@ -177,12 +176,11 @@ class Minecraft extends EventEmitter {
             javaArgs: this.options.installation.javaArgs ?? '',
         };
 
-        const handleProgress = ({ task, total, time, type }) => this.emit('progress', {
-            type: 'download',
-            task: task,
+        const handleProgress = ({ current, total, time, type }) => this.emit('download', {
+            current: current,
             total: total,
             time: time,
-            loadType: type,
+            type: type,
         });
         this.downloadQueue = new DownloadQueue(handleProgress);
     }
@@ -256,12 +254,17 @@ class Minecraft extends EventEmitter {
      * @param version Main version JSON
      */
     async getAssets(version) {
+        let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
             await downloadToFile(version.assetIndex.url, path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), true);
         }
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
         const res_url = "https://resources.download.minecraft.net";
+
+        const emitProgress = (e) => this.emit('progress', {
+            type: 'assets', ...e
+        });
 
         const assetProcessor = async (asset, number) => {
             const { hash, size } = index.objects[asset];
@@ -278,9 +281,13 @@ class Minecraft extends EventEmitter {
                     size: size,
                     url: `${res_url}/${subHash}/${hash}`,
                     filePath: assetPath,
-                })
+                });
             }
-
+            count++;
+            emitProgress({
+                task: count,
+                total: Object.keys(index.objects).length,
+            });
             return assetPath;
         };
         if (this.checkFiles && this.checkHash) {
@@ -295,6 +302,11 @@ class Minecraft extends EventEmitter {
             await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
             console.timeEnd('assets:async_process');
         }
+        emitProgress({
+            task: Object.keys(index.objects).length,
+            total: Object.keys(index.objects).length,
+        });
+        logger.debug('Collected assets!');
     }
 
     /**
@@ -322,6 +334,7 @@ class Minecraft extends EventEmitter {
      * @param {String} type - Meta library type
      */
     async downloadLibrary(directory, libraries, type = 'classes') {
+        let count = 0;
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
             if (!library) return false;
@@ -364,17 +377,31 @@ class Minecraft extends EventEmitter {
                     (library.url ? library.url : '') + jar_name
                 ];
                 this.downloadQueue.push({
-                    type: 'library',
+                    type: 'classes',
                     size: size,
                     url: urls,
                     filePath: jarFile,
                 })
             }
 
+            count++;
+            this.emit('progress', {
+                type: 'classes',
+                task: count,
+                total: libraries.length,
+            });
+
+
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
         }));
+
+        this.emit('progress', {
+            type: 'classes',
+            task: libraries.length,
+            total: libraries.length,
+        });
 
         return libs.filter(lib => Boolean(lib));
     }
