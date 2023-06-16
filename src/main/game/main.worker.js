@@ -91,32 +91,48 @@ if (!isMainThread) {
 
 			const javaArgs = await new Promise(async (resolve, reject) => {
 				const instance = new Minecraft(options);
-				instance.on('progress', (e) => parentPort.postMessage({ type: 'args:progress', payload: e }));
+				{
+					const handleProgress = (() => {
+						var totalProgress = 0;
+						let prev = {};
+						return ({ progress, type }) => {
+							if (!prev[type]) prev[type] = 0;
+							totalProgress += progress - prev[type];
+							prev[type] = progress;
+							return totalProgress;
+						};
+					})();
+					instance.on('progress', ({task, total,type}) => {
+						const current = handleProgress({
+							progress: task / total,
+							type: type,
+						});
+						parentPort.postMessage({
+							type: 'args:progress',
+							payload: {
+								task: current,
+								total: 2,
+							},
+						});
+					});
+					instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
+				}
 
 				if (!fs.existsSync(options.overrides.path.version))
 					fs.mkdirSync(options.overrides.path.version, { recursive: true });
 				if (!fs.existsSync(options.overrides.path.gameDirectory))
 					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
-				// logger.log('Attempting to load client');
-				// console.time("> client");
-				const client = await instance.loadClient(options.manifest, controller.signal);
-				// console.timeEnd("> client");
+				const [client, classes, assets] = await Promise.all([
+					instance.loadClient(options.manifest),
+					instance.getClasses(options.manifest),
+					instance.getAssets(options.manifest),
+				]);
 				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load natives');
-				// console.time("> natives");
-				const nativePath = await instance.getNatives(options.manifest, controller.signal);
-				// console.timeEnd("> natives");
-				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load classes');
-				// console.time("> classes");
-				const classes = await instance.getClasses(options.manifest, controller.signal);
-				// console.timeEnd("> classes");
-				if (controller.signal.aborted) return;
-				// logger.log('Attempting to load assets');
-				// console.time("> assets");
-				const assets = await instance.getAssets(options.manifest, controller.signal);
-				// console.timeEnd("> assets");
+				const [nativePath, downloadStatus] = await Promise.all([
+					instance.getNatives(options.manifest, controller.signal),
+					instance.downloadQueue.load(controller.signal),
+				]);
 				if (controller.signal.aborted) return;
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
 				if (controller.signal.aborted) return;

@@ -56,11 +56,12 @@ const eventListener = (event, args) => {
 const useTotalProgress = (emit) => {
 	let totalProgress = 0;
 	let prev = {};
-	return ({ type, progress }) => {
+	return ({ type, progress, time }) => {
 		if (!prev[type]) prev[type] = 0;
 		totalProgress += progress - prev[type];
 		typeof emit === 'function' && emit({
-			type, progress, totalProgress: (Math.round(totalProgress * 100) / 100) / 6
+			type, progress, time,
+			totalProgress: (Math.round(totalProgress * 100) / 100) / 3,
 		});
 		prev[type] = progress;
 	}
@@ -138,10 +139,8 @@ const InstanceController = new function () {
 			}
 
 			performanceMarks.getVersionManifest = performance.now();
-			handleProgress({ type: 'load:version-manifest', progress: 0.1 });
-			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId, ({ percent }) => {
-				handleProgress({ type: 'load:version-manifest', progress: percent });
-			});
+
+			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
 			try {
@@ -173,7 +172,11 @@ const InstanceController = new function () {
 							}
 							if (type == 'args:progress') {
 								const progress = (payload.task / payload.total);
-								return handleProgress({ type: payload.type, progress: progress });
+								return handleProgress({ type: `args:progress`, progress: progress });
+							}
+							if (type == 'args:download') {
+								const progress = (payload.current / payload.total);
+								return handleProgress({ type: `download`, progress: progress, time: payload.time });
 							}
 							if (type == 'javaPath') {
 								javaController.resolve(payload);

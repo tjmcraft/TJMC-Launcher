@@ -5,7 +5,121 @@ const Zip = require('adm-zip')
 const EventEmitter = require('events')
 const { downloadToFile } = require('../util/download')
 const { checkFileHash } = require('../util/Crypto')
+const { debounce, throttle } = require('../util/Shedulers')
 const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
+
+/**
+ * @typedef {string} FileType
+ */
+
+/**
+ * Download queue manager
+ * @param {Function} progressHandler - progress handler
+ * @returns {ClassDecorator}
+ */
+const DownloadQueue = function (progressHandler = () => void 0) {
+
+    progressHandler = typeof progressHandler === 'function' ? progressHandler : () => void 0;
+
+    let totalBytes = 0;
+    let loadedBytes = 0;
+    let startTime = new Date().getTime();
+
+    const isValidUrl = (url) => url != void 0 && url.includes('http');
+
+    const debugTotal = throttle((e) => console.debug("[DQ]", "total:", e), 100, false);
+    const useProgressCounter = (size, type) => {
+        let prevBytes = 0;
+        let prevTotalBytes = 0;
+        if (size > 0) totalBytes += size;
+        return ({ percent, total, current }) => {
+            const duration = (new Date().getTime() - startTime) / 1000;
+            if (size <= 0) {
+                total = total ?? 0;
+                totalBytes += total - prevTotalBytes;
+            }
+            if (prevTotalBytes != total) debugTotal(totalBytes);
+            prevTotalBytes = total;
+            if (current > 0) {
+                loadedBytes += current - prevBytes;
+            }
+            prevBytes = current;
+
+            const bps = loadedBytes / duration;
+            const time = (totalBytes - loadedBytes) / bps;
+            debugTotal(loadedBytes + "/" + totalBytes);
+            progressHandler && progressHandler({
+                current: loadedBytes,
+                total: totalBytes,
+                time: time,
+                type: type,
+            });
+        }
+    }
+
+    /**
+     * Async work on unit
+     * @param {DownloadUnit} unit download unit
+     * @param {AbortSignal} signal - abort signal
+     * @returns {void}
+     */
+    const workOnUnit = async (unit, signal) => {
+        const handleProgress = useProgressCounter(unit.size, unit.type);
+        if (typeof unit.url === 'string') {
+            return await downloadToFile(unit.url, unit.filePath, true, handleProgress, signal);
+        } else if (Array.isArray(unit.url)) {
+            for (const url of unit.url) {
+                if (signal?.aborted) return;
+                const loaded = await downloadToFile(url, unit.filePath, true, handleProgress, signal);
+                // console.debug("[DQ]", loaded ? "downloaded" : "failed", unit.name, "->", url);
+                if (loaded) return loaded;
+            }
+        }
+        return undefined;
+    };
+
+    /**
+     * Queue of units
+     * @type {Array.<DownloadUnit>}
+     */
+    const queue = [];
+
+    /**
+     * @typedef DownloadUnit
+     * @type {object}
+     * @property {FileType} type - file type mark
+     * @property {number} size - expected file size
+     * @property {import('fs').PathLike} filePath - file path
+     * @property {string|Array.<string>} url - file url
+     */
+
+    /**
+     * Push new unit to download queue
+     * @param {DownloadUnit} unit
+     */
+    this.push = async (unit) => {
+        if (queue.find(e => e.url == unit.url && e.path == unit.path)) return;
+        return queue.push(Object.assign({
+            type: 'file',
+            size: 0,
+        }, unit));
+    };
+
+    /**
+     * Start queue loading
+     * @param {AbortSignal} [signal] - abort signal
+     * @returns {Promise.<void>}
+     */
+    this.load = async (signal = undefined) => {
+        startTime = new Date().getTime();
+        // totalBytes = queue.reduce((a, c) => a + c.size, 0);
+        let promises = queue.map(unit => workOnUnit(unit, signal));
+        let result = await Promise.all(promises);
+        return result.every(Boolean);
+    };
+
+    return this;
+}
 
 class Minecraft extends EventEmitter {
 
@@ -61,55 +175,33 @@ class Minecraft extends EventEmitter {
             autoConnect: this.options.installation.autoConnect ?? false,
             javaArgs: this.options.installation.javaArgs ?? '',
         };
+
+        const handleProgress = ({ current, total, time, type }) => this.emit('download', {
+            current: current,
+            total: total,
+            time: time,
+            type: type,
+        });
+        this.downloadQueue = new DownloadQueue(handleProgress);
     }
 
     /**
      * Loads main client jar
      * @param {object} version Main version JSON
-     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async loadClient(version, signal) {
-        logger.debug(`<- Attempting to load ${path.basename(this.options.mcPath)}`);
-        const handleProgress = ({ percent }) => {
-            this.emit('progress', {
-                type: 'load:version-jar',
-                task: percent,
-                total: 1,
-            });
-        }
+    async loadClient(version) {
         if (this.checkFiles && (
             !fs.existsSync(this.options.mcPath) ||
             (this.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
-            await downloadToFile(version.downloads.client.url, this.options.mcPath, true, handleProgress, signal);
+            this.downloadQueue.push({
+                type: 'version-jar',
+                size: version.downloads.client.size,
+                url: version.downloads.client.url,
+                filePath: this.options.mcPath
+            });
         }
-        handleProgress({ percent: 1 });
-        logger.debug(`-> Loaded ${path.basename(this.options.mcPath)}`);
         return this.options.mcPath;
-    }
-
-    /**
-     * Collect cp of libraries
-     * @param {Object} classJson - version JSON
-     */
-    async getClasses(classJson, signal) {
-        const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
-        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven', signal);
-        const parsed = classJson.libraries.filter(lib => {
-            const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
-            const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
-            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
-            if (lib_ex) return lib;
-        });
-        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes', signal);
-        logger.log(`Collected Class Path's! (count: ${libs.length})`);
-        return libs;
-    }
-
-    popString(path) {
-        const tempArray = path.split('/')
-        tempArray.pop()
-        return tempArray.join('/')
     }
 
     /**
@@ -118,12 +210,10 @@ class Minecraft extends EventEmitter {
      * @param {AbortSignal} signal Signal for aborting loading
      */
     async getNatives(version, signal) {
-        let count = 0;
         const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
         logger.debug(`Set natives directory to ${nativeDirectory}`)
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true });
-
             const stat = version.libraries
                 .filter(lib => {
                     if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
@@ -136,12 +226,6 @@ class Minecraft extends EventEmitter {
                     return native;
                 });
             if (signal?.aborted) return;
-            stat.length &&
-                this.emit('progress', {
-                    type: 'natives',
-                    task: 0,
-                    total: stat.length,
-                });
             await Promise.all(stat.map(async (native, index) => {
                 if (!native) return
                 const name = native.path.split('/').pop()
@@ -158,20 +242,9 @@ class Minecraft extends EventEmitter {
                     } catch (e) { logger.warn(e) }
                     // fs.unlinkSync(native_path);
                 }
-                count++;
-                this.emit('progress', {
-                    type: 'natives',
-                    task: count,
-                    total: stat.length,
-                });
             }));
             logger.debug(`Downloaded and extracted natives! ${stat.length}`);
         }
-        this.emit('progress', {
-            type: 'natives',
-            task: 1,
-            total: 1,
-        });
         logger.debug(`Natives Collected!`);
         return nativeDirectory;
     }
@@ -179,9 +252,8 @@ class Minecraft extends EventEmitter {
     /**
      * Function getting and download assets
      * @param version Main version JSON
-     * @param {AbortSignal} signal Aborting signal
      */
-    async getAssets(version, signal) {
+    async getAssets(version) {
         let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
         if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
@@ -189,16 +261,13 @@ class Minecraft extends EventEmitter {
         }
         const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
         const res_url = "https://resources.download.minecraft.net";
-        this.emit('progress', {
-            type: 'assets',
-            task: 0.0001,
-            total: Object.keys(index.objects).length,
+
+        const emitProgress = (e) => this.emit('progress', {
+            type: 'assets', ...e
         });
 
-        const assetsToLoad = [];
         const assetProcessor = async (asset, number) => {
-            if (signal?.aborted) return;
-            const hash = index.objects[asset].hash;
+            const { hash, size } = index.objects[asset];
             const subHash = hash.substring(0, 2);
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
@@ -207,28 +276,20 @@ class Minecraft extends EventEmitter {
                 (this.checkHash && !await checkFileHash(assetPath, hash))
             )) {
                 (number <= 0) && logger.debug(`Downloading assets...`);
-                assetsToLoad.push(async () => {
-                    if (signal?.aborted) return;
-                    await downloadToFile(`${res_url}/${subHash}/${hash}`, assetPath, true);
-                    count++;
-                    this.emit('progress', {
-                        type: 'assets',
-                        task: count,
-                        total: Object.keys(index.objects).length,
-                    });
+                this.downloadQueue.push({
+                    type: 'assets',
+                    size: size,
+                    url: `${res_url}/${subHash}/${hash}`,
+                    filePath: assetPath,
                 });
-            } else {
-                count++;
-                this.checkFiles && // no emit when check files is off (causes lagging)
-                    this.emit('progress', {
-                        type: 'assets',
-                        task: count,
-                        total: Object.keys(index.objects).length,
-                    })
             }
+            count++;
+            this.checkFiles && emitProgress({
+                task: count,
+                total: Object.keys(index.objects).length,
+            });
             return assetPath;
         };
-        if (signal?.aborted) return;
         if (this.checkFiles && this.checkHash) {
             console.time("assets:sync_check");
             for (const number in Object.keys(index.objects)) {
@@ -241,15 +302,29 @@ class Minecraft extends EventEmitter {
             await Promise.all(Object.keys(index.objects).map((asset, number) => assetProcessor(asset, number)));
             console.timeEnd('assets:async_process');
         }
-        if (assetsToLoad.length > 0) {
-            await Promise.all(assetsToLoad.map(async asset => await asset()));
-        }
-        this.emit('progress', {
-            type: 'assets',
+        emitProgress({
             task: Object.keys(index.objects).length,
             total: Object.keys(index.objects).length,
-        })
-        logger.debug('Collected assets');
+        });
+        logger.debug('Collected assets!');
+    }
+
+    /**
+     * Collect cp of libraries
+     * @param {Object} classJson - version JSON
+     */
+    async getClasses(classJson) {
+        const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
+        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
+        const parsed = classJson.libraries.filter(lib => {
+            const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
+            const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
+            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
+            if (lib_ex) return lib;
+        });
+        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
+        logger.log(`Collected Class Path's! (count: ${libs.length})`);
+        return libs;
     }
 
     /**
@@ -257,27 +332,12 @@ class Minecraft extends EventEmitter {
      * @param {String} directory - directory
      * @param {Array.<Object>} libraries - libraries array
      * @param {String} type - Meta library type
-     * @param {AbortSignal} signal Aborting signal
      */
-    async downloadLibrary(directory, libraries, type = 'classes', signal) {
-        let totalProgress = 0;
-        const useProgressCounter = () => {
-            let prev = 0;
-            return ({ percent }) => {
-                totalProgress += percent - prev;
-                this.emit('progress', {
-                    type: type,
-                    task: totalProgress,
-                    total: libraries.length,
-                });
-                prev = percent;
-            }
-        }
+    async downloadLibrary(directory, libraries, type = 'classes') {
+        let count = 0;
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.map(async library => {
             if (!library) return false;
-
-            const handleProgress = useProgressCounter();
 
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
@@ -286,6 +346,7 @@ class Minecraft extends EventEmitter {
             logger.debug(">>", "load", name);
 
             const hash = library.downloads?.artifact?.sha1 || library?.checksum || library?.artifact?.sha1 || undefined;
+            const size = library.downloads?.artifact?.size || library?.size || library?.artifact?.size || 0;
 
             if (this.checkFiles && (
                 !fs.existsSync(jarFile) ||
@@ -315,20 +376,31 @@ class Minecraft extends EventEmitter {
                     'https://search.maven.org/remotecontent?filepath=' + jar_name,
                     (library.url ? library.url : '') + jar_name
                 ];
-                for (const url of urls) {
-                    if (signal?.aborted) return;
-                    const loaded = await downloadToFile(url, jarFile, true, handleProgress, signal);
-                    // console.debug(">>", loaded ? "downloaded" : "failed", name, "->", url);
-                    if (loaded) break;
-                }
-            } else {
-                handleProgress({ percent: 1 });
+                this.downloadQueue.push({
+                    type: 'classes',
+                    size: size,
+                    url: urls,
+                    filePath: jarFile,
+                })
             }
+
+            count++;
+            this.checkFiles && this.emit('progress', {
+                type: 'classes',
+                task: count,
+                total: libraries.length,
+            });
 
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
         }));
+
+        this.emit('progress', {
+            type: 'classes',
+            task: libraries.length,
+            total: libraries.length,
+        });
 
         return libs.filter(lib => Boolean(lib));
     }
