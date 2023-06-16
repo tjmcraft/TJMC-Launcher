@@ -27,7 +27,7 @@ const CubeSidebarItems = memo(() => {
 		moveInstallationPosition({ startHash: startHash, endHash: endHash });
 	};
 
-	return (
+	return installations.length ? (
 		<div
 			className="installations"
 			onDragLeave={() => setDragOverItem(undefined)}
@@ -35,24 +35,20 @@ const CubeSidebarItems = memo(() => {
 			onDragOver={e => e.preventDefault()}
 			onDrop={handleDragEnd}
 		>
-			{
-				installations.length ? (
-					installations.map((hash) => (
-						<CubeSidebarItem
-							key={hash}
-							hash={hash}
-							isSelected={currentHash == hash}
-							isDragOver={dragOverItem == hash}
-							onDragStart={(e) => handleDragStart(e, hash)}
-							onDragOver={() => setDragOverItem(hash)}
-						/>
-					))
-				) : (
-					<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
-						<h1>{'Добавьте версию'}</h1>
-					</div>
-				)
-			}
+			{installations.map((hash) => (
+				<CubeSidebarItem
+					key={hash}
+					hash={hash}
+					isSelected={currentHash == hash}
+					isDragOver={dragOverItem == hash}
+					onDragStart={(e) => handleDragStart(e, hash)}
+					onDragOver={() => setDragOverItem(hash)}
+				/>
+			))}
+		</div>
+	) : (
+		<div className={buildClassName('item', "d-flex", "centred", 'fp')}>
+			<h1>{'Добавьте версию'}</h1>
 		</div>
 	);
 });
