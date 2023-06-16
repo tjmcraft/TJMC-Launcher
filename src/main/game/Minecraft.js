@@ -8,6 +8,8 @@ const { checkFileHash } = require('../util/Crypto')
 const { debounce, throttle } = require('../util/Shedulers')
 const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be1600; font-weight: bold')
 
+const MC_RES_URL = "https://resources.download.minecraft.net";
+
 /**
  * @typedef {string} FileType
  */
@@ -255,12 +257,10 @@ class Minecraft extends EventEmitter {
      */
     async getAssets(version) {
         let count = 0;
-        const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
-        if (!fs.existsSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`))) {
-            await downloadToFile(version.assetIndex.url, path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), true);
-        }
-        const index = JSON.parse(fs.readFileSync(path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`), { encoding: 'utf8' }));
-        const res_url = "https://resources.download.minecraft.net";
+        const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'));
+        const assetsIndexPath = path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`);
+        if (!fs.existsSync(assetsIndexPath)) await downloadToFile(version.assetIndex.url, assetsIndexPath, true);
+        const index = JSON.parse(fs.readFileSync(assetsIndexPath, { encoding: 'utf8' }));
 
         const emitProgress = (e) => this.emit('progress', {
             type: 'assets', ...e
@@ -279,7 +279,7 @@ class Minecraft extends EventEmitter {
                 this.downloadQueue.push({
                     type: 'assets',
                     size: size,
-                    url: `${res_url}/${subHash}/${hash}`,
+                    url: `${MC_RES_URL}/${subHash}/${hash}`,
                     filePath: assetPath,
                 });
             }
@@ -315,7 +315,6 @@ class Minecraft extends EventEmitter {
      */
     async getClasses(classJson) {
         const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
-        if (classJson.mavenFiles) await this.downloadLibrary(libraryDirectory, classJson.mavenFiles, 'classes-maven');
         const parsed = classJson.libraries.filter(lib => {
             const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
             const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
@@ -336,8 +335,7 @@ class Minecraft extends EventEmitter {
     async downloadLibrary(directory, libraries, type = 'classes') {
         let count = 0;
         const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
-        const libs = await Promise.all(libraries.map(async library => {
-            if (!library) return false;
+        const libs = await Promise.all(libraries.filter(Boolean).map(async library => {
 
             const lib = library.name.split(':');
             const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
@@ -352,30 +350,21 @@ class Minecraft extends EventEmitter {
                 !fs.existsSync(jarFile) ||
                 (this.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
             )) {
-                // logger.debug("<<", "download", name);
-                const lib_url = ((library) => {
-                    if (isValidUrl(library.downloads?.artifact?.url))
-                        return library.downloads.artifact.url;
-                    if (isValidUrl(library.artifact?.url))
-                        return library.artifact.url;
-                    if (isValidUrl(library.url))
-                        return library.url;
-                    if (isValidUrl(library.exact_url))
-                        return library.exact_url;
-                    return "";
-                })(library);
+                logger.debug("<<", "download", name);
                 const jar_name = `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}/${name}`;
                 const urls = [
-                    lib_url,
-                    'https://libraries.minecraft.net/' + jar_name,
-                    'https://tlaun.ch/repo/libraries/' + jar_name,
-                    'https://files.minecraftforge.net/maven/' + jar_name,
-                    'https://dl.liteloader.com/versions/' + jar_name,
-                    'https://repo1.maven.org/maven2/' + jar_name,
-                    'https://maven.minecraftforge.net/' + jar_name,
-                    'https://search.maven.org/remotecontent?filepath=' + jar_name,
-                    (library.url ? library.url : '') + jar_name
-                ];
+                    ...([library.downloads?.artifact?.url, library.artifact?.url, library.url, library.exact_url]),
+                    ...([
+                        'https://libraries.minecraft.net/',
+                        'https://tlaun.ch/repo/libraries/',
+                        'https://files.minecraftforge.net/maven/',
+                        'https://dl.liteloader.com/versions/',
+                        'https://repo1.maven.org/maven2/',
+                        'https://maven.minecraftforge.net/',
+                        'https://search.maven.org/remotecontent?filepath=',
+                        (library.url || '')
+                    ].map(e => e + jar_name))
+                ].filter(Boolean);
                 this.downloadQueue.push({
                     type: 'classes',
                     size: size,
@@ -402,7 +391,7 @@ class Minecraft extends EventEmitter {
             total: libraries.length,
         });
 
-        return libs.filter(lib => Boolean(lib));
+        return libs.filter(Boolean);
     }
 
     /**
