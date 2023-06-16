@@ -49,7 +49,7 @@ const CubeTopToolbar = ({ hash }) => {
 				download: 'downloading resources',
 				aborting: 'aborting',
 				terminated: 'terminated',
-			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time/60)}m\xa0${Math.floor(time%60)}s` : ''}`;
+			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time/60) > 0 ? `${Math.floor(time/60)}m\xa0` : ''}${Math.round(time%60)}s` : ''}`;
 		}
 		return type;
 	}, [type, progressType, isLoading, progress, time]);
