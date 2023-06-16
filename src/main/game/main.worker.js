@@ -91,30 +91,32 @@ if (!isMainThread) {
 
 			const javaArgs = await new Promise(async (resolve, reject) => {
 				const instance = new Minecraft(options);
-				const handleProgress = (() => {
-					var totalProgress = 0;
-					let prev = {};
-					return ({ progress, type }) => {
-						if (!prev[type]) prev[type] = 0;
-						totalProgress += progress - prev[type];
-						prev[type] = progress;
-						return totalProgress;
-					};
-				})();
-				instance.on('progress', ({task, total,type}) => {
-					const current = handleProgress({
-						progress: task / total,
-						type: type,
+				{
+					const handleProgress = (() => {
+						var totalProgress = 0;
+						let prev = {};
+						return ({ progress, type }) => {
+							if (!prev[type]) prev[type] = 0;
+							totalProgress += progress - prev[type];
+							prev[type] = progress;
+							return totalProgress;
+						};
+					})();
+					instance.on('progress', ({task, total,type}) => {
+						const current = handleProgress({
+							progress: task / total,
+							type: type,
+						});
+						parentPort.postMessage({
+							type: 'args:progress',
+							payload: {
+								task: current,
+								total: 2,
+							},
+						});
 					});
-					parentPort.postMessage({
-						type: 'args:progress',
-						payload: {
-							task: current,
-							total: 2,
-						},
-					});
-				});
-				instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
+					instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
+				}
 
 				if (!fs.existsSync(options.overrides.path.version))
 					fs.mkdirSync(options.overrides.path.version, { recursive: true });
