@@ -151,8 +151,7 @@
           "arch": "x64"
         }
       ],
-      "icon": "icons/icon.ico",
-      "publisherName": "MakAndJo"
+      "icon": "icons/icon.ico"
     },
     "linux": {
       "target": [
@@ -198,7 +197,7 @@
     "nsis": {
       "oneClick": true,
       "perMachine": false,
-      "allowElevation": true,
+      "allowElevation": false,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false
