@@ -209,46 +209,65 @@ class Minecraft extends EventEmitter {
     /**
      * Function get and download natives
      * @param {object} version Main version JSON
-     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async getNatives(version, signal) {
-        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-        logger.debug(`Set natives directory to ${nativeDirectory}`)
-        if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
-            fs.mkdirSync(nativeDirectory, { recursive: true });
-            const stat = version.libraries
-                .filter(lib => {
-                    if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
-                }).map((lib) => {
-                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || {};
-                    const native =
-                        this.getOS() === 'osx'
-                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                            : (lib_clfs[`natives-${this.getOS()}`])
-                    return native;
+    async getNatives(version) {
+        let count = 0;
+        const librariesDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
+        const stat = version.libraries
+            .filter(lib => lib.classifiers || lib.downloads?.classifiers)
+            .filter(lib => !this.parseRule(lib))
+            .filter(Boolean);
+        const natives = await Promise.all(stat.map(async (library, index) => {
+            const native = (library.classifiers || library.downloads?.classifiers)[library.natives[this.getOS()]];
+            const lib = library.name.split(':');
+            const nativePath = native.path || path.join(`${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`,
+                `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}-${library.natives[this.getOS()]}.jar`);
+            const filePath = path.join(librariesDirectory, nativePath);
+            if (this.checkFiles && (
+                !fs.existsSync(filePath) ||
+                (this.checkHash && !await checkFileHash(filePath, native.sha1))
+            )) {
+                (index <= 0) && logger.debug(`Downloading natives...`);
+                this.downloadQueue.push({
+                    type: 'natives',
+                    size: native.size,
+                    url: native.url,
+                    filePath: filePath,
                 });
-            if (signal?.aborted) return;
-            await Promise.all(stat.map(async (native, index) => {
-                if (!native) return
-                const name = native.path.split('/').pop()
-                const native_path = path.join(nativeDirectory, name);
-                if (this.checkFiles && (
-                    !fs.existsSync(native_path) ||
-                    (this.checkHash && !await checkFileHash(native_path, native.sha1))
-                )) {
-                    (index <= 0) && logger.debug(`Downloading natives...`);
-                    await downloadToFile(native.url, native_path, true);
-                    if (signal?.aborted) return;
-                    try {
-                        new Zip(native_path).extractAllTo(nativeDirectory, true);
-                    } catch (e) { logger.warn(e) }
-                    // fs.unlinkSync(native_path);
-                }
-            }));
-            logger.debug(`Downloaded and extracted natives! ${stat.length}`);
-        }
-        logger.debug(`Natives Collected!`);
-        return nativeDirectory;
+            }
+            count++;
+            this.checkFiles && this.emit('progress', {
+                type: 'natives',
+                task: count,
+                total: stat.length,
+            });
+            return filePath;
+        }));
+
+        this.emit('progress', {
+            type: 'natives',
+            task: stat.length,
+            total: stat.length,
+        });
+
+        logger.debug(`Natives Collected: ${natives.length}`);
+        return natives;
+    }
+
+    /**
+     * Extract natives jars to dir
+     * @param {Array} natives
+     */
+    async extractNatives(natives) {
+        const nativesDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
+        fs.mkdirSync(nativesDirectory, { recursive: true });
+        await Promise.all(natives.map(async (native) => {
+            console.debug("[natives]", native);
+            try {
+                new Zip(native).extractAllTo(nativesDirectory, true)
+            } catch (e) { logger.warn(e) }
+        }));
+        return nativesDirectory;
     }
 
     /**
@@ -315,30 +334,15 @@ class Minecraft extends EventEmitter {
      */
     async getClasses(classJson) {
         const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
-        const parsed = classJson.libraries.filter(lib => {
-            const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
-            const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
-            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
-            if (lib_ex) return lib;
-        });
-        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
-        logger.log(`Collected Class Path's! (count: ${libs.length})`);
-        return libs;
-    }
-
-    /**
-     * Download library to directory
-     * @param {String} directory - directory
-     * @param {Array.<Object>} libraries - libraries array
-     * @param {String} type - Meta library type
-     */
-    async downloadLibrary(directory, libraries, type = 'classes') {
+        const parsed = classJson.libraries
+            .filter(lib => [lib.url, lib.artifact, lib.downloads?.artifact, lib.exact_url, lib.name].some(e => e != undefined))
+            .filter(lib => !this.parseRule(lib))
+            .filter(Boolean);
         let count = 0;
-        const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
-        const libs = await Promise.all(libraries.filter(Boolean).map(async library => {
+        const libs = (await Promise.all(parsed.map(async library => {
 
             const lib = library.name.split(':');
-            const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
+            const jarPath = path.join(libraryDirectory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
             const jarFile = path.join(jarPath, name);
             logger.debug(">>", "load", name);
@@ -377,21 +381,22 @@ class Minecraft extends EventEmitter {
             this.checkFiles && this.emit('progress', {
                 type: 'classes',
                 task: count,
-                total: libraries.length,
+                total: parsed.length,
             });
 
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
-        }));
+        }))).filter(Boolean);
 
         this.emit('progress', {
             type: 'classes',
-            task: libraries.length,
-            total: libraries.length,
+            task: parsed.length,
+            total: parsed.length,
         });
 
-        return libs.filter(Boolean);
+        logger.log(`Collected Class Path's! (count: ${libs.length})`);
+        return libs;
     }
 
     /**
