@@ -747,7 +747,7 @@ const UpdatesContainer = memo(() => {
 		({
 			available: updateDownload,
 			loaded: updateInstall,
-		})[updateStatus] || updateCheck
+		}[updateStatus] || updateCheck)()
 	), [updateStatus, updateCheck, updateDownload, updateInstall]);
 
 	function renderProgress(value) {
