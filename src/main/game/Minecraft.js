@@ -209,45 +209,55 @@ class Minecraft extends EventEmitter {
     /**
      * Function get and download natives
      * @param {object} version Main version JSON
-     * @param {AbortSignal} signal Signal for aborting loading
      */
-    async getNatives(version, signal) {
-        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
-        if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
-            fs.mkdirSync(nativeDirectory, { recursive: true });
-            const stat = version.libraries
-                .filter(lib => lib.classifiers || lib.downloads?.classifiers)
-                .filter(lib => !this.parseRule(lib))
-                .map((lib) => {
-                    const lib_clfs = lib.classifiers || lib.downloads?.classifiers;
-                    const native =
-                        this.getOS() === 'osx'
-                            ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                            : (lib_clfs[`natives-${this.getOS()}`])
-                    return native;
+    async getNatives(version) {
+        const librariesDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
+        const stat = version.libraries
+            .filter(lib => lib.classifiers || lib.downloads?.classifiers)
+            .filter(lib => !this.parseRule(lib))
+            .map((library) => {
+                const lib_clfs = library.classifiers || library.downloads?.classifiers;
+                return this.getOS() === 'osx'
+                    ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
+                    : (lib_clfs[`natives-${this.getOS()}`]);
+            })
+            .filter(Boolean);
+        const natives = await Promise.all(stat.map(async (native, index) => {
+            const native_path = path.join(librariesDirectory, native.path);
+            if (this.checkFiles && (
+                !fs.existsSync(native_path) ||
+                (this.checkHash && !await checkFileHash(native_path, native.sha1))
+            )) {
+                (index <= 0) && logger.debug(`Downloading natives...`);
+                this.downloadQueue.push({
+                    type: 'natives',
+                    size: native.size,
+                    url: native.url,
+                    filePath: native_path,
                 });
-            if (signal?.aborted) return;
-            await Promise.all(stat.map(async (native, index) => {
-                if (!native) return
-                const name = native.path.split('/').pop()
-                const native_path = path.join(nativeDirectory, name);
-                if (this.checkFiles && (
-                    !fs.existsSync(native_path) ||
-                    (this.checkHash && !await checkFileHash(native_path, native.sha1))
-                )) {
-                    (index <= 0) && logger.debug(`Downloading natives...`);
-                    await downloadToFile(native.url, native_path, true);
-                    if (signal?.aborted) return;
-                    // fs.unlinkSync(native_path);
-                }
+            }
+            return native_path;
+        }));
+
+        logger.debug(`Natives Collected: ${natives.length}`);
+        return natives;
+    }
+
+    /**
+     *
+     * @param {Array} natives
+     */
+    async extractNatives(natives) {
+        const nativesDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
+        if (!fs.existsSync(nativesDirectory) || !fs.readdirSync(nativesDirectory).length) {
+            fs.mkdirSync(nativesDirectory, { recursive: true });
+            await Promise.all(natives.map(async (native) => {
                 try {
-                    new Zip(native_path).extractAllTo(nativeDirectory, false);
+                    new Zip(native).extractAllTo(nativesDirectory, true)
                 } catch (e) { logger.warn(e) }
             }));
-            logger.debug(`Downloaded and extracted natives! ${stat.length}`);
         }
-        logger.debug(`Natives Collected!`);
-        return nativeDirectory;
+        return nativesDirectory;
     }
 
     /**
