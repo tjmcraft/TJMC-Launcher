@@ -314,13 +314,10 @@ class Minecraft extends EventEmitter {
      */
     async getClasses(classJson) {
         const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
-        const parsed = classJson.libraries.filter(lib => {
-            const lib_url_ex = (lib.url != undefined || lib.artifact != undefined || lib.downloads?.artifact != undefined || lib.exact_url != undefined);
-            const lib_no_clfs_ex = (!lib_url_ex && (lib.classifiers == undefined && lib.downloads?.classifiers == undefined) && lib.name);
-            const lib_ex = (lib_url_ex || lib_no_clfs_ex) && !this.parseRule(lib);
-            if (lib_ex) return lib;
-        });
-        const libs = await this.downloadLibrary(libraryDirectory, parsed, 'classes');
+        const parsed = classJson.libraries
+            .filter(lib => [lib.url, lib.artifact, lib.downloads?.artifact, lib.exact_url, lib.name].some(e => e != undefined))
+            .filter(lib => !this.parseRule(lib));
+        const libs = await this.downloadLibrary(libraryDirectory, parsed);
         logger.log(`Collected Class Path's! (count: ${libs.length})`);
         return libs;
     }
@@ -329,11 +326,9 @@ class Minecraft extends EventEmitter {
      * Download library to directory
      * @param {String} directory - directory
      * @param {Array.<Object>} libraries - libraries array
-     * @param {String} type - Meta library type
      */
-    async downloadLibrary(directory, libraries, type = 'classes') {
+    async downloadLibrary(directory, libraries) {
         let count = 0;
-        const isValidUrl = (url) => url != void 0 && ['http', '.jar'].every(e => url.includes(e));
         const libs = await Promise.all(libraries.filter(Boolean).map(async library => {
 
             const lib = library.name.split(':');
