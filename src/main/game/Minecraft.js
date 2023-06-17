@@ -211,6 +211,7 @@ class Minecraft extends EventEmitter {
      * @param {object} version Main version JSON
      */
     async getNatives(version) {
+        let count = 0;
         const librariesDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
         const stat = version.libraries
             .filter(lib => lib.classifiers || lib.downloads?.classifiers)
@@ -234,8 +235,20 @@ class Minecraft extends EventEmitter {
                     filePath: filePath,
                 });
             }
+            count++;
+            this.checkFiles && this.emit('progress', {
+                type: 'natives',
+                task: count,
+                total: stat.length,
+            });
             return filePath;
         }));
+
+        this.emit('progress', {
+            type: 'natives',
+            task: stat.length,
+            total: stat.length,
+        });
 
         logger.debug(`Natives Collected: ${natives.length}`);
         return natives;

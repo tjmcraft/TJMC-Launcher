@@ -111,7 +111,7 @@ if (!isMainThread) {
 							type: 'args:progress',
 							payload: {
 								task: current,
-								total: 2,
+								total: 3,
 							},
 						});
 					});
