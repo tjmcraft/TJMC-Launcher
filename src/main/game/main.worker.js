@@ -123,19 +123,17 @@ if (!isMainThread) {
 				if (!fs.existsSync(options.overrides.path.gameDirectory))
 					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
 
-				const [client, classes, assets] = await Promise.all([
+				const [client, classes, natives, assets] = await Promise.all([
 					instance.loadClient(options.manifest),
 					instance.getClasses(options.manifest),
+					instance.getNatives(options.manifest),
 					instance.getAssets(options.manifest),
 				]);
 				if (controller.signal.aborted) return;
-				const [nativePath, downloadStatus] = await Promise.all([
-					instance.getNatives(options.manifest, controller.signal),
-					instance.downloadQueue.load(controller.signal),
-				]);
+				const downloadStatus = await instance.downloadQueue.load(controller.signal);
+				const nativePath = await instance.extractNatives(natives);
 				if (controller.signal.aborted) return;
 				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
-				if (controller.signal.aborted) return;
 				return resolve(args);
 			});
 			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
