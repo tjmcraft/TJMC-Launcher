@@ -473,6 +473,9 @@ class Minecraft extends EventEmitter {
         }
         let args = [];
         // Java Arguments
+        if (this.overrides.javaArgs) {
+            args.push(this.overrides.javaArgs);
+        }
         if (process.platform === 'darwin') {
             args.push('-Xdock:name=TJMC-Launcher');
             args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'));
@@ -515,10 +518,6 @@ class Minecraft extends EventEmitter {
             args.push('--server=' + 'play.tjmc.ru');
         }
 
-        if (this.overrides.javaArgs) {
-            args.push(this.overrides.javaArgs);
-        }
-
         // Forge Arguments
         args = args.concat(this.resolveArgs(versionFile))
 
@@ -542,10 +541,6 @@ class Minecraft extends EventEmitter {
 
         if (this.overrides.autoConnect) {
             args.push('--server=' + 'play.tjmc.ru');
-        }
-
-        if (this.overrides.javaArgs) {
-            args.push(this.overrides.javaArgs);
         }
 
         // Vanilla Arguments
