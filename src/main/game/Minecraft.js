@@ -316,23 +316,13 @@ class Minecraft extends EventEmitter {
         const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
         const parsed = classJson.libraries
             .filter(lib => [lib.url, lib.artifact, lib.downloads?.artifact, lib.exact_url, lib.name].some(e => e != undefined))
-            .filter(lib => !this.parseRule(lib));
-        const libs = await this.downloadLibrary(libraryDirectory, parsed);
-        logger.log(`Collected Class Path's! (count: ${libs.length})`);
-        return libs;
-    }
-
-    /**
-     * Download library to directory
-     * @param {String} directory - directory
-     * @param {Array.<Object>} libraries - libraries array
-     */
-    async downloadLibrary(directory, libraries) {
+            .filter(lib => !this.parseRule(lib))
+            .filter(Boolean);
         let count = 0;
-        const libs = await Promise.all(libraries.filter(Boolean).map(async library => {
+        const libs = (await Promise.all(parsed.map(async library => {
 
             const lib = library.name.split(':');
-            const jarPath = path.join(directory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
+            const jarPath = path.join(libraryDirectory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
             const jarFile = path.join(jarPath, name);
             logger.debug(">>", "load", name);
@@ -371,21 +361,22 @@ class Minecraft extends EventEmitter {
             this.checkFiles && this.emit('progress', {
                 type: 'classes',
                 task: count,
-                total: libraries.length,
+                total: parsed.length,
             });
 
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
-        }));
+        }))).filter(Boolean);
 
         this.emit('progress', {
             type: 'classes',
-            task: libraries.length,
-            total: libraries.length,
+            task: parsed.length,
+            total: parsed.length,
         });
 
-        return libs.filter(Boolean);
+        logger.log(`Collected Class Path's! (count: ${libs.length})`);
+        return libs;
     }
 
     /**
