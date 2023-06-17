@@ -480,6 +480,12 @@ class Minecraft extends EventEmitter {
         args.push('-Xmx' + this.getMemory()[0]);
         args.push('-Xms' + this.getMemory()[1]);
         args.push('-Dfile.encoding=UTF-8');
+        args.push(...[
+            '-Dminecraft.api.auth.host',
+            '-Dminecraft.api.account.host',
+            '-Dminecraft.api.session.host',
+            '-Dminecraft.api.services.host'
+        ].map(e => `${e}=${'https://0.0.0.0'}`));
         if (versionFile.arguments) {
             args = args.concat(this.getJVMArgs113(versionFile, tempNativePath, cp));
         } else {
