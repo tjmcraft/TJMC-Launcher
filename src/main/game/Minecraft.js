@@ -471,11 +471,27 @@ class Minecraft extends EventEmitter {
             '${launcher_name}': 'TJMC',
             '${launcher_version}': '1.0.0'
         }
-        if (versionFile.arguments) {
-            return this.getJVMArgs113(versionFile, tempNativePath, cp)
-        } else {
-            return this.getJVMArgs112(versionFile, tempNativePath, cp)
+        let args = [];
+        // Java Arguments
+        if (process.platform === 'darwin') {
+            args.push('-Xdock:name=TJMC-Launcher');
+            args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'));
         }
+        args.push('-Xmx' + this.getMemory()[0]);
+        args.push('-Xms' + this.getMemory()[1]);
+        args.push('-Dfile.encoding=UTF-8');
+        args.push(...[
+            '-Dminecraft.api.auth.host',
+            '-Dminecraft.api.account.host',
+            '-Dminecraft.api.session.host',
+            '-Dminecraft.api.services.host'
+        ].map(e => `${e}=${'https://0.0.0.0'}`));
+        if (versionFile.arguments) {
+            args = args.concat(this.getJVMArgs113(versionFile, tempNativePath, cp));
+        } else {
+            args = args.concat(this.getJVMArgs112(versionFile, tempNativePath, cp));
+        }
+        return args;
     }
 
     /**
@@ -485,18 +501,10 @@ class Minecraft extends EventEmitter {
     getJVMArgs112(versionFile, tempNativePath, cp) {
 
         let args = []
-        const jar = (this.javaSeparator) + this.options.mcPath;
-
-        // Java Arguments
-        if (process.platform === 'darwin') {
-            args.push('-Xdock:name=TJMC-Launcher')
-            args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
-        }
-        args.push('-Xmx' + this.getMemory()[0])
-        args.push('-Xms' + this.getMemory()[1])
         args.push('-Djava.library.path=' + tempNativePath)
 
         // Classpath Argument
+        const jar = (this.javaSeparator) + this.options.mcPath;
         args.push('-cp')
         args.push(`${cp.join(this.javaSeparator) + jar}`)
 
@@ -527,13 +535,6 @@ class Minecraft extends EventEmitter {
     getJVMArgs113(versionFile) {
 
         let args = []
-
-        if (process.platform === 'darwin') {
-            args.push('-Xdock:name=TJMC-Launcher')
-            args.push('-Xdock:icon=' + path.join(__dirname, 'assets', 'minecraft.icns'))
-        }
-        args.push('-Xmx' + this.getMemory()[0])
-        args.push('-Xms' + this.getMemory()[1])
         args = args.concat(versionFile.arguments.jvm)
 
         // Main Java Class
