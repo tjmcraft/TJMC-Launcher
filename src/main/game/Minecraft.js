@@ -212,15 +212,14 @@ class Minecraft extends EventEmitter {
      * @param {AbortSignal} signal Signal for aborting loading
      */
     async getNatives(version, signal) {
-        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'))
-        logger.debug(`Set natives directory to ${nativeDirectory}`)
+        const nativeDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
         if (!fs.existsSync(nativeDirectory) || !fs.readdirSync(nativeDirectory).length) {
             fs.mkdirSync(nativeDirectory, { recursive: true });
             const stat = version.libraries
-                .filter(lib => {
-                    if ((lib.classifiers || (lib.downloads ? lib.downloads.classifiers : false)) && !this.parseRule(lib)) return lib;
-                }).map((lib) => {
-                    const lib_clfs = lib.classifiers || lib.downloads.classifiers || {};
+                .filter(lib => lib.classifiers || lib.downloads?.classifiers)
+                .filter(lib => !this.parseRule(lib))
+                .map((lib) => {
+                    const lib_clfs = lib.classifiers || lib.downloads?.classifiers;
                     const native =
                         this.getOS() === 'osx'
                             ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
@@ -239,11 +238,11 @@ class Minecraft extends EventEmitter {
                     (index <= 0) && logger.debug(`Downloading natives...`);
                     await downloadToFile(native.url, native_path, true);
                     if (signal?.aborted) return;
-                    try {
-                        new Zip(native_path).extractAllTo(nativeDirectory, true);
-                    } catch (e) { logger.warn(e) }
                     // fs.unlinkSync(native_path);
                 }
+                try {
+                    new Zip(native_path).extractAllTo(nativeDirectory, false);
+                } catch (e) { logger.warn(e) }
             }));
             logger.debug(`Downloaded and extracted natives! ${stat.length}`);
         }
