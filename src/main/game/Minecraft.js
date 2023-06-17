@@ -215,28 +215,26 @@ class Minecraft extends EventEmitter {
         const stat = version.libraries
             .filter(lib => lib.classifiers || lib.downloads?.classifiers)
             .filter(lib => !this.parseRule(lib))
-            .map((library) => {
-                const lib_clfs = library.classifiers || library.downloads?.classifiers;
-                return this.getOS() === 'osx'
-                    ? (lib_clfs['natives-osx'] || lib_clfs['natives-macos'])
-                    : (lib_clfs[`natives-${this.getOS()}`]);
-            })
             .filter(Boolean);
-        const natives = await Promise.all(stat.map(async (native, index) => {
-            const native_path = path.join(librariesDirectory, native.path);
+        const natives = await Promise.all(stat.map(async (library, index) => {
+            const native = (library.classifiers || library.downloads?.classifiers)[library.natives[this.getOS()]];
+            const lib = library.name.split(':');
+            const nativePath = native.path || path.join(`${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`,
+                `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}-${library.natives[this.getOS()]}.jar`);
+            const filePath = path.join(librariesDirectory, nativePath);
             if (this.checkFiles && (
-                !fs.existsSync(native_path) ||
-                (this.checkHash && !await checkFileHash(native_path, native.sha1))
+                !fs.existsSync(filePath) ||
+                (this.checkHash && !await checkFileHash(filePath, native.sha1))
             )) {
                 (index <= 0) && logger.debug(`Downloading natives...`);
                 this.downloadQueue.push({
                     type: 'natives',
                     size: native.size,
                     url: native.url,
-                    filePath: native_path,
+                    filePath: filePath,
                 });
             }
-            return native_path;
+            return filePath;
         }));
 
         logger.debug(`Natives Collected: ${natives.length}`);
@@ -244,19 +242,18 @@ class Minecraft extends EventEmitter {
     }
 
     /**
-     *
+     * Extract natives jars to dir
      * @param {Array} natives
      */
     async extractNatives(natives) {
         const nativesDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
-        if (!fs.existsSync(nativesDirectory) || !fs.readdirSync(nativesDirectory).length) {
-            fs.mkdirSync(nativesDirectory, { recursive: true });
-            await Promise.all(natives.map(async (native) => {
-                try {
-                    new Zip(native).extractAllTo(nativesDirectory, true)
-                } catch (e) { logger.warn(e) }
-            }));
-        }
+        fs.mkdirSync(nativesDirectory, { recursive: true });
+        await Promise.all(natives.map(async (native) => {
+            console.debug("[natives]", native);
+            try {
+                new Zip(native).extractAllTo(nativesDirectory, true)
+            } catch (e) { logger.warn(e) }
+        }));
         return nativesDirectory;
     }
 
