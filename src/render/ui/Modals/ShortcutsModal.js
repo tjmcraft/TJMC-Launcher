@@ -30,7 +30,6 @@ const Header = (({ title, subtitle = undefined }) => {
 const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
 const ShortcutsModal = (props) => {
-	const { closeModal } = getDispatch();
 	const isMac = platform.os.family == 'OS X';
 	const template = [
 		{
