@@ -9,6 +9,7 @@ import { Modal, ModalFooter } from ".";
 
 import style from 'CSS/modal.module.css';
 import "./ShortcutsModal.css";
+import platform from "platform";
 
 const Header = (({ title, subtitle = undefined }) => {
 	const { closeModal } = getDispatch();
@@ -30,26 +31,86 @@ const Content = (({ children }) => createElement('div', { class: buildClassName(
 
 const ShortcutsModal = (props) => {
 	const { closeModal } = getDispatch();
+	const isMac = platform.os.family == 'OS X';
+	const template = [
+		{
+			label: "General",
+			submenu: [
+				{
+					label: 'Check for updates',
+					accelerator: 'Ctrl+Shift+U',
+				},
+				{
+					label: 'Keyboard shortcuts',
+					accelerator: isMac ? 'Command+/' : 'Ctrl+/',
+				},
+				{
+					label: 'Settings',
+					accelerator: 'Ctrl+Shift+I',
+				},
+				{
+					label: 'Map',
+					accelerator: 'Ctrl+Shift+M',
+				},
+				{
+					label: 'Root Directory',
+					accelerator: 'Ctrl+Shift+D',
+				},
+				{
+					label: 'Quit',
+					accelerator: isMac ? 'Command+Q' : 'Ctrl+Q',
+				}
+			],
+		},
+		{
+			label: 'Installation',
+			submenu: [
+				{
+					label: 'Start Launching',
+					accelerator: 'F5',
+				},
+				{
+					label: 'Start With Force',
+					accelerator: 'Ctrl+F5',
+				},
+				{
+					label: 'Stop Launching',
+					accelerator: 'Shift+F5',
+				},
+				{
+					label: 'Edit Current',
+					accelerator: 'F4',
+				},
+				{
+					label: 'Create new',
+					accelerator: 'F3',
+				},
+			]
+		},
+	];
 	return (
-		<Modal mini={true} small={true} full={false}>
-			<Header title={"Keyboard Shortcuts"} subtitle={"Control your experience!"} />
+		<Modal small={true} full={false}>
+			<Header title={"Keyboard Shortcuts"} />
 			<Content>
 				<div className={buildClassName("colorStandart", "size14")}>
 					<div className="sc-groups">
-						<div className="sc-group">
-							<span>General</span>
-							<div className="sc-container">
-								<div className="sc-title">
-									<span>
-										First shortcut
-									</span>
-								</div>
-								<div className="sc-icon">
-									<kbd>⌘</kbd>
-									<kbd>k</kbd>
-								</div>
+						{template.map(({ label, submenu }, key) => (
+							<div className="sc-group" key={key}>
+								<span>{label}</span>
+								{submenu.map(({ label, accelerator }, key) => (
+									<div className="sc-container" key={key}>
+										<div className="sc-title">
+											<span>{label}</span>
+										</div>
+										<div className="sc-icon">
+											{accelerator.split("+").map((a, key) => (
+												<kbd key={key}>{a}</kbd>
+											))}
+										</div>
+									</div>
+								))}
 							</div>
-						</div>
+						))}
 					</div>
 				</div>
 			</Content>
