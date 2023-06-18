@@ -21,6 +21,14 @@ const createMenu = async () => {
                     click: () => checkForUpdates()
                 },
                 {
+                    label: 'Keyboard shortcuts',
+                    accelerator: isMac ? 'Command+/' : 'Ctrl+/',
+                    click: () => {
+                        MainWindow.restore();
+                        MainWindow.send('open-shortcuts');
+                    }
+                },
+                {
                     type: 'separator'
                 },
                 {

@@ -13,6 +13,8 @@ import Alert from "./Modals/Alert";
 import WhatsNew from "./Modals/WhatsNew";
 import InstallationEditor from "./Modals/InstallationEditor";
 import MapModal from "./Modals/MapModal";
+import ShortcutsModal from "./Modals/ShortcutsModal";
+
 
 import style from "CSS/modal.module.css";
 
@@ -23,6 +25,7 @@ const MODAL_STORE = {
 	"whats-new": WhatsNew,
 	"installation-editor": InstallationEditor,
 	"map-modal": MapModal,
+	"shortcuts-modal": ShortcutsModal,
 };
 
 const ModalLayer = ({ isShown, children }) => {

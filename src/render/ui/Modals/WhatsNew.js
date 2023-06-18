@@ -54,12 +54,10 @@ const WhatsNewContainer = memo(() => {
 			);
 		} else {
 			return (
-
 				<div className={buildClassName("main-content", "d-flex", "vertical", "centred", "no-scroll")} style={{flex: 1}}>
 					<h1>{`Early build (v${APP_VERSION})`}</h1>
 					<h3>Cannot be found on GitHub</h3>
 				</div>
-
 			);
 		}
 	}
