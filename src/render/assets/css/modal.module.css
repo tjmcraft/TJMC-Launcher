@@ -164,7 +164,7 @@
     height: 32px;
 }
 .layer > .modal .header .date {
-    color: #b9bbbe;
+    color: var(--header-secondary);
     font-size: 12px;
     line-height: 16px;
 }
