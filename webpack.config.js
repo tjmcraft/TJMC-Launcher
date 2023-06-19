@@ -42,7 +42,7 @@ module.exports = {
 		main: path.resolve(basePath, 'index.js')
 	},
 	resolve: {
-		extensions: ['.js', '.jsx', '.json', '.css', '.png', '.*'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.png', '.*'],
 		alias: {
 			Libs: path.resolve(basePath, 'Libs'),
 			Util: path.resolve(basePath, 'Util'),
@@ -84,7 +84,7 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(ts|jsx|js)$/,
+				test: /\.(ts|tsx|js|jsx)$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader',
 			},
