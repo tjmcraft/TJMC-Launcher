@@ -76,7 +76,7 @@ exports.start = async () => {
 }
 
 const os = require('os');
-const { ipcMain, dialog, shell } = require('electron');
+const { ipcMain, dialog, shell, app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
@@ -162,11 +162,27 @@ const initHandlers = async () => {
 	}
 
 	{ // Host
-		WSSHost.addReducer(requestChannels.requestHostInfo, () => ({
-			hostVendor: 'TJMC-Launcher',
-			hostVersion: autoUpdater.currentVersion,
-			hostMemory: os.totalmem() / 1024 / 1024,
-		}));
+		WSSHost.addReducer(requestChannels.requestHostInfo, () => {
+			const menu = app.applicationMenu.items.map(m => ({
+				label: m.label,
+				role: m.role,
+				commandId: m.commandId,
+				enabled: m.enabled,
+				submenu: m.submenu.items.map(sm => ({
+					type: sm.type,
+					label: sm.label,
+					commandId: sm.commandId,
+					enabled: sm.enabled,
+					accelerator: sm.accelerator,
+				})),
+			}));
+			return {
+				hostVendor: 'TJMC-Launcher',
+				hostVersion: autoUpdater.currentVersion,
+				hostMemory: os.totalmem() / 1024 / 1024,
+				hostMenu: menu,
+			}
+		});
 		WSSHost.addReducer(requestChannels.relaunchHost, () => {
 			app.relaunch();
 		});

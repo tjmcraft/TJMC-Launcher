@@ -51,7 +51,7 @@
 
 .sc-container kbd {
 	background-color: var(--background-modifier-accent);
-	box-shadow: var(--background-secondary) 0 3px 0;
+	box-shadow: 0 3px 0 var(--background-secondary-alt);
 	transform: translateY(-2px);
 	transition: .05s ease;
 	padding: 4px 6px;
