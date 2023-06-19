@@ -30,8 +30,9 @@ const Header = (({ title, subtitle = undefined }) => {
 const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
 const ShortcutsModal = (props) => {
+	const host = useGlobal(global => global.hostInfo);
 	const isMac = platform.os.family == 'OS X';
-	const template = [
+	const template = (host.hostMenu || [
 		{
 			label: "General",
 			submenu: [
@@ -86,7 +87,10 @@ const ShortcutsModal = (props) => {
 				},
 			]
 		},
-	];
+	]).map(e => ({
+		label: e.label,
+		submenu: e.submenu.filter(e => e.accelerator && e.label)
+	})).filter(e => e.submenu.length);
 	return (
 		<Modal small={true} full={false}>
 			<Header title={"Keyboard Shortcuts"} />

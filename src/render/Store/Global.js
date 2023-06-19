@@ -9,6 +9,8 @@ const INITIAL_STATE = {
 	hostInfo: {
 		hostVendor: undefined,
 		hostVersion: undefined,
+		hostMemory: undefined,
+		hostMenu: undefined,
 	},
 	settings: {
 		debug_mode: false,
