@@ -92,7 +92,7 @@ const ShortcutsModal = (props) => {
 		submenu: e.submenu.filter(e => e.accelerator && e.label)
 	})).filter(e => e.submenu.length);
 	return (
-		<Modal small={true} full={false}>
+		<Modal mini small width="25em">
 			<Header title={"Keyboard Shortcuts"} />
 			<Content>
 				<div className={buildClassName("colorStandart", "size14")}>

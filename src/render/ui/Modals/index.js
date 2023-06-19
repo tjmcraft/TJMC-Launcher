@@ -8,6 +8,7 @@ export const Modal = ({
 	mini = false,
 	small = false,
 	full = false,
+	width = ''
 }) => {
 
 	const classNames = buildClassName(
@@ -17,7 +18,7 @@ export const Modal = ({
 		full && style.full,
 	);
 
-	return <div className={classNames} role="alertdialog" tabIndex={-1} aria-modal="true">{children}</div>;
+	return <div className={classNames} role="alertdialog" tabIndex={-1} aria-modal="true" style={{width:width}}>{children}</div>;
 };
 
 export const ModalFooter = ({ children }) => {
