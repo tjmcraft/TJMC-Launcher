@@ -1,3 +1,10 @@
+// Types define
+type AnyLiteral = Record<string, any>;
+type AnyClass = new (...args: any[]) => any;
+type AnyFunction = (...args: any[]) => any;
+type AnyToVoidFunction = (...args: any[]) => void;
+type NoneToVoidFunction = () => void;
+
 // Modules import
 declare module '*.module.css';
 declare module "*.png";
