@@ -42,12 +42,6 @@
   font-size: 14px;
   font-weight: 500;
 }
-.sc-groups > .sc-group > .sc-container > .sc-icon {
-
-}
-.sc-groups > .sc-group > .sc-container > .sc-icon > kbd {
-
-}
 
 .sc-container kbd {
 	background-color: var(--background-modifier-accent);
