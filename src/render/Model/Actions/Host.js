@@ -35,6 +35,19 @@ addReducer("initHost", (global, actions) => {
 	const createInstallation = (e, data) => {
 		return actions.openVersionChooserModal();
 	};
+	const hostActions = {
+		openSettings,
+		openMap,
+		openShortcuts,
+		runCurrentInstallation,
+		stopCurrentInstallation,
+		runInstallationForce,
+		editInstallation,
+		createInstallation,
+	};
+	window.electron.on('tjmc:runAction', (e, { type, data }) => {
+		if (hostActions.hasOwnProperty(type)) withAuth(hostActions[type])(data);
+	});
 	window.electron.on('open-settings', withAuth(openSettings));
 	window.electron.on('open-map', withAuth(openMap));
 	window.electron.on('open-shortcuts', withAuth(openShortcuts));
