@@ -216,6 +216,7 @@ class Minecraft extends EventEmitter {
         const stat = version.libraries
             .filter(lib => lib.classifiers || lib.downloads?.classifiers)
             .filter(lib => !this.parseRule(lib))
+            .filter(lib => lib.natives[this.getOS()])
             .filter(Boolean);
         const natives = await Promise.all(stat.map(async (library, index) => {
             const native = (library.classifiers || library.downloads?.classifiers)[library.natives[this.getOS()]];
