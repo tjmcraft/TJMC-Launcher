@@ -5,16 +5,23 @@ const MainWindow = require("./MainWindow");
 const ConfigManager = require('./managers/ConfigManager');
 const { checkForUpdates } = require("./Updater");
 
+const runActionInRenderer = (type, data = undefined) => {
+    MainWindow.restore();
+    MainWindow.send('tjmc:runAction', { type: type, data: data });
+}
+
 const createMenu = async () => {
     const isMac = (process.platform === 'darwin');
     const template = [
         {
             label: 'Application',
             submenu: [
-                ...(isMac ? [{
-                    label: 'About TJMC-Launcher',
-                    selector: 'orderFrontStandardAboutPanel:'
-                }] : []),
+                ...(isMac ? [
+                    {
+                        label: 'About TJMC-Launcher',
+                        selector: 'orderFrontStandardAboutPanel:'
+                    }
+                ] : []),
                 {
                     label: 'Check for updates',
                     accelerator: 'Ctrl+Shift+U',
@@ -23,10 +30,7 @@ const createMenu = async () => {
                 {
                     label: 'Keyboard shortcuts',
                     accelerator: isMac ? 'Command+/' : 'Ctrl+/',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('open-shortcuts');
-                    }
+                    click: () => runActionInRenderer('openShortcuts')
                 },
                 {
                     type: 'separator'
@@ -34,18 +38,12 @@ const createMenu = async () => {
                 {
                     label: 'Settings',
                     accelerator: 'Ctrl+Shift+I',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('open-settings');
-                    }
+                    click: () => runActionInRenderer('openSettings')
                 },
                 {
                     label: 'Map',
                     accelerator: 'Ctrl+Shift+M',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('open-map');
-                    }
+                    click: () => runActionInRenderer('openMap')
                 },
                 {
                     label: 'Root Directory',
@@ -58,9 +56,7 @@ const createMenu = async () => {
                 {
                     label: 'Quit',
                     accelerator: isMac ? 'Command+Q' : 'Ctrl+Q',
-                    click: () => {
-                        app.quit()
-                    }
+                    click: () => app.quit()
                 }
             ]
         },
@@ -85,74 +81,77 @@ const createMenu = async () => {
             {
                 role: 'paste'
             },
-            ...(isMac ? [{
-                role: 'pasteAndMatchStyle'
-            },
-            {
-                role: 'delete'
-            },
-            {
-                role: 'selectAll'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                label: 'Speech',
-                submenu: [{
-                    role: 'startSpeaking'
+            ...(isMac ? [
+                {
+                    role: 'pasteAndMatchStyle'
                 },
                 {
-                    role: 'stopSpeaking'
+                    role: 'delete'
+                },
+                {
+                    role: 'selectAll'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Speech',
+                    submenu: [{
+                        role: 'startSpeaking'
+                    },
+                    {
+                        role: 'stopSpeaking'
+                    }
+                    ]
                 }
-                ]
-            }
-            ] : [{
-                role: 'delete'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'selectAll'
-            }
+            ] : [
+                {
+                    role: 'delete'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'selectAll'
+                }
             ])
             ]
         },
         // { role: 'viewMenu' }
         {
             label: 'View',
-            submenu: [{
-                role: 'reload'
-            },
-            {
-                role: 'forceReload'
-            },
-            {
-                role: 'toggleDevTools',
-                accelerator: 'F12'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'resetZoom'
-            },
-            {
-                role: 'zoomIn',
-                accelerator: isMac ? 'Cmd+=' : 'Ctrl+='
-            },
-            {
-                role: 'zoomOut',
-                accelerator: isMac ? 'Cmd+-' : 'Ctrl+-'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'togglefullscreen',
-                accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11'
-            }
+            submenu: [
+                {
+                    role: 'reload'
+                },
+                {
+                    role: 'forceReload'
+                },
+                {
+                    role: 'toggleDevTools',
+                    accelerator: 'F12'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'resetZoom'
+                },
+                {
+                    role: 'zoomIn',
+                    accelerator: isMac ? 'Cmd+=' : 'Ctrl+='
+                },
+                {
+                    role: 'zoomOut',
+                    accelerator: isMac ? 'Cmd+-' : 'Ctrl+-'
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'togglefullscreen',
+                    accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11'
+                }
             ]
         },
         // { role: 'windowMenu' }
@@ -162,34 +161,22 @@ const createMenu = async () => {
                 {
                     label: 'Start Launching',
                     accelerator: 'F5',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('installation.run.current');
-                    }
+                    click: () => runActionInRenderer('runCurrentInstallation')
                 },
                 {
                     label: 'Start With Force',
                     accelerator: 'Ctrl+F5',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('installation.run.force');
-                    }
+                    click: () => runActionInRenderer('runInstallationForce')
                 },
                 {
                     label: 'Stop Launching',
                     accelerator: 'Shift+F5',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('installation.stop.current');
-                    }
+                    click: () => runActionInRenderer('stopCurrentInstallation')
                 },
                 {
                     label: 'Edit Current',
                     accelerator: 'F4',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('installation.edit.current');
-                    }
+                    click: () => runActionInRenderer('editInstallation')
                 },
                 {
                     type: 'separator'
@@ -197,10 +184,7 @@ const createMenu = async () => {
                 {
                     label: 'Create new',
                     accelerator: 'F3',
-                    click: () => {
-                        MainWindow.restore();
-                        MainWindow.send('installation.create.new');
-                    }
+                    click: () => runActionInRenderer('createInstallation')
                 },
             ]
         },
