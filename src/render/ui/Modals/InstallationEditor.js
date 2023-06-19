@@ -1,6 +1,7 @@
 import { memo, createElement, useState, useMemo } from "react";
 
 import buildClassName from "Util/buildClassName";
+import { cleanObject, compareObjects, getObjectDiff } from "Util/Iterates";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
@@ -9,7 +10,6 @@ import { selectInstallation } from "Model/Selectors/installations";
 import { Modal, ModalFooter } from ".";
 import { InputGroup, PathInput } from "UI/components/Input";
 import SettingSwitch from "UI/components/SettingSwitch";
-import { cleanObject, compareObjects, getObjectDiff } from "Util/Iterates";
 
 
 const InstallationForm = ({ version, onCancel }) => {

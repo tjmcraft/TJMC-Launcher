@@ -13,32 +13,23 @@ import style from 'CSS/modal.module.css';
 import "CSS/markdown.css";
 
 
-const WhatsNewContent = (({latestRelease}) => {
+const Header = (({ title, date }) => {
+	const { closeModal } = getDispatch();
+	const onClose = () => closeModal();
 	return (
-		<div>
-			<img src="https://cdn.tjmc.ru/images/1501915239_image.gif" style={{ height: "25em" }} />
-			<div className={buildClassName("colorStandart", "size14")}>
-				<span className="markdown">
-					<Markdown remarkPlugins={[remarkGfm]} children={latestRelease.body} />
-				</span>
+		<div className={buildClassName('flex-group', 'horizontal', style.header)}>
+			<div className="flex-child">
+				<h2>{title || 'Что нового?'}</h2>
+				<div className={buildClassName('size12', 'colorStandart', style.date)}>
+					{new Date(date).toLocaleString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+				</div>
 			</div>
+			<div className="button" onClick={onClose}>{SVG('cross')}</div>
 		</div>
 	);
 });
 
-const Header = (({ title, date }) => {
-	const { closeModal } = getDispatch();
-	const onClose = () => closeModal();
-	return createElement('div', { class: buildClassName('flex-group', 'horizontal', style.header) },
-		createElement('div', { class: buildClassName('flex-child') },
-			createElement('h2', null, title || 'Что нового?'),
-			createElement('div', { class: buildClassName('size12', 'colorStandart', style.date) }, new Date(date).toLocaleString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }))),
-		createElement('div', { class: buildClassName('button'), onClick: onClose }, SVG('cross')));
-});
-
-const Content = (({latestRelease}) => {
-	return createElement('div', { class: buildClassName(style.content, 'thin-s') }, <WhatsNewContent latestRelease={latestRelease} />);
-});
+const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
 const WhatsNewContainer = memo(() => {
 	const releases = useGlobal(global => global.releases);
@@ -48,18 +39,23 @@ const WhatsNewContainer = memo(() => {
 			return (
 				<Fragment>
 					<Header title={latestRelease.name} date={latestRelease.published_at} />
-					<Content latestRelease={latestRelease} />
+					<Content>
+						<img src="https://cdn.tjmc.ru/images/1501915239_image.gif" style={{ height: "20em" }} />
+						<div className={buildClassName("colorStandart", "size14")}>
+							<span className="markdown">
+								<Markdown remarkPlugins={[remarkGfm]} children={latestRelease.body} />
+							</span>
+						</div>
+					</Content>
 					<Footer />
 				</Fragment>
 			);
 		} else {
 			return (
-
-				<div className={buildClassName("main-content", "d-flex", "vertical", "centred", "no-scroll")} style={{flex: 1}}>
+				<div className={buildClassName("main-content", "d-flex", "vertical", "centred", "no-scroll")} style={{ flex: 1 }}>
 					<h1>{`Early build (v${APP_VERSION})`}</h1>
 					<h3>Cannot be found on GitHub</h3>
 				</div>
-
 			);
 		}
 	}
