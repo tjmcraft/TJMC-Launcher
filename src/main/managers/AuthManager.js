@@ -81,7 +81,6 @@ class AuthManager extends EventEmitter {
 		} catch (e) {}
 		if (!storedToken) return;
 		if (this.matchUserId(this.currentUserId)['type'] == 'tjmc') {
-			console.debug('[currentToken]', storedToken);
 			this.token = storedToken;
 		}
 	}
@@ -91,7 +90,6 @@ class AuthManager extends EventEmitter {
 			return this.createMockedOfflineUser(this.matchUserId(this.currentUserId)['username']);
 		}
 		token = token ?? this.token;
-		console.debug('[getCurrentUser]', '[token]', token);
 		if (token == void 0) return;
 		const { response } = await downloadFile(API_HOST + "user?access_token=" + token.accessToken);
 		if (response?.user == undefined) {
