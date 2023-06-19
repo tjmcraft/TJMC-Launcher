@@ -1,17 +1,27 @@
-const { Menu, app } = require("electron");
+const { Menu, app, shell } = require("electron");
 const { openDir } = require("./helpers");
 const MainWindow = require("./MainWindow");
 
 const ConfigManager = require('./managers/ConfigManager');
 const { checkForUpdates } = require("./Updater");
 
+const isMac = (process.platform === 'darwin');
+
 const runActionInRenderer = (type, data = undefined) => {
     MainWindow.restore();
     MainWindow.send('tjmc:runAction', { type: type, data: data });
-}
+};
+
+/**
+ * Resolve platform hotkey
+ * @param {string} hotkey
+ */
+const resolveHotKey = (hotkey) => {
+    const keys = hotkey.split('+');
+    return keys.map(e => e.toLowerCase() == 'mod' ? (isMac ? 'Cmd' : 'Ctrl') : e).join('+');
+};
 
 const createMenu = async () => {
-    const isMac = (process.platform === 'darwin');
     const template = [
         {
             label: 'Application',
@@ -24,30 +34,25 @@ const createMenu = async () => {
                 ] : []),
                 {
                     label: 'Check for updates',
-                    accelerator: 'Ctrl+Shift+U',
+                    accelerator: resolveHotKey('Mod+Shift+U'),
                     click: () => checkForUpdates()
-                },
-                {
-                    label: 'Keyboard shortcuts',
-                    accelerator: isMac ? 'Command+/' : 'Ctrl+/',
-                    click: () => runActionInRenderer('openShortcuts')
                 },
                 {
                     type: 'separator'
                 },
                 {
                     label: 'Settings',
-                    accelerator: 'Ctrl+Shift+I',
+                    accelerator: resolveHotKey('Mod+Shift+I'),
                     click: () => runActionInRenderer('openSettings')
                 },
                 {
                     label: 'Map',
-                    accelerator: 'Ctrl+Shift+M',
+                    accelerator: resolveHotKey('Mod+Shift+M'),
                     click: () => runActionInRenderer('openMap')
                 },
                 {
                     label: 'Root Directory',
-                    accelerator: 'Ctrl+Shift+D',
+                    accelerator: resolveHotKey('Mod+Shift+D'),
                     click: () => openDir(ConfigManager.getMinecraftDirectory())
                 },
                 {
@@ -55,81 +60,17 @@ const createMenu = async () => {
                 },
                 {
                     label: 'Quit',
-                    accelerator: isMac ? 'Command+Q' : 'Ctrl+Q',
+                    accelerator: resolveHotKey('Mod+Q'),
                     click: () => app.quit()
                 }
             ]
         },
-        // { role: 'editMenu' }
-        {
-            label: 'Edit',
-            submenu: [{
-                role: 'undo'
-            },
-            {
-                role: 'redo'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'cut'
-            },
-            {
-                role: 'copy'
-            },
-            {
-                role: 'paste'
-            },
-            ...(isMac ? [
-                {
-                    role: 'pasteAndMatchStyle'
-                },
-                {
-                    role: 'delete'
-                },
-                {
-                    role: 'selectAll'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    label: 'Speech',
-                    submenu: [{
-                        role: 'startSpeaking'
-                    },
-                    {
-                        role: 'stopSpeaking'
-                    }
-                    ]
-                }
-            ] : [
-                {
-                    role: 'delete'
-                },
-                {
-                    type: 'separator'
-                },
-                {
-                    role: 'selectAll'
-                }
-            ])
-            ]
-        },
-        // { role: 'viewMenu' }
+        { role: 'editMenu' },
         {
             label: 'View',
             submenu: [
                 {
                     role: 'reload'
-                },
-                {
-                    role: 'forceReload'
-                },
-                {
-                    role: 'toggleDevTools',
-                    accelerator: 'F12'
                 },
                 {
                     type: 'separator'
@@ -139,43 +80,42 @@ const createMenu = async () => {
                 },
                 {
                     role: 'zoomIn',
-                    accelerator: isMac ? 'Cmd+=' : 'Ctrl+='
+                    accelerator: resolveHotKey('Mod+=')
                 },
                 {
                     role: 'zoomOut',
-                    accelerator: isMac ? 'Cmd+-' : 'Ctrl+-'
+                    accelerator: resolveHotKey('Mod+-')
                 },
                 {
                     type: 'separator'
                 },
                 {
                     role: 'togglefullscreen',
-                    accelerator: isMac ? 'Ctrl+Cmd+F' : 'F11'
+                    accelerator: resolveHotKey(isMac ? 'Ctrl+Cmd+F' : 'F11')
                 }
             ]
         },
-        // { role: 'windowMenu' }
         {
             label: 'Installation',
             submenu: [
                 {
                     label: 'Start Launching',
-                    accelerator: 'F5',
+                    accelerator: resolveHotKey('F5'),
                     click: () => runActionInRenderer('runCurrentInstallation')
                 },
                 {
                     label: 'Start With Force',
-                    accelerator: 'Ctrl+F5',
+                    accelerator: resolveHotKey('Ctrl+F5'),
                     click: () => runActionInRenderer('runInstallationForce')
                 },
                 {
                     label: 'Stop Launching',
-                    accelerator: 'Shift+F5',
+                    accelerator: resolveHotKey('Shift+F5'),
                     click: () => runActionInRenderer('stopCurrentInstallation')
                 },
                 {
                     label: 'Edit Current',
-                    accelerator: 'F4',
+                    accelerator: resolveHotKey('F4'),
                     click: () => runActionInRenderer('editInstallation')
                 },
                 {
@@ -183,34 +123,33 @@ const createMenu = async () => {
                 },
                 {
                     label: 'Create new',
-                    accelerator: 'F3',
+                    accelerator: resolveHotKey('F3'),
                     click: () => runActionInRenderer('createInstallation')
                 },
             ]
         },
+        { role: 'windowMenu' },
         {
-            label: 'Window',
-            submenu: [{
-                role: 'minimize'
-            },
-            {
-                role: 'zoom'
-            },
-            ...(isMac ? [{
-                type: 'separator'
-            },
-            {
-                role: 'front'
-            },
-            {
-                type: 'separator'
-            },
-            {
-                role: 'window'
-            }
-            ] : [{
-                role: 'close'
-            }])
+            label: 'Help',
+            role: 'help',
+            submenu: [
+                {
+                    label: 'Help and support',
+                    accelerator: resolveHotKey('F1'),
+                    click: () => shell.openExternal('https://launcher.tjmc.ru/')
+                },
+                {
+                    label: 'Keyboard shortcuts',
+                    accelerator: resolveHotKey('Mod+/'),
+                    click: () => runActionInRenderer('openShortcuts')
+                },
+                {
+                    type: 'separator'
+                },
+                {
+                    role: 'toggleDevTools',
+                    accelerator: resolveHotKey('F12')
+                },
             ]
         }
     ];
