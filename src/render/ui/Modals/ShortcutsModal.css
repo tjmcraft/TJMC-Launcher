@@ -62,7 +62,7 @@
 	line-height: 100%;
 }
 .sc-container kbd:active {
-	box-shadow: var(--background-secondary) 0 1px 0;
+	box-shadow: var(--background-secondary-alt) 0 1px 0;
 	transform: translateY(0);
 }
 .sc-container kbd:last-child {
