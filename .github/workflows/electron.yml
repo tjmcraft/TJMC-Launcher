@@ -12,11 +12,11 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install Snapcraft
         uses: samuelmeuli/action-snapcraft@v2
         if: startsWith(matrix.os, 'ubuntu')
-        
+
       - name: Install Libsecret
         if: startsWith(matrix.os, 'ubuntu')
         run: sudo apt-get install -y libsecret-1-dev
@@ -41,7 +41,3 @@ jobs:
           mac_cert_password: ${{ secrets.mac_certs_password }}
           win_cert: ${{ secrets.win_certs }}
           win_cert_password: ${{ secrets.win_certs_password }}
-      
-      - name: Publish to snap
-        if: startsWith(matrix.os, 'ubuntu')
-        run: npm run deploy:linux-snap
