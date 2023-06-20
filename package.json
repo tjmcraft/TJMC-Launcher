@@ -197,7 +197,23 @@
           "stable"
         ]
       },
-      "grade": "stable"
+      "grade": "stable",
+      "plugs": [
+        "desktop",
+        "desktop-legacy",
+        "home",
+        "x11",
+        "wayland",
+        "unity7",
+        "browser-support",
+        "network",
+        "gsettings",
+        "audio-playback",
+        "pulseaudio",
+        "opengl",
+        "password-manager-service",
+        "personal-files"
+      ]
     },
     "nsis": {
       "oneClick": true,
