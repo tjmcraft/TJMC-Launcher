@@ -5,7 +5,6 @@ const TCHost = require('./libs/TCHost');
 
 const requestChannels = Object.seal({
 	requestHostInfo: 'requestHostInfo',
-	setProgress: 'setProgress',
 	fetchCurrentUser: 'auth:fetchCurrentUser',
 	requestAuth: 'auth:requestAuth',
 	revokeAuth: 'auth:revokeAuth',
@@ -185,9 +184,6 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.relaunchHost, () => {
 			app.relaunch();
-		});
-		WSSHost.addReducer(requestChannels.setProgress, (data) => {
-			if (data.progress) win?.setProgressBar(data.progress);
 		});
 		WSSHost.addReducer(requestChannels.openMinecraftFolder, async () => {
 			shell.openPath(ConfigManager.getMinecraftDirectory());
