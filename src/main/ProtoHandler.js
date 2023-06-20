@@ -16,7 +16,7 @@ const setInstanceProtocolHandler = () => {
 		// TODO: Figure out bug in setAsDefaultProtocolClient on Linux
 		// Set Protocol Handler on Linux manually because of bug in Electron
 		try {
-			require('child_process').exec(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
+			require('child_process').execSync(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
 			logger.info("Successfully set protocol handler on Linux.")
 		} catch (e) {
 			logger.warn(`Failed to set Protocol Handler on Linux: ${e}`)
