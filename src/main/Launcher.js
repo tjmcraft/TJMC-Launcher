@@ -38,7 +38,7 @@ queueMicrotask(runMainThread);
 const eventListener = (event, args) => {
 	switch (event) {
 		case 'progress': {
-			MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
+			MainWindow.setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
 			Bridge.emit(ackChannels.gameProgressLoad, args);
 		}; break;
 		case 'close': {
