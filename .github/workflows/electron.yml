@@ -5,11 +5,18 @@ on: workflow_dispatch
 jobs:
   release:
     runs-on: ${{ matrix.os }}
+    env:
+      SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Install Snapcraft
+        uses: samuelmeuli/action-snapcraft@v2
+        # Only install Snapcraft on Ubuntu
+        if: startsWith(matrix.os, 'ubuntu')
 
       - name: Use Node.js Setup
         uses: actions/setup-node@v3
