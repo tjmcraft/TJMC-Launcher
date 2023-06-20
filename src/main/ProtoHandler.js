@@ -65,7 +65,7 @@ const protoHandler = (link) => {
 exports.protoHandler = protoHandler;
 
 const handleArgsLink = (args) => {
-	if (process.platform === 'win32') {
+	if (process.platform != 'darwin') {
 		const deepLink = args.find((arg) => arg.startsWith(DEFAULT_PROTOCOL_HANDLER + '://'));
 		if (deepLink) return protoHandler(deepLink);
 	}
