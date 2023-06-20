@@ -15,7 +15,6 @@ jobs:
       
       - name: Install Snapcraft
         uses: samuelmeuli/action-snapcraft@v2
-        # Only install Snapcraft on Ubuntu
         if: startsWith(matrix.os, 'ubuntu')
 
       - name: Use Node.js Setup
@@ -38,3 +37,7 @@ jobs:
           mac_cert_password: ${{ secrets.mac_certs_password }}
           win_cert: ${{ secrets.win_certs }}
           win_cert_password: ${{ secrets.win_certs_password }}
+      
+      - name: Publish to snap
+        if: startsWith(matrix.os, 'ubuntu')
+        run: npm run deploy:linux-snap
