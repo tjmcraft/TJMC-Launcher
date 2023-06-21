@@ -111,3 +111,8 @@ if (gotTheLock) {
 } else {
     app.quit();
 }
+
+if (process.env.NODE_ENV == 'development') {
+    const electronReload = require('electron-reload');
+    electronReload(__dirname, {});
+}

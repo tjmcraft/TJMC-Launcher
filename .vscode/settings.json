@@ -12,6 +12,7 @@
         "msort",
         "natsort",
         "nsis",
+        "prefresh",
         "realname"
     ],
     "cSpell.language": "en,ru",
