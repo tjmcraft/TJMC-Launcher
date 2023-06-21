@@ -40,10 +40,10 @@ const optimization = () => {
 
 module.exports = {
 	entry: {
-		main: path.resolve(basePath, 'index.js')
+		main: path.resolve(basePath, 'index.tsx')
 	},
 	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.png', '.*'],
+		extensions: ['.tsx', '.jsx', '.ts', '.js', '.json', '.css', '.png', '.*'],
 		alias: {
 			Libs: path.resolve(basePath, 'Libs'),
 			Util: path.resolve(basePath, 'Util'),
@@ -80,9 +80,14 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(ts|tsx|js|jsx)$/,
+				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader',
+			},
+			{
+				test: /\.(ts|tsx)$/,
+				exclude: /node_modules/,
+				loader: 'ts-loader',
 			},
 			{
 				test: /\.css$/,

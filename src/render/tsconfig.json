@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "checkJs": true,
+        "jsx": "react",
+        "jsxFactory": "createElement",
+        "jsxFragmentFactory": "Fragment",
+        "baseUrl": "./",
+        "skipLibCheck": true,
+        "strict": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "allowJs": true,
+        "paths": {
+            "Libs/*": ["Libs/*"],
+            "Util/*": ["Util/*"],
+            "Store/*": ["Store/*"],
+            "SVG/*": ["assets/svg/*"],
+            "IMG/*": ["assets/images/*"],
+            "CSS/*": ["./assets/css/*"],
+            "UI/*": ["ui/*"],
+            "Model/*": ["Model/*"],
+            "Hooks/*": ["hooks/*"],
+            "react": ["./node_modules/preact/compat/"],
+            "react-dom": ["./node_modules/preact/compat/"]
+        }
+    },
+    "exclude": ["node_modules", "dist", "build", ".vscode"],
+}
