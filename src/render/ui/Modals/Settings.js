@@ -4,7 +4,6 @@ import remarkGfm from "remark-gfm";
 
 import buildClassName from "Util/buildClassName.js";
 import { getDispatch } from "Store/Global";
-import { randomString } from "Util/Random.js";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
@@ -16,7 +15,6 @@ import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
 import { RadioGroup } from "UI/components/Radio.js";
-import ToggleSwitch from "UI/components/ToggleSwitch.js";
 import RangeSlider from "UI/components/Slider.js";
 import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
