@@ -1,11 +1,9 @@
 import { createElement, memo, useRef, useEffect, useCallback, useState } from "react";
 import { Modal } from ".";
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Store/Global";
 import Spinner from "UI/components/Spinner";
 
 const MapContainer = memo(() => {
-	const { closeModal } = getDispatch();
 	const [loadError, setLoadError] = useState(false);
 	const timer = useRef(undefined);
 	const handleLoad = useCallback(() => {

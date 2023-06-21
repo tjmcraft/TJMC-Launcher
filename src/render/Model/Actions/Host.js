@@ -10,29 +10,29 @@ import { callHost, initHost } from "../../api/host";
 import { updateCurrentUser } from "Model/Reducers/user";
 import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
 
-addReducer("initHost", (global, actions) => {
+addReducer("initHost", (_global, actions) => {
 	const withAuth = (fn = (...args) => args) => (...args) =>
 		getState(global => ["ready"].includes(global.auth_state)) ? fn(...args) : () => void 0;
-	const openSettings = (e, data) => actions.openSettingsModal();
-	const openMap = (e, data) => actions.openMapModal();
-	const openShortcuts = (e, data) => actions.openShortcutsModal();
-	const runCurrentInstallation = (e, data) => {
+	const openSettings = () => actions.openSettingsModal();
+	const openMap = () => actions.openMapModal();
+	const openShortcuts = () => actions.openShortcutsModal();
+	const runCurrentInstallation = () => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.invokeLaunch({ hash: hash });
 	};
-	const stopCurrentInstallation = (e, data) => {
+	const stopCurrentInstallation = () => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.revokeLaunch({ hash: hash });
 	};
-	const runInstallationForce = (e, data) => {
+	const runInstallationForce = () => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
 	};
-	const editInstallation = (e, data) => {
+	const editInstallation = () => {
 		const hash = getState(selectCurrentVersionHash);
 		return actions.openInstallationEditor({ hash: hash });
 	};
-	const createInstallation = (e, data) => {
+	const createInstallation = () => {
 		return actions.openVersionChooserModal();
 	};
 	const hostActions = {
@@ -45,7 +45,7 @@ addReducer("initHost", (global, actions) => {
 		editInstallation,
 		createInstallation,
 	};
-	window.electron.on('tjmc:runAction', (e, { type, data }) => {
+	window.electron.on('tjmc:runAction', (_e, { type, data }) => {
 		if (hostActions.hasOwnProperty(type)) withAuth(hostActions[type])(data);
 	});
 	void initHost(actions.hostUpdate);
@@ -75,7 +75,7 @@ addReducer("relaunchHost", () => {
 	void callHost("relaunchHost");
 });
 
-addReducer("requestAuth", (global, actions, update) => {
+addReducer("requestAuth", (global, _actions, update) => {
 	if (!update) return;
 	const { login } = update;
 	void callHost("requestAuth", login);
@@ -85,14 +85,14 @@ addReducer("requestAuth", (global, actions, update) => {
 	};
 });
 
-addReducer("logout", async (global, actions) => {
+addReducer("logout", async (_global, _actions) => {
 	try {
 		await callHost("revokeAuth");
 	} catch (e) { }
 	// actions.reset();
 });
 
-addReducer("setConfig", async (global, actions, payload) => {
+addReducer("setConfig", async (_global, actions, payload) => {
 	if (!payload) return;
 	const { key, value } = payload;
 	window.__debug__ && console.debug(">>", "[setConfig]", key, "=>", value);
@@ -102,7 +102,7 @@ addReducer("setConfig", async (global, actions, payload) => {
 	}
 });
 
-addReducer("invokeLaunch", (global, actions, payload) => {
+addReducer("invokeLaunch", (global, _actions, payload) => {
 
 	if (!payload) return;
 	const { hash, params } = payload;
@@ -121,7 +121,7 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 		isProcessing: true
 	});
 });
-addReducer("revokeLaunch", (global, actions, payload) => {
+addReducer("revokeLaunch", (global, _actions, payload) => {
 
 	if (!payload) return;
 	const { hash } = payload;

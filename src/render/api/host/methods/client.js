@@ -12,7 +12,7 @@ let client;
 let onUpdate;
 let isConnected = false;
 
-export async function init(_onUpdate, initialArgs) {
+export async function init(_onUpdate, _initialArgs) {
 	window.__debug_host__ && console.debug(">>> START INIT IPCHOST");
 
 	onUpdate = _onUpdate;
@@ -81,6 +81,6 @@ export async function invokeRequest(request, shouldReturnTrue = false, shouldThr
 	}
 }
 
-function handleUpdatesFromRequest(update, request) {
+function handleUpdatesFromRequest(update, _request) {
 	updater(update);
 }

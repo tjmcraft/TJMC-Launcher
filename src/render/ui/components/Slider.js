@@ -1,4 +1,4 @@
-import { createElement, createRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createElement, useCallback, useMemo, useRef, useState } from "react";
 import { getPos } from "Libs/ElementEx.js";
 import style from "CSS/slider.module.css";
 import { randomString } from "Util/Random.js";

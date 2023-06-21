@@ -1,4 +1,4 @@
-import { createElement, useCallback, useRef, memo, useEffect } from "react";
+import { createElement, useCallback, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";

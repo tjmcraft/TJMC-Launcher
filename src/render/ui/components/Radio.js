@@ -17,7 +17,7 @@ const RadioGroup = ({
 	id = id || randomString(5);
 
 	const handleClick = (i) => {
-		return (e) => {
+		return () => {
 			typeof action === "function" &&
 			action.call(this, i);
 		};

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const useContextMenu = (
 	elementRef,
@@ -8,6 +8,9 @@ const useContextMenu = (
 ) => {
 	const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 	const [contextMenuPosition, setContextMenuPosition] = useState(undefined);
+
+	elementRef &&
+	shouldDisableOnLongTap;
 
 	const handleContextMenu = useCallback((e) => {
 		(e.target).classList.remove('no-selection');

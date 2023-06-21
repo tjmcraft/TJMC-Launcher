@@ -12,7 +12,7 @@ import iconImage from "IMG/icon.png";
 const Preloader = () => {
 
 	const shouldShow = getState(global => global.settings.enable_preloader);
-	const [isPreloaderOpen, $openPreloader, $closePreloader] = useFlag(shouldShow);
+	const [isPreloaderOpen, _$openPreloader, $closePreloader] = useFlag(shouldShow);
 
 	useEffect(() => {
 		setTimeout(() => {

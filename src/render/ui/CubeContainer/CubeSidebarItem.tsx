@@ -1,4 +1,4 @@
-import { createElement, useCallback, useRef, memo, useEffect } from "react";
+import { createElement, useCallback, useRef, memo, FC } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -16,7 +16,8 @@ import MenuItem from "UI/components/MenuItem";
 import Portal from "UI/components/Portal";
 
 
-const StatusContainer = ({ hash, isProcessing }) => {
+const StatusContainer = ( { hash, isProcessing } ) => {
+	// @ts-ignore
 	const { progress } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
@@ -34,7 +35,19 @@ const StatusContainer = ({ hash, isProcessing }) => {
 	);
 };
 
-const ContextMenu = ({
+type OwnProps = {
+	containerRef?: React.RefObject<HTMLElement>;
+	isProcessing?: boolean;
+	isContextMenuOpen?: boolean;
+	contextMenuPosition?: any;
+	handleContextMenuClose?: AnyFunction;
+	handleContextMenuHide?: AnyFunction;
+	hash?: string;
+	name?: string;
+	handleClick: AnyFunction;
+}
+
+const ContextMenu: FC<OwnProps> = ({
 	containerRef,
 	isProcessing,
 	isContextMenuOpen,
@@ -68,11 +81,11 @@ const ContextMenu = ({
 		getRootElement,
 		getMenuElement, () => ({ withPortal: true }));
 
-	const handleLaunchClick = useCallback((e) => (!isProcessing ?
+	const handleLaunchClick = useCallback(() => (!isProcessing ?
 		invokeLaunch({ hash }) : revokeLaunch({ hash })
 	), [hash, invokeLaunch, revokeLaunch, isProcessing]);
 
-	const handleRemoveClick = useCallback((e) => {
+	const handleRemoveClick = useCallback(() => {
 		alert({
 			title: "Удаление установки",
 			content: `Вы действительно хотите удалить установку "${name}" с вашего компьютера?`,
@@ -157,7 +170,7 @@ const CubeSidebarItem = ({
 
 	const { setVersionHash } = getDispatch();
 
-	const { name, type, isProcessing } = useGlobal(global => {
+	const { name, isProcessing } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
 		return {
 			name: version.name,

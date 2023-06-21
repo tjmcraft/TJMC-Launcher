@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { shallowEqual, stacksEqual } from "Util/Iterates";
+import { shallowEqual } from "Util/Iterates";
 import { addCallback, getState, removeCallback } from "Store/Progress";
 import useForceUpdate from "./useForceUpdate";
 

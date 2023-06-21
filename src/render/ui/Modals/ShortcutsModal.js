@@ -1,11 +1,11 @@
-import { memo, createElement, useState, useMemo } from "react";
+import { memo, createElement } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { SVG } from "UI/svg";
 
-import { Modal, ModalFooter } from ".";
+import { Modal } from ".";
 
 import style from 'CSS/modal.module.css';
 import "./ShortcutsModal.css";
@@ -29,7 +29,7 @@ const Header = (({ title, subtitle = undefined }) => {
 
 const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
-const ShortcutsModal = (props) => {
+const ShortcutsModal = () => {
 	const host = useGlobal(global => global.hostInfo);
 	const isMac = platform.os.family == 'OS X';
 	const template = (host.hostMenu || [

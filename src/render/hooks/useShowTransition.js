@@ -13,7 +13,7 @@ const useShowTransition = (
 ) => {
 	classes = Object.assign({ open: "open", shown: "shown", closing: "closing" }, classes);
 	const [isClosed, setIsClosed] = useState(!isOpen);
-	const closeTimeoutRef = useRef();
+	const closeTimeoutRef = useRef(0);
 	// СSS class should be added in a separate tick to turn on CSS transition.
 	const [hasOpenClassName, setHasOpenClassName] = useState(isOpen && noOpenTransition);
 

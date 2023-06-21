@@ -32,7 +32,7 @@ export function SVG(name) {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, viewBox: '0 0 48 48', 'data-icon': 'progress-circle' },
 				<g>
 					<circle r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="100" stroke-dashoffset="0" />
-					<circle id="bar" r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" style="stroke-dashoffset: 30px;" />
+					<circle id="bar" r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset="30px" />
 				</g>);
 		},
 		get cross() {

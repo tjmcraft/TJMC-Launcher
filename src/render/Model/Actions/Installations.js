@@ -5,7 +5,7 @@ import { updateVersions } from "Model/Reducers/versions";
 import { updateInstances } from "Model/Reducers/instances";
 import { cleanObject } from "Util/Iterates";
 
-addReducer("hostUpdate", (global, actions, update) => {
+addReducer("hostUpdate", (global, _actions, update) => {
 	// console.debug(">>> HOST UPDATE:", update);
 	switch (update.type) {
 		case "updateInstallations": return updateInstallations(global, update);
@@ -17,7 +17,7 @@ addReducer("hostUpdate", (global, actions, update) => {
 	}
 });
 
-addReducer("createInstallation", async (global, actions, payload) => {
+addReducer("createInstallation", async (_global, actions, payload) => {
 	if (!payload) return;
 	let { version, options } = payload;
 	options = Object.assign({}, {
@@ -27,34 +27,34 @@ addReducer("createInstallation", async (global, actions, payload) => {
 	const { hash } = await callHost("createInstallation", options);
 	hash && actions.setVersionHash(hash);
 });
-addReducer("editInstallation", async (global, actions, payload) => {
+addReducer("editInstallation", async (_global, _actions, payload) => {
 	if (!payload) return;
 	let { hash, options } = payload;
 	options = cleanObject(options);
 	await callHost("editInstallation", hash, options);
 });
-addReducer("removeInstallation", (global, actions, payload) => {
+addReducer("removeInstallation", (_global, _actions, payload) => {
 	if (!payload) return;
 	let { hash, forceDeps } = payload;
 	void callHost("removeInstallation", { hash, forceDeps });
 });
-addReducer("moveInstallationPosition", (global, actions, payload) => {
+addReducer("moveInstallationPosition", (_global, _actions, payload) => {
 	if (!payload) return;
 	let { startHash, endHash } = payload;
 	void callHost("moveInstallationPosition", { startHash, endHash });
 });
 
-addReducer("openInstallationFolder", (global, actions, payload) => {
+addReducer("openInstallationFolder", (_global, _actions, payload) => {
 	if (!payload) return;
 	let { hash } = payload;
 	void callHost("openInstallationFolder", hash);
 });
 
-addReducer("killInstance", (global, actions, payload) => {
+addReducer("killInstance", (_global, _actions, payload) => {
 	if (!payload) return;
 	void callHost("killInstance", { instanceId: payload });
 });
-addReducer("killAllInstances", (global, actions, payload) => {
+addReducer("killAllInstances", (_global, _actions, _payload) => {
 	void callHost("killAllInstances");
 });
 
@@ -62,7 +62,7 @@ addReducer("getGlobalVersions", () => {
 	void callHost("fetchVersions");
 });
 
-addReducer("setVersionHash", (global, actions, payload) => {
+addReducer("setVersionHash", (global, _actions, payload) => {
 	if (!payload) return;
 	return {
 		...global,

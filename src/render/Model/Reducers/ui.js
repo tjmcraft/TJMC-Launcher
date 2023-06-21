@@ -25,7 +25,7 @@ export function addModal(payload) {
 	});
 }
 
-export function closeModal(payload = undefined) {
+export function closeModal() {
 	const global = getState();
 	const modals = [...global.modals];
 	let last = modals[modals.length - 1];
@@ -44,7 +44,7 @@ export function closeModal(payload = undefined) {
 	});
 }
 
-export function unloadModal(payload = undefined) {
+export function unloadModal() {
 	const global = getState();
 	const modals = [...global.modals];
 	const current = modals.slice().reverse().find(modal => modal.isClosing && !modal.isShown);

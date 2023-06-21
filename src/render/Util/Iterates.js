@@ -136,17 +136,6 @@ export function compareObjects(original, copy) {
 	return copy;
 }
 
-const stacksNotEqual = (a1, a2) => (
-	Array.isArray(a1) && Array.isArray(a2) &&
-	(
-		(a1 == null || a2 == null) ||
-		(
-			a1.length !== a2.length ||
-			a1.map((val, idx) => shallowEqual(val, a2[idx])).some(e => !e)
-		)
-	)
-) || a1 !== a2;
-
 export const stacksEqual = (a1, a2) => a1 === a2 || (
 	a1 !== null && a2 !== null &&
 	Array.isArray(a1) && Array.isArray(a2) &&
@@ -162,22 +151,6 @@ export const stacksDiff = (arr1, arr2) =>
 		.filter(x => !arr2.includes(x))
 		.concat(arr2.filter(x => !arr1.includes(x)));
 
-
-function naturalCompare(a, b) {
-	let ax = [], bx = [];
-
-	a.replace(/(\d+)|(\D+)/g, (_, $1, $2) => { ax.push([$1 || Infinity, $2 || ""]); });
-	b.replace(/(\d+)|(\D+)/g, (_, $1, $2) => { bx.push([$1 || Infinity, $2 || ""]); });
-
-	while (ax.length && bx.length) {
-		let an = ax.shift();
-		let bn = bx.shift();
-		let nn = (an[0] - bn[0]) || an[1].localeCompare(bn[1], { numeric: true, sensitivity: 'base' });
-		if (nn) return nn;
-	}
-
-	return ax.length - bx.length;
-}
 
 export const keySort = (array, key, order) => {
 	array = [...array];

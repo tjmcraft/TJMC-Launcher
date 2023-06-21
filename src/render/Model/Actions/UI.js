@@ -74,12 +74,12 @@ addReducer("openModal", (_global, _actions, payload) => {
 	void addModal(payload);
 });
 
-addReducer("closeModal", (_global, _actions, payload) => {
-	void closeModal(payload);
+addReducer("closeModal", (_global, _actions, _payload) => {
+	void closeModal();
 });
 
-addReducer("onHideModal", (_global, _actions, payload) => {
-	void unloadModal(payload);
+addReducer("onHideModal", (_global, _actions, _payload) => {
+	void unloadModal();
 });
 
 addReducer("alert", (_global, _actions, update) => {

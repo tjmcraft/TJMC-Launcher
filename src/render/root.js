@@ -8,6 +8,7 @@ import "Model/Actions/Installations";
 import { getDispatch, getState } from "Store/Global";
 
 import platform from "platform";
+// @ts-ignore
 import BuildInfo from "!webpack-plugin-buildinfo?gitHashShort&time!";
 
 import './assets/css/launcher.css';

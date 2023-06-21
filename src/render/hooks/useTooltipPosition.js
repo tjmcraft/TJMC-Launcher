@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-const BOTTOM_MARGIN = 12;
 const EMPTY_RECT = {
 	width: 0, left: 0, height: 0, top: 0,
 };

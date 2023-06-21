@@ -245,7 +245,7 @@ export const PathInput = ({
 		setPath(e.target.value);
 	};
 
-	const handleFocus = (e) => {
+	const handleFocus = () => {
 		setIsSelecting(true);
 	};
 

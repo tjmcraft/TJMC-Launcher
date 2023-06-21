@@ -16,7 +16,7 @@ const RoundProgress = ({ progress = 0 }) => {
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox='0 0 48 48' data-icon='progress-circle'>
 				<g>
 					<circle r={radius} cx="24" cy="24" fill="transparent" stroke-dasharray="100" stroke-dashoffset="0" />
-					<circle id="bar" r={radius} cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset="0" style={{'stroke-dashoffset': `${dashOffset}px`}} />
+					<circle id="bar" r={radius} cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset={dashOffset} />
 				</g>
 			</svg>
 		</div>

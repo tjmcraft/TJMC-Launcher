@@ -1,11 +1,13 @@
 
-export function debounce(fn,
-	ms,
+export function debounce<F extends AnyToVoidFunction>(
+	fn: F,
+	ms: number,
 	shouldRunFirst = true,
-	shouldRunLast = true,) {
+	shouldRunLast = true
+) {
 	let waitingTimeout;
 
-	return (...args) => {
+	return (...args: Parameters<F>) => {
 		if (waitingTimeout) {
 			clearTimeout(waitingTimeout);
 			waitingTimeout = undefined;
@@ -24,14 +26,16 @@ export function debounce(fn,
 	};
 }
 
-export function throttle(fn = () => {},
-	ms = 500,
-	shouldRunFirst = true,) {
-	let interval;
-	let isPending;
-	let args;
+export function throttle<F extends AnyToVoidFunction>(
+	fn: F,
+	ms: number = 500,
+	shouldRunFirst = true
+) {
+	let interval: number | undefined;
+	let isPending: boolean;
+	let args: Parameters<F>;
 
-	return (..._args) => {
+	return (..._args: Parameters<F>) => {
 		isPending = true;
 		args = _args;
 

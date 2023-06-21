@@ -1,4 +1,4 @@
-import { createElement, memo, useCallback, useEffect, useRef } from "react";
+import { createElement, memo, useRef } from "react";
 
 import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
@@ -7,7 +7,6 @@ import { SVG } from "./svg";
 import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "./components/Tooltip";
-import Portal from "./components/Portal";
 
 const UserPanel = memo(() => {
 	const { openVersionChooserModal, openSettingsModal } = getDispatch();

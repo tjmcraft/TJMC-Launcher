@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
-import { arePropsShallowEqual, shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
+import { shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
 import { addCallback, getState, removeCallback } from "Store/Global";
 import { randomString } from "Util/Random";
 import useForceUpdate from "./useForceUpdate";

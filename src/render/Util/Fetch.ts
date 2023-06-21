@@ -42,7 +42,7 @@ export function URLWithQuery(url, query = {}) {
 async function fetchWT(url, user_options = {}) {
 	const timeout = 3000;
 	const controller = new AbortController();
-	let options = { ...user_options, signal: controller.signal, credentials: 'include' };
+	let options: RequestInit = { ...user_options, signal: controller.signal, credentials: 'include' };
 	setTimeout(() => controller.abort(), timeout);
 	let response;
 	try {

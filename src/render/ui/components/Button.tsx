@@ -1,11 +1,24 @@
-import { createElement, useCallback, useState } from "react";
+import React, { createElement, useCallback, useState, MouseEvent as ReactMouseEvent, FC } from "react";
 import buildClassName from "Util/buildClassName";
 import Spinner from "./Spinner";
 import { randomString } from "Util/Random";
 
 const CLICKED_TIMEOUT = 400;
 
-const Button = ({
+type OwnProps = {
+	id?: string;
+	type?: 'button' | 'submit' | 'reset';
+	className?: string;
+	disabled?: boolean;
+	children: React.ReactNode;
+	isFilled?: boolean;
+	isPrimary?: boolean;
+	isRed?: boolean;
+	isLoading?: boolean;
+	onClick?: (e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}
+
+const Button: FC<OwnProps> = ({
 	id = undefined,
 	type = "button",
 	className = undefined,

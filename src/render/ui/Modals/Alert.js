@@ -20,7 +20,7 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 			closeOverlay: true
 		}
 	];
-	const handleClick = (button) => (e) => {
+	const handleClick = (button) => () => {
 		if (button.callback && typeof button.callback === 'function') button.callback.call(this);
 		if (button.closeOverlay) closeModal();
 	};

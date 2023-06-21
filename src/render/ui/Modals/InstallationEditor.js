@@ -1,7 +1,7 @@
 import { memo, createElement, useState, useMemo } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { cleanObject, compareObjects, getObjectDiff } from "Util/Iterates";
+import { compareObjects } from "Util/Iterates";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";

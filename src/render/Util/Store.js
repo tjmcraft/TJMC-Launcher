@@ -1,4 +1,4 @@
-import { getUnequalProps, pick, shallowEqual } from "./Iterates";
+import {  pick, shallowEqual } from "./Iterates";
 import { generateIdFor } from "./Random";
 import { onBeforeUnload, throttle } from "./Shedulers";
 

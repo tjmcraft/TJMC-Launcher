@@ -1,7 +1,4 @@
-import { createElement } from "react";
-
 import useGlobal from "Hooks/useGlobal";
-
 
 const Route = ({path, children}) => {
 	let currentScreen = useGlobal(global => global.currentMainScreen);

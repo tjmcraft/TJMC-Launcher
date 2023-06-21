@@ -1,4 +1,3 @@
-
 import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
 
 import buildClassName from "Util/buildClassName.js";
@@ -17,17 +16,6 @@ import MenuItem from "UI/components/MenuItem";
 import SettingSwitch from "UI/components/SettingSwitch";
 
 import "./VersionChooser.css";
-
-function levenshteinDistance(s, t) {
-	if (!s.length) return t.length;
-	if (!t.length) return s.length;
-
-	return Math.min(
-		levenshteinDistance(s.substr(1), t) + 1,
-		levenshteinDistance(t.substr(1), s) + 1,
-		levenshteinDistance(s.substr(1), t.substr(1)) + (s.charAt(0).toLowerCase() !== t.charAt(0).toLowerCase() ? 1 : 0)
-	);
-}
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
 
@@ -68,7 +56,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 			<div className="sidebar-region">
 				<div className="sidebar">
 					{versions.length <= 0 && (
-						[...Array(12)].map((v, k) =>
+						[...Array(12)].map((_v, k) =>
 							<div key={k}
 								className={buildClassName('item', 'navItem', 'bgL')} />)
 					)}
@@ -143,7 +131,7 @@ const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 
 const JavaSelector = ({ items, onChange, selectedIndex, title }) => {
 
 	const handleClick = (i) => {
-		return (e) => {
+		return () => {
 			if (onChange) onChange(i);
 		};
 	};
@@ -362,7 +350,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	);
 };
 
-const VersionChooser = (props) => {
+const VersionChooser = () => {
 
 	const { getGlobalVersions } = getDispatch();
 
