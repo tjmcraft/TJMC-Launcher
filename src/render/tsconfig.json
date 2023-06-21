@@ -18,6 +18,9 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "allowJs": true,
+        "lib": [
+            "DOM", "DOM.Iterable", "ES2019"
+        ],
         "paths": {
             "Libs/*": ["Libs/*"],
             "Util/*": ["Util/*"],

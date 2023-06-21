@@ -8,7 +8,11 @@
         "preact"
         // "plugin:react/recommended"
     ],
-    "ignorePatterns": ["dist/*"],
+    "ignorePatterns": [
+        "dist/*",
+        "*-test.ts",
+        "*-test.tsx"
+    ],
     "globals": {
         "window": true
     },
@@ -17,11 +21,14 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": [
-        "react"
-    ],
     "rules": {
-        "indent": ["warn", "tab", { "SwitchCase": 1 }],
+        "indent": [
+            "warn",
+            "tab",
+            {
+                "SwitchCase": 1
+            }
+        ],
         "semi": "warn",
         "no-implicit-coercion": "error",
         "react-hooks/exhaustive-deps": "error",
@@ -40,12 +47,19 @@
         "no-nested-ternary": "off",
         "no-lonely-if": "off",
         "function-paren-newline": [
-            "warn", "consistent"
+            "warn",
+            "consistent"
         ],
         "prefer-destructuring": "off",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
-        "quote-props": ["warn", "as-needed"],
-        "object-shorthand": ["warn", "methods"]
+        "quote-props": [
+            "warn",
+            "as-needed"
+        ],
+        "object-shorthand": [
+            "warn",
+            "methods"
+        ]
     }
 }

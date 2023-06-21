@@ -49,4 +49,7 @@ interface Window {
 	system: TJMCSystem;
 	tjmcNative: TJMCNative;
 	electron: ElectronExpose;
+	resetCache: Function;
+	_gstore: Object;
+	getCookie: Function;
 };
