@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { shallowEqual, stacksDiff, stacksEqual } from "Util/Iterates";
-import { addCallback, getState, removeCallback } from "Store/Global";
+import { GlobalState, MapStateToProps, addCallback, getState, removeCallback } from "Store/Global";
 import { randomString } from "Util/Random";
 import useForceUpdate from "./useForceUpdate";
 
-const updateContainer = (selector, callback, options) => {
-	return (global) =>
+const updateContainer = (selector: MapStateToProps, callback: Function, options: PickOptions) => {
+	return (global: GlobalState) =>
 		callback((prevState) => {
 
 			let nextState;
@@ -57,22 +57,22 @@ const updateContainer = (selector, callback, options) => {
 		});
 };
 
-/**
- * useGlobal hook
- * @param {*} selector selector function (picker)
- * @param {React.DependencyList} inputs dependency list
- * @param {Object} options options (for debug)
- * @param {boolean} [options.debugPicker] debug picker function
- * @param {boolean} [options.debugPicked] debug when picker picked
- * @param {string} [options.label] picker label for debug
- * @returns
- */
-const useGlobal = (selector = () => { }, inputs = [], options = undefined) => {
+type PickOptions = {
+	debugPicker?: boolean;
+	debugPicked?: boolean;
+	label?: string;
+}
+
+const useGlobal = (
+	selector: MapStateToProps<any> = () => ({}),
+	inputs: React.DependencyList = [],
+	options: PickOptions = {}
+) => {
 
 	options = useMemo(() => Object.assign({ debugPicker: false, debugPicked: false, label: randomString(5) }, options), [options]);
 
 	const forceUpdate = useForceUpdate();
-	const mappedProps = useRef(undefined);
+	const mappedProps = useRef<ReturnType<typeof selector>>(undefined);
 
 	const picker = useCallback(selector, [selector, ...inputs]);
 

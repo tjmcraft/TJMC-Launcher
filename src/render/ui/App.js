@@ -1,7 +1,7 @@
 import { memo, createElement } from "react";
 
-import { getDispatch } from "Store/Global.js";
-import useGlobal from "Hooks/useGlobal.js";
+import { getDispatch } from "Store/Global";
+import useGlobal from "Hooks/useGlobal";
 import useConstructor from "Hooks/useConstructor.js";
 
 import Preloader from "UI/Preloader.js";

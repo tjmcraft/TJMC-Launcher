@@ -1,7 +1,7 @@
 import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
 
 import buildClassName from "Util/buildClassName.js";
-import { getDispatch } from "Store/Global.js";
+import { getDispatch } from "Store/Global";
 import { cleanObject } from "Util/Iterates";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import useGlobal from "Hooks/useGlobal";

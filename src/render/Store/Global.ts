@@ -39,6 +39,10 @@ const INITIAL_STATE = {
 	}
 };
 
+export type GlobalState = typeof INITIAL_STATE;
+type GlobalStateKeys = keyof GlobalState;
+export type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => AnyLiteral | String | Boolean;
+
 const stateStore = new StateStore();
 const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE);
 
@@ -58,7 +62,7 @@ window.resetCache = stateStore.getDispatch().reset;
 window._gstore = stateStore;
 
 export const getDispatch = stateStore.getDispatch;
-export const getState = stateStore.getState;
+export const getState = (selector: MapStateToProps): GlobalState[GlobalStateKeys] => stateStore.getState(selector);
 export const setState = stateStore.setState;
 export const withState = stateStore.withState;
 export const addReducer = stateStore.addReducer;
