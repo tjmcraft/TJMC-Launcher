@@ -15,7 +15,6 @@ import InstallationEditor from "Components/Modals/InstallationEditor";
 import MapModal from "Components/Modals/MapModal";
 import ShortcutsModal from "Components/Modals/ShortcutsModal";
 
-
 import style from "CSS/modal.module.css";
 
 const MODAL_STORE = {

@@ -7,7 +7,7 @@ import captureEscKeyListener from "Util/captureEscKeyListener";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
-import { selectVersions } from "Model/Selectors/installations.js";
+import { selectVersions } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from "UI/Modal";
 import { InputGroup, InputText, PathInput } from "UI/Input";
