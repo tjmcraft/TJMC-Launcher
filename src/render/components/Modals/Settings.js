@@ -16,7 +16,7 @@ import platform from "platform";
 
 import { RadioGroup } from "UI/components/Radio";
 import RangeSlider from "UI/components/Slider";
-import { Modal } from "UI/Modals";
+import { Modal } from "Components/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 import { InputGroup, PathInput } from "UI/components/Input";

@@ -7,13 +7,13 @@ import useShowTransition from "Hooks/useShowTransition";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import { SVG } from "UI/svg";
 
-import Settings from "UI/Modals/Settings";
-import VersionChooser from "UI/Modals/VersionChooser";
-import Alert from "UI/Modals/Alert";
-import WhatsNew from "UI/Modals/WhatsNew";
-import InstallationEditor from "UI/Modals/InstallationEditor";
-import MapModal from "UI/Modals/MapModal";
-import ShortcutsModal from "UI/Modals/ShortcutsModal";
+import Settings from "Components/Modals/Settings";
+import VersionChooser from "Components/Modals/VersionChooser";
+import Alert from "Components/Modals/Alert";
+import WhatsNew from "Components/Modals/WhatsNew";
+import InstallationEditor from "Components/Modals/InstallationEditor";
+import MapModal from "Components/Modals/MapModal";
+import ShortcutsModal from "Components/Modals/ShortcutsModal";
 
 
 import style from "CSS/modal.module.css";

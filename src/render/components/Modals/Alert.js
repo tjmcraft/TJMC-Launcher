@@ -2,9 +2,9 @@ import { createElement, Fragment, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
-import { SVG } from "../svg";
+import { SVG } from "../../ui/svg";
 
-import { Modal, ModalFooter } from "UI/Modals";
+import { Modal, ModalFooter } from "Components/Modals";
 import Button from "UI/components/Button";
 
 import appStyle from 'CSS/app.module.css';
