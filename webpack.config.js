@@ -52,6 +52,7 @@ module.exports = {
 			IMG: path.resolve(basePath, 'assets', 'images'),
 			CSS: path.resolve(basePath, 'assets', 'css'),
 			UI: path.resolve(basePath, 'ui'),
+			Components: path.resolve(basePath, 'components'),
 			Model: path.resolve(basePath, 'Model'),
 			Hooks: path.resolve(basePath, 'hooks'),
 			react: "preact/compat",
