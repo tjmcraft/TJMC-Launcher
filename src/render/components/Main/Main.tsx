@@ -1,13 +1,14 @@
 import { createElement, memo } from "react";
 
+import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
-import { SVG } from "./svg";
 
+import Transition from "UI/Transition";
 import Route from "UI/components/Route";
-import CubeContainer from "UI/CubeContainer";
-import { Guild } from "UI/guilds";
-import buildClassName from "Util/buildClassName";
+import { Guild } from "Components/Guild";
+import { SVG } from "UI/svg";
+import CubeContainer from "Components/Main/CubeContainer";
 
 
 const Main = () => {
@@ -29,4 +30,13 @@ const Main = () => {
 	);
 };
 
-export default memo(Main);
+const MainContainer = ({ isShown }) => {
+	return (
+		<Transition className={"app-container"} isShown={isShown}>
+			<Main />
+			<div className="uploadArea" />
+		</Transition>
+	);
+};
+
+export default memo(MainContainer);

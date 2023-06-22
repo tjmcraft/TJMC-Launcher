@@ -1,5 +1,5 @@
 import { createElement, memo } from "react";
-import MainSidebar from "UI/MainSidebar";
+import MainSidebar from "Components/Main/MainSidebar";
 import CubeSidebar from "./CubeSidebar";
 import CubeContent from "./CubeMainContent";
 

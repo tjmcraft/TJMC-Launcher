@@ -8,12 +8,12 @@ import { pick } from "Util/Iterates";
 import { InputText } from "UI/components/Input";
 import Button from "UI/components/Button";
 
-import style from "CSS/auth.module.css";
-import useShowTransition from "Hooks/useShowTransition";
+import style from "./auth.module.css";
 import captureKeyboardListeners from "Util/captureKeyboard";
+import Transition from "UI/Transition";
 
 // TODO: Implement multiscreen authState support
-// Need to implement multiAuthState support under API Requests and API itself
+// Need to implement multiAuthState support under API Requests itself
 
 const Authentication = () => {
 
@@ -98,17 +98,10 @@ const Authentication = () => {
 };
 
 const AuthContainer = ({ isShown }) => {
-	const {
-		shouldRender,
-		transitionClassNames,
-	} = useShowTransition(
-		isShown, undefined, true, undefined, false, { }, 350
-	);
-
-	return shouldRender && (
-		<div className={buildClassName(style.container, transitionClassNames)}>
+	return (
+		<Transition isShown={isShown} className={style.container}>
 			<Authentication />
-		</div>
+		</Transition>
 	);
 };
 

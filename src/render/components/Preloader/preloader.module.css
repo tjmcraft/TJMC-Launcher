@@ -11,7 +11,7 @@
     left: 0;
     background-repeat: no-repeat;
     background-color: var(--background-tertiary);
-    z-index: 3000;
+    z-index: 3009;
     user-select: none;
     transition: opacity 1s ease;
 
