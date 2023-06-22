@@ -1,4 +1,4 @@
-import { createElement, memo, useEffect, useState } from "react";
+import { Fragment, createElement, memo, useEffect, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch, getState } from "Store/Global";
@@ -76,17 +76,23 @@ const ModalLayer = ({ isShown, children }) => {
 
 };
 
-const Modals = memo(() => {
+const Modals = () => {
 	const modals = useGlobal(global => global.modals);
 	const isOpen = modals.length > 0;
 
-	return isOpen &&
-		modals.map((modal) => (
-			<ModalLayer isShown={modal.isShown} key={modal.label}>
-				{createElement(MODAL_STORE[modal.layer], modal.props)}
-			</ModalLayer>
-		));
-});
+	return (
+		<Fragment>
+			{
+				isOpen &&
+				modals.map((modal) => (
+					<ModalLayer isShown={modal.isShown} key={modal.label}>
+						{createElement(MODAL_STORE[modal.layer], modal.props)}
+					</ModalLayer>
+				))
+			}
+		</Fragment>
+	);
+};
 
 const LayerContainer = memo(() => {
 

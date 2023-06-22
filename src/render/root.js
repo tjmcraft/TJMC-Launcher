@@ -29,7 +29,7 @@ window.__debug__ && console.debug('Build Info:', window.buildInfo);
 
 import { Frame } from "UI/components/Frame";
 import App from "UI/App";
-import LayerContainer from "UI/LayerContainer.js";
+import LayerContainer from "UI/LayerContainer";
 
 export default function Root() {
 	return (

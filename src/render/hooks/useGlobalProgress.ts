@@ -22,7 +22,10 @@ const updateContainer = (propsRef, selector, callback) => {
 	};
 };
 
-const useGlobalProgress = (selector = () => { }, inputs = []) => {
+const useGlobalProgress = <T extends () => ReturnType<T>>(
+	selector: T,
+	inputs = []
+): ReturnType<T> => {
 
 	const forceUpdate = useForceUpdate();
 	const mappedProps = useRef(undefined);

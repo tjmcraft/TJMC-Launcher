@@ -17,7 +17,7 @@ type ActionHandler = (
   payload: any,
 ) => GlobalState | void | Promise<void>;
 
-type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => AnyLiteral;
+type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => any;
 
 export class StateStore {
 

@@ -1,6 +1,54 @@
 import { StateStore, StoreCaching } from "Util/Store";
 
-const INITIAL_STATE = {
+export type GlobalState = {
+	currentUserId?: string;
+	version_hash?: string;
+	theme: string;
+	auth_state: string;
+	hostConnectionState: string;
+	hostInfo: {
+		hostVendor: AnyLiteral;
+		hostVersion: AnyLiteral;
+		hostMemory: any;
+		hostMenu: any;
+	};
+	settings: {
+		debug_mode: boolean;
+		debug_host: boolean;
+		debug_api: boolean;
+		enable_preloader: boolean;
+		full_settings: boolean;
+		full_chooser: boolean;
+		dev_disable_faloc: boolean;
+		exp_more_border: boolean;
+	};
+	users: Record<string, AnyLiteral>;
+	installations: Record<string, AnyLiteral>;
+	instances: Record<string, AnyLiteral>;
+	versions: Array<any>;
+	modals: Array<{
+		isShown: boolean;
+		label: string;
+		layer: string;
+		props: AnyLiteral;
+	}>;
+	configuration?: AnyLiteral;
+	releases: Array<any>;
+	currentMainScreen: string;
+	currentSettingsScreen: string;
+	lastAppVersionId?: string;
+	update: {
+		popupLock: boolean;
+		status: string;
+		progress: number;
+		next?: AnyLiteral;
+		total?: number;
+		transferred?: number;
+		bytesPerSecond?: number;
+	};
+};
+
+const INITIAL_STATE: GlobalState = {
 	currentUserId: undefined,
 	version_hash: undefined,
 	theme: "system",
@@ -20,6 +68,7 @@ const INITIAL_STATE = {
 		full_settings: false,
 		full_chooser: false,
 		dev_disable_faloc: false,
+		exp_more_border: false,
 	},
 	users: {},
 	installations: {},
@@ -39,9 +88,7 @@ const INITIAL_STATE = {
 	}
 };
 
-export type GlobalState = typeof INITIAL_STATE;
-type GlobalStateKeys = keyof GlobalState;
-export type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => AnyLiteral | String | Boolean;
+export type MapStateToProps<T extends AnyFunction, OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => ReturnType<T>;
 
 const stateStore = new StateStore();
 const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE);
@@ -62,7 +109,7 @@ window.resetCache = stateStore.getDispatch().reset;
 window._gstore = stateStore;
 
 export const getDispatch = stateStore.getDispatch;
-export const getState = (selector: MapStateToProps): GlobalState[GlobalStateKeys] => stateStore.getState(selector);
+export const getState = <T extends MapStateToProps<T>>(selector?: T): ReturnType<T> => stateStore.getState(selector);
 export const setState = stateStore.setState;
 export const withState = stateStore.withState;
 export const addReducer = stateStore.addReducer;

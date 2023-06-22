@@ -4,8 +4,8 @@ import { GlobalState, MapStateToProps, addCallback, getState, removeCallback } f
 import { randomString } from "Util/Random";
 import useForceUpdate from "./useForceUpdate";
 
-const updateContainer = (selector: MapStateToProps, callback: Function, options: PickOptions) => {
-	return (global: GlobalState) =>
+const updateContainer = <T extends MapStateToProps<T>>(selector: T, callback: Function, options: PickOptions) => {
+	return (global: GlobalState): ReturnType<T> =>
 		callback((prevState) => {
 
 			let nextState;
@@ -63,11 +63,11 @@ type PickOptions = {
 	label?: string;
 }
 
-const useGlobal = (
-	selector: MapStateToProps<any> = () => ({}),
+const useGlobal = <T extends MapStateToProps<T>>(
+	selector: T,
 	inputs: React.DependencyList = [],
 	options: PickOptions = {}
-) => {
+): ReturnType<T> => {
 
 	options = useMemo(() => Object.assign({ debugPicker: false, debugPicked: false, label: randomString(5) }, options), [options]);
 
