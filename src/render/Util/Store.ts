@@ -41,7 +41,7 @@ export class StateStore {
 		}
 	};
 
-	getState = (selector: MapStateToProps<any> = () => ({})) => selector(this.currentState) ?? undefined;
+	getState = (selector: MapStateToProps<any> = (state) => (state)) => selector(this.currentState) ?? undefined;
 
 
 	private updateContainers = (currentState) => {
