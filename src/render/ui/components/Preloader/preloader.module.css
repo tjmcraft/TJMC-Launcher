@@ -1,6 +1,3 @@
-@import "./colors.css";
-@import "./animations.css";
-
 .preloader {
     opacity: 0;
     position: fixed;

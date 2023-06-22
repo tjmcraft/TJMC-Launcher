@@ -1,10 +1,9 @@
 import { createElement } from "react";
 
-import style from "CSS/frame.module.css";
 import buildClassName from "Util/buildClassName";
+import style from "./frame.module.css";
 
-
-export function Frame({ title = "" }) {
+export default function Frame({ title = "" }) {
 	if (window.system?.os == 'osx') return null;
 	const onClose = () => window.tjmcNative.window.close();
 	const onMaximize = () => window.tjmcNative.window.maximize();

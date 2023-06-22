@@ -1,22 +1,11 @@
-// @ts-nocheck
-import { memo, createElement, useEffect } from "react";
+import { memo, createElement } from "react";
 
 import useShowTransition from "Hooks/useShowTransition";
 import buildClassName from "Util/buildClassName";
 
-import Main from "UI/Main.js";
-import { getDispatch, getState } from "Store/Global";
-import { selectCurrentVersionHash } from "Model/Selectors/installations";
-
+import Main from "UI/Main";
 
 const AppContainer = ({ isShown }) => {
-
-	const {
-		openSettingsModal,
-		invokeLaunch,
-		openInstallationEditor,
-		openVersionChooserModal,
-	} = getDispatch();
 
 	const {
 		shouldRender,

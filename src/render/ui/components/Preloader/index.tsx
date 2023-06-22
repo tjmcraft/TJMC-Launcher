@@ -6,7 +6,7 @@ import useFlag from "Hooks/useFlag";
 import { getState } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 
-import style from "CSS/preloader.module.css";
+import style from "./preloader.module.css";
 import iconImage from "IMG/icon.png";
 
 const Preloader = () => {
