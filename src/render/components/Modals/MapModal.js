@@ -1,7 +1,7 @@
 import { createElement, memo, useRef, useEffect, useCallback, useState } from "react";
 import { Modal } from ".";
 import buildClassName from "Util/buildClassName";
-import Spinner from "UI/components/Spinner";
+import Spinner from "UI/Spinner";
 
 const MapContainer = memo(() => {
 	const [loadError, setLoadError] = useState(false);

@@ -3,10 +3,10 @@ import { createElement, memo, useRef } from "react";
 import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
-import { SVG } from "../../ui/svg";
+import { SVG } from "UI/svg";
 import useGlobal from "Hooks/useGlobal";
 
-import Tooltip from "../../ui/components/Tooltip";
+import Tooltip from "UI/Tooltip";
 
 const UserPanel = memo(() => {
 	const { openVersionChooserModal, openSettingsModal } = getDispatch();

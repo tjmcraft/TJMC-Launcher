@@ -6,7 +6,7 @@ import useGlobalProgress from "Hooks/useGlobalProgress";
 import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
 
-import Button from "UI/components/Button";
+import Button from "UI/Button";
 import { toFixedNumber } from "Util/Numbers";
 
 

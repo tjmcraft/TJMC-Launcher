@@ -5,7 +5,7 @@ import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 
 import Transition from "UI/Transition";
-import Route from "UI/components/Route";
+import Route from "UI/Route";
 import { Guild } from "Components/Guild";
 import { SVG } from "UI/svg";
 import CubeContainer from "Components/Main/CubeContainer";

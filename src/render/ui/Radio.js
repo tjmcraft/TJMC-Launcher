@@ -2,7 +2,7 @@ import { createElement } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
-import { SVG } from "../svg.js";
+import { SVG } from "UI/svg";
 
 import style from "CSS/radio.module.css";
 

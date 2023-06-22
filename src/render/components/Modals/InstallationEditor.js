@@ -8,8 +8,8 @@ import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from ".";
-import { InputGroup, PathInput } from "UI/components/Input";
-import SettingSwitch from "UI/components/SettingSwitch";
+import { InputGroup, PathInput } from "UI/Input";
+import SettingSwitch from "UI/SettingSwitch";
 
 
 const InstallationForm = ({ version, onCancel }) => {

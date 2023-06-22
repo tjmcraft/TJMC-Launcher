@@ -10,10 +10,10 @@ import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations.js";
 
 import { Modal, ModalFooter } from "Components/Modals";
-import { InputGroup, InputText, PathInput } from "UI/components/Input";
-import Select from "UI/components/Select";
-import MenuItem from "UI/components/MenuItem";
-import SettingSwitch from "UI/components/SettingSwitch";
+import { InputGroup, InputText, PathInput } from "UI/Input";
+import Select from "UI/Select";
+import MenuItem from "UI/MenuItem";
+import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
 

@@ -14,20 +14,20 @@ import { selectSettings } from "Model/Selectors/Settings";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
-import { RadioGroup } from "UI/components/Radio";
-import RangeSlider from "UI/components/Slider";
+import { RadioGroup } from "UI/Radio";
+import RangeSlider from "UI/Slider";
 import { Modal } from "Components/Modals";
-import Select from "UI/components/Select";
-import MenuItem from "UI/components/MenuItem";
-import { InputGroup, PathInput } from "UI/components/Input";
-import Button from "UI/components/Button";
+import Select from "UI/Select";
+import MenuItem from "UI/MenuItem";
+import { InputGroup, PathInput } from "UI/Input";
+import Button from "UI/Button";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
 import "CSS/markdown.css";
-import SettingSwitch from "UI/components/SettingSwitch";
-import SettingButton from "UI/components/SettingButton";
-import SettingContainer from "UI/components/SettingContainer";
+import SettingSwitch from "UI/SettingSwitch";
+import SettingButton from "UI/SettingButton";
+import SettingContainer from "UI/SettingContainer";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {

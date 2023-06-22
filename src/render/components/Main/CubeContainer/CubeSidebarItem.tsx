@@ -9,11 +9,11 @@ import { selectInstallation } from "Model/Selectors/installations";
 import useGlobal from "Hooks/useGlobal";
 import useGlobalProgress from "Hooks/useGlobalProgress";
 
-import PendingProgress from "UI/components/PendingProgress";
-import RoundProgress from "UI/components/RoundProgress";
-import Menu from "UI/components/Menu";
-import MenuItem from "UI/components/MenuItem";
-import Portal from "UI/components/Portal";
+import PendingProgress from "UI/PendingProgress";
+import RoundProgress from "UI/RoundProgress";
+import Menu from "UI/Menu";
+import MenuItem from "UI/MenuItem";
+import Portal from "UI/Portal";
 
 
 const StatusContainer = ( { hash, isProcessing } ) => {

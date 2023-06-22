@@ -5,8 +5,8 @@ import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
 import { pick } from "Util/Iterates";
 
-import { InputText } from "UI/components/Input";
-import Button from "UI/components/Button";
+import { InputText } from "UI/Input";
+import Button from "UI/Button";
 
 import style from "./auth.module.css";
 import captureKeyboardListeners from "Util/captureKeyboard";
