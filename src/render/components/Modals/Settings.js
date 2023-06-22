@@ -14,13 +14,13 @@ import { selectSettings } from "Model/Selectors/Settings";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
+import { Modal } from "UI/Modal";
+import Button from "UI/Button";
+import Select from "UI/Select";
+import { InputGroup, PathInput } from "UI/Input";
 import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/Slider";
-import { Modal } from "Components/Modals";
-import Select from "UI/Select";
 import MenuItem from "UI/MenuItem";
-import { InputGroup, PathInput } from "UI/Input";
-import Button from "UI/Button";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";

@@ -4,7 +4,7 @@ import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import { SVG } from "../../ui/svg";
 
-import { Modal, ModalFooter } from "Components/Modals";
+import { Modal, ModalFooter } from "UI/Modal";
 import Button from "UI/Button";
 
 import appStyle from 'CSS/app.module.css';

@@ -9,7 +9,7 @@ import useHostOnline from "Hooks/useHostOnline";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations.js";
 
-import { Modal, ModalFooter } from "Components/Modals";
+import { Modal, ModalFooter } from "UI/Modal";
 import { InputGroup, InputText, PathInput } from "UI/Input";
 import Select from "UI/Select";
 import MenuItem from "UI/MenuItem";

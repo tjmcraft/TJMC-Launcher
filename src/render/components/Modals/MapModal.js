@@ -1,5 +1,5 @@
 import { createElement, memo, useRef, useEffect, useCallback, useState } from "react";
-import { Modal } from ".";
+import { Modal } from "UI/Modal";
 import buildClassName from "Util/buildClassName";
 import Spinner from "UI/Spinner";
 

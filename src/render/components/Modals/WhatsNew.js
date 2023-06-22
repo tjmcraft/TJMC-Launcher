@@ -5,9 +5,9 @@ import remarkGfm from "remark-gfm";
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from 'Store/Global';
-import { SVG } from '../../ui/svg';
+import { SVG } from 'UI/svg';
 
-import { Modal } from 'Components/Modals';
+import { Modal } from 'UI/Modal';
 
 import style from 'CSS/modal.module.css';
 import "CSS/markdown.css";

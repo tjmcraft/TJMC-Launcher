@@ -5,7 +5,7 @@ import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { SVG } from "UI/svg";
 
-import { Modal } from ".";
+import { Modal } from "UI/Modal";
 
 import style from 'CSS/modal.module.css';
 import "./ShortcutsModal.css";

@@ -7,7 +7,7 @@ import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
 import { selectInstallation } from "Model/Selectors/installations";
 
-import { Modal, ModalFooter } from ".";
+import { Modal, ModalFooter } from "UI/Modal";
 import { InputGroup, PathInput } from "UI/Input";
 import SettingSwitch from "UI/SettingSwitch";
 
