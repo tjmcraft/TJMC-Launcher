@@ -1,6 +1,6 @@
 import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
 
-import buildClassName from "Util/buildClassName.js";
+import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import { cleanObject } from "Util/Iterates";
 import captureEscKeyListener from "Util/captureEscKeyListener";
@@ -10,7 +10,7 @@ import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations.js";
 
 import { Modal, ModalFooter } from "UI/Modals";
-import { InputGroup, InputText, PathInput } from "UI/components/Input.js";
+import { InputGroup, InputText, PathInput } from "UI/components/Input";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";
 import SettingSwitch from "UI/components/SettingSwitch";

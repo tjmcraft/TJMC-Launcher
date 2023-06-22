@@ -1,9 +1,9 @@
 import { createElement, useCallback, useMemo, useRef, useState } from "react";
-import { getPos } from "Libs/ElementEx.js";
+import { getPos } from "Libs/ElementEx";
 import style from "CSS/slider.module.css";
-import { randomString } from "Util/Random.js";
-import { toFixedNumber } from "Util/Numbers.js";
-import Tooltip from "./Tooltip.js";
+import { randomString } from "Util/Random";
+import { toFixedNumber } from "Util/Numbers";
+import Tooltip from "./Tooltip";
 
 export default function RangeSlider({
 	id = undefined,

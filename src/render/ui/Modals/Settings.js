@@ -2,20 +2,20 @@ import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragmen
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import buildClassName from "Util/buildClassName.js";
+import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
 import useEffectAfterMount from "Hooks/useEffectAfterMount";
-import { selectCurrentUser } from "Model/Selectors/user.js";
+import { selectCurrentUser } from "Model/Selectors/user";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
-import { RadioGroup } from "UI/components/Radio.js";
-import RangeSlider from "UI/components/Slider.js";
+import { RadioGroup } from "UI/components/Radio";
+import RangeSlider from "UI/components/Slider";
 import { Modal } from "UI/Modals";
 import Select from "UI/components/Select";
 import MenuItem from "UI/components/MenuItem";

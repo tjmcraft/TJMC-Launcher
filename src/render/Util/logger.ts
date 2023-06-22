@@ -1,5 +1,8 @@
 export default class LoggerUtil {
 
+	private prefix: string;
+	private style: string;
+
 	constructor(prefix, style) {
 		this.prefix = prefix;
 		this.style = style;
