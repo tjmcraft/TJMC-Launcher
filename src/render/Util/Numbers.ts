@@ -1,4 +1,4 @@
-export function toFixedNumber(num, digits, base) {
-	const pow = Math.pow(base ?? 10, digits);
+export function toFixedNumber(num, digits, base = 10) {
+	const pow = Math.pow(base, digits);
 	return Math.round(num * pow) / pow;
 }
