@@ -1,11 +1,21 @@
-import { createElement, useCallback, useMemo, useRef, useState } from "react";
+import { FC, createElement, memo, useCallback, useMemo, useRef, useState } from "react";
 import { getPos } from "Libs/ElementEx";
 import style from "CSS/slider.module.css";
 import { randomString } from "Util/Random";
 import { toFixedNumber } from "Util/Numbers";
 import Tooltip from "./Tooltip";
 
-export default function RangeSlider({
+type OwnProps = {
+	id?: string;
+	value: number;
+	min: number;
+	max: number;
+	step?: number;
+	onChange: AnyFunction;
+	unit: string;
+};
+
+const RangeSlider: FC<OwnProps> = ({
 	id = undefined,
 	value = 0,
 	min = 0,
@@ -13,7 +23,7 @@ export default function RangeSlider({
 	step = 1,
 	onChange = void 0,
 	unit = '',
-}) {
+}) => {
 
 	id = id || `slider-${randomString(5)}`;
 
@@ -22,6 +32,8 @@ export default function RangeSlider({
 			max: Number(max),
 			min: Number(min),
 			step: Number(step),
+			inc: 0,
+			ticks: 0,
 		};
 		val.ticks = (val.max - val.min) / val.step;
 		val.inc = 100 / val.ticks;
@@ -80,6 +92,6 @@ export default function RangeSlider({
 			<Tooltip forRef={grabberRef} isOpen={popupOpen}>{valRef.current + unit}</Tooltip>
 		</div>
 	);
+};
 
-
-}
+export default memo(RangeSlider);

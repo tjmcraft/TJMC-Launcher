@@ -19,7 +19,7 @@ import Button from "UI/Button";
 import Select from "UI/Select";
 import { InputGroup, PathInput } from "UI/Input";
 import { RadioGroup } from "UI/Radio";
-import RangeSlider from "UI/Slider";
+import RangeSlider from "UI/RangeSlider";
 import MenuItem from "UI/MenuItem";
 
 import iconImage from "IMG/icon.png";
