@@ -1,9 +1,19 @@
-import { createElement, memo, useCallback } from "react";
+import { FC, ReactNode, createElement, memo, useCallback } from "react";
 
 import buildClassName from "Util/buildClassName";
 
+type OwnProps = {
+	children: ReactNode;
+	onClick?: AnyFunction;
+	disabled?: Boolean;
+	className?: string;
+	compact?: Boolean;
+	destructive?: Boolean;
+	withWrap?: Boolean;
+	selected?: Boolean;
+};
 
-const MenuItem = ({
+const MenuItem: FC<OwnProps> = ({
 	children,
 	onClick = void 0,
 	disabled = false,

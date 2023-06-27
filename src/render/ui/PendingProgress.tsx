@@ -1,6 +1,6 @@
-import { createElement, memo } from "react";
+import { FC, createElement, memo } from "react";
 
-const PendingProgress = () => {
+const PendingProgress: FC = () => {
 	return (
 		<div className="process-container">
 			<div className="dot-bricks" />

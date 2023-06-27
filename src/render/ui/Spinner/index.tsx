@@ -1,11 +1,15 @@
-import { createElement } from "react";
+import { FC, createElement, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 
 import './Spinner.css';
 
+type OwnProps = {
+	color: 'blue' | 'white';
+	size?: 1 | 2 | 3;
+};
 
-const Spinner = ({
+const Spinner: FC<OwnProps> = ({
 	color = 'blue',
 	size = 1
 }) => {
@@ -21,4 +25,4 @@ const Spinner = ({
 	);
 };
 
-export default Spinner;
+export default memo(Spinner);

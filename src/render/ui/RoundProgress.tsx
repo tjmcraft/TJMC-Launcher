@@ -1,6 +1,10 @@
-import { createElement, memo } from "react";
+import { FC, createElement, memo } from "react";
 
-const RoundProgress = ({ progress = 0 }) => {
+type OwnProps = {
+	progress: number;
+};
+
+const RoundProgress: FC<OwnProps> = ({ progress = 0 }) => {
 	const radius = 14;
 	let dashOffset = 0;
 	if (isNaN(progress)) {
