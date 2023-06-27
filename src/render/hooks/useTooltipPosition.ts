@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { CSSProperties, useEffect, useState } from "react";
 
 const EMPTY_RECT = {
 	width: 0, left: 0, height: 0, top: 0,
@@ -9,8 +9,8 @@ export default function useTooltipPosition(
 	getTooltipElement,
 ) {
 
-	const [positionX, setPositionX] = useState('top');
-	const [style, setStyle] = useState('');
+	const [positionX, setPositionX] = useState<'top'|'bottom'>('top');
+	const [style, setStyle] = useState<CSSProperties>(undefined);
 	const margin = 5;
 
 	useEffect(() => {
@@ -43,7 +43,7 @@ export default function useTooltipPosition(
 		setPositionX(horizontalPosition);
 		const top = y;
 
-		setStyle(`left: ${left}px; top: ${top}px`);
+		setStyle({ left: `${left}px`, top: `${top}px` });
 	}, [getTriggerElement, getTooltipElement]);
 
 	return { positionX, style };
