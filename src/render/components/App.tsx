@@ -2,7 +2,7 @@ import { memo, createElement, Fragment } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
-import useConstructor from "Hooks/useConstructor.js";
+import useConstructor from "Hooks/useConstructor";
 
 import Frame from "Components/Frame";
 import LayerContainer from "Components/LayerContainer";

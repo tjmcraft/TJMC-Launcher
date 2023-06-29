@@ -1,11 +1,6 @@
 import { useCallback, useState } from "react";
 
-/**
- * Use Flag state toggle
- * @param {boolean} initial
- * @returns {[Boolean,Function,Function]}
- */
-const useFlag = (initial = false) => {
+const useFlag = (initial = false): [boolean, AnyFunction, AnyFunction] => {
 	const [value, setValue] = useState(initial);
 
 	const setTrue = useCallback(() => {

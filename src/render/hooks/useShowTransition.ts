@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import buildClassName from "Util/buildClassName";
 
+type TransitionClasses = {
+	open?: string;
+	shown?: string;
+	closing?: string;
+}
 
 const useShowTransition = (
-	isOpen = false,
-	onCloseTransitionEnd = null,
-	noOpenTransition = false,
-	className = null,
-	noCloseTransition = false,
-	classes = {},
-	duration = 350
+	isOpen: boolean = false,
+	onCloseTransitionEnd: AnyToVoidFunction = null,
+	noOpenTransition: boolean = false,
+	className: string | false = false,
+	noCloseTransition: boolean = false,
+	classes: TransitionClasses = {},
+	duration: number = 350
 ) => {
 	classes = Object.assign({ open: "open", shown: "shown", closing: "closing" }, classes);
 	const [isClosed, setIsClosed] = useState(!isOpen);
