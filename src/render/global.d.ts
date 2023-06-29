@@ -51,5 +51,4 @@ interface Window {
 	electron: ElectronExpose;
 	resetCache: Function;
 	_gstore: Object;
-	getCookie: Function;
 };
