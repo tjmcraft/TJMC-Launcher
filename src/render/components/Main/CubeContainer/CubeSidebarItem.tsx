@@ -3,50 +3,48 @@ import { createElement, useCallback, useRef, memo, FC } from "react";
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 
-import useContextMenu from "Hooks/useContextMenu";
-import useContextMenuPosition from "Hooks/useContextMenuPosition";
-import { selectInstallation } from "Model/Selectors/installations";
 import useGlobal from "Hooks/useGlobal";
 import useGlobalProgress from "Hooks/useGlobalProgress";
+import { selectInstallation } from "Model/Selectors/installations";
+import useContextMenu from "Hooks/useContextMenu";
+import useContextMenuPosition from "Hooks/useContextMenuPosition";
 
+import { Menu, MenuItem } from "UI/Menu";
 import PendingProgress from "UI/PendingProgress";
 import RoundProgress from "UI/RoundProgress";
 import Portal from "UI/Portal";
-import { Menu, MenuItem } from "UI/Menu";
 
-
-const StatusContainer = ( { hash, isProcessing } ) => {
-	// @ts-ignore
+const StatusContainer: FC<{
+	hash: string;
+	isProcessing: boolean;
+}> = ({ hash, isProcessing }) => {
 	const { progress } = useGlobalProgress(global => {
 		const version = global[hash] || {};
 		return {
 			progress: version.totalProgress || 0,
 		};
 	}, [hash]);
-	return (
+	return isProcessing && (
 		<div className="status-container">
-			{isProcessing && (
-				progress > 0 ?
-					<RoundProgress progress={progress * 100} /> :
-					<PendingProgress />
-			)}
+			{progress > 0 ?
+				<RoundProgress progress={progress * 100} /> :
+				<PendingProgress />
+			}
 		</div>
 	);
 };
 
-type OwnProps = {
+const ContextMenu: FC<{
 	containerRef?: React.RefObject<HTMLElement>;
 	isProcessing?: boolean;
 	isContextMenuOpen?: boolean;
 	contextMenuPosition?: any;
 	handleContextMenuClose?: AnyFunction;
 	handleContextMenuHide?: AnyFunction;
-	hash?: string;
-	name?: string;
+	hash: string;
+	name: string;
 	handleClick: AnyFunction;
-}
-
-const ContextMenu: FC<OwnProps> = ({
+}> = ({
 	containerRef,
 	isProcessing,
 	isContextMenuOpen,
@@ -154,7 +152,18 @@ const ContextMenu: FC<OwnProps> = ({
 	);
 };
 
-const CubeSidebarItem = ({
+const CubeSidebarItem: FC<{
+	hash: string;
+	isSelected?: boolean;
+	isDragOver?: boolean;
+	onDragStart?: AnyToVoidFunction;
+	onDragEnter?: AnyToVoidFunction;
+	onDragLeave?: AnyToVoidFunction;
+	onDragExit?: AnyToVoidFunction;
+	onDragOver?: AnyToVoidFunction;
+	onDragEnd?: AnyToVoidFunction;
+	onDrop?: AnyToVoidFunction;
+}> = ({
 	hash,
 	isSelected = false,
 	isDragOver = false,
