@@ -132,7 +132,6 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	const config = useGlobal(global => global.configuration);
 	const hostOnline = useHostOnline();
 
-	const [index, setIndex] = useState(1);
 	const [name, setName] = useState("");
 	const [gameDir, setGameDir] = useState(undefined);
 	const [width, setWidth] = useState(undefined);
