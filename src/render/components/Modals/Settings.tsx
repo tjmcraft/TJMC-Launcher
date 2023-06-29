@@ -16,8 +16,6 @@ import platform from "platform";
 
 import { Modal } from "UI/Modal";
 import Button from "UI/Button";
-import Select from "UI/Select";
-import { InputGroup, PathInput } from "UI/Input";
 import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/RangeSlider";
 import MenuItem from "UI/MenuItem";
@@ -28,6 +26,7 @@ import "CSS/markdown.css";
 import SettingSwitch from "UI/SettingSwitch";
 import SettingButton from "UI/SettingButton";
 import SettingContainer from "UI/SettingContainer";
+import { InputGroup, PathInput, SelectInput } from "UI/Input";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
@@ -116,7 +115,7 @@ const TestContainer = memo(() => {
 			<div className={buildClassName(style.settingGroup, style.withBorder)}>
 				<SettingContainer note={"You can use selectable menu"} inputMode>
 					<div className={"test"}>
-						<Select title="Select item" value={items[selectedIndex]}>
+						<SelectInput title="Select item" value={items[selectedIndex]}>
 							{items.map((e, i) => (
 								<MenuItem compact
 									key={i}
@@ -124,7 +123,7 @@ const TestContainer = memo(() => {
 									onClick={() => selectIndex(i)}
 								>{e}</MenuItem>
 							))}
-						</Select>
+						</SelectInput>
 					</div>
 				</SettingContainer>
 				<SettingSwitch
@@ -806,7 +805,7 @@ const UpdatesContainer = memo(() => {
 	return (
 		<div className={buildClassName(style.settingGroup, style.withBorder)}>
 			<SettingContainer title={"Период проверки обновлений"}>
-				<Select value={item.name}>
+				<SelectInput value={item.name}>
 					{items.map((e, i) => (
 						<MenuItem compact
 							key={i}
@@ -814,7 +813,7 @@ const UpdatesContainer = memo(() => {
 							onClick={() => selectIndex(i)}
 						>{e.name}</MenuItem>
 					))}
-				</Select>
+				</SelectInput>
 			</SettingContainer>
 			<SettingContainer note={renderProgress(updateProgress)} title={titleName}>
 				<Button

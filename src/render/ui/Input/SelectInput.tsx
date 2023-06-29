@@ -1,15 +1,25 @@
-import { createElement, useCallback, useRef, useState } from "react";
+import { createElement, FC, memo, ReactNode, useCallback, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
-import Menu from "./Menu";
-import { InputGroup } from "./Input";
+import Menu from "../Menu";
+import { InputGroup } from "UI/Input";
 
 import inputStyle from "CSS/input.module.css";
 
+type OwnProps = {
+	id?: string;
+	children: ReactNode;
+	onInput?: AnyToVoidFunction;
+	onOpen?: AnyToVoidFunction;
+	onClose?: AnyToVoidFunction;
+	onBlur?: AnyToVoidFunction;
+	title?: string;
+	value: string;
+};
 
-const Select = ({
+const Select: FC<OwnProps> = ({
 	id = undefined,
 	children,
 	onInput = void 0,
@@ -95,4 +105,4 @@ const Select = ({
 	);
 };
 
-export default Select;
+export default memo(Select);

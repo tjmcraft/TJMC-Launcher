@@ -10,7 +10,7 @@ import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from "UI/Modal";
-import { InputGroup, InputText, PathInput } from "UI/Input";
+import { InputGroup, PathInput, TextInput } from "UI/Input";
 import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
@@ -68,7 +68,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 				</div>
 			</div>
 			<div className="sidebar-bottom">
-				<InputText id="versions-search"
+				<TextInput id="versions-search"
 					autoFocus={true}
 					placeholder="Введите название версии"
 					onChange={handleInput}

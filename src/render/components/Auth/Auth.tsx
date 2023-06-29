@@ -4,13 +4,13 @@ import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
 import { pick } from "Util/Iterates";
+import captureKeyboardListeners from "Util/captureKeyboard";
 
-import { InputText } from "UI/Input";
 import Button from "UI/Button";
+import { TextInput } from "UI/Input";
+import Transition from "UI/Transition";
 
 import style from "./auth.module.css";
-import captureKeyboardListeners from "Util/captureKeyboard";
-import Transition from "UI/Transition";
 
 // TODO: Implement multiscreen authState support
 // Need to implement multiAuthState support under API Requests itself
@@ -65,7 +65,7 @@ const Authentication = () => {
 							<p className={buildClassName(style.subtitle)}>{"Войдите в свой аккаунт"}</p>
 						</div>
 						<div className={style.block}>
-							<InputText id="email"
+							<TextInput id="email"
 								name="email"
 								required={true}
 								autoFocus={true}
