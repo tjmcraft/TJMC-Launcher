@@ -22,7 +22,7 @@ const updateContainer = (propsRef, selector, callback) => {
 	};
 };
 
-const useGlobalProgress = <T extends () => ReturnType<T>>(
+const useGlobalProgress = <T extends (global) => ReturnType<T>>(
 	selector: T,
 	inputs = []
 ): ReturnType<T> => {
