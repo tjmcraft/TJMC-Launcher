@@ -108,7 +108,7 @@ export default function useContextMenuPosition(
 
 		setWithScroll( menuMaxHeight < menuRect.height );
 		setMenuStyle( `max-height: ${menuMaxHeight}px;` );
-		setStyle( { left: `${left}px`, top: `${top} px` } );
+		setStyle( { left: `${left}px`, top: `${top}px` } );
 		const offsetX = ( anchorX + addedXForPortalPositioning - triggerRect.left ) - left;
 		const offsetY = ( anchorY + addedYForPortalPositioning - triggerRect.top ) - top - ( marginTop || 0 );
 		setTransformOriginX( horizontalPosition === 'left' ? offsetX : menuRect.width + offsetX );
