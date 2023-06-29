@@ -11,8 +11,6 @@ import { selectVersions } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from "UI/Modal";
 import { InputGroup, InputText, PathInput } from "UI/Input";
-import Select from "UI/Select";
-import MenuItem from "UI/MenuItem";
 import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
