@@ -128,29 +128,6 @@ const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 
 	);
 };
 
-const JavaSelector = ({ items, onChange, selectedIndex, title }) => {
-
-	const handleClick = (i) => {
-		return () => {
-			if (onChange) onChange(i);
-		};
-	};
-
-	const current = items[selectedIndex];
-
-	return (
-		<Select title={title} value={`${current.name}`}>
-			{items.map((e, i) => (
-				<MenuItem compact
-					key={i}
-					selected={selectedIndex == i}
-					onClick={handleClick(i)}
-				>{e.name} - {e.path}</MenuItem>
-			))}
-		</Select>
-	);
-};
-
 const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 
 	const { createInstallation, closeModal } = getDispatch();
@@ -203,29 +180,6 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 			closeModal();
 		}
 	};
-
-	const fakeJavas = [
-		{
-			name: "Java 1",
-			path: "/lib/java/1",
-		},
-		{
-			name: "Java 2",
-			path: "/lib/java/2",
-		},
-		{
-			name: "Java 3",
-			path: "/lib/java/3",
-		},
-		{
-			name: "Java 4",
-			path: "/lib/java/4",
-		},
-		{
-			name: "Java 5",
-			path: "/lib/java/5",
-		},
-	];
 
 	return (
 		<div className={buildClassName("main-content", "d-flex")}>
@@ -281,17 +235,6 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 								placeholder={config?.minecraft?.launch?.height || "<auto>"} />
 						</div>
 					</InputGroup>
-				</div>
-				<div className="children-zx1" style={{ display: "none" }}>
-					<JavaSelector
-						title="Путь к java"
-						items={fakeJavas}
-						selectedIndex={index}
-						onChange={(e) => {
-							console.debug("jvs >>", e);
-							setIndex(e);
-						}}
-					/>
 				</div>
 				<div className="children-zx1">
 					<PathInput
