@@ -8,7 +8,7 @@ import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
 
 
-const CubeContent = memo(() => {
+const CubeContent = () => {
 
 	const { hash, hasInstallations } = useGlobal(global => {
 		const versionHash = selectCurrentVersionHash(global);
@@ -31,6 +31,6 @@ const CubeContent = memo(() => {
 			</div>
 		)
 	);
-});
+};
 
-export default CubeContent;
+export default memo(CubeContent);
