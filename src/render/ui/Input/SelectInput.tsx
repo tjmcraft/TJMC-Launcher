@@ -3,10 +3,10 @@ import { createElement, FC, memo, ReactNode, useCallback, useRef, useState } fro
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
-import Menu from "../Menu";
 import { InputGroup } from "UI/Input";
+import Menu from "../Menu";
 
-import inputStyle from "CSS/input.module.css";
+import inputStyle from "./input.module.css";
 
 type OwnProps = {
 	id?: string;

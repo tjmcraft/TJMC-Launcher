@@ -2,7 +2,7 @@ import { createElement, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 
-import style from "CSS/input.module.css";
+import style from "./input.module.css";
 
 const PasswordInput = ({
 	ref, id, className, name,

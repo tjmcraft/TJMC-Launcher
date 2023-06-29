@@ -1,6 +1,6 @@
 import { createElement, memo } from "react";
 
-import style from "CSS/input.module.css";
+import style from "./input.module.css";
 
 const InputGroup = ({
 	htmlFor,

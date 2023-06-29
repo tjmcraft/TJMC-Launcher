@@ -4,8 +4,8 @@ import { randomString } from "Util/Random";
 import { selectFile, selectFolder } from "Model/Actions/Host";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 
-import style from "CSS/input.module.css";
 import InputGroup from "./InputGroup";
+import style from "./input.module.css";
 
 /**
  * PathInput Component

@@ -3,8 +3,7 @@ import { createElement, useRef, memo } from "react";
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
-import style from "CSS/input.module.css";
-
+import style from "./input.module.css";
 
 const TextInput = ({
 	ref = undefined,
