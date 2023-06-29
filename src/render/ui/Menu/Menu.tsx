@@ -5,7 +5,6 @@ import useShowTransition from "Hooks/useShowTransition";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 
-
 type OwnProps = {
 	full?: boolean;
 	isOpen: boolean;
@@ -20,7 +19,7 @@ type OwnProps = {
 	children: React.ReactNode;
 };
 
-const Menu = forwardRef<HTMLDivElement, OwnProps>( ( {
+const Menu = forwardRef<HTMLDivElement, OwnProps>(({
 	full = false,
 	isOpen = false,
 	children,
@@ -30,28 +29,28 @@ const Menu = forwardRef<HTMLDivElement, OwnProps>( ( {
 	style = undefined,
 	positionX = undefined, positionY = undefined,
 	transformOriginX = undefined, transformOriginY = undefined,
-}, ref ) => {
+}, ref) => {
 
-	let menuRef = useRef<HTMLDivElement>( null );
-	if ( ref ) {
+	let menuRef = useRef<HTMLDivElement>(null);
+	if (ref) {
 		// @ts-ignore
 		menuRef = ref;
 	}
 	const backdropContainerRef = containerRef || menuRef;
 
-	const { transitionClassNames } = useShowTransition( isOpen, onCloseEnd, false, undefined, false, undefined, 200 );
+	const { transitionClassNames } = useShowTransition(isOpen, onCloseEnd, false, undefined, false, undefined, 200);
 
-	useEffect( () => ( isOpen ? captureEscKeyListener( onClose ) : undefined ), [isOpen, onClose] );
+	useEffect(() => (isOpen ? captureEscKeyListener(onClose) : undefined), [isOpen, onClose]);
 
-	useVirtualBackdrop( isOpen, backdropContainerRef, onClose );
+	useVirtualBackdrop(isOpen, backdropContainerRef, onClose);
 
-	const handleClose = ( e ) => { e.stopPropagation(); onClose(); };
+	const handleClose = (e) => { e.stopPropagation(); onClose(); };
 
 	const transformOriginYStyle = transformOriginY !== undefined ? `${transformOriginY}px` : undefined;
 	const transformOriginXStyle = transformOriginX !== undefined ? `${transformOriginX}px` : undefined;
 
 	return (
-		<div className={buildClassName( "menu", full && "full" )} style={style}>
+		<div className={buildClassName("menu", full && "full")} style={style}>
 			<div ref={menuRef}
 				className={buildClassName(
 					positionX, positionY,
@@ -66,6 +65,6 @@ const Menu = forwardRef<HTMLDivElement, OwnProps>( ( {
 			</div>
 		</div>
 	);
-} );
+});
 
-export default memo( Menu );
+export default memo(Menu);

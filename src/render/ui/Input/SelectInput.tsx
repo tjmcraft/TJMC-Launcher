@@ -4,7 +4,7 @@ import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
 import { InputGroup } from "UI/Input";
-import Menu from "../Menu";
+import Menu from "../Menu/Menu";
 
 import inputStyle from "./input.module.css";
 

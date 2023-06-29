@@ -11,9 +11,8 @@ import useGlobalProgress from "Hooks/useGlobalProgress";
 
 import PendingProgress from "UI/PendingProgress";
 import RoundProgress from "UI/RoundProgress";
-import Menu from "UI/Menu";
-import MenuItem from "UI/MenuItem";
 import Portal from "UI/Portal";
+import { Menu, MenuItem } from "UI/Menu";
 
 
 const StatusContainer = ( { hash, isProcessing } ) => {

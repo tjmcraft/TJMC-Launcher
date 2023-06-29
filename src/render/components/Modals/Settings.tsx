@@ -18,7 +18,6 @@ import { Modal } from "UI/Modal";
 import Button from "UI/Button";
 import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/RangeSlider";
-import MenuItem from "UI/MenuItem";
 
 import iconImage from "IMG/icon.png";
 import style from "CSS/settings.module.css";
@@ -27,6 +26,7 @@ import SettingSwitch from "UI/SettingSwitch";
 import SettingButton from "UI/SettingButton";
 import SettingContainer from "UI/SettingContainer";
 import { InputGroup, PathInput, SelectInput } from "UI/Input";
+import { MenuItem } from "UI/Menu";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
