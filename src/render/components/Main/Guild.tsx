@@ -1,8 +1,8 @@
-import { createElement } from "react";
+import { createElement, memo } from "react";
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
-export const Guild = ({
+const Guild = ({
 	id = undefined,
 	type,
 	onClick = void 0,
@@ -26,3 +26,5 @@ export const Guild = ({
 		</div>
 	);
 };
+
+export default memo(Guild);

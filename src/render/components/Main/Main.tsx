@@ -6,9 +6,9 @@ import useGlobal from "Hooks/useGlobal";
 
 import Transition from "UI/Transition";
 import Route from "UI/Route";
-import { Guild } from "Components/Guild";
+import Guild from "./Guild";
+import CubeContainer from "./CubeContainer";
 import { SVG } from "UI/svg";
-import CubeContainer from "Components/Main/CubeContainer";
 
 
 const Main = () => {
