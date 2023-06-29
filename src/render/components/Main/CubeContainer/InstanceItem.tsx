@@ -1,4 +1,4 @@
-import { createElement, useCallback, memo } from "react";
+import { createElement, useCallback, memo, FC } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -7,7 +7,9 @@ import useGlobal from "Hooks/useGlobal";
 import { selectInstallation, selectInstance } from "Model/Selectors/installations";
 import { SVG } from "UI/svg";
 
-const InstanceItem = ({ instanceId }) => {
+const InstanceItem: FC<{
+	instanceId: string;
+}> = ({ instanceId }) => {
 	const { killInstance } = getDispatch();
 	const { hash, name } = useGlobal(global => {
 		const instance = selectInstance(global, instanceId);
