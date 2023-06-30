@@ -107,7 +107,7 @@ module.exports = {
 						loader: 'css-loader',
 						options: {
 							modules: {
-								localIdentName: isDev ? "[name]__[local]-[hash:base64:6]" : "[local]-[hash:base64:6]",
+								localIdentName: isDev ? "[name]__[local]" : "[local]-[hash:base64:6]",
 							}
 						}
 					}
@@ -135,7 +135,7 @@ module.exports = {
 
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: isDev ? '[name].css' : '[name].[contenthash].css',
+			filename: isDev ? '[name].[local].css' : '[name].[contenthash].css',
 			chunkFilename: '[name].[chunkhash].css',
 			ignoreOrder: true,
 		}),
