@@ -2,20 +2,6 @@ import { createElement } from "react";
 
 export function SVG(name) {
 	const SVGS = {
-		get dropdown_key() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 18, height: 18, className: 'button-1w5pas' },
-				<g fill="none" fill-rule="evenodd">
-					<path d="M0 0h18v18H0" />
-					<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
-					<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
-				</g>);
-		},
-		get add_plus() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, viewBox: '0 0 18 18' }, <polygon fill-rule="nonzero" fill="currentColor" points="15 10 10 10 10 15 8 15 8 10 3 10 3 8 8 8 8 3 10 3 10 8 15 8" />);
-		},
-		get settings_gear() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 20, height: 20, viewBox: '0 0 24 24' }, <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M19.738 10H22V14H19.739C19.498 14.931 19.1 15.798 18.565 16.564L20 18L18 20L16.565 18.564C15.797 19.099 14.932 19.498 14 19.738V22H10V19.738C9.069 19.498 8.203 19.099 7.436 18.564L6 20L4 18L5.436 16.564C4.901 15.799 4.502 14.932 4.262 14H2V10H4.262C4.502 9.068 4.9 8.202 5.436 7.436L4 6L6 4L7.436 5.436C8.202 4.9 9.068 4.502 10 4.262V2H14V4.261C14.932 4.502 15.797 4.9 16.565 5.435L18 3.999L20 5.999L18.564 7.436C19.099 8.202 19.498 9.069 19.738 10ZM12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" />);
-		},
 		get info_circle() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 96, height: 96, viewBox: '0 0 512 512', 'data-icon': 'info-circle' }, <path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm0-338c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z" />);
 		},
@@ -28,33 +14,14 @@ export function SVG(name) {
 		get success_circle() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 96, height: 96, viewBox: '0 0 512 512', 'data-icon': 'success-circle' }, <path fill="currentColor" d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z" />);
 		},
-		get progress_circle() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, viewBox: '0 0 48 48', 'data-icon': 'progress-circle' },
-				<g>
-					<circle r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="100" stroke-dashoffset="0" />
-					<circle id="bar" r="14" cx="24" cy="24" fill="transparent" stroke-dasharray="87.96459430051421" stroke-dashoffset="30px" />
-				</g>);
-		},
-		get cross() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 18, height: 18, viewBox: '0 0 24 24', 'data-icon': 'cross-icon' }, <path fill="currentColor" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z" />);
-		},
 		get compass() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 24 24' }, <path fill="currentColor" d="M12 10.9C11.39 10.9 10.9 11.39 10.9 12C10.9 12.61 11.39 13.1 12 13.1C12.61 13.1 13.1 12.61 13.1 12C13.1 11.39 12.61 10.9 12 10.9ZM12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM14.19 14.19L6 18L9.81 9.81L18 6L14.19 14.19Z" />);
-		},
-		get play_circle() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 512 512' }, <path fill="currentColor" d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z" />);
-		},
-		get user_circle() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 496 512' }, <path fill="currentColor" d="M248 104c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96zm0 144c-26.5 0-48-21.5-48-48s21.5-48 48-48 48 21.5 48 48-21.5 48-48 48zm0-240C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 448c-49.7 0-95.1-18.3-130.1-48.4 14.9-23 40.4-38.6 69.6-39.5 20.8 6.4 40.6 9.6 60.5 9.6s39.7-3.1 60.5-9.6c29.2 1 54.7 16.5 69.6 39.5-35 30.1-80.4 48.4-130.1 48.4zm162.7-84.1c-24.4-31.4-62.1-51.9-105.1-51.9-10.2 0-26 9.6-57.6 9.6-31.5 0-47.4-9.6-57.6-9.6-42.9 0-80.6 20.5-105.1 51.9C61.9 339.2 48 299.2 48 256c0-110.3 89.7-200 200-200s200 89.7 200 200c0 43.2-13.9 83.2-37.3 115.9z" />);
 		},
 		get home() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 576 512' }, <path fill="currentColor" d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z" />);
 		},
 		get news() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 576 512' }, <path fill="currentColor" d="M552 64H88c-13.255 0-24 10.745-24 24v8H24c-13.255 0-24 10.745-24 24v272c0 30.928 25.072 56 56 56h472c26.51 0 48-21.49 48-48V88c0-13.255-10.745-24-24-24zM56 400a8 8 0 0 1-8-8V144h16v248a8 8 0 0 1-8 8zm236-16H140c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12h152c6.627 0 12 5.373 12 12v8c0 6.627-5.373 12-12 12zm208 0H348c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12h152c6.627 0 12 5.373 12 12v8c0 6.627-5.373 12-12 12zm-208-96H140c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12h152c6.627 0 12 5.373 12 12v8c0 6.627-5.373 12-12 12zm208 0H348c-6.627 0-12-5.373-12-12v-8c0-6.627 5.373-12 12-12h152c6.627 0 12 5.373 12 12v8c0 6.627-5.373 12-12 12zm0-96H140c-6.627 0-12-5.373-12-12v-40c0-6.627 5.373-12 12-12h360c6.627 0 12 5.373 12 12v40c0 6.627-5.373 12-12 12z" />);
-		},
-		get virus() {
-			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 512 512' }, <path fill="currentColor" d="M483.55,227.55H462c-50.68,0-76.07-61.27-40.23-97.11L437,115.19A28.44,28.44,0,0,0,396.8,75L381.56,90.22c-35.84,35.83-97.11,10.45-97.11-40.23V28.44a28.45,28.45,0,0,0-56.9,0V50c0,50.68-61.27,76.06-97.11,40.23L115.2,75A28.44,28.44,0,0,0,75,115.19l15.25,15.25c35.84,35.84,10.45,97.11-40.23,97.11H28.45a28.45,28.45,0,1,0,0,56.89H50c50.68,0,76.07,61.28,40.23,97.12L75,396.8A28.45,28.45,0,0,0,115.2,437l15.24-15.25c35.84-35.84,97.11-10.45,97.11,40.23v21.54a28.45,28.45,0,0,0,56.9,0V462c0-50.68,61.27-76.07,97.11-40.23L396.8,437A28.45,28.45,0,0,0,437,396.8l-15.25-15.24c-35.84-35.84-10.45-97.12,40.23-97.12h21.54a28.45,28.45,0,1,0,0-56.89ZM224,272a48,48,0,1,1,48-48A48,48,0,0,1,224,272Zm80,56a24,24,0,1,1,24-24A24,24,0,0,1,304,328Z" />);
 		},
 		get map() {
 			return createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 32, height: 32, viewBox: '0 0 576 512' }, <path fill="currentColor" d="M288 0c-69.59 0-126 56.41-126 126 0 56.26 82.35 158.8 113.9 196.02 6.39 7.54 17.82 7.54 24.2 0C331.65 284.8 414 182.26 414 126 414 56.41 357.59 0 288 0zm0 168c-23.2 0-42-18.8-42-42s18.8-42 42-42 42 18.8 42 42-18.8 42-42 42zM20.12 215.95A32.006 32.006 0 0 0 0 245.66v250.32c0 11.32 11.43 19.06 21.94 14.86L160 448V214.92c-8.84-15.98-16.07-31.54-21.25-46.42L20.12 215.95zM288 359.67c-14.07 0-27.38-6.18-36.51-16.96-19.66-23.2-40.57-49.62-59.49-76.72v182l192 64V266c-18.92 27.09-39.82 53.52-59.49 76.72-9.13 10.77-22.44 16.95-36.51 16.95zm266.06-198.51L416 224v288l139.88-55.95A31.996 31.996 0 0 0 576 426.34V176.02c0-11.32-11.43-19.06-21.94-14.86z" />);
@@ -64,12 +31,6 @@ export function SVG(name) {
 		},
 	};
 	switch (name) {
-		case 'dropdown-key':
-			return SVGS.dropdown_key;
-		case 'add-plus':
-			return SVGS.add_plus;
-		case 'settings-gear':
-			return SVGS.settings_gear;
 		case 'info-circle':
 			return SVGS.info_circle;
 		case 'error-circle':
@@ -78,22 +39,12 @@ export function SVG(name) {
 			return SVGS.warn_circle;
 		case 'success-circle':
 			return SVGS.success_circle;
-		case 'cross':
-			return SVGS.cross;
-		case 'progress-circle':
-			return SVGS.progress_circle;
 		case 'compass':
 			return SVGS.compass;
-		case 'play-circle':
-			return SVGS.play_circle;
-		case 'user-circle':
-			return SVGS.user_circle;
 		case 'home':
 			return SVGS.home;
 		case 'news':
 			return SVGS.news;
-		case 'virus':
-			return SVGS.virus;
 		case 'map':
 			return SVGS.map;
 		case 'cube':
