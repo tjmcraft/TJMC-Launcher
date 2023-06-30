@@ -7,7 +7,7 @@ import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "UI/Tooltip";
 
-const UserPanel = memo(() => {
+export const UserPanel = memo(() => {
 	const { openVersionChooserModal, openSettingsModal } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 

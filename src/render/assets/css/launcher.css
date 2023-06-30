@@ -896,18 +896,17 @@ body {
     overflow: hidden overlay;
     background: var(--background-secondary);
 }
-
-.sidebar-main > .container-3Wc7 > .scroller > .content {
+ .scroller > .content {
     position: relative;
     /*height: 100%;*/
 }
 
-.sidebar-main > .container-3Wc7 > .scroller .fp {
+ .scroller .fp {
     height: 90%;
     line-height: normal;
     font-size: 1.2em;
 }
-.sidebar-main > .container-3Wc7 > .scroller + .scroller .header-w {
+ .scroller + .scroller .header-w {
     padding: 4px 16px 4px 18px;
     height: 28px;
     position: sticky;
@@ -916,26 +915,25 @@ body {
     margin-bottom: 4px;
     z-index: 2;
 }
-.sidebar-main > .container-3Wc7 .header-w {
+.scroller .header-w {
     z-index: 1;
     display: flex;
     align-items: center;
     padding: 18px 18px 4px;
     height: 40px;
     color: var(--interactive-normal);
-    background-color: var(--background-secondary);
 }
 
-.sidebar-main > .container-3Wc7 .header-w:hover {
+.scroller .header-w:hover {
     color: var(--interactive-hover);
 }
 
-.sidebar-main > .container-3Wc7 .header-w span {
+.scroller .header-w span {
     flex: 1;
     font-weight: 600;
 }
 
-.sidebar-main > .container-3Wc7 > .scroller + .scroller .navItem {
+.scroller + .scroller .navItem {
     margin-bottom: 1px;
     margin-left: 8px;
     margin-right: 8px;
@@ -978,6 +976,29 @@ body {
     min-width: 0;
     min-height: 0;
     flex: 1 1 auto;
+}
+
+.container > .leftColumn {
+    display: flex;
+    width: 300px;
+    max-width: 350px;
+    flex: 0 0 auto;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    background-color: var(--background-tertiary);
+}
+.container > .leftColumn .scroller {
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 4px;
+    overflow: hidden overlay;
+}
+.container > .leftColumn .scroller .header-w {
+    position: sticky;
+    top: 0;
+    padding: 4px 18px;
+    background-color: var(--background-tertiary);
 }
 
 .guilds {
@@ -1339,6 +1360,7 @@ i {
 }
 
 .container-f .header {
+    background-color: var(--background-secondary);
     box-shadow: 0 0px 5px 0px var(--color-shadow);
     position: relative;
     font-weight: 500;
@@ -2083,12 +2105,13 @@ a:hover {
 }
 .categoryItem {
     color: var(--header-secondary);
-    margin-left: 8px;
+    margin: 0 8px;
     box-sizing: border-box;
     display: block;
     padding: 1px 0;
     border-radius: 4px;
     transition: none;
+    margin-bottom: 1px;
 }
 .categoryItem:hover {
     color: var(--interactive-hover);

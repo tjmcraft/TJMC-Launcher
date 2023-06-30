@@ -1,29 +1,42 @@
 import { createElement, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 
 import Transition from "UI/Transition";
 import Route from "UI/Route";
-import Guild from "./Guild";
+
 import CubeContainer from "./CubeContainer";
 import { SVG } from "UI/svg";
+import CubeSidebar from "./CubeContainer/CubeSidebar";
+
 
 
 const Main = () => {
 
-	const { selectMainScreen, openMapModal } = getDispatch();
 	const currentScreen = useGlobal(global => global.currentMainScreen);
+	currentScreen && 1;
 
 	return (
 		<div className="container">
-			<div className="guilds">
-				<div className={buildClassName("scroller", "no-scrollbar")}>
-					<Guild type="item" svg={SVG('home')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
-					<Guild type="separator" />
-					<Guild type="item" svg={SVG('map')} onClick={() => openMapModal()} />
+			<div className="leftColumn">
+				<div className={buildClassName("discover", "no-scrollbar")}>
+					<h2 className={buildClassName('headerDiscover', 'size24')}>{"Главная"}</h2>
+					<div className={buildClassName('categoryItem', "selected")}>
+						<div className="innerItem">
+							<div className="avatar">{SVG('compass')}</div>
+							<div className="content">{"Main"}</div>
+						</div>
+					</div>
+					<div className={buildClassName('categoryItem', "")}>
+						<div className="innerItem">
+							<div className="avatar">{SVG('map')}</div>
+							<div className="content">{"Map"}</div>
+						</div>
+					</div>
 				</div>
+				<div className="separator" />
+				<CubeSidebar />
 			</div>
 			<Route path="cube"><CubeContainer /></Route>
 		</div>
