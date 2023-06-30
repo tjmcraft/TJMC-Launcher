@@ -5,7 +5,6 @@ import remarkGfm from "remark-gfm";
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from 'Store/Global';
-import { SVG } from 'UI/svg';
 
 import { Modal } from 'UI/Modal';
 
@@ -24,7 +23,7 @@ const Header = (({ title, date }) => {
 					{new Date(date).toLocaleString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 				</div>
 			</div>
-			<div className="button" onClick={onClose}>{SVG('cross')}</div>
+			<div className="button" onClick={onClose}><i className="icon-close"></i></div>
 		</div>
 	);
 });

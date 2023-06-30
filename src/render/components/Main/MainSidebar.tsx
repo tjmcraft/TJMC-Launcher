@@ -3,7 +3,6 @@ import { createElement, memo, useRef } from "react";
 import { getDispatch } from "Store/Global";
 import { selectCurrentUser } from "Model/Selectors/user";
 
-import { SVG } from "UI/svg";
 import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "UI/Tooltip";
@@ -34,9 +33,9 @@ const UserPanel = memo(() => {
 					<div className="title">{user.realname || user.username}</div>
 					<div className="subtitle">{`#${user.discriminator}`}</div>
 				</div>
-				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}>{SVG('add-plus')}</div>
+				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}><i className="icon-add"></i></div>
 				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
-				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}>{SVG('settings-gear')}</div>
+				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}><i className="icon-settings"></i></div>
 				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
 		</div>

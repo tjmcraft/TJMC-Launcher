@@ -1225,6 +1225,12 @@ body {
     padding: 2px;
 }
 
+i {
+    font-size: 18px;
+    line-height: 18px !important;
+    font-weight: 600 !important;
+}
+
 .bb {
     flex-grow: 1;
 }

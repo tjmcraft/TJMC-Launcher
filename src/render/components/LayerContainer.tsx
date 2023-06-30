@@ -5,7 +5,6 @@ import { getDispatch, getState } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import useShowTransition from "Hooks/useShowTransition";
 import captureEscKeyListener from "Util/captureEscKeyListener";
-import { SVG } from "UI/svg";
 
 import Settings from "Components/Modals/Settings";
 import VersionChooser from "Components/Modals/VersionChooser";
@@ -59,7 +58,7 @@ const ModalLayer = ({ isShown, children }) => {
 	const createToolsContainer = (closeModal = () => { }) => {
 		return (
 			<div className={buildClassName(style.tools, "frame-fix")}>
-				<div className={style.closeButton} onClick={closeModal}>{SVG("cross")}</div>
+				<div className={style.closeButton} onClick={closeModal}><i className="icon-close"></i></div>
 				<div className={style.keyCode}>{"ESC"}</div>
 			</div>
 		);
