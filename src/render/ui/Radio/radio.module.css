@@ -1,64 +1,99 @@
 .radioGroup {
-    display: flex;
-    flex-direction: column;
-    /*gap: .5em;*/
+  display: flex;
+  flex-direction: column;
+  /*gap: .5em;*/
 }
 .radioGroup.vertical {
-    flex-direction: column;
+  flex-direction: column;
 }
 .radioGroup.horizontal {
-    flex-direction: row;
+  flex-direction: row;
 }
 .radioGroup.vertical > .item {
-    margin-bottom: .5rem;
-    flex: 1;
+  margin-bottom: 0.5rem;
+  flex: 1;
 }
 .radioGroup.horizontal > .item {
-    margin-right: .5rem;
-    flex: 1 1 auto;
+  margin-right: 0.5rem;
+  flex: 1 1 auto;
 }
 .radioGroup.vertical > .item:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 .radioGroup.horizontal > .item:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 .radioGroup > .item {
-    position: relative;
-    color: var(--interactive-normal);
-    cursor: pointer;
+  position: relative;
+  color: var(--interactive-normal);
+  cursor: pointer;
 }
-.radioGroup > .item[aria-checked=true] {
-    color: var(--interactive-active) !important;
+.radioGroup > .item[aria-checked="true"] {
+  color: var(--interactive-active) !important;
 }
 .radioGroup > .item:hover {
-    color: var(--interactive-hover);
+  color: var(--interactive-hover);
 }
-.radioGroup > .item[aria-checked=true] > .radioBar {
-    background: var(--background-secondary-alt) !important;
+.radioGroup > .item[aria-checked="true"] > .radioBar {
+  background: var(--background-secondary-alt) !important;
 }
 .radioGroup > .item > .radioBar {
-    display: flex;
-    align-items: center;
-    border-radius: 5px;
-    background: var(--background-secondary);
-    padding: 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  background: var(--background-secondary);
+  padding: 10px;
 }
 :global(:root.more-border) .radioGroup > .item > .radioBar {
-    border: 1px solid var(--border-color-1);
+  border: 1px solid var(--border-color-1);
 }
 .radioGroup > .item > .radioBar:hover {
-    background: var(--background-modifier-hover);
+  background: var(--background-modifier-hover);
 }
 .radioGroup > .item > .radioBar > .radio {
-    display: flex;
-    width: 24px;
-    height: 24px;
+  display: flex;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
+  position: relative;
+}
+.radioBar > .radio::before,
+.radioBar > .radio::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+.radioGroup > .item > .radioBar > .radio::before {
+  border: 2px solid var(--interactive-normal);
+  border-radius: 50%;
+  /* background-color: var(--background-secondary); */
+  opacity: 1;
+  transition: border-color 0.1s ease, opacity 0.1s ease;
+}
+.radioGroup > .item > .radioBar > .radio::after {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  background: var(--brand-color);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+.radioGroup > .item > .radioBar > .radio.checked::before {
+  border: 2px solid var(--interactive-active);
+}
+.radioGroup > .item > .radioBar > .radio.checked::after {
+  opacity: 1;
 }
 .radioGroup > .item > .radioBar > .info {
-    width: 100%;
-    margin: 0 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  width: 100%;
+  margin: 0 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
