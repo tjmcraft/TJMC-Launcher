@@ -14,7 +14,7 @@ stateStore.addReducer("init", () => {
 	return Object.assign({}, INITIAL_STATE);
 });
 
-export const getState = stateStore.getState;
+export const getState = (selector = e => e) => stateStore.getState(selector);
 export const setState = stateStore.setState;
 export const addReducer = stateStore.addReducer;
 export const addCallback = stateStore.addCallback;

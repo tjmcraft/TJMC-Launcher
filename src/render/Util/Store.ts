@@ -17,7 +17,7 @@ type ActionHandler = (
   payload: any,
 ) => GlobalState | void | Promise<void>;
 
-type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => any;
+type MapStateToProps<OwnProps = AnyLiteral> = (global: GlobalState, ownProps?: OwnProps) => Partial<GlobalState>;
 
 export class StateStore {
 
@@ -41,7 +41,7 @@ export class StateStore {
 		}
 	};
 
-	getState = (selector: MapStateToProps<any> = (state) => (state)) => selector(this.currentState) ?? undefined;
+	getState = <T extends MapStateToProps>(selector: T): ReturnType<T> => selector(this.currentState) as ReturnType<T>;
 
 
 	private updateContainers = (currentState) => {
@@ -109,8 +109,8 @@ export class StateStore {
 
 	getDispatch = () => this.actions;
 
-	withState = <OwnProps>(
-		selector: MapStateToProps<OwnProps> = () => ({}),
+	withState = (
+		selector: MapStateToProps,
 		debug?: any
 	) => {
 		return (callback: Function) => {
@@ -201,7 +201,7 @@ export const StoreCaching = (store: StateStore, initialState: {}, cache_key: str
 		if (!isCaching) {
 			return;
 		}
-		const global = store.getState();
+		const global = store.getState(e => e);
 		const reducedGlobal = {
 			...INITIAL_STATE,
 			...pick(global, [

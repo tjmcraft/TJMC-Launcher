@@ -132,7 +132,7 @@ addReducer("openWhatsNewModal", (global, _actions, _update) => {
 		small: true,
 		closeButton: false,
 	});
-	global = getState();
+	global = getState(e => e);
 	global = {
 		...global,
 		lastAppVersionId: APP_VERSION,
