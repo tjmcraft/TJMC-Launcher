@@ -11,7 +11,6 @@ import { SVG } from "UI/svg";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import UserIcon from "./UserIcon";
-import { UserPanel } from "./MainSidebar";
 
 import { getDispatch } from "Store/Global";
 
@@ -48,7 +47,6 @@ const Main = () => {
 				</div>
 				<div className="separator" />
 				<CubeSidebar />
-				<UserPanel />
 			</div>
 			<div className={buildClassName("middleColumn", "content")}>
 				<Route path="cube">
