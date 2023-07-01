@@ -6,9 +6,11 @@ import useGlobal from "Hooks/useGlobal";
 import Transition from "UI/Transition";
 import Route from "UI/Route";
 
-import CubeContainer from "./CubeContainer";
+
 import { SVG } from "UI/svg";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
+import CubeContent from "./CubeContainer/CubeContent";
+import UserIcon from "./UserIcon";
 
 
 
@@ -21,7 +23,10 @@ const Main = () => {
 		<div className="container">
 			<div className={buildClassName("leftColumn", "sidebar")}>
 				<div className={buildClassName("discover", "no-scrollbar")}>
-					<h2 className={buildClassName('headerDiscover', 'size24')}>{"Главная"}</h2>
+					<div className="headerDiscover">
+						<h2 className="size24">{"Главная"}</h2>
+						<UserIcon />
+					</div>
 					<div className={buildClassName('categoryItem', "selected")}>
 						<div className="innerItem">
 							<div className="avatar">{SVG('compass')}</div>
@@ -38,7 +43,11 @@ const Main = () => {
 				<div className="separator" />
 				<CubeSidebar />
 			</div>
-			<Route path="cube"><CubeContainer /></Route>
+			<div className={buildClassName("middleColumn", "content")}>
+				<Route path="cube">
+					<CubeContent />
+				</Route>
+			</div>
 		</div>
 	);
 };

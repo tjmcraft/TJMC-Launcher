@@ -839,7 +839,7 @@ body {
     background-color: var(--background-secondary);
 }
 
-:root:not(.platform-web) .sidebar-main {
+:root:not(.platform-web) .content {
     overflow: hidden;
     border-radius: 8px 0 0;
 }
@@ -2103,7 +2103,12 @@ a:hover {
     margin-top: 8px;
     position: relative;
 }
-.headerDiscover {
+.discover .headerDiscover {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: normal;
+    justify-content: space-between;
     margin: 16px 0 16px 16px;
     font-weight: 700;
 }
