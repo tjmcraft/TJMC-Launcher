@@ -839,7 +839,7 @@ body {
     background-color: var(--background-secondary);
 }
 
-:root:not(.platform-web) .content {
+:root:not(.platform-web) .middleColumn.content {
     overflow: hidden;
     border-radius: 8px 0 0;
 }
@@ -954,7 +954,7 @@ body {
 
 .container {
     position: relative;
-    width: 100%;
+    width: auto;
     height: 100%;
     overflow: hidden;
     display: flex;
@@ -1260,7 +1260,6 @@ i {
     width: 32px;
     height: 32px;
     position: relative;
-    margin-right: 8px;
     overflow: hidden;
     flex-shrink: 0;
     transition: all 0.2s;
@@ -1282,6 +1281,10 @@ i {
 .avatar:hover {
     /*filter: brightness(0.7);*/
     cursor: pointer;
+}
+
+.avatar~.nameTag {
+    margin-left: 8px;
 }
 
 .nameTag {
@@ -2109,7 +2112,7 @@ a:hover {
     flex-wrap: nowrap;
     align-items: normal;
     justify-content: space-between;
-    margin: 16px 0 16px 16px;
+    margin: 16px;
     font-weight: 700;
 }
 .categoryItem {

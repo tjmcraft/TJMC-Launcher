@@ -14,8 +14,8 @@ type OwnProps = {
 	positionX?: 'left' | 'right';
 	positionY?: 'top' | 'bottom';
 	containerRef?: RefObject<HTMLElement>;
-	onCloseEnd?: () => void;
-	onClose: () => void;
+	onCloseEnd?: AnyToVoidFunction;
+	onClose?: AnyToVoidFunction;
 	children: React.ReactNode;
 };
 

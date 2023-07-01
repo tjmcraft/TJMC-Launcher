@@ -96,14 +96,19 @@ addReducer("alert", (_global, _actions, update) => {
 	});
 });
 
-addReducer("openSettingsModal", (_global, _actions, update) => {
+addReducer("openSettingsModal", (global, _actions, update) => {
 	const { tab } = update || {};
+	global = getState(e => e);
+	global = {
+		...global,
+		currentSettingsScreen: tab,
+	};
+	setState(global);
 	void addModal({
 		layer: "settings",
 		label: "settings",
 		closeButton: true,
 		allowOutsideClick: true,
-		tab,
 	});
 });
 

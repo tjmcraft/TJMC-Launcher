@@ -11,13 +11,17 @@ import { SVG } from "UI/svg";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import UserIcon from "./UserIcon";
+import { UserPanel } from "./MainSidebar";
+
+import { getDispatch } from "Store/Global";
 
 
 
 const Main = () => {
-
+	const { openSettingsModal } = getDispatch();
 	const currentScreen = useGlobal(global => global.currentMainScreen);
 	currentScreen && 1;
+
 
 	return (
 		<div className="container">
@@ -25,7 +29,9 @@ const Main = () => {
 				<div className={buildClassName("discover", "no-scrollbar")}>
 					<div className="headerDiscover">
 						<h2 className="size24">{"Главная"}</h2>
-						<UserIcon />
+						<div className="container">
+							<UserIcon onClick={() => openSettingsModal({ tab: 'my-account' })} />
+						</div>
 					</div>
 					<div className={buildClassName('categoryItem', "selected")}>
 						<div className="innerItem">
@@ -42,6 +48,7 @@ const Main = () => {
 				</div>
 				<div className="separator" />
 				<CubeSidebar />
+				<UserPanel />
 			</div>
 			<div className={buildClassName("middleColumn", "content")}>
 				<Route path="cube">
