@@ -2099,19 +2099,22 @@ a:hover {
 
 
 /* === Home Section === */
+.discover {
+    margin-top: 8px;
+    position: relative;
+}
 .headerDiscover {
     margin: 16px 0 16px 16px;
     font-weight: 700;
 }
 .categoryItem {
     color: var(--header-secondary);
-    margin: 0 8px;
+    margin: 1px 8px;
     box-sizing: border-box;
     display: block;
     padding: 1px 0;
     border-radius: 4px;
     transition: none;
-    margin-bottom: 1px;
 }
 .categoryItem:hover {
     color: var(--interactive-hover);

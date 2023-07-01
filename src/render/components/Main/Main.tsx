@@ -19,7 +19,7 @@ const Main = () => {
 
 	return (
 		<div className="container">
-			<div className="leftColumn">
+			<div className={buildClassName("leftColumn", "sidebar")}>
 				<div className={buildClassName("discover", "no-scrollbar")}>
 					<h2 className={buildClassName('headerDiscover', 'size24')}>{"Главная"}</h2>
 					<div className={buildClassName('categoryItem', "selected")}>
