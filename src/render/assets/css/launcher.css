@@ -311,7 +311,7 @@ button:hover {
 }
 
 button:active {
-    background-color: #3A3A3A;
+    background-color: var(--background-modifier-active);
 }
 
 button>.content {/* margin: 0 auto; */white-space: nowrap;text-overflow: ellipsis;overflow: hidden;outline: 0;}
@@ -2146,7 +2146,7 @@ a:hover {
     color: #fff;
 }
 .categoryItem.selected .innerItem{
-    background: var(--brand-color);
+    background: var(--background-modifier-selected);
 }
 .categoryItem h2 {
     line-height: 1;

@@ -15,7 +15,7 @@ const UserIcon = forwardRef<HTMLDivElement,any>((props, ref) => {
 		) : (
 			<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`} />
 		)}
-	</div>
+		</div>
 	);
 });
 

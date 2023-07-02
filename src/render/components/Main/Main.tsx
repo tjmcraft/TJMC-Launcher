@@ -17,7 +17,7 @@ import { getDispatch } from "Store/Global";
 
 
 const Main = () => {
-	const { openSettingsModal } = getDispatch();
+	const { openSettingsModal, openMapModal } = getDispatch();
 	const currentScreen = useGlobal(global => global.currentMainScreen);
 	currentScreen && 1;
 
@@ -32,14 +32,8 @@ const Main = () => {
 							<UserIcon onClick={() => openSettingsModal({ tab: 'my-account' })} />
 						</div>
 					</div>
-					<div className={buildClassName('categoryItem', "selected")}>
-						<div className="innerItem">
-							<div className="avatar">{SVG('compass')}</div>
-							<div className="content">{"Main"}</div>
-						</div>
-					</div>
 					<div className={buildClassName('categoryItem', "")}>
-						<div className="innerItem">
+						<div className="innerItem" onClick={() => openMapModal()}>
 							<div className="avatar">{SVG('map')}</div>
 							<div className="content">{"Map"}</div>
 						</div>
