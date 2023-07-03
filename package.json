@@ -197,6 +197,7 @@
           "stable"
         ]
       },
+      "confinement": "classic",
       "grade": "stable",
       "plugs": [
         "desktop",

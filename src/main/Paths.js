@@ -5,7 +5,7 @@ const launcherDir = path.normalize(
 			process.env.APPDATA || (
 					process.platform == 'darwin' ?
 							process.env.HOME + '/Library/Preferences' :
-							process.env.HOME + "/usr/share"
+							process.env.HOME
 			)
 	) + '/.tjmc'
 ) || require('electron').remote.app.getPath('userData');
