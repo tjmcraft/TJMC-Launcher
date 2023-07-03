@@ -21,6 +21,11 @@ If you are looking to install **TJMC-Launcher** without setting up a development
 | :---: | :---: | :---: | :---: | :---: |
 | [x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.exe) | [x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.dmg) \| [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.dmg) | [x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.zip) \| [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.zip) | [x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-amd64.deb) \| [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.deb) | [x64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-x64.tar.gz) \| [arm64](https://github.com/tjmcraft/TJMC-Launcher/releases/latest/download/TJMC-Launcher-setup-arm64.tar.gz) |
 
+#### Warning ⚠️
+If you have any troubles with Linux Snap package **auth**, run this command in bash shell: \
+```sh
+sudo snap connect tjmc-launcher:password-manager-service
+```
 
 ## Developing 💻
 
