@@ -211,8 +211,7 @@
         "audio-playback",
         "pulseaudio",
         "opengl",
-        "password-manager-service",
-        "personal-files"
+        "password-manager-service"
       ]
     },
     "nsis": {
