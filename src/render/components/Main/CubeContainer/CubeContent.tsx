@@ -2,25 +2,23 @@ import { createElement, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
-import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
+import { selectInstallation } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
 
 
-const CubeContent = () => {
+const CubeContent = ({ hash }) => {
 
-	const { hash, hasInstallations } = useGlobal(global => {
-		const versionHash = selectCurrentVersionHash(global);
-		const version = selectInstallation(global, versionHash) || undefined;
+	const { hasInstallation } = useGlobal(global => {
+		const version = selectInstallation(global, hash) || undefined;
 		return {
-			hash: versionHash,
-			hasInstallations: version !== undefined,
+			hasInstallation: version !== undefined,
 		};
-	});
+	}, [hash]);
 
 	return (
-		hasInstallations ? (
+		hasInstallation ? (
 			<div className={buildClassName("main-content", "auto-s")}>
 				<CubeTopContainer hash={hash} />
 				<CubeMainContainer hash={hash} />

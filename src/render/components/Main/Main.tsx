@@ -1,26 +1,20 @@
 import { createElement, memo } from "react";
 
-import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
-
-import Transition from "UI/Transition";
-import Route from "UI/Route";
-
+import { getDispatch } from "Store/Global";
+import buildClassName from "Util/buildClassName";
 
 import { SVG } from "UI/svg";
+import Transition from "UI/Transition";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import UserIcon from "./UserIcon";
-
-import { getDispatch } from "Store/Global";
-
+import MapContainer from "./MapContainer";
 
 
 const Main = () => {
-	const { openSettingsModal, openMapModal } = getDispatch();
-	const currentScreen = useGlobal(global => global.currentMainScreen);
-	currentScreen && 1;
-
+	const { openSettingsModal, selectMainScreen } = getDispatch();
+	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
 		<div className="container">
@@ -32,8 +26,8 @@ const Main = () => {
 							<UserIcon onClick={() => openSettingsModal({ tab: 'my-account' })} />
 						</div>
 					</div>
-					<div className={buildClassName('categoryItem', "")}>
-						<div className="innerItem" onClick={() => openMapModal()}>
+					<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
+						<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
 							<div className="avatar">{SVG('map')}</div>
 							<div className="content">{"Map"}</div>
 						</div>
@@ -43,9 +37,12 @@ const Main = () => {
 				<CubeSidebar />
 			</div>
 			<div className={buildClassName("middleColumn", "content")}>
-				<Route path="cube">
-					<CubeContent />
-				</Route>
+				{currentMainScreen.type == 'installation' && (
+					<CubeContent hash={currentMainScreen.hash} />
+				)}
+				{currentMainScreen.type == 'map' && (
+					<MapContainer />
+				)}
 			</div>
 		</div>
 	);

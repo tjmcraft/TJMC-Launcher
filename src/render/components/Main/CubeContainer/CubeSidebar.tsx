@@ -13,7 +13,7 @@ const CubeSidebarItems = memo(() => {
 	const { moveInstallationPosition } = getDispatch();
 
 	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
-	const currentHash = useGlobal(selectCurrentVersionHash);
+	const { hash: currentHash } = useGlobal(global => ({ hash: selectCurrentVersionHash(global) }));
 
 	const [dragOverItem, setDragOverItem] = useState(undefined);
 

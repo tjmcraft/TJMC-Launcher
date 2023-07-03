@@ -30,7 +30,7 @@ export function updateInstallation(global, hash, update) {
 export function updateInstallations(global, update) {
 	const currentHash = selectCurrentVersionHash(global);
 	if (currentHash == undefined) {
-		global.version_hash = Object.keys(update.installations)[0];
+		// global.version_hash = Object.keys(update.installations)[0];
 	}
 	return {
 		...global,

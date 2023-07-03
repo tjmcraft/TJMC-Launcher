@@ -206,7 +206,6 @@ export const StoreCaching = (store: StateStore, initialState: {}, cache_key: str
 			...INITIAL_STATE,
 			...pick(global, [
 				"currentUserId",
-				"version_hash",
 				"theme",
 				"auth_state",
 				"settings",

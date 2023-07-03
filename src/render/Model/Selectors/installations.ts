@@ -1,6 +1,6 @@
 
 export function selectCurrentVersionHash(global) {
-	return global.version_hash || undefined;
+	return global.currentMainScreen?.hash || undefined;
 }
 
 export function selectInstallations(global) {

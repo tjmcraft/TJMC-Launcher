@@ -10,7 +10,6 @@ type Actions = Record<ActionNames, (payload?: ActionPayload, options?: ActionOpt
 
 export type GlobalState = {
 	currentUserId?: string;
-	version_hash?: string;
 	theme: string;
 	auth_state: string;
 	hostConnectionState: string;
@@ -43,7 +42,12 @@ export type GlobalState = {
 	}>;
 	configuration?: AnyLiteral;
 	releases: Array<any>;
-	currentMainScreen: string;
+	currentMainScreen: {
+		type: 'installation';
+		hash: string;
+	} | {
+		type: 'map';
+	};
 	currentSettingsScreen: string;
 	lastAppVersionId?: string;
 	update: {
@@ -59,7 +63,6 @@ export type GlobalState = {
 
 const INITIAL_STATE: GlobalState = {
 	currentUserId: undefined,
-	version_hash: undefined,
 	theme: "system",
 	auth_state: "pending",
 	hostConnectionState: "connectionStateBroken",
@@ -86,7 +89,9 @@ const INITIAL_STATE: GlobalState = {
 	modals: [],
 	configuration: undefined,
 	releases: [],
-	currentMainScreen: "cube",
+	currentMainScreen: {
+		type: 'map',
+	},
 	currentSettingsScreen: "my-account",
 	lastAppVersionId: undefined,
 	update: {
