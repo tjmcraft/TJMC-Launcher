@@ -145,15 +145,6 @@ addReducer("openWhatsNewModal", (global, _actions, _update) => {
 	setState(global);
 });
 
-addReducer("openMapModal", (_global, _actions, _update) => {
-	void addModal({
-		layer: "map-modal",
-		label: "map-modal",
-		closeButton: true,
-		allowOutsideClick: true,
-	});
-});
-
 addReducer("openShortcutsModal", (_global, _actions, _update) => {
 	void addModal({
 		layer: "shortcuts-modal",

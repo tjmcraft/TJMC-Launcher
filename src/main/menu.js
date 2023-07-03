@@ -46,11 +46,6 @@ const createMenu = async () => {
                     click: () => runActionInRenderer('openSettings')
                 },
                 {
-                    label: 'Map',
-                    accelerator: resolveHotKey('Mod+Shift+M'),
-                    click: () => runActionInRenderer('openMap')
-                },
-                {
                     label: 'Root Directory',
                     accelerator: resolveHotKey('Mod+Shift+D'),
                     click: () => openDir(ConfigManager.getMinecraftDirectory())

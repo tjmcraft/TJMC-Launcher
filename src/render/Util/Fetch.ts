@@ -49,7 +49,7 @@ async function fetchWT(url, user_options = {}) {
 		response = await fetch(url, options);
 		return await response.json();
 	} catch (err) {
-		console.error("Failed to fetch", url, "=>", err);
+		window.__debug_api__ && console.error("Failed to fetch", url, "=>", err);
 		return;
 	}
 }
