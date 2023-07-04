@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import buildClassName from "Util/buildClassName";
 
 type TransitionClasses = {
@@ -23,7 +23,7 @@ const useShowTransition = (
 	duration: number = 350,
 	debug_tag: string = undefined,
 ) => {
-	classes = Object.assign({}, DEFAULT_TRANSITION_CLASSES, classes);
+	classes = useMemo(() => Object.assign({}, DEFAULT_TRANSITION_CLASSES, classes), [classes]);
 	const [isClosed, setIsClosed] = useState(!isOpen);
 	const [hasOpenClassName, setHasOpenClassName] = useState(isOpen && noOpenTransition);
 
