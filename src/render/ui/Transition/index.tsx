@@ -1,11 +1,9 @@
 import usePrevious from "Hooks/usePrevious";
-import useShowTransition from "Hooks/useShowTransition";
 import buildClassName from "Util/buildClassName";
-import forceReflow from "Util/forceReflow";
-// import forceReflow from "Util/forceReflow";
-import { createElement, FC, ReactNode, useLayoutEffect, useRef } from "react";
+import { createElement, useRef } from "react";
 
 import "./Transition.css";
+import TransitionContainer from "UI/TransitionContainer";
 
 export type ChildrenFn = (isActive: boolean, isFrom: boolean, currentKey: number) => React.ReactNode;
 export type TransitionProps = {
@@ -15,7 +13,9 @@ export type TransitionProps = {
   children: React.ReactNode | ChildrenFn;
 };
 
-const Transition: FC<TransitionProps> = ({
+const TRANSITION_DURATION = 250;
+
+const Transition: React.FC<TransitionProps> = ({
   activeKey,
   renderCount,
   className,
@@ -33,24 +33,24 @@ const Transition: FC<TransitionProps> = ({
 
   rendersRef.current[activeKey] = children;
 
-  useLayoutEffect(() => {});
-
   const renders = rendersRef.current;
   const renderKeys = Object.keys(renderCount ? new Array(renderCount).fill(undefined) : renders).map(Number);
   const contents = renderKeys.map((key) => {
     const render = renders[key];
-    if (!render) {
-      return undefined;
-    }
-
+    if (!render) return undefined;
     return (
-      <TransitionElement key={key} isActive={key === activeKey} firstMount={renderKeys.length <= 1} className={"trans-" + key} >
+      <TransitionContainer key={key}
+        duration={TRANSITION_DURATION}
+        isShown={key === activeKey}
+        noOpenTransition={renderKeys.length <= 1}
+        className={buildClassName("TransitionElement", "trans-" + key)}
+      >
         {
           typeof render === 'function'
             ? render(key === activeKey, key === prevActiveKey, activeKey)
             : render
         }
-      </TransitionElement>
+      </TransitionContainer>
     );
   });
 
@@ -62,30 +62,3 @@ const Transition: FC<TransitionProps> = ({
 };
 
 export default Transition;
-
-const TRANSITION_DURATION = 250;
-
-const TransitionElement = ({ children, className, isActive, firstMount }: {
-  children: ReactNode;
-  className?: string;
-  isActive: boolean;
-  firstMount: boolean;
-}) => {
-
-  const ref = useRef();
-
-  const {
-		shouldRender,
-		transitionClassNames,
-	} = useShowTransition(
-		isActive, undefined, firstMount, undefined, false, { }, TRANSITION_DURATION, className
-    );
-
-  if (ref.current) forceReflow(ref.current);
-
-	return shouldRender && (
-		<div className={buildClassName("TransitionElement", transitionClassNames, className)} ref={ref}>
-			{children}
-		</div>
-	);
-};
