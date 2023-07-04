@@ -452,26 +452,6 @@ p {
 }
 
 
-/* =============== APP LAYERS =============== */
-
-.app-layer {
-    flex-direction: column;
-    transition: all 0.35s cubic-bezier(0.35, 1.4, 0.5, 1);
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.app-layer {
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.9);
-}
-
-
 /* =============== SideBar View =============== */
 
 .sidebarView {
@@ -768,8 +748,6 @@ body {
     position: relative;
     height: 100%;
     background-color: var(--background-tertiary);
-    display: flex;
-    flex-direction: column;
     z-index: 1;
 }
 

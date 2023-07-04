@@ -49,6 +49,7 @@ export type GlobalState = {
 		type: 'map';
 	};
 	currentSettingsScreen: string;
+	isSettingsOpen: boolean;
 	lastAppVersionId?: string;
 	update: {
 		popupLock: boolean;
@@ -93,6 +94,7 @@ const INITIAL_STATE: GlobalState = {
 		type: 'map',
 	},
 	currentSettingsScreen: "my-account",
+	isSettingsOpen: false,
 	lastAppVersionId: undefined,
 	update: {
 		status: "not-available",

@@ -13,7 +13,7 @@ import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/in
 addReducer("initHost", (_global, actions) => {
 	const withAuth = (fn = (...args) => args) => (...args) =>
 		getState(global => ["ready"].includes(global.auth_state)) ? fn(...args) : () => void 0;
-	const openSettings = () => actions.openSettingsModal();
+	const openSettings = () => actions.openSettings();
 	const openShortcuts = () => actions.openShortcutsModal();
 	const runCurrentInstallation = () => {
 		const hash = getState(selectCurrentVersionHash);

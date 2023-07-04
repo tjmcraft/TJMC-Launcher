@@ -96,20 +96,19 @@ addReducer("alert", (_global, _actions, update) => {
 	});
 });
 
-addReducer("openSettingsModal", (global, _actions, update) => {
+addReducer("openSettings", (global, _actions, update) => {
 	const { tab } = update || {};
-	global = getState(e => e);
-	global = {
+	return {
 		...global,
-		currentSettingsScreen: tab,
+		...(tab ? { currentSettingsScreen: tab } : {}),
+		isSettingsOpen: true,
 	};
-	setState(global);
-	void addModal({
-		layer: "settings",
-		label: "settings",
-		closeButton: true,
-		allowOutsideClick: true,
-	});
+});
+addReducer("closeSettings", (global, _actions, _update) => {
+	return {
+		...global,
+		isSettingsOpen: false,
+	};
 });
 
 addReducer("openVersionChooserModal", (_global, _actions, _update) => {

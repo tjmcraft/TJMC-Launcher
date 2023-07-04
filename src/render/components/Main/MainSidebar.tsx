@@ -8,7 +8,7 @@ import useGlobal from "Hooks/useGlobal";
 import Tooltip from "UI/Tooltip";
 
 export const UserPanel = memo(() => {
-	const { openVersionChooserModal, openSettingsModal } = getDispatch();
+	const { openVersionChooserModal, openSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 
 	const addVersionButton = useRef();
@@ -17,7 +17,7 @@ export const UserPanel = memo(() => {
 	if (!user) return null;
 
 	const onAddClick = () => openVersionChooserModal();
-	const onSettingsClick = () => openSettingsModal();
+	const onSettingsClick = () => openSettings();
 
 	return (
 		<div className="panel">

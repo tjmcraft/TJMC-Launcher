@@ -9,10 +9,12 @@ import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import UserIcon from "./UserIcon";
 import MapContainer from "./MapContainer";
+import Transition from "UI/Transition";
+import Settings from "./Settings";
 
 
 const Main = () => {
-	const { openSettingsModal, selectMainScreen } = getDispatch();
+	const { openSettings, selectMainScreen } = getDispatch();
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
@@ -22,7 +24,7 @@ const Main = () => {
 					<div className="headerDiscover">
 						<h2 className="size24">{"Главная"}</h2>
 						<div className="container">
-							<UserIcon onClick={() => openSettingsModal({ tab: 'my-account' })} />
+							<UserIcon onClick={() => openSettings({ tab: 'my-account' })} />
 						</div>
 					</div>
 					<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
@@ -48,9 +50,28 @@ const Main = () => {
 };
 
 const MainContainer = () => {
+
+	const isSettingsOpen = useGlobal(global => global.isSettingsOpen);
+
+	function renderContent() {
+		if (isSettingsOpen) {
+			return <Settings />;
+		}
+		return <Main />;
+	}
+
+	function getActiveKey() {
+		if (isSettingsOpen) return 1;
+		return 0;
+	}
+
 	return (
 		<div className="app-container">
-			<Main />
+			<Transition
+				activeKey={getActiveKey()}
+			>
+				{renderContent}
+			</Transition>
 			<div className="uploadArea" />
 		</div>
 	);
