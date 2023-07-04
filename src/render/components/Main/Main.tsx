@@ -5,7 +5,6 @@ import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 
 import { SVG } from "UI/svg";
-import Transition from "UI/Transition";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import UserIcon from "./UserIcon";
@@ -48,12 +47,12 @@ const Main = () => {
 	);
 };
 
-const MainContainer = ({ isShown }) => {
+const MainContainer = () => {
 	return (
-		<Transition className={"app-container"} isShown={isShown}>
+		<div className="app-container">
 			<Main />
 			<div className="uploadArea" />
-		</Transition>
+		</div>
 	);
 };
 

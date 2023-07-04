@@ -953,7 +953,7 @@ const Settings = (props) => {
 					</div>
 				</div>
 				<div className="content-region">
-					<div className="transitionWrap">
+					<div className="wrap">
 						<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
 							<ActiveTab current={currentSettingsScreen} />
 						</div>

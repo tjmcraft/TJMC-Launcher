@@ -8,7 +8,6 @@ import captureKeyboardListeners from "Util/captureKeyboard";
 
 import Button from "UI/Button";
 import { TextInput } from "UI/Input";
-import Transition from "UI/Transition";
 
 import style from "./auth.module.css";
 
@@ -97,11 +96,11 @@ const Authentication = () => {
 
 };
 
-const AuthContainer = ({ isShown }) => {
+const AuthContainer = () => {
 	return (
-		<Transition isShown={isShown} className={style.container}>
+		<div className={style.container}>
 			<Authentication />
-		</Transition>
+		</div>
 	);
 };
 

@@ -623,13 +623,13 @@ p {
     overflow: hidden;
 }
 
-.content-region > .transitionWrap {
+.content-region > .wrap {
     flex: 1;
     height: 100%;
     width: 100%;
 }
 
-.content-region > .transitionWrap > .content {
+.content-region > .wrap > .content {
     height: 100%;
     overflow: hidden scroll;
 }
@@ -760,24 +760,17 @@ body {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     z-index: auto;
+    width: 100%;
+    height: 100%;
 }
 
 .app-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    position: relative;
+    height: 100%;
     background-color: var(--background-tertiary);
     display: flex;
     flex-direction: column;
-    transition: transform 0.25s cubic-bezier(.65,-0.3,0.3,1.3), opacity 0.35s ease;
     z-index: 1;
-}
-
-.app-container:not(.open) {
-    transform: scale(0.93) translateZ(0px);
-    opacity: 0;
 }
 
 :root.platform-win .preloader,
@@ -1020,7 +1013,6 @@ body {
     flex: 1 1 auto;
     overflow: hidden scroll;
     user-select: none;
-    background-color: var(--background-tertiary);
     padding-top: 12px;
     padding-right: 0px;
 }

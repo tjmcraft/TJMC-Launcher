@@ -9,6 +9,7 @@ import LayerContainer from "Components/LayerContainer";
 import Preloader from "Components/Preloader";
 import Auth from "Components/Auth/Auth";
 import Main from "Components/Main/Main";
+import Transition from "UI/Transition";
 
 const App = () => {
 
@@ -16,15 +17,36 @@ const App = () => {
 	useConstructor(initHost);
 	useConstructor(initApi);
 
-	const isAuthReady = useGlobal(global => ["ready"].includes(global.auth_state));
+	const AuthState = useGlobal(global => global.auth_state);
+
+	function renderContent() {
+		switch (AuthState) {
+			case "ready":
+				return <Main />;
+			default:
+				return <Auth />
+		}
+	};
+
+	function getActiveKey() {
+		switch (AuthState) {
+			case "ready":
+				return 1;
+			default:
+				return 0;
+		}
+	}
 
 	return (
 		<Fragment>
 			<Frame />
 			<div className="app">
 				<Preloader />
-				<Auth isShown={!isAuthReady} />
-				<Main isShown={isAuthReady} />
+				<Transition
+					activeKey={getActiveKey()}
+				>
+					{renderContent}
+				</Transition>
 			</div>
 			<LayerContainer />
 		</Fragment>
