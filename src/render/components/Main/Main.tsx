@@ -20,6 +20,7 @@ const Main = () => {
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
+				<div className="r-box">
 				<div className={buildClassName("discover", "no-scrollbar")}>
 					<div className="headerDiscover">
 						<h2 className="size24">{"Главная"}</h2>
@@ -34,9 +35,8 @@ const Main = () => {
 						</div>
 					</div>
 				</div>
-
-					<CubeSidebar />
-
+				</div>
+				<CubeSidebar />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
 				{currentMainScreen.type == 'installation' && (
