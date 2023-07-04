@@ -12,16 +12,12 @@
   padding: 10px 0px;
 }
 
-.container > .middleColumn {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  flex-grow: 1;
-  overflow: hidden;
-}
-
 #version-selector .main-content {
   background: var(--background-primary);
+}
+
+#version-selector.container > .leftColumn {
+  gap: 0;
 }
 
 .middleHeader {

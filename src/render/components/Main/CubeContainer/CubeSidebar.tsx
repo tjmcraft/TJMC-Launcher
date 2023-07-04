@@ -56,12 +56,19 @@ const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
 	return (
-		<div className={buildClassName('scroller', 'thin-s')}>
-			<h2 className={buildClassName('header-w', 'container-df')}>
-				<span>{"Версии"}</span>
-				<div className={buildClassName("button", "small")} onClick={onClick}><i className="icon-add"></i></div>
-			</h2>
-			<CubeSidebarItems />
+		<div className={buildClassName("r-box", "installations")}>
+			<div className="header-w">
+				<span>
+					<i className="icon-forums"></i>
+					<span>Мои установки</span>
+				</span>
+				<button className="circle" onClick={onClick}>
+					<i className="icon-add"></i>
+				</button>
+			</div>
+			<div className={buildClassName('scroller', 'thin-s')}>
+				<CubeSidebarItems />
+			</div>
 		</div>
 	);
 });
@@ -92,16 +99,23 @@ const InstanceScroller = memo(() => {
 		});
 	}, [killAllInstances, alert]);
 	return instances.length > 0 && (
+		<div className={buildClassName("r-box", "instances")}>
 		<div className={buildClassName('scroller', 'thin-s')}>
-			<h2 className={buildClassName('header-w', 'container-df')}>
-				<span>{"Запущенные"}</span>
-				<div className={buildClassName("button", "small")} onClick={handleKillAll} title="Kill all instances"><i className="icon-close"></i></div>
+			<h2 className='header-w'>
+					<span>
+					<i className="icon-play"></i>
+					<span>Сейчас запущено</span>
+					</span>
+					<button className="circle" onClick={handleKillAll} title="Kill all instances">
+						<i className="icon-close"></i>
+					</button>
 			</h2>
 			{instances.map((instanceId) =>
 				<InstanceItem
 					key={instanceId}
 					instanceId={instanceId}
 				/>)}
+			</div>
 		</div>
 	);
 });

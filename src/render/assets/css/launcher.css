@@ -572,10 +572,13 @@ p {
     cursor: default;
 }
 
-.navItem .button {
+.navItem button {
     visibility: hidden;
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 12px !important;
 }
-.navItem:hover .button {
+.navItem:hover button {
     visibility: visible;
 }
 
@@ -810,11 +813,6 @@ body {
     background-color: var(--background-secondary);
 }
 
-:root:not(.platform-web) .middleColumn.content {
-    overflow: hidden;
-    border-radius: 8px 0 0;
-}
-
 .sidebar-main>.sidebar-region {
     position: relative;
     flex: 1 1 auto;
@@ -873,6 +871,10 @@ body {
     flex-direction: row;
     flex-shrink: 0;
 }
+.container.main {
+    gap: 8px;
+    padding: 8px;
+}
 .container > .base {
     display: flex;
     flex-direction: column;
@@ -880,7 +882,6 @@ body {
     flex-grow: 1;
     overflow: hidden;
 }
-
 .base > .content {
     display: flex;
     align-items: stretch;
@@ -892,10 +893,11 @@ body {
 
 .container > .leftColumn {
     display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 300px;
     max-width: 350px;
     flex: 0 0 auto;
-    flex-direction: column;
     flex-shrink: 0;
     overflow: hidden;
     background-color: var(--background-tertiary);
@@ -923,47 +925,66 @@ body {
     line-height: normal;
     font-size: 1.2em;
 }
-.container > .leftColumn .scroller .header-w {
+
+.container > .leftColumn .r-box.installations {
+    flex: 1 1 auto;
+}
+
+.container > .leftColumn .r-box .header-w {
     z-index: 1;
     display: flex;
     align-items: center;
-    height: 32px;
     color: var(--interactive-normal);
-    position: sticky;
-    top: 0;
-    padding: 4px 18px;
-    background-color: var(--background-tertiary);
+    padding: 8px 16px;
 }
-.container > .leftColumn .scroller .header-w:hover {
+.container > .leftColumn .r-box .header-w:hover {
     color: var(--interactive-hover);
 }
 
-.container > .leftColumn .scroller .header-w span {
-    flex: 1;
+.container > .leftColumn .r-box .header-w span {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-margin-end: auto;
+    align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 8px;
+    margin-inline-end: auto;
+    min-width: 0;
+    min-height: 32px;
+    font-size: 1rem;
     font-weight: 600;
 }
-.container > .leftColumn .scroller + .scroller {
+.container > .leftColumn .r-box.instances {
     flex: 0 0 auto;
-    border-top: 2px solid var(--background-modifier-selected);
-    box-shadow: 0 0, 0 10px 20px 10px var(--color-shadow);
     min-height: 10vh;
     max-height: 35vh;
     overflow: hidden overlay;
 }
-.container > .leftColumn .scroller + .scroller .header-w {
+.container > .leftColumn .r-box.instances .header-w {
     padding: 4px 16px 4px 18px;
-    height: 28px;
-    position: sticky;
-    top: 0;
-    background-color: var(--background-primary);
+    /* height: 28px; */
     margin-bottom: 4px;
     z-index: 2;
 }
-.container > .leftColumn .scroller + .scroller .navItem {
+.container > .leftColumn .r-box.instances .navItem {
     margin-bottom: 1px;
     margin-left: 8px;
     margin-right: 8px;
 }
+
+.container.main > .middleColumn {
+    border-radius: 8px;
+}
+.container > .middleColumn {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex-grow: 1;
+    overflow: hidden;
+    background-color: var(--background-secondary-alt);
+  }
 
 .guilds {
     overflow: hidden;
@@ -988,7 +1009,8 @@ body {
     /* position: relative; */
     box-sizing: border-box;
     min-height: 0;
-    flex: 1 1 auto;
+    height: 100%;
+    /* flex: 1 1 auto; */
     overflow: hidden scroll;
     user-select: none;
     padding-top: 12px;
@@ -1197,21 +1219,30 @@ body {
     background: transparent;
     cursor: pointer;
     transition: all .2s;
+    font-size: 14px;
 }
 .button:hover {
     color: var(--interactive-hover);
     background-color: var(--background-modifier-selected);
 }
 
-.button.small {
-    width: 20px;
-    height: 20px;
-    padding: 2px;
+button.circle {
+    min-width: unset;
+    min-height: unset;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3125rem;
+    font-size: 14px;
+    color: var(--interactive-normal);
 }
 
 i {
-    font-size: 18px;
-    line-height: 18px !important;
+    font-size: 1.3em;
+    /* line-height: 18px !important; */
     font-weight: 600 !important;
 }
 
@@ -2066,7 +2097,7 @@ a:hover {
 
 /* === Home Section === */
 .discover {
-    padding: 12px;
+    padding: 8px;
     padding-bottom: 0;
     position: relative;
 }
@@ -2274,4 +2305,12 @@ a:hover {
 .description .subtitle {
     margin-top: 24px;
     color: inherit;
+}
+
+.r-box {
+    flex: 1 0 auto;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--sbw-background-side);
 }

@@ -18,8 +18,8 @@ const Main = () => {
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
-		<div className="container">
-			<div className={buildClassName("leftColumn", "sidebar")}>
+		<div className={buildClassName("container", "main")}>
+			<nav className={buildClassName("leftColumn", "sidebar")}>
 				<div className={buildClassName("discover", "no-scrollbar")}>
 					<div className="headerDiscover">
 						<h2 className="size24">{"Главная"}</h2>
@@ -34,9 +34,10 @@ const Main = () => {
 						</div>
 					</div>
 				</div>
-				<div className="separator" />
-				<CubeSidebar />
-			</div>
+
+					<CubeSidebar />
+
+			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
 				{currentMainScreen.type == 'installation' && (
 					<CubeContent hash={currentMainScreen.hash} />
