@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useCallback, useState } from "react";
+import { memo, createElement, Fragment, useCallback, useState, useRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -7,6 +7,7 @@ import { selectCurrentVersionHash, selectInstallations, selectInstances } from "
 
 import CubeSidebarItem from "./CubeSidebarItem";
 import InstanceItem from "./InstanceItem";
+import Tooltip from "UI/Tooltip";
 
 
 const CubeSidebarItems = memo(() => {
@@ -55,6 +56,7 @@ const CubeSidebarItems = memo(() => {
 export const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
+	const addVersionButton = useRef();
 	return (
 		<div className={buildClassName("r-box", "installations")}>
 			<div className="header-w">
@@ -62,9 +64,10 @@ export const InstallationsScroller = memo(() => {
 					<i className="icon-forums"></i>
 					<span>Мои установки</span>
 				</span>
-				<button className="circle" onClick={onClick}>
+				<button className="circle" onClick={onClick} ref={addVersionButton}>
 					<i className="icon-add"></i>
 				</button>
+				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<CubeSidebarItems />
