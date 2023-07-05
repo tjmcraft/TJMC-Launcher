@@ -7,34 +7,29 @@ import buildClassName from "Util/buildClassName";
 import { SVG } from "UI/svg";
 import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
-import UserIcon from "./UserIcon";
 import MapContainer from "./MapContainer";
 import Transition from "UI/Transition";
 import Settings from "./Settings";
+import UserPanel from "./UserPanel";
 
 
 const Main = () => {
-	const { openSettings, selectMainScreen } = getDispatch();
+	const { selectMainScreen } = getDispatch();
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
+				<UserPanel />
 				<div className="r-box">
-				<div className={buildClassName("discover", "no-scrollbar")}>
-					<div className="headerDiscover">
-						<h2 className="size24">{"Главная"}</h2>
-						<div className="container">
-							<UserIcon onClick={() => openSettings({ tab: 'my-account' })} />
+					<div className={buildClassName("discover", "no-scrollbar")}>
+						<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
+							<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
+								<div className="avatar">{SVG('map')}</div>
+								<div className="content">{"Map"}</div>
+							</div>
 						</div>
 					</div>
-					<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
-						<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
-							<div className="avatar">{SVG('map')}</div>
-							<div className="content">{"Map"}</div>
-						</div>
-					</div>
-				</div>
 				</div>
 				<CubeSidebar />
 			</nav>

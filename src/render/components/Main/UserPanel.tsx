@@ -7,16 +7,14 @@ import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "UI/Tooltip";
 
-export const UserPanel = memo(() => {
-	const { openVersionChooserModal, openSettings } = getDispatch();
+const UserPanel = memo(() => {
+	const { openSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 
-	const addVersionButton = useRef();
 	const settingsButton = useRef();
 
 	if (!user) return null;
 
-	const onAddClick = () => openVersionChooserModal();
 	const onSettingsClick = () => openSettings();
 
 	return (
@@ -33,8 +31,6 @@ export const UserPanel = memo(() => {
 					<div className="title">{user.realname || user.username}</div>
 					<div className="subtitle">{`#${user.discriminator}`}</div>
 				</div>
-				<div className="button" id="add-version-button" ref={addVersionButton} onClick={onAddClick}><i className="icon-add"></i></div>
-				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}><i className="icon-settings"></i></div>
 				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
@@ -42,13 +38,4 @@ export const UserPanel = memo(() => {
 	);
 });
 
-const MainSidebar = ({ children }) => {
-	return (
-		<div className="sidebar-main">
-			<nav className="container-3Wc7">{children}</nav>
-			<UserPanel />
-		</div>
-	);
-};
-
-export default memo(MainSidebar);
+export default memo(UserPanel);
