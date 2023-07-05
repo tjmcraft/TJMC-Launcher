@@ -805,6 +805,9 @@ body {
 
 
 .sidebar .panel {
+    padding: 8px 4px 0;
+}
+.sidebar .r-box .panel {
     padding: 8px;
 }
 
@@ -1229,8 +1232,13 @@ i {
     overflow: hidden;
 }
 .avatarWrapper:hover {
-    /* background-color: var(--background-modifier-hover); */
     cursor: pointer;
+}
+.avatarWrapper:hover {
+    background-color: var(--background-modifier-hover);
+}
+.r-box .avatarWrapper:hover {
+    background-color: transparent;
 }
 .avatarWrapper > .avatar {
     width: auto;
@@ -2078,8 +2086,11 @@ a:hover {
 
 /* === Home Section === */
 .discover {
-    padding: 8px;
     position: relative;
+    padding: 0 4px;
+}
+.r-box .discover {
+    padding: 8px;
 }
 .discover .headerDiscover {
     display: flex;

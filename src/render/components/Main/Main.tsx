@@ -19,8 +19,8 @@ const Main = () => {
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
-			<div className="r-box"><UserPanel /></div>
-				<div className="r-box">
+				<div className=""><UserPanel /></div>
+				<div className="">
 					<div className={buildClassName("discover", "no-scrollbar")}>
 						<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
 							<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
