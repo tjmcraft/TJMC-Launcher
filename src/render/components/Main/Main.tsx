@@ -4,13 +4,12 @@ import useGlobal from "Hooks/useGlobal";
 import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 
-import { SVG } from "UI/svg";
-import CubeSidebar from "./CubeContainer/CubeSidebar";
 import CubeContent from "./CubeContainer/CubeContent";
 import MapContainer from "./MapContainer";
 import Transition from "UI/Transition";
 import Settings from "./Settings";
 import UserPanel from "./UserPanel";
+import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
 
 
 const Main = () => {
@@ -20,18 +19,19 @@ const Main = () => {
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
-				<UserPanel />
+			<div className="r-box"><UserPanel /></div>
 				<div className="r-box">
 					<div className={buildClassName("discover", "no-scrollbar")}>
 						<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
 							<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
-								<div className="avatar">{SVG('map')}</div>
+								<i className="icon-location"></i>
 								<div className="content">{"Map"}</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<CubeSidebar />
+				<InstallationsScroller />
+				<InstanceScroller />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
 				{currentMainScreen.type == 'installation' && (

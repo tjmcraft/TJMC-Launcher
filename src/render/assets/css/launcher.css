@@ -805,15 +805,13 @@ body {
 
 
 .sidebar .panel {
-    z-index: 1;
-    flex: 0 0 auto;
-    height: 48px;
+    padding: 8px;
 }
 
 .sidebar .panel>.container {
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    height: 48px;
 }
 
 .container-df {
@@ -950,7 +948,7 @@ body {
     position: relative;
     flex-grow: 1;
     overflow: hidden;
-    background-color: var(--background-primary)
+    background-color: var(--background-secondary)
   }
 
 .guilds {
@@ -1218,8 +1216,8 @@ i {
 }
 
 .avatar {
-    width: 32px;
-    height: 32px;
+    width: auto;
+    height: 100%;
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
@@ -1234,11 +1232,6 @@ i {
     height: 100%;
 }
 
-.avatar svg {
-    max-width: 24px;
-    max-height: 24px;
-}
-
 .avatar:hover {
     /*filter: brightness(0.7);*/
     cursor: pointer;
@@ -1249,7 +1242,7 @@ i {
 }
 
 .nameTag {
-    user-select: text;
+    /* user-select: text; */
     flex-grow: 1;
     margin-right: 4px;
     min-width: 0;
@@ -1261,9 +1254,9 @@ i {
     text-overflow: ellipsis;
     overflow: hidden;
     color: var(--header-primary);
-    line-height: 18px;
+    line-height: normal;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 1rem;
 }
 
 .nameTag>.subtitle {
@@ -1271,8 +1264,8 @@ i {
     text-overflow: ellipsis;
     overflow: hidden;
     color: var(--header-secondary);
-    line-height: 13px;
-    font-size: 12px;
+    line-height: 1;
+    font-size: 0.8rem;
     font-weight: 600;
 }
 
@@ -2092,7 +2085,7 @@ a:hover {
     color: var(--interactive-hover);
 }
 .categoryItem > .innerItem {
-    height: auto;
+    height: 40px;
     padding: 5px 8px;
     display: flex;
     align-items: center;

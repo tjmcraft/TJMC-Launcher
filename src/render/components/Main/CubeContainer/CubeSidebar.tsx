@@ -52,7 +52,7 @@ const CubeSidebarItems = memo(() => {
 	);
 });
 
-const InstallationsScroller = memo(() => {
+export const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const onClick = () => openVersionChooserModal();
 	return (
@@ -73,7 +73,7 @@ const InstallationsScroller = memo(() => {
 	);
 });
 
-const InstanceScroller = memo(() => {
+export const InstanceScroller = memo(() => {
 	const { killAllInstances, alert } = getDispatch();
 	const instances = useGlobal(global => Object.keys(selectInstances(global)));
 	const handleKillAll = useCallback(() => {
@@ -119,14 +119,3 @@ const InstanceScroller = memo(() => {
 		</div>
 	);
 });
-
-const CubeSidebar = () => {
-	return (
-		<Fragment>
-			<InstallationsScroller />
-			<InstanceScroller />
-		</Fragment>
-	);
-};
-
-export default memo(CubeSidebar);
