@@ -1,8 +1,7 @@
-import { memo, createElement, Fragment } from "react";
+import { memo, createElement, Fragment, useEffect } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
-import useConstructor from "Hooks/useConstructor";
 
 import Frame from "Components/Frame";
 import LayerContainer from "Components/LayerContainer";
@@ -14,8 +13,8 @@ import Transition from "UI/Transition";
 const App = () => {
 
 	const { initHost, initApi } = getDispatch();
-	useConstructor(initHost);
-	useConstructor(initApi);
+	useEffect(initHost, [initHost]);
+	useEffect(initApi, [initApi]);
 
 	const AuthState = useGlobal(global => global.auth_state);
 
