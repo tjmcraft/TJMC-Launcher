@@ -983,7 +983,7 @@ body {
     position: relative;
     flex-grow: 1;
     overflow: hidden;
-    background-color: var(--background-secondary-alt);
+    background-color: var(--background-primary)
   }
 
 .guilds {
@@ -2143,7 +2143,7 @@ a:hover {
     margin-left: 8px;
 }
 .categoryItem.selected {
-    color: #fff;
+    color: var(--header-primary);
 }
 .categoryItem.selected .innerItem{
     background: var(--background-modifier-selected);
@@ -2311,5 +2311,5 @@ a:hover {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--sbw-background-side);
+    background-color: var(--background-primary);
 }
