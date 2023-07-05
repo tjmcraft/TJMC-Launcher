@@ -20,18 +20,20 @@ const UserPanel = memo(() => {
 	return (
 		<div className="panel">
 			<div className="container">
-				<div className="avatar">
-					{(user.avatar != void 0) ? (
-						<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} />
-					) : (
-						<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`} />
-					)}
+				<div className="avatarWrapper" onClick={() => openSettings({tab:'my-account'})}>
+					<div className="avatar">
+						{(user.avatar != void 0) ? (
+							<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} />
+						) : (
+							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`} />
+						)}
+					</div>
+					<div className="nameTag">
+						<div className="title">{user.realname || user.username}</div>
+						<div className="subtitle">{`#${user.discriminator}`}</div>
+					</div>
 				</div>
-				<div className="nameTag">
-					<div className="title">{user.realname || user.username}</div>
-					<div className="subtitle">{`#${user.discriminator}`}</div>
-				</div>
-				<div className="button" id="settings-button" ref={settingsButton} onClick={onSettingsClick}><i className="icon-settings"></i></div>
+				<button className="circle" id="settings-button" ref={settingsButton} onClick={onSettingsClick}><i className="icon-settings"></i></button>
 				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
 		</div>

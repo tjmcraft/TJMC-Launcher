@@ -1215,9 +1215,31 @@ i {
     flex-grow: 1;
 }
 
-.avatar {
+.avatarWrapper {
+    position: relative;
+    height: 100%;
+    min-width: 120px;
+    padding: 4px 8px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-right: 8px;
+    margin-inline-end: auto;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.avatarWrapper:hover {
+    /* background-color: var(--background-modifier-hover); */
+    cursor: pointer;
+}
+.avatarWrapper > .avatar {
     width: auto;
     height: 100%;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
     position: relative;
     overflow: hidden;
     flex-shrink: 0;
@@ -1243,7 +1265,6 @@ i {
 
 .nameTag {
     /* user-select: text; */
-    flex-grow: 1;
     margin-right: 4px;
     min-width: 0;
     line-height: 16px;
