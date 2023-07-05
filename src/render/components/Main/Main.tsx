@@ -1,7 +1,6 @@
 import { createElement, memo } from "react";
 
 import useGlobal from "Hooks/useGlobal";
-import { getDispatch } from "Store/Global";
 import buildClassName from "Util/buildClassName";
 
 import CubeContent from "./CubeContainer/CubeContent";
@@ -13,23 +12,12 @@ import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSid
 
 
 const Main = () => {
-	const { selectMainScreen } = getDispatch();
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
 				<div className=""><UserPanel /></div>
-				<div className="">
-					<div className={buildClassName("discover", "no-scrollbar")}>
-						<div className={buildClassName('categoryItem', currentMainScreen.type == 'map' && "selected")}>
-							<div className="innerItem" onClick={() => selectMainScreen({ type: 'map' })}>
-								<i className="icon-location"></i>
-								<div className="content">{"Map"}</div>
-							</div>
-						</div>
-					</div>
-				</div>
 				<InstallationsScroller />
 				<InstanceScroller />
 			</nav>

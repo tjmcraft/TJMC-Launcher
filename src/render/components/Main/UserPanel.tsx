@@ -6,21 +6,25 @@ import { selectCurrentUser } from "Model/Selectors/user";
 import useGlobal from "Hooks/useGlobal";
 
 import Tooltip from "UI/Tooltip";
+import buildClassName from "Util/buildClassName";
 
 const UserPanel = memo(() => {
-	const { openSettings } = getDispatch();
+	const { selectMainScreen, openSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
+	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
+	const mapButton = useRef();
 	const settingsButton = useRef();
 
 	if (!user) return null;
 
+	const onMapClick = () => selectMainScreen({ type: 'map' });
 	const onSettingsClick = () => openSettings();
 
 	return (
 		<div className="panel">
 			<div className="container">
-				<div className="avatarWrapper" onClick={() => openSettings({tab:'my-account'})}>
+				<div className="avatarWrapper" onClick={() => openSettings({ tab: 'my-account' })}>
 					<div className="avatar">
 						{(user.avatar != void 0) ? (
 							<img src={`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64`} />
@@ -33,7 +37,21 @@ const UserPanel = memo(() => {
 						<div className="subtitle">{`#${user.discriminator}`}</div>
 					</div>
 				</div>
-				<button className="circle" id="settings-button" ref={settingsButton} onClick={onSettingsClick}><i className="icon-settings"></i></button>
+				<button ref={mapButton}
+					id="map-button"
+					className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
+					onClick={onMapClick}
+				>
+					<i className="icon-location"/>
+				</button>
+				<Tooltip forRef={mapButton}>Карта</Tooltip>
+				<button ref={settingsButton}
+					id="settings-button"
+					className="circle"
+					onClick={onSettingsClick}
+				>
+					<i className="icon-settings"/>
+				</button>
 				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 			</div>
 		</div>
