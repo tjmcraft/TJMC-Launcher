@@ -27,6 +27,7 @@ import SettingContainer from "UI/SettingContainer";
 import { InputGroup, PathInput, SelectInput } from "UI/Input";
 import { MenuItem } from "UI/Menu";
 import captureEscKeyListener from "Util/captureEscKeyListener";
+import UserPanel from "./UserPanel";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
@@ -34,15 +35,15 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const hostOnline = useHostOnline();
 
 	const items = useMemo(() => [
-		{ type: "header", content: "Настройки пользователя" },
+		{ type: "header", content: "Настройки пользователя", icon: "icon-user" },
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", disabled: false },
 		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Игры" },
+		{ type: "header", content: "Настройки Игры", icon: "icon-archive" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline },
 		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Приложения" },
+		{ type: "header", content: "Настройки Приложения", icon: "icon-archive" },
 		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false },
 		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false },
 		{ type: "separator" },
@@ -55,15 +56,18 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	} : undefined;
 
 	return (
-		<div className="sidebar-items">
+		<Fragment>
 			{items.map((e, i) => (
 				<div key={i}
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
 					onClick={handleSelect(e.tab)}>
-					{e.content || ''}
+					{e.icon ? (
+						<i className={e.icon}/>
+					) : ''}
+					<span>{e.content || ''}</span>
 				</div>
 			))}
-		</div>
+		</Fragment>
 	);
 };
 
@@ -943,9 +947,17 @@ const Settings = () => {
 	useEffect(() => captureEscKeyListener(() => closeSettings()), [closeSettings]);
 
 	return (
+		<div className="container main" id="user-settings">
+			<nav className="leftColumn">
+				<div className="box">
 
-			<div className="sidebarView" id="user-settings">
-				<div className="sidebar-region">
+					<UserPanel>
+						<button className="circle">
+							<i className="icon-logout"/>
+						</button>
+				</UserPanel>
+				</div>
+				<div className="r-box settings">
 					<div className="sidebar">
 						<SideBarItems
 							currentScreen={currentSettingsScreen}
@@ -954,15 +966,13 @@ const Settings = () => {
 						<InfoBox />
 					</div>
 				</div>
-				<div className="content-region">
-					<div className="wrap">
-						<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
-							<ActiveTab current={currentSettingsScreen} />
-						</div>
-					</div>
+			</nav>
+			<div className="content-region">
+				<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
+					<ActiveTab current={currentSettingsScreen} />
 				</div>
 			</div>
-
+		</div>
 	);
 };
 

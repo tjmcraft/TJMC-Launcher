@@ -235,7 +235,7 @@ button {
     border-radius: 0.375rem;
     border-color: transparent;
     background-color: transparent;
-    color: var(--header-primary);
+    color: var(--interactive-normal);
     font-family: var(--font-primary);
     font-weight: 500;
     font-size: 16px;
@@ -245,7 +245,7 @@ button {
     align-items: center;
     position: relative;
     padding: 8px 16px;
-    min-width: 96px;
+    min-width: 38px;
     min-height: 38px;
     width: auto;
     box-sizing: border-box;
@@ -268,6 +268,23 @@ button.small {
     min-width: 80px;
     min-height: 28px;
     font-size: 14px;
+}
+button {
+
+}
+
+button.circle {
+    min-width: unset;
+    min-height: unset;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3125rem;
+    font-size: 14px;
+    color: var(--interactive-normal);
 }
 
 button.filled {
@@ -454,15 +471,20 @@ p {
 
 /* =============== SideBar View =============== */
 
-.sidebarView {
+.container > .leftColumn .sidebar-region {
+    position: relative;
+    flex: 1 1 auto;
     display: flex;
-    flex-direction: row;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
+    align-items: end;
+    justify-content: flex-start;
+    flex-direction: column;
 }
+
+.container > .leftColumn .sidebar {
+    width: 100%;
+    padding: 10px 0px;
+}
+
 
 .sidebar-region {
     background-color: var(--sbw-background-side);
@@ -472,12 +494,7 @@ p {
     overflow: hidden overlay;
 }
 
-.sidebarView .sidebar-region {
-    flex: 1 0 220px;
-    justify-content: flex-end;
-    background-color: var(--sbw-background-side);
-}
-:root.more-border .sidebarView .sidebar-region {
+:root.more-border .sidebar-region {
     border-right: 1px solid var(--border-color-1);
 }
 .sidebar-region::-webkit-scrollbar {
@@ -547,6 +564,12 @@ p {
     margin-right: 8px;
     visibility: visible;
 }
+.settings .sidebar {
+    padding: 12px 24px !important;
+}
+.settings .navItem {
+    margin-left: 25px;
+}
 
 .navItem:hover {
     color: var(--interactive-hover);
@@ -582,39 +605,18 @@ p {
     visibility: visible;
 }
 
-.header {
-    padding: 6px 10px;
-    font-size: 12px !important;
-    /*font-weight: 700 !important;*/
+.sidebar .header {
+    margin-bottom: 8px;
+    font-size: 16px !important;
     line-height: 16px;
-    text-transform: uppercase;
-    flex: 0 0 auto;
     color: #8e9297;
+    gap: 12px;
 }
 
 .separator {
     margin: 8px 10px;
     height: 1px;
     background-color: var(--background-modifier-accent);
-}
-
-.sidebarView .content-region {
-    background: var(--sbw-background-main);
-    flex: 1 1 800px;
-    display: flex;
-    align-items: flex-start;
-    overflow: hidden;
-}
-
-.content-region > .wrap {
-    flex: 1;
-    height: 100%;
-    width: 100%;
-}
-
-.content-region > .wrap > .content {
-    height: 100%;
-    overflow: hidden scroll;
 }
 
 [data-type=async-component] {
@@ -631,16 +633,6 @@ p {
     width: 100%;
 }
 
-
-/*.content-region .content::-webkit-scrollbar-thumb {
-    background-color: transparent;
-}*/
-
-
-/*.content-region .content:hover::-webkit-scrollbar-thumb {
-    background-color: rgb(170, 170, 170, 0.7);
-}*/
-
 h2 {
     /* text-transform: uppercase; */
     font-size: 20px;
@@ -654,6 +646,20 @@ h5 {
     font-size: 12px;
     font-weight: 700;
     line-height: 16px;
+}
+
+.content-region {
+    background: var(--sbw-background-main);
+    flex: 1 1 800px;
+    display: flex;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+.content-region .content {
+    height: 100%;
+    width: 100%;
+    overflow: hidden scroll;
 }
 
 .content-region .content h2 {
@@ -680,13 +686,12 @@ h5 {
     margin: 0;
 }
 .content-region .content.centred .tab {
-    margin: 0 calc(15% - 75px);
+    margin: 0 auto;
 }
 
 .content .separator {
     margin: 40px 0;
 }
-
 
 .layerContainer {
     position: absolute;
@@ -804,14 +809,14 @@ body {
 /* === Main === */
 
 
-.sidebar .panel {
+.panel {
     padding: 8px 4px 0;
 }
-.sidebar .r-box .panel {
+.r-box .panel {
     padding: 8px;
 }
 
-.sidebar .panel>.container {
+.panel>.container {
     display: flex;
     align-items: center;
     height: 48px;
@@ -895,7 +900,10 @@ body {
 }
 
 .container > .leftColumn .r-box.installations {
-    flex: 1 1 auto;
+    flex: 1 1 100%;
+}
+.container > .leftColumn .r-box.settings {
+    flex: 1 1 100%;
 }
 
 .container > .leftColumn .r-box .header-w {
@@ -1192,20 +1200,6 @@ body {
 .button:hover {
     color: var(--interactive-hover);
     background-color: var(--background-modifier-selected);
-}
-
-button.circle {
-    min-width: unset;
-    min-height: unset;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.3125rem;
-    font-size: 14px;
-    color: var(--interactive-normal);
 }
 
 i {

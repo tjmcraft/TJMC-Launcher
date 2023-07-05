@@ -7,7 +7,7 @@ import CubeContent from "./CubeContainer/CubeContent";
 import MapContainer from "./MapContainer";
 import Transition from "UI/Transition";
 import Settings from "./Settings";
-import UserPanel from "./UserPanel";
+import { UserPanelMain } from "./UserPanel";
 import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
 
 
@@ -17,7 +17,7 @@ const Main = () => {
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
-				<UserPanel/>
+				<UserPanelMain/>
 				<InstallationsScroller />
 				<InstanceScroller />
 			</nav>

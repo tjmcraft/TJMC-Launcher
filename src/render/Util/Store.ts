@@ -214,6 +214,7 @@ export const StoreCaching = (store: StateStore, initialState: {}, cache_key: str
 				"versions",
 				"releases",
 				"currentMainScreen",
+				"isSettingsOpen",
 				...(APP_ENV == "development" ? [
 					"currentSettingsScreen", "modals"
 				] : []),

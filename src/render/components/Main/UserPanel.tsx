@@ -8,20 +8,12 @@ import useGlobal from "Hooks/useGlobal";
 import Tooltip from "UI/Tooltip";
 import buildClassName from "Util/buildClassName";
 
-const UserPanel = memo(() => {
-	const { selectMainScreen, openSettings } = getDispatch();
+const UserPanel: React.FC<{
+	children?: React.ReactNode;
+}> = ({ children }) => {
+	const { openSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
-	const currentMainScreen = useGlobal(global => global.currentMainScreen);
-
-	const mapButton = useRef();
-	const settingsButton = useRef();
-
-	if (!user) return null;
-
-	const onMapClick = () => selectMainScreen({ type: 'map' });
-	const onSettingsClick = () => openSettings();
-
-	return (
+	return user && (
 		<div className="panel">
 			<div className="container">
 				<div className="avatarWrapper" onClick={() => openSettings({ tab: 'my-account' })}>
@@ -37,7 +29,25 @@ const UserPanel = memo(() => {
 						<div className="subtitle">{`#${user.discriminator}`}</div>
 					</div>
 				</div>
-				<button ref={mapButton}
+				{children}
+			</div>
+		</div>
+	);
+};
+
+export const UserPanelMain = () => {
+	const { selectMainScreen, openSettings } = getDispatch();
+	const currentMainScreen = useGlobal(global => global.currentMainScreen);
+
+	const mapButton = useRef();
+	const settingsButton = useRef();
+
+	const onMapClick = () => selectMainScreen({ type: 'map' });
+	const onSettingsClick = () => openSettings();
+
+	return (
+		<UserPanel>
+			<button ref={mapButton}
 					id="map-button"
 					className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
 					onClick={onMapClick}
@@ -53,9 +63,8 @@ const UserPanel = memo(() => {
 					<i className="icon-settings"/>
 				</button>
 				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
-			</div>
-		</div>
-	);
-});
+		</UserPanel>
+	)
+};
 
 export default memo(UserPanel);
