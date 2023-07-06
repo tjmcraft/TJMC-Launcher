@@ -16,7 +16,7 @@
 }
 .settingGroupContainer > .settingGroup {
     position: relative;
-    background: var(--background-primary);
+    background: var(--inp-background-normal);
     border-radius: 8px;
 }
 
@@ -62,7 +62,7 @@
 
 
 .zxcBox {
-    background: var(--background-primary);
+    background: var(--inp-background-normal);
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 20px;

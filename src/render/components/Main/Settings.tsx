@@ -35,19 +35,16 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const hostOnline = useHostOnline();
 
 	const items = useMemo(() => [
-		{ type: "header", content: "Настройки пользователя", icon: "icon-user" },
-		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", disabled: false },
-		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false },
+		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user'  },
+		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Игры", icon: "icon-archive" },
-		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline },
-		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline },
+		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
+		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline, icon: 'icon-permissions' },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Приложения", icon: "icon-archive" },
-		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false },
-		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false },
+		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false, icon: 'icon-animations' },
+		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false, icon: 'icon-reopen-topic' },
 		{ type: "separator" },
-		{ type: "navItem", content: "О программе", tab: "launcher-about", disabled: false },
+		{ type: "navItem", content: "О программе", tab: "launcher-about", disabled: false, icon: 'icon-info' },
 		{ type: "separator" },
 	], [hostOnline]);
 
@@ -65,6 +62,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 						<i className={e.icon}/>
 					) : ''}
 					<span>{e.content || ''}</span>
+					<span className="next"><i className="icon-next" /></span>
 				</div>
 			))}
 		</Fragment>

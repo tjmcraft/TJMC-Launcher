@@ -533,6 +533,7 @@ p {
     white-space: nowrap;
     text-overflow: ellipsis;
     /* overflow: hidden; */
+    gap: 8px;
     border-radius: 5px;
     flex-shrink: 0;
     font-weight: 500;
@@ -540,13 +541,25 @@ p {
     font-family: var(--font-primary);
 }
 
+.sidebar .item > .next,
+.sidebar .item > .next {
+    opacity: 0;
+    pointer-events: none;
+}
+.navItem:not(.selected) > .next {
+    opacity: 1;
+    margin-inline-start: auto;
+    flex: 0 !important;
+}
+
 .sidebar .item span,
 .content .item span {
-    white-space: inherit;
-    text-overflow: inherit;
-    overflow: inherit;
-    font-weight: inherit;
     flex: 1;
+}
+
+.settings .navItem {
+    min-height: 38px;
+    margin-bottom: 2px;
 }
 
 .navItem {
@@ -564,22 +577,17 @@ p {
     margin-right: 8px;
     visibility: visible;
 }
-.settings .sidebar {
-    padding: 12px 24px !important;
-}
-.settings .navItem {
-    margin-left: 25px;
-}
-
 .navItem:hover {
     color: var(--interactive-hover);
     background-color: var(--background-modifier-hover);
 }
-
 .navItem.selected {
     cursor: default;
     color: var(--interactive-active) !important;
     background-color: var(--background-modifier-selected) !important;
+}
+.settings .navItem.selected {
+    background-color: var(--brand-color) !important;
 }
 
 .navItem.processing {
@@ -869,7 +877,7 @@ body {
     flex: 0 0 auto;
     flex-shrink: 0;
     overflow: hidden;
-    background-color: var(--background-tertiary);
+    /* background-color: var(--background-tertiary); */
 }
 .container > .leftColumn .scroller {
     padding-right: 0;
@@ -893,6 +901,14 @@ body {
     height: 90%;
     line-height: normal;
     font-size: 1.2em;
+}
+
+.r-box {
+    flex: 1 0 auto;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--background-primary);
 }
 
 .container > .leftColumn .r-box.installations {
@@ -955,27 +971,9 @@ body {
     position: relative;
     flex-grow: 1;
     overflow: hidden;
-    background-color: var(--background-secondary)
+    background-color: var(--background-primary)
   }
 
-.guilds {
-    overflow: hidden;
-    display: flex;
-    width: 72px;
-    flex-direction: column;
-    flex-shrink: 0;
-    position: relative;
-    background-color: var(--background-tertiary);
-}
-
-.guilds > .tree {
-    height: 100%;
-    display: flex;
-}
-
-.guilds > .tree > .scroller > .listItem > .wrapper {
-    transition: all .3s ease;
-}
 
 .scroller {
     /* position: relative; */
@@ -1014,13 +1012,6 @@ body {
 }
 
 
-
-.listItem > .guildSeparator {
-    height: 2px;
-    width: 32px;
-    border-radius: 1px;
-    background-color: var(--background-modifier-accent);
-}
 
 .listItem > .wrapper > .singleIconBtn {
     padding: 8px;
@@ -2254,12 +2245,4 @@ a:hover {
 .description .subtitle {
     margin-top: 24px;
     color: inherit;
-}
-
-.r-box {
-    flex: 1 0 auto;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: var(--background-secondary);
 }
