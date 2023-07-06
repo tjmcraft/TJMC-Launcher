@@ -905,7 +905,7 @@ body {
 }
 
 .r-box {
-    flex: 1 0 auto;
+    flex: 1 0;
     position: relative;
     border-radius: 8px;
     overflow: hidden;
