@@ -662,7 +662,7 @@ h5 {
     overflow: hidden scroll;
 }
 
-.content h2 {
+.content .tab h2 {
     font-size: 1.5em;
     margin-bottom: 20px;
     line-height: 1;
@@ -670,7 +670,7 @@ h5 {
     padding: 12px 8px;
 }
 
-.content h5 {
+.content .tab h5 {
     margin-bottom: 8px;
     color: var(--header-secondary);
 }
