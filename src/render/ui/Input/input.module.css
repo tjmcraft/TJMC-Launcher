@@ -1,7 +1,7 @@
 :root {
     --input-height: 42px;
     --toggle-icon-size: 18px;
-    --inp-background-normal: var(--background-primary);
+    --inp-background-normal: var(--background-secondary);
     --inp-background-disabled: var(--background-secondary-alt);
 }
 
