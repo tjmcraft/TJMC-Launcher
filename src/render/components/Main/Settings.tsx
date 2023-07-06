@@ -843,7 +843,7 @@ const AboutTab = memo(() => {
 							</button>
 						</div>
 						<div className="separator" />
-						<div className={buildClassName("note", "nowrap", "tran-s")}>
+						<div className={buildClassName(style.note, "nowrap", "tran-s")}>
 							<div className="description">{APP_COPYRIGHT}</div>
 							<span className={buildClassName("flex-group", "horizontal")}>
 								<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
@@ -922,7 +922,7 @@ const Settings = () => {
 	useEffect(() => captureEscKeyListener(() => closeSettings()), [closeSettings]);
 
 	return (
-		<div className="container main" id="user-settings">
+		<div className={buildClassName("container", "main", "settings")} id="user-settings">
 			<nav className="leftColumn">
 				<div className="box">
 
@@ -932,7 +932,7 @@ const Settings = () => {
 						</button>
 				</UserPanel>
 				</div>
-				<div className="r-box settings">
+				<div className="r-box">
 					<div className="sidebar">
 						<SideBarItems
 							currentScreen={currentSettingsScreen}

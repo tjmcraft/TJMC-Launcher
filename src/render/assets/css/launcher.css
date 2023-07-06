@@ -587,6 +587,7 @@ p {
     background-color: var(--background-modifier-selected) !important;
 }
 .settings .navItem.selected {
+    color: #fff !important;
     background-color: var(--brand-color) !important;
 }
 
@@ -908,7 +909,7 @@ body {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--background-primary);
+    background-color: var(--sbw-background-side);
 }
 
 .container > .leftColumn .r-box.installations {
@@ -971,7 +972,11 @@ body {
     position: relative;
     flex-grow: 1;
     overflow: hidden;
-    background-color: var(--background-primary)
+    background-color: var(--sbw-background-main);
+  }
+
+  .container.settings > .middleColumn {
+    background-color: var(--sbw-background-main);
   }
 
 

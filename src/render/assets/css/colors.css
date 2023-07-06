@@ -5,7 +5,7 @@
     --background-primary: #242424;
     --background-secondary: #1d1d1d;
     --background-secondary-alt: #181818;
-    --sbw-background-side: #181818;
+    --sbw-background-side: #1d1d1d;
     --sbw-background-main: #121212;
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
@@ -47,8 +47,8 @@
     --background-primary: #fff;
     --background-secondary: #f2f3f5;
     --background-secondary-alt: #dbdddf;
-    --sbw-background-side: #f2f3f5;
-    --sbw-background-main: #fff;
+    --sbw-background-side: #f1f1f1;
+    --sbw-background-main: #e2e3e5;
     --interactive-normal: #4f5660;
     --interactive-hover: #2e3338;
     --interactive-active: #060607;

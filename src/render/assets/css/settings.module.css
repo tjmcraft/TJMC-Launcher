@@ -69,13 +69,10 @@
     border: 1px solid var(--border-color-1);
 }
 
-.zxcBox .separator {
+.zxcBox :global(.separator) {
     margin: 16px 0 !important;
 }
-.zxcBox > :not(.separator) + button + button {
-    /* margin-top: 8px !important; */
-}
-.zxcBox > :not(.separator) + * {
+.zxcBox > :not(:global(.separator)) + * {
     margin-top: 16px !important;
 }
 
