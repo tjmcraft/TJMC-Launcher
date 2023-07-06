@@ -944,7 +944,7 @@ const Settings = () => {
 					</div>
 				</div>
 			</nav>
-			<div className="content-region">
+			<div className="middleColumn">
 				<div className={buildClassName("content", "auto-s", "centred")}>
 					<ActiveTab current={currentSettingsScreen} />
 				</div>

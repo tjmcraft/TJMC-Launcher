@@ -16,7 +16,7 @@
 }
 .settingGroupContainer > .settingGroup {
     position: relative;
-    background: var(--background-secondary);
+    background: var(--background-primary);
     border-radius: 8px;
 }
 

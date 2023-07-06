@@ -656,13 +656,13 @@ h5 {
     overflow: hidden;
 }
 
-.content-region .content {
+.content {
     height: 100%;
     width: 100%;
     overflow: hidden scroll;
 }
 
-.content-region .content h2 {
+.content h2 {
     font-size: 1.5em;
     margin-bottom: 20px;
     line-height: 1;
@@ -670,13 +670,13 @@ h5 {
     padding: 12px 8px;
 }
 
-.content-region .content h5 {
+.content h5 {
     margin-bottom: 8px;
     color: var(--header-secondary);
 }
 
 
-.content-region .content .tab {
+.content .tab {
     position: relative;
     padding: 60px 24px 40px 40px;
     flex: 1 1 auto;
@@ -685,7 +685,7 @@ h5 {
     min-height: 100%;
     margin: 0;
 }
-.content-region .content.centred .tab {
+.content.centred .tab {
     margin: 0 auto;
 }
 

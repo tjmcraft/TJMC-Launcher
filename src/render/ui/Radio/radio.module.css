@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   border-radius: 5px;
-  background: var(--background-secondary);
+  background: var(--background-primary);
   padding: 10px;
 }
 :global(:root.more-border) .radioGroup > .item > .radioBar {
