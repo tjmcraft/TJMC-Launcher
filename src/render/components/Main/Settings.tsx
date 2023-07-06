@@ -663,27 +663,6 @@ const LauncherAppearanceTab = memo(() => {
 					</div>
 				</div>
 				<div className={style.settingGroupContainer}>
-					<h5>Общие</h5>
-					<div className={style.settingGroup}>
-						<SettingSwitch id="app.settings.fullmode"
-							title="Использовать настройки в полноэкранном режиме"
-							note="Включение этого параметра позволяет использовать настройки в полноэкранном режиме"
-							checked={settings.full_settings}
-							action={(s) => {
-								setSettings({ full_settings: Boolean(s) });
-							}}
-						/>
-						<SettingSwitch id="app.chooser.fullmode"
-							title="Использовать установщик версии в полноэкранном режиме"
-							note="Включение этого параметра позволяет использовать установщик версии в полноэкранном режиме"
-							checked={settings.full_chooser}
-							action={(s) => {
-								setSettings({ full_chooser: Boolean(s) });
-							}}
-						/>
-					</div>
-				</div>
-				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
 					<div className={style.settingGroup}>
 						<SettingSwitch id="app.preloader.mode"
@@ -942,8 +921,6 @@ const Settings = () => {
 		selectSettingsScreen(screen);
 	}, [selectSettingsScreen]);
 
-	const { full_settings: shouldFull } = useGlobal(global => global.settings);
-
 	useEffect(() => captureEscKeyListener(() => closeSettings()), [closeSettings]);
 
 	return (
@@ -968,7 +945,7 @@ const Settings = () => {
 				</div>
 			</nav>
 			<div className="content-region">
-				<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
+				<div className={buildClassName("content", "auto-s", "centred")}>
 					<ActiveTab current={currentSettingsScreen} />
 				</div>
 			</div>

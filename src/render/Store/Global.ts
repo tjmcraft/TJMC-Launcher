@@ -24,8 +24,6 @@ export type GlobalState = {
 		debug_host: boolean;
 		debug_api: boolean;
 		enable_preloader: boolean;
-		full_settings: boolean;
-		full_chooser: boolean;
 		dev_disable_faloc: boolean;
 		exp_more_border: boolean;
 	};
@@ -78,8 +76,6 @@ const INITIAL_STATE: GlobalState = {
 		debug_host: false,
 		debug_api: false,
 		enable_preloader: true,
-		full_settings: false,
-		full_chooser: false,
 		dev_disable_faloc: false,
 		exp_more_border: false,
 	},

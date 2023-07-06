@@ -320,8 +320,6 @@ const VersionChooser = () => {
 		setLeftOpen(state => !state);
 	}, [setLeftOpen]);
 
-	const { full_chooser: shouldFull } = useGlobal(global => global.settings);
-
 	useEffect(() => getGlobalVersions(), [getGlobalVersions]);
 	useEffect(() => (selectedVersion ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
 	useEffect(() => {
@@ -329,7 +327,7 @@ const VersionChooser = () => {
 	}, [selectedVersion]);
 
 	return (
-		<Modal mini={false} small={false} full={shouldFull}>
+		<Modal mini={false} small={false}>
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector items={versionTypes} onSelect={handleTypeSelect} />
