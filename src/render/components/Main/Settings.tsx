@@ -182,7 +182,7 @@ const MyAccountTab = memo(() => {
 			<h2>Моя учётная запись</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className="ictx-flex">
 							<div className={buildClassName("icon", "ns")}>
 								<span style={{
@@ -247,7 +247,7 @@ const SkinTab = memo(() => {
 			<h2>Конфигурация скина</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className="skin-flex">
 							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&vr=-25&hr=35`} />
 							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18`} />
@@ -826,7 +826,7 @@ const AboutTab = memo(() => {
 			<h2>О программе</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className={buildClassName("pctx-flex")}>
 							<div className="ictx-flex">
 								<div className="icon"><img src={iconImage} /></div>
@@ -855,7 +855,7 @@ const AboutTab = memo(() => {
 						</div>
 					</div>
 					<UpdatesContainer />
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<h5>Просмотр информации о предыдущих релизах</h5>
 						<div className="separator" />
 						<div className="flex-group vertical">

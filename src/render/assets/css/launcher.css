@@ -689,10 +689,6 @@ h5 {
     margin: 0 auto;
 }
 
-.content .separator {
-    margin: 40px 0;
-}
-
 .layerContainer {
     position: absolute;
     top: 0;
@@ -1692,39 +1688,6 @@ a.anchor:hover {
 
 .grow {
     width: auto;
-}
-
-.bxcF1-box {
-    background: var(--background-secondary);
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color-1);
-}
-
-.bxcF1-box .separator {
-    margin: 16px 0 !important;
-}
-.bxcF1-box > :not(.separator) + button + button {
-    /* margin-top: 8px !important; */
-}
-.bxcF1-box > :not(.separator) + * {
-    margin-top: 16px !important;
-}
-
-.bxcF1-box .note {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: space-between;
-    row-gap: 1em;
-    column-gap: 1em;
-    width: 100%;
-    overflow-x: overlay;
-    overflow-y: hidden;
-}
-.bxcF1-box .note > span > * {
-    margin-right: 8px;
 }
 
 .release {
