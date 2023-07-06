@@ -2,11 +2,11 @@
 
 :root, .dark-theme {
     --background-tertiary: #121212;
-    --background-primary: #242424;
+    --background-primary: #282828;
     --background-secondary: #1d1d1d;
     --background-secondary-alt: #181818;
-    --sbw-background-side: #1d1d1d;
-    --sbw-background-main: #121212;
+    --sbw-background-side: #282828;
+    --sbw-background-main: #1d1d1d;
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
     --interactive-active: #fff;
@@ -47,8 +47,8 @@
     --background-primary: #fff;
     --background-secondary: #f2f3f5;
     --background-secondary-alt: #dbdddf;
-    --sbw-background-side: #f1f1f1;
-    --sbw-background-main: #e2e3e5;
+    --sbw-background-side: #fff;
+    --sbw-background-main: #efeff3;
     --interactive-normal: #4f5660;
     --interactive-hover: #2e3338;
     --interactive-active: #060607;
