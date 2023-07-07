@@ -17,7 +17,7 @@ const Main = () => {
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
-				<UserPanelMain/>
+				<UserPanelMain />
 				<InstallationsScroller />
 				<InstanceScroller />
 			</nav>

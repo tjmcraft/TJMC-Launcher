@@ -5,7 +5,7 @@
     --background-primary: #282828;
     --background-secondary: #181818;
     --background-secondary-alt: #121212;
-    --sbw-background-side: transparent;
+    --sbw-background-side: #1d1d1d;
     --sbw-background-main: #1d1d1d;
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
@@ -47,7 +47,7 @@
     --background-primary: #fff;
     --background-secondary: #f2f3f5;
     --background-secondary-alt: #dbdddf;
-    --sbw-background-side: transparent;
+    --sbw-background-side: #fefefe;
     --sbw-background-main: #fefefe;
     --interactive-normal: #4f5660;
     --interactive-hover: #2e3338;

@@ -915,8 +915,9 @@ body {
 .container > .leftColumn .r-box.installations {
     flex: 1 1 100%;
 }
-.container > .leftColumn .r-box.settings {
+.container.settings > .leftColumn .r-box {
     flex: 1 1 100%;
+    background-color: transparent;
 }
 
 .container > .leftColumn .r-box .header-w {
