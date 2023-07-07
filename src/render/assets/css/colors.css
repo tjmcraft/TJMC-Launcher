@@ -47,8 +47,8 @@
     --background-primary: #fff;
     --background-secondary: #f2f3f5;
     --background-secondary-alt: #dbdddf;
-    --sbw-background-side: #fff;
-    --sbw-background-main: #efeff3;
+    --sbw-background-side: transparent;
+    --sbw-background-main: #fefefe;
     --interactive-normal: #4f5660;
     --interactive-hover: #2e3338;
     --interactive-active: #060607;
