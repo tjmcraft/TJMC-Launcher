@@ -1,7 +1,3 @@
-#version-selector .main-content {
-  background: var(--background-primary);
-}
-
 #version-selector.container > .leftColumn {
   gap: 0;
 }
