@@ -827,6 +827,10 @@ body {
     height: 48px;
 }
 
+.panel button + button {
+    margin-left: 4px;
+}
+
 .container-df {
     box-sizing: border-box;
     text-overflow: ellipsis;
@@ -849,10 +853,6 @@ body {
     flex-direction: row;
     flex-shrink: 0;
 }
-.container.main {
-    gap: 8px;
-    padding: 8px;
-}
 .container > .base {
     display: flex;
     flex-direction: column;
@@ -873,6 +873,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 8px;
     width: 300px;
     max-width: 350px;
     flex: 0 0 auto;
@@ -965,7 +966,9 @@ body {
 }
 
 .container.main > .middleColumn {
-    border-radius: 8px;
+    --border-radius-mid: 8px;
+    border-top-left-radius: var(--border-radius-mid);
+    border-bottom-left-radius: var(--border-radius-mid);
 }
 .container > .middleColumn {
     display: flex;
