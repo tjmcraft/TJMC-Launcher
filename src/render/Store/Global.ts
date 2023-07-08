@@ -109,7 +109,20 @@ type ActionHandler = (
 export type MapStateToProps<T extends AnyFunction, OwnProps = AnyLiteral> = (global: GlobalState, ownProps?: OwnProps) => ReturnType<T>;
 
 const stateStore = new StateStore();
-const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE);
+const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE, [
+	"currentUserId",
+	"theme",
+	"auth_state",
+	"settings",
+	"users",
+	"installations",
+	"versions",
+	"releases",
+	"currentMainScreen",
+	"currentSettingsScreen",
+	"isSettingsOpen",
+	"lastAppVersionId",
+]);
 
 stateStore.addCallback(async (global) => {
 	window.__debug__ && console.debug("->", { ...global });

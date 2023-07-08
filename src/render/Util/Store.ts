@@ -155,12 +155,17 @@ export class StateStore {
 
 }
 
-export const StoreCaching = (store: StateStore, initialState: {}, cache_key: string = null) => {
+export const StoreCaching = <T extends AnyLiteral>(
+	store: StateStore,
+	initialState: T,
+	cachingKeys: Array<keyof T>,
+	cache_key: string = "tjmc.global.state"
+) => {
 
 	if (typeof store != "object" || !(store instanceof StateStore)) throw new Error("Caching store in not instance of StateStore");
 
-	const STATE_CACHE_KEY = cache_key || "tjmc.global.state";
-	const INITIAL_STATE = initialState || {};
+	const STATE_CACHE_KEY = cache_key;
+	const INITIAL_STATE = initialState;
 	const UPDATE_THROTTLE = 5000;
 
 	const updateCacheThrottled = throttle(() => updateCache(), UPDATE_THROTTLE, false);
@@ -214,22 +219,7 @@ export const StoreCaching = (store: StateStore, initialState: {}, cache_key: str
 		const global = store.getState(e => e);
 		const reducedGlobal = {
 			...INITIAL_STATE,
-			...pick(global, [
-				"currentUserId",
-				"theme",
-				"auth_state",
-				"settings",
-				"users",
-				"installations",
-				"versions",
-				"releases",
-				"currentMainScreen",
-				"isSettingsOpen",
-				...(APP_ENV == "development" ? [
-					"currentSettingsScreen", "modals"
-				] : []),
-				"lastAppVersionId"
-			])
+			...pick(global, cachingKeys)
 		};
 		try {
 			const json = JSON.stringify(reducedGlobal);
