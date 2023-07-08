@@ -185,7 +185,7 @@ const MyAccountTab = memo(() => {
 							<div className={buildClassName("icon", "ns")}>
 								<span style={{
 									backgroundImage: user.avatar != void 0 ?
-										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64)` :
+										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256)` :
 										`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`
 								}} className="accountAvatar" />
 							</div>
