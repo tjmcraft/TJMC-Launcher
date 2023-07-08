@@ -915,6 +915,9 @@ body {
 
 .r-box {
     flex: 1 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
     position: relative;
     border-radius: 8px;
     overflow: hidden;
