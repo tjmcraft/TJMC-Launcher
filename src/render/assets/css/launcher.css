@@ -872,13 +872,13 @@ body {
 .container > .leftColumn {
     display: flex;
     flex-direction: column;
-
     width: 300px;
     max-width: 350px;
     flex: 0 0 auto;
     flex-shrink: 0;
     overflow: hidden;
-    /* background-color: var(--background-tertiary); */
+    border-right: 1px solid var(--border-color-1);
+    background-color: var(--sbw-background-side);
 }
 .container.main > .leftColumn {
     gap: 8px;
@@ -913,7 +913,7 @@ body {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
-    background-color: var(--sbw-background-side);
+    background-color: var(--background-floating);
 }
 
 .container > .leftColumn .r-box.installations {

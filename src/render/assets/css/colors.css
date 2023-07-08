@@ -4,9 +4,9 @@
     --background-tertiary: #121212;
     --background-primary: #282828;
     --background-secondary: #1d1d1d;
-    --background-secondary-alt: #121212;
+    --background-secondary-alt: #181818;
     --sbw-background-side: #1d1d1d;
-    --sbw-background-main: #1d1d1d;
+    --sbw-background-main: #121212;
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
     --interactive-active: #fff;
@@ -14,7 +14,7 @@
     --background-modifier-active: rgba(79,84,92,0.24);
     --background-modifier-selected: rgba(79,84,92,0.32);
     --background-modifier-accent: hsla(0,0%,100%,0.06);
-    --border-color-1: rgba(79,84,92,0.16);
+    --border-color-1: rgba(79,84,92,0.18);
     --background-floating: #18191c;
     --header-primary: #fff;
     --header-secondary: #b9bbbe;
@@ -44,10 +44,10 @@
 
 :root.light-theme {
     --background-tertiary: #efeff3;
-    --background-primary: #f2f3f5;
-    --background-secondary: #fff;
+    --background-primary: #fff;
+    --background-secondary: #f2f3f5;
     --background-secondary-alt: #dbdddf;
-    --sbw-background-side: #fefefe;
+    --sbw-background-side: #efeff3;
     --sbw-background-main: #fefefe;
     --interactive-normal: #4f5660;
     --interactive-hover: #2e3338;
