@@ -87,7 +87,8 @@ const INITIAL_STATE: GlobalState = {
 	configuration: undefined,
 	releases: [],
 	currentMainScreen: {
-		type: 'map',
+		type: 'installation',
+		hash: undefined,
 	},
 	currentSettingsScreen: "my-account",
 	isSettingsOpen: false,
