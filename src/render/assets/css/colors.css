@@ -3,14 +3,14 @@
 :root, .dark-theme {
     --background-tertiary: #121212;
     --background-primary: #282828;
-    --background-secondary: #1f1f1f;
+    --background-secondary: #1d1d1d;
     --background-secondary-alt: #121212;
     --sbw-background-side: #1d1d1d;
     --sbw-background-main: #1d1d1d;
     --interactive-normal: #b9bbbe;
     --interactive-hover: #dcddde;
     --interactive-active: #fff;
-    --background-modifier-hover: rgba(79,84,92,0.16);
+    --background-modifier-hover: rgba(79,84,92,0.26);
     --background-modifier-active: rgba(79,84,92,0.24);
     --background-modifier-selected: rgba(79,84,92,0.32);
     --background-modifier-accent: hsla(0,0%,100%,0.06);
@@ -43,9 +43,9 @@
 /************* LIGHT THEME ***************/
 
 :root.light-theme {
-    --background-tertiary: #e3e5e8;
-    --background-primary: #fff;
-    --background-secondary: #f2f3f5;
+    --background-tertiary: #efeff3;
+    --background-primary: #f2f3f5;
+    --background-secondary: #fff;
     --background-secondary-alt: #dbdddf;
     --sbw-background-side: #fefefe;
     --sbw-background-main: #fefefe;
