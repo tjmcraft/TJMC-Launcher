@@ -110,11 +110,9 @@ export class StateStore {
 	removeReducer = (name: ActionNames, reducer: ActionHandler) => {
 		if (!this.reducers[name]) return;
 		const index = this.reducers[name].indexOf(reducer);
-		console.debug("removeReducer", index);
 		if (index !== -1) {
 			this.reducers[name].splice(index, 1);
 		}
-		console.debug("reducers", this.reducers);
 	};
 
 	getDispatch = () => this.actions;
