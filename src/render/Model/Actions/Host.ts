@@ -4,11 +4,11 @@ import { updateGameError, updateGameStartupError, updateHostInfo, updateProgress
 import { updateAuthState, updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
-import { addReducer, getState } from "Store/Global";
+import { addReducer } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { updateCurrentUser } from "Model/Reducers/user";
-import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
+import { selectInstallation } from "Model/Selectors/installations";
 
 addReducer("initHost", (_global, actions) => {
 	window.electron.on('tjmc:runAction', (_e, { type, data }) => {

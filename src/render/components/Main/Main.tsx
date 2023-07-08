@@ -9,7 +9,7 @@ import Transition from "UI/Transition";
 import Settings from "./Settings";
 import { UserPanelMain } from "./UserPanel";
 import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
-import { addReducer, getDispatch, removeReducer } from "Store/Global";
+import { addReducer, removeReducer } from "Store/Global";
 
 
 const Main = () => {
