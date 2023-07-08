@@ -882,7 +882,7 @@ body {
 }
 .container.main > .leftColumn {
     gap: 8px;
-    padding: 8px 0 0 0;
+    padding: 0;
 }
 .container > .leftColumn .scroller {
     padding-right: 0;
