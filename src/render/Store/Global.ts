@@ -133,5 +133,7 @@ export const setState = stateStore.setState;
 export const withState = stateStore.withState;
 export const addReducer: (name: ActionNames, reducer: ActionHandler) => void =
 	(...args) => stateStore.addReducer(...args);
+export const removeReducer: (name: ActionNames, reducer: ActionHandler) => void =
+	(...args) => stateStore.removeReducer(...args);
 export const addCallback = stateStore.addCallback;
 export const removeCallback = stateStore.removeCallback;

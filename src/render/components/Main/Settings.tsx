@@ -919,7 +919,7 @@ const Settings = () => {
 		selectSettingsScreen(screen);
 	}, [selectSettingsScreen]);
 
-	useEffect(() => captureEscKeyListener(() => closeSettings()), [closeSettings]);
+	useEffect(() => captureEscKeyListener(closeSettings), [closeSettings]);
 
 	return (
 		<div className={buildClassName("container", "main", "settings")} id="user-settings">

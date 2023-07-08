@@ -1,4 +1,4 @@
-import { createElement, memo } from "react";
+import { createElement, memo, useCallback, useEffect } from "react";
 
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
@@ -9,6 +9,7 @@ import Transition from "UI/Transition";
 import Settings from "./Settings";
 import { UserPanelMain } from "./UserPanel";
 import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
+import { addReducer, getDispatch, removeReducer } from "Store/Global";
 
 
 const Main = () => {
@@ -36,6 +37,23 @@ const Main = () => {
 const MainContainer = () => {
 
 	const isSettingsOpen = useGlobal(global => global.isSettingsOpen);
+
+	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const openSettings = () => actions.openSettings();
+		const openShortcuts = () => actions.openShortcutsModal();
+		const hostActions = {
+			openSettings,
+			openShortcuts,
+		};
+		if (hostActions.hasOwnProperty(type))
+			(hostActions[type])(data);
+	}, []);
+
+	useEffect(() => {
+		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
+		addReducer('runShortcutAction', handler);
+		return () => removeReducer('runShortcutAction', handler);
+	}, [runShortcutAction]);
 
 	function renderContent() {
 		if (isSettingsOpen) {
