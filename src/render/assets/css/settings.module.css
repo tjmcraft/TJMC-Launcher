@@ -62,7 +62,7 @@
 
 
 .zxcBox {
-    background: var(--inp-background-normal);
+    background: var(--background-secondary);
     padding: 16px;
     border-radius: 8px;
     margin-bottom: 20px;

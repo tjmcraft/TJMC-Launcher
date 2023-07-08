@@ -1954,7 +1954,7 @@ a:hover {
 
 .fieldList {
     border-radius: 8px;
-    background-color: var(--background-secondary);
+    background-color: var(--background-primary);
     padding: 16px;
     margin-top: 16px;
 }
