@@ -15,6 +15,21 @@ import { addReducer, removeReducer } from "Store/Global";
 const Main = () => {
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
+	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const createInstallation = () => actions.openVersionChooserModal();
+		const hostActions = {
+			createInstallation
+		};
+		if (hostActions.hasOwnProperty(type))
+			(hostActions[type])(data);
+	}, []);
+
+	useEffect(() => {
+		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
+		addReducer('runShortcutAction', handler);
+		return () => removeReducer('runShortcutAction', handler);
+	}, [runShortcutAction]);
+
 	return (
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>

@@ -19,27 +19,15 @@ const CubeContent = ({ hash }) => {
 	}, [hash]);
 
 	const runShortcutAction = useCallback((actions, { type, data }) => {
-		const runCurrentInstallation = () => {
-			return actions.invokeLaunch({ hash: hash });
-		};
-		const stopCurrentInstallation = () => {
-			return actions.revokeLaunch({ hash: hash });
-		};
-		const runInstallationForce = () => {
-			return actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
-		};
-		const editInstallation = () => {
-			return actions.openInstallationEditor({ hash: hash });
-		};
-		const createInstallation = () => {
-			return actions.openVersionChooserModal();
-		};
+		const runCurrentInstallation = () => actions.invokeLaunch({ hash: hash });
+		const stopCurrentInstallation = () => actions.revokeLaunch({ hash: hash });
+		const runInstallationForce = () => actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
+		const editInstallation = () => actions.openInstallationEditor({ hash: hash });
 		const hostActions = {
 			runCurrentInstallation,
 			stopCurrentInstallation,
 			runInstallationForce,
 			editInstallation,
-			createInstallation,
 		};
 		if (hostActions.hasOwnProperty(type))
 			(hostActions[type])(data);
