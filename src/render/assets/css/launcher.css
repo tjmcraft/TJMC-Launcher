@@ -878,11 +878,11 @@ body {
     flex-shrink: 0;
     overflow: hidden;
     /* border-right: 1px solid var(--border-color-1); */
-    background-color: var(--sbw-background-side);
+    /* background-color: var(--sbw-background-side); */
 }
 .container.main > .leftColumn {
     gap: 8px;
-    padding: 8px;
+    padding: 8px 0 0 0;
 }
 .container > .leftColumn .scroller {
     padding-right: 0;
@@ -968,10 +968,16 @@ body {
     margin-right: 8px;
 }
 
+.container.main {
+    padding: 0 0 8px 8px;
+    gap: 8px;
+}
 .container.main > .middleColumn {
     --border-radius-mid: 8px;
     border-top-left-radius: var(--border-radius-mid);
     border-bottom-left-radius: var(--border-radius-mid);
+    /* border-top-right-radius: var(--border-radius-mid); */
+    /* border-bottom-right-radius: var(--border-radius-mid); */
 }
 .container > .middleColumn {
     display: flex;
@@ -1954,7 +1960,7 @@ a:hover {
 
 .fieldList {
     border-radius: 8px;
-    background-color: var(--background-primary);
+    background-color: var(--background-secondary-alt);
     padding: 16px;
     margin-top: 16px;
 }
