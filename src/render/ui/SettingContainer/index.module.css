@@ -14,7 +14,7 @@
 	pointer-events: none;
 }
 .settingContainer {
-	--inp-background-normal: var(--background-secondary-alt);
+	--inp-background-normal: var(--background-secondary);
 	--inp-background-disabled: var(--background-tertiary);
 }
 

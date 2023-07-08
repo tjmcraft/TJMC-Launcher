@@ -872,14 +872,17 @@ body {
 .container > .leftColumn {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
+
     width: 300px;
     max-width: 350px;
     flex: 0 0 auto;
     flex-shrink: 0;
     overflow: hidden;
     /* background-color: var(--background-tertiary); */
+}
+.container.main > .leftColumn {
+    gap: 8px;
+    padding: 8px;
 }
 .container > .leftColumn .scroller {
     padding-right: 0;
@@ -1951,7 +1954,7 @@ a:hover {
 
 .fieldList {
     border-radius: 8px;
-    background-color: var(--background-primary);
+    background-color: var(--background-secondary);
     padding: 16px;
     margin-top: 16px;
 }
