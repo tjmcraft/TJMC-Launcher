@@ -482,7 +482,7 @@ p {
 
 .container > .leftColumn .sidebar {
     width: 100%;
-    padding: 10px 0px;
+    padding: 0;
 }
 
 
@@ -620,6 +620,10 @@ p {
     line-height: 16px;
     color: #8e9297;
     gap: 12px;
+}
+
+.sidebar > :first-child.separator {
+    margin-top: 0;
 }
 
 .separator {
@@ -815,7 +819,7 @@ body {
 
 
 .panel {
-    padding: 8px 4px 0;
+    padding: 12px 4px 0;
 }
 .r-box .panel {
     padding: 8px;
@@ -883,6 +887,7 @@ body {
 .container.main > .leftColumn {
     gap: 8px;
     padding: 0;
+    /* padding-top: 8px; */
 }
 .container > .leftColumn .scroller {
     padding-right: 0;

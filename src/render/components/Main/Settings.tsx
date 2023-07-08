@@ -35,6 +35,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const hostOnline = useHostOnline();
 
 	const items = useMemo(() => [
+		{ type: "separator" },
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user'  },
 		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
 		{ type: "separator" },
