@@ -34,10 +34,11 @@ const CubeContent = ({ hash }) => {
 	}, [hash]);
 
 	useEffect(() => {
+		if (!hasInstallation) return;
 		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
 		addReducer('runShortcutAction', handler);
 		return () => removeReducer('runShortcutAction', handler);
-	}, [runShortcutAction]);
+	}, [runShortcutAction, hasInstallation]);
 
 	return (
 		hasInstallation ? (
