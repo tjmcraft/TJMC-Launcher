@@ -11,10 +11,11 @@ import { addReducer, removeReducer } from "Store/Global";
 
 const CubeContent = ({ hash }) => {
 
-	const { hasInstallation } = useGlobal(global => {
+	const { hasInstallation, hasModals } = useGlobal(global => {
 		const version = selectInstallation(global, hash) || undefined;
 		return {
 			hasInstallation: version !== undefined,
+			hasModals: global.modals.length > 0
 		};
 	}, [hash]);
 
@@ -34,11 +35,11 @@ const CubeContent = ({ hash }) => {
 	}, [hash]);
 
 	useEffect(() => {
-		if (!hasInstallation) return;
+		if (!hasInstallation || hasModals) return;
 		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
 		addReducer('runShortcutAction', handler);
 		return () => removeReducer('runShortcutAction', handler);
-	}, [runShortcutAction, hasInstallation]);
+	}, [runShortcutAction, hasInstallation, hasModals]);
 
 	return (
 		hasInstallation ? (

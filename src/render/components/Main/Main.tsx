@@ -13,6 +13,7 @@ import { addReducer, removeReducer } from "Store/Global";
 
 
 const Main = () => {
+
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
 	const runShortcutAction = useCallback((actions, { type, data }) => {

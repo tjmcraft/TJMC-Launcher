@@ -97,6 +97,7 @@ addReducer("alert", (_global, _actions, update) => {
 });
 
 addReducer("openSettings", (global, _actions, update) => {
+	if (global.modals.length > 0) return;
 	const { tab } = update || {};
 	return {
 		...global,
