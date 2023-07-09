@@ -44,8 +44,8 @@
 }
 
 .sc-container kbd {
-	background-color: var(--background-modifier-accent);
-	box-shadow: 0 3px 0 var(--background-modifier-selected);
+	background-color: var(--background-primary);
+	box-shadow: 0 3px 0 var(--background-modifier-accent);
 	transform: translateY(-2px);
 	transition: .05s ease;
 	padding: 4px 6px;
