@@ -1971,7 +1971,7 @@ a:hover {
 
 .fieldList {
     border-radius: 8px;
-    background-color: var(--background-secondary-alt);
+    background-color: var(--background-modifier-accent);
     padding: 16px;
     margin-top: 16px;
 }
