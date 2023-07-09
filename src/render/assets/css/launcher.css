@@ -977,15 +977,15 @@ body {
 }
 
 .container.main {
-    padding: 0 0 8px 8px;
+    padding: 8px;
     gap: 8px;
 }
 .container.main > .middleColumn {
     --border-radius-mid: 8px;
     border-top-left-radius: var(--border-radius-mid);
     border-bottom-left-radius: var(--border-radius-mid);
-    /* border-top-right-radius: var(--border-radius-mid); */
-    /* border-bottom-right-radius: var(--border-radius-mid); */
+    border-top-right-radius: var(--border-radius-mid);
+    border-bottom-right-radius: var(--border-radius-mid);
 }
 .container > .middleColumn {
     display: flex;
