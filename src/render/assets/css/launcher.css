@@ -521,7 +521,7 @@ p {
     width: 100%;
     padding: 5px 10px;
     z-index: 1;
-    background-color: var(--background-secondary);
+    background-color: var(--background-secondary-alt);
     box-shadow: 0 5px 10px 5px var(--color-shadow);
 }
 
@@ -1356,7 +1356,7 @@ i {
 }
 
 .container-f .header {
-    background-color: var(--background-secondary);
+    background-color: var(--background-secondary-alt);
     box-shadow: 0 0px 5px 0px var(--color-shadow);
     position: relative;
     font-weight: 500;
