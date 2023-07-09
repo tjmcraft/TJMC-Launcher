@@ -482,12 +482,15 @@ p {
 
 .container > .leftColumn .sidebar {
     width: 100%;
+    padding: 10px 0;
+}
+.container.main > .leftColumn .sidebar {
     padding: 0;
 }
 
 
 .sidebar-region {
-    background-color: var(--background-secondary-alt);
+    background-color: var(--background-secondary);
     display: flex;
     flex-direction: row;
     user-select: none;
