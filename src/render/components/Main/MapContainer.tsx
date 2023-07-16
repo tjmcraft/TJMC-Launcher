@@ -1,6 +1,6 @@
 import { createElement, memo, useRef, useEffect, useCallback, useState } from "react";
 import buildClassName from "Util/buildClassName";
-import { Modal } from "UI/Modal";
+
 import Spinner from "UI/Spinner";
 
 const MapContainer = memo(() => {
@@ -24,12 +24,4 @@ const MapContainer = memo(() => {
 	);
 });
 
-const MapModal = memo(() => {
-	return (
-		<Modal mini={false} small={false} full={false}>
-			<MapContainer />
-		</Modal>
-	);
-});
-
-export default MapModal;
+export default memo(MapContainer);

@@ -62,10 +62,7 @@ addReducer("getGlobalVersions", () => {
 	void callHost("fetchVersions");
 });
 
-addReducer("setVersionHash", (global, _actions, payload) => {
+addReducer("setVersionHash", (_global, actions, payload) => {
 	if (!payload) return;
-	return {
-		...global,
-		version_hash: payload
-	};
+	void actions.selectMainScreen({ type: 'installation', hash: payload });
 });

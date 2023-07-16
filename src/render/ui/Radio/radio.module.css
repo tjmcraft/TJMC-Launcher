@@ -35,13 +35,13 @@
   color: var(--interactive-hover);
 }
 .radioGroup > .item[aria-checked="true"] > .radioBar {
-  background: var(--background-secondary-alt) !important;
+  background: var(--background-modifier-selected) !important;
 }
 .radioGroup > .item > .radioBar {
   display: flex;
   align-items: center;
   border-radius: 5px;
-  background: var(--background-secondary);
+  background: var(--inp-background-normal);
   padding: 10px;
 }
 :global(:root.more-border) .radioGroup > .item > .radioBar {

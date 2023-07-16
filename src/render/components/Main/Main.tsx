@@ -1,41 +1,97 @@
-import { createElement, memo } from "react";
+import { createElement, memo, useCallback, useEffect } from "react";
 
-import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
+import buildClassName from "Util/buildClassName";
 
+import CubeContent from "./CubeContainer/CubeContent";
+import MapContainer from "./MapContainer";
 import Transition from "UI/Transition";
-import Route from "UI/Route";
-import Guild from "./Guild";
-import CubeContainer from "./CubeContainer";
-import { SVG } from "UI/svg";
+import Settings from "./Settings";
+import { UserPanelMain } from "./UserPanel";
+import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
+import { addReducer, removeReducer } from "Store/Global";
 
 
 const Main = () => {
 
-	const { selectMainScreen, openMapModal } = getDispatch();
-	const currentScreen = useGlobal(global => global.currentMainScreen);
+	const currentMainScreen = useGlobal(global => global.currentMainScreen);
+
+	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const createInstallation = () => actions.openVersionChooserModal();
+		const hostActions = {
+			createInstallation
+		};
+		if (hostActions.hasOwnProperty(type))
+			(hostActions[type])(data);
+	}, []);
+
+	useEffect(() => {
+		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
+		addReducer('runShortcutAction', handler);
+		return () => removeReducer('runShortcutAction', handler);
+	}, [runShortcutAction]);
 
 	return (
-		<div className="container">
-			<div className="guilds">
-				<div className={buildClassName("scroller", "no-scrollbar")}>
-					<Guild type="item" svg={SVG('home')} onClick={() => selectMainScreen('cube')} selected={currentScreen == 'cube'} />
-					<Guild type="separator" />
-					<Guild type="item" svg={SVG('map')} onClick={() => openMapModal()} />
-				</div>
+		<div className={buildClassName("container", "main")}>
+			<nav className={buildClassName("leftColumn", "sidebar")}>
+				<UserPanelMain />
+				<InstallationsScroller />
+				<InstanceScroller />
+			</nav>
+			<div className={buildClassName("middleColumn", "content")}>
+				{currentMainScreen.type == 'installation' && (
+					<CubeContent hash={currentMainScreen.hash} />
+				)}
+				{currentMainScreen.type == 'map' && (
+					<MapContainer />
+				)}
 			</div>
-			<Route path="cube"><CubeContainer /></Route>
 		</div>
 	);
 };
 
-const MainContainer = ({ isShown }) => {
+const MainContainer = () => {
+
+	const isSettingsOpen = useGlobal(global => global.isSettingsOpen);
+
+	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const openSettings = () => actions.openSettings();
+		const openShortcuts = () => actions.openShortcutsModal();
+		const hostActions = {
+			openSettings,
+			openShortcuts,
+		};
+		if (hostActions.hasOwnProperty(type))
+			(hostActions[type])(data);
+	}, []);
+
+	useEffect(() => {
+		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
+		addReducer('runShortcutAction', handler);
+		return () => removeReducer('runShortcutAction', handler);
+	}, [runShortcutAction]);
+
+	function renderContent() {
+		if (isSettingsOpen) {
+			return <Settings />;
+		}
+		return <Main />;
+	}
+
+	function getActiveKey() {
+		if (isSettingsOpen) return 1;
+		return 0;
+	}
+
 	return (
-		<Transition className={"app-container"} isShown={isShown}>
-			<Main />
+		<div className="app-container">
+			<Transition
+				activeKey={getActiveKey()}
+			>
+				{renderContent}
+			</Transition>
 			<div className="uploadArea" />
-		</Transition>
+		</div>
 	);
 };
 

@@ -169,11 +169,10 @@ const InstallationForm = ({ version, onCancel }) => {
 const InstallationEditor = (props) => {
 	const { closeModal } = getDispatch();
 	const selectedVersion = useGlobal(global => selectInstallation(global, props.hash));
-	const { full_chooser: shouldFull } = useGlobal(global => global.settings);
 	console.debug("[InstallationEditor]", props);
 	console.debug("[InstallationEditor]", selectedVersion);
 	return (
-		<Modal mini={true} small={true} full={shouldFull}>
+		<Modal mini={true} small={true}>
 			<div className={buildClassName("container", "left-closed")} id="version-selector">
 				<div className="middleColumn">
 					<InstallationForm version={selectedVersion} onCancel={closeModal} key={selectedVersion.id} />

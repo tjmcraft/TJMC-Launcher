@@ -6,23 +6,19 @@ import useGlobal from "Hooks/useGlobal";
 import useShowTransition from "Hooks/useShowTransition";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 
-import Settings from "Components/Modals/Settings";
 import VersionChooser from "Components/Modals/VersionChooser";
 import Alert from "Components/Modals/Alert";
 import WhatsNew from "Components/Modals/WhatsNew";
 import InstallationEditor from "Components/Modals/InstallationEditor";
-import MapModal from "Components/Modals/MapModal";
 import ShortcutsModal from "Components/Modals/ShortcutsModal";
 
 import style from "CSS/modal.module.css";
 
 const MODAL_STORE = {
-	settings: Settings,
 	versionChooser: VersionChooser,
 	alert: Alert,
 	"whats-new": WhatsNew,
 	"installation-editor": InstallationEditor,
-	"map-modal": MapModal,
 	"shortcuts-modal": ShortcutsModal,
 };
 

@@ -96,15 +96,20 @@ addReducer("alert", (_global, _actions, update) => {
 	});
 });
 
-addReducer("openSettingsModal", (_global, _actions, update) => {
+addReducer("openSettings", (global, _actions, update) => {
+	if (global.modals.length > 0) return;
 	const { tab } = update || {};
-	void addModal({
-		layer: "settings",
-		label: "settings",
-		closeButton: true,
-		allowOutsideClick: true,
-		tab,
-	});
+	return {
+		...global,
+		...(tab ? { currentSettingsScreen: tab } : {}),
+		isSettingsOpen: true,
+	};
+});
+addReducer("closeSettings", (global, _actions, _update) => {
+	return {
+		...global,
+		isSettingsOpen: false,
+	};
 });
 
 addReducer("openVersionChooserModal", (_global, _actions, _update) => {
@@ -132,21 +137,12 @@ addReducer("openWhatsNewModal", (global, _actions, _update) => {
 		small: true,
 		closeButton: false,
 	});
-	global = getState();
+	global = getState(e => e);
 	global = {
 		...global,
 		lastAppVersionId: APP_VERSION,
 	};
 	setState(global);
-});
-
-addReducer("openMapModal", (_global, _actions, _update) => {
-	void addModal({
-		layer: "map-modal",
-		label: "map-modal",
-		closeButton: true,
-		allowOutsideClick: true,
-	});
 });
 
 addReducer("openShortcutsModal", (_global, _actions, _update) => {

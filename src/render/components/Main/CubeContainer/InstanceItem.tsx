@@ -22,7 +22,7 @@ const InstanceItem: FC<{
 	return instanceId && (
 		<div className={buildClassName('item', 'navItem', 'noAction')}>
 			<span>{name || hash || instanceId}</span>
-			<div className={buildClassName("button", "small")} title="Kill instance" onClick={handleKill}><i className="icon-close"></i></div>
+			<button className="circle" onClick={handleKill} title="Kill instance"><i className="icon-close"></i></button>
 		</div>
 	);
 };

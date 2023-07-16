@@ -4,49 +4,15 @@ import { updateGameError, updateGameStartupError, updateHostInfo, updateProgress
 import { updateAuthState, updateConnectionState } from "Model/Reducers/initial";
 import { updateInstallation } from "Model/Reducers/installations";
 
-import { addReducer, getState } from "Store/Global";
+import { addReducer } from "Store/Global";
 import ProgressStore from "Store/Progress";
 import { callHost, initHost } from "../../api/host";
 import { updateCurrentUser } from "Model/Reducers/user";
-import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
+import { selectInstallation } from "Model/Selectors/installations";
 
 addReducer("initHost", (_global, actions) => {
-	const withAuth = (fn = (...args) => args) => (...args) =>
-		getState(global => ["ready"].includes(global.auth_state)) ? fn(...args) : () => void 0;
-	const openSettings = () => actions.openSettingsModal();
-	const openMap = () => actions.openMapModal();
-	const openShortcuts = () => actions.openShortcutsModal();
-	const runCurrentInstallation = () => {
-		const hash = getState(selectCurrentVersionHash);
-		return actions.invokeLaunch({ hash: hash });
-	};
-	const stopCurrentInstallation = () => {
-		const hash = getState(selectCurrentVersionHash);
-		return actions.revokeLaunch({ hash: hash });
-	};
-	const runInstallationForce = () => {
-		const hash = getState(selectCurrentVersionHash);
-		return actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
-	};
-	const editInstallation = () => {
-		const hash = getState(selectCurrentVersionHash);
-		return actions.openInstallationEditor({ hash: hash });
-	};
-	const createInstallation = () => {
-		return actions.openVersionChooserModal();
-	};
-	const hostActions = {
-		openSettings,
-		openMap,
-		openShortcuts,
-		runCurrentInstallation,
-		stopCurrentInstallation,
-		runInstallationForce,
-		editInstallation,
-		createInstallation,
-	};
 	window.electron.on('tjmc:runAction', (_e, { type, data }) => {
-		if (hostActions.hasOwnProperty(type)) withAuth(hostActions[type])(data);
+		actions.runShortcutAction({ type, data });
 	});
 	void initHost(actions.hostUpdate);
 });

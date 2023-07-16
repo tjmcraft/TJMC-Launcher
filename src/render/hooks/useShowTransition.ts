@@ -1,11 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import buildClassName from "Util/buildClassName";
 
 type TransitionClasses = {
 	open?: string;
 	shown?: string;
 	closing?: string;
-}
+};
+
+const DEFAULT_TRANSITION_CLASSES: TransitionClasses = {
+	open: "open",
+	shown: "shown",
+	closing: "closing",
+};
 
 const useShowTransition = (
 	isOpen: boolean = false,
@@ -13,61 +19,51 @@ const useShowTransition = (
 	noOpenTransition: boolean = false,
 	className: string | false = false,
 	noCloseTransition: boolean = false,
-	classes: TransitionClasses = {},
-	duration: number = 350
+	classes: TransitionClasses = DEFAULT_TRANSITION_CLASSES,
+	duration: number = 350,
+	debug_tag: string = undefined,
 ) => {
-	classes = Object.assign({ open: "open", shown: "shown", closing: "closing" }, classes);
+	classes = useMemo(() => Object.assign({}, DEFAULT_TRANSITION_CLASSES, classes), [classes]);
 	const [isClosed, setIsClosed] = useState(!isOpen);
-	const closeTimeoutRef = useRef(0);
-	// СSS class should be added in a separate tick to turn on CSS transition.
 	const [hasOpenClassName, setHasOpenClassName] = useState(isOpen && noOpenTransition);
+
+	useEffect(() => {
+		let closeTimeout = 0;
+		if (isOpen) {
+			setIsClosed(false);
+			setHasOpenClassName(true);
+		} else {
+			setHasOpenClassName(false);
+			if (!isClosed && !closeTimeout) {
+				closeTimeout = window.setTimeout(() => {
+					setIsClosed(true);
+					if (onCloseTransitionEnd) {
+						onCloseTransitionEnd();
+					}
+					closeTimeout = undefined;
+				}, noCloseTransition ? 0 : duration);
+			}
+		}
+		return () => {
+			window.clearTimeout(closeTimeout);
+			closeTimeout = undefined;
+		};
+	}, [isOpen]);
 
 	// `noCloseTransition`, when set to true, should remove the open class immediately
 	const shouldHaveOpenClassName = hasOpenClassName && !(noCloseTransition && !isOpen);
-	const isClosing = Boolean(closeTimeoutRef.current);
+	const isClosing = Boolean(!isOpen && !isClosed);
 	const shouldRender = isOpen || isClosing;
 	const transitionClassNames = buildClassName(
-		className && 'opacity-transition',
 		className,
 		shouldHaveOpenClassName && classes.open,
 		shouldRender && classes.shown,
 		isClosing && classes.closing,
 	);
 
-	useEffect(() => { // open after render
-		if (isOpen) {
-			setIsClosed(false);
-			setHasOpenClassName(true);
-
-			if (closeTimeoutRef.current) {
-				window.clearTimeout(closeTimeoutRef.current);
-				closeTimeoutRef.current = undefined;
-			}
-		}
-	}, [isOpen]);
-
-	if (!isOpen) { // close before render
-		setHasOpenClassName(false);
-
-		if (!isClosed && !closeTimeoutRef.current) {
-			const exec = () => {
-				setIsClosed(true);
-
-				if (onCloseTransitionEnd) {
-					onCloseTransitionEnd();
-				}
-
-				closeTimeoutRef.current = undefined;
-			};
-
-			if (noCloseTransition) {
-				exec();
-			} else {
-				closeTimeoutRef.current = window.setTimeout(exec, duration);
-			}
-		}
-	}
-
+	debug_tag && console.debug("[HOOKS]", "{useShowTransition}", `[${debug_tag}]`, "state:", {
+		shouldRender, shouldHaveOpenClassName, isClosing
+	});
 
 	return {
 		shouldRender,

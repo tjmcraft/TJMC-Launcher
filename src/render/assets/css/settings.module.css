@@ -16,7 +16,7 @@
 }
 .settingGroupContainer > .settingGroup {
     position: relative;
-    background: var(--background-secondary);
+    background: var(--inp-background-normal);
     border-radius: 8px;
 }
 
@@ -58,4 +58,35 @@
 .size12 {
     font-size: 12px;
     line-height: 16px;
+}
+
+
+.zxcBox {
+    background: var(--background-secondary);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color-1);
+}
+
+.zxcBox :global(.separator) {
+    margin: 16px 0 !important;
+}
+.zxcBox > :not(:global(.separator)) + * {
+    margin-top: 16px !important;
+}
+
+.zxcBox .note {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    row-gap: 1em;
+    column-gap: 1em;
+    width: 100%;
+    overflow-x: overlay;
+    overflow-y: hidden;
+}
+.zxcBox .note > span > * {
+    margin-right: 8px;
 }

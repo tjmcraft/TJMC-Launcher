@@ -2,7 +2,7 @@ import { randomString } from "Util/Random";
 import { getState, setState } from "Store/Global";
 
 export function addModal(payload) {
-	const global = getState();
+	const global = getState(e => e);
 	const modals = [...global.modals];
 	if (payload.layer == undefined) return;
 	payload.label = payload.label != void 0 ? payload.label : `${payload.layer}-${randomString(5)}`;
@@ -26,7 +26,7 @@ export function addModal(payload) {
 }
 
 export function closeModal() {
-	const global = getState();
+	const global = getState(e => e);
 	const modals = [...global.modals];
 	let last = modals[modals.length - 1];
 	if (last && last.isShown) {
@@ -45,7 +45,7 @@ export function closeModal() {
 }
 
 export function unloadModal() {
-	const global = getState();
+	const global = getState(e => e);
 	const modals = [...global.modals];
 	const current = modals.slice().reverse().find(modal => modal.isClosing && !modal.isShown);
 	if (current) modals.splice(modals.indexOf(current), 1);

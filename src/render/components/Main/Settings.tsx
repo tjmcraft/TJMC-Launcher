@@ -14,7 +14,6 @@ import { selectSettings } from "Model/Selectors/Settings";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
-import { Modal } from "UI/Modal";
 import Button from "UI/Button";
 import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/RangeSlider";
@@ -27,6 +26,8 @@ import SettingButton from "UI/SettingButton";
 import SettingContainer from "UI/SettingContainer";
 import { InputGroup, PathInput, SelectInput } from "UI/Input";
 import { MenuItem } from "UI/Menu";
+import captureEscKeyListener from "Util/captureEscKeyListener";
+import UserPanel from "./UserPanel";
 
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
@@ -34,19 +35,17 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const hostOnline = useHostOnline();
 
 	const items = useMemo(() => [
-		{ type: "header", content: "Настройки пользователя" },
-		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", disabled: false },
-		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Игры" },
-		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline },
-		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline },
+		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user'  },
+		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
 		{ type: "separator" },
-		{ type: "header", content: "Настройки Приложения" },
-		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false },
-		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false },
+		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
+		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline, icon: 'icon-permissions' },
 		{ type: "separator" },
-		{ type: "navItem", content: "О программе", tab: "launcher-about", disabled: false },
+		{ type: "navItem", content: "Внешний вид", tab: "launcher-appearance", disabled: false, icon: 'icon-animations' },
+		{ type: "navItem", content: "Настройки лаунчера", tab: "launcher-settings", disabled: false, icon: 'icon-reopen-topic' },
+		{ type: "separator" },
+		{ type: "navItem", content: "О программе", tab: "launcher-about", disabled: false, icon: 'icon-info' },
 		{ type: "separator" },
 	], [hostOnline]);
 
@@ -55,15 +54,19 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	} : undefined;
 
 	return (
-		<div className="sidebar-items">
+		<Fragment>
 			{items.map((e, i) => (
 				<div key={i}
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
 					onClick={handleSelect(e.tab)}>
-					{e.content || ''}
+					{e.icon ? (
+						<i className={e.icon}/>
+					) : ''}
+					<span>{e.content || ''}</span>
+					<span className="next"><i className="icon-next" /></span>
 				</div>
 			))}
-		</div>
+		</Fragment>
 	);
 };
 
@@ -161,7 +164,7 @@ const TestContainer = memo(() => {
 
 const MyAccountTab = memo(() => {
 
-	const { logout, closeModal } = getDispatch();
+	const { logout, closeSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
 
 	const handleChangeClick = useCallback(() => {
@@ -170,20 +173,20 @@ const MyAccountTab = memo(() => {
 
 	const onLogoutClick = useCallback(() => {
 		logout();
-		closeModal();
-	}, [logout, closeModal]);
+		closeSettings();
+	}, [logout, closeSettings]);
 
 	return user && (
 		<TabItem id="my-account">
 			<h2>Моя учётная запись</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className="ictx-flex">
 							<div className={buildClassName("icon", "ns")}>
 								<span style={{
 									backgroundImage: user.avatar != void 0 ?
-										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=64)` :
+										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256)` :
 										`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`
 								}} className="accountAvatar" />
 							</div>
@@ -243,7 +246,7 @@ const SkinTab = memo(() => {
 			<h2>Конфигурация скина</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className="skin-flex">
 							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&vr=-25&hr=35`} />
 							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18`} />
@@ -659,27 +662,6 @@ const LauncherAppearanceTab = memo(() => {
 					</div>
 				</div>
 				<div className={style.settingGroupContainer}>
-					<h5>Общие</h5>
-					<div className={style.settingGroup}>
-						<SettingSwitch id="app.settings.fullmode"
-							title="Использовать настройки в полноэкранном режиме"
-							note="Включение этого параметра позволяет использовать настройки в полноэкранном режиме"
-							checked={settings.full_settings}
-							action={(s) => {
-								setSettings({ full_settings: Boolean(s) });
-							}}
-						/>
-						<SettingSwitch id="app.chooser.fullmode"
-							title="Использовать установщик версии в полноэкранном режиме"
-							note="Включение этого параметра позволяет использовать установщик версии в полноэкранном режиме"
-							checked={settings.full_chooser}
-							action={(s) => {
-								setSettings({ full_chooser: Boolean(s) });
-							}}
-						/>
-					</div>
-				</div>
-				<div className={style.settingGroupContainer}>
 					<h5>Дополнительно</h5>
 					<div className={style.settingGroup}>
 						<SettingSwitch id="app.preloader.mode"
@@ -843,7 +825,7 @@ const AboutTab = memo(() => {
 			<h2>О программе</h2>
 			<div className="children">
 				<div className={style.settingGroupContainer}>
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<div className={buildClassName("pctx-flex")}>
 							<div className="ictx-flex">
 								<div className="icon"><img src={iconImage} /></div>
@@ -862,7 +844,7 @@ const AboutTab = memo(() => {
 							</button>
 						</div>
 						<div className="separator" />
-						<div className={buildClassName("note", "nowrap", "tran-s")}>
+						<div className={buildClassName(style.note, "nowrap", "tran-s")}>
 							<div className="description">{APP_COPYRIGHT}</div>
 							<span className={buildClassName("flex-group", "horizontal")}>
 								<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
@@ -872,7 +854,7 @@ const AboutTab = memo(() => {
 						</div>
 					</div>
 					<UpdatesContainer />
-					<div className="bxcF1-box">
+					<div className={style.zxcBox}>
 						<h5>Просмотр информации о предыдущих релизах</h5>
 						<div className="separator" />
 						<div className="flex-group vertical">
@@ -929,21 +911,29 @@ const ActiveTab = ({ current }) => {
 	}
 };
 
-const Settings = (props) => {
+const Settings = () => {
 
-	const { selectSettingsScreen } = getDispatch();
+	const { selectSettingsScreen, closeSettings } = getDispatch();
 	const currentSettingsScreen = useGlobal(global => global.currentSettingsScreen);
 
 	const handleScreenSelect = useCallback((screen) => {
 		selectSettingsScreen(screen);
 	}, [selectSettingsScreen]);
 
-	const { full_settings: shouldFull } = useGlobal(global => global.settings);
+	useEffect(() => captureEscKeyListener(closeSettings), [closeSettings]);
 
 	return (
-		<Modal {...props} full={shouldFull}>
-			<div className="sidebarView" id="user-settings">
-				<div className="sidebar-region">
+		<div className={buildClassName("container", "main", "settings")} id="user-settings">
+			<nav className="leftColumn">
+				<div className="box">
+
+					<UserPanel>
+						<button className="circle">
+							<i className="icon-logout"/>
+						</button>
+				</UserPanel>
+				</div>
+				<div className="r-box">
 					<div className="sidebar">
 						<SideBarItems
 							currentScreen={currentSettingsScreen}
@@ -952,15 +942,13 @@ const Settings = (props) => {
 						<InfoBox />
 					</div>
 				</div>
-				<div className="content-region">
-					<div className="transitionWrap">
-						<div className={buildClassName("content", "auto-s", !shouldFull && "centred")}>
-							<ActiveTab current={currentSettingsScreen} />
-						</div>
-					</div>
+			</nav>
+			<div className="middleColumn">
+				<div className={buildClassName("content", "auto-s", "centred")}>
+					<ActiveTab current={currentSettingsScreen} />
 				</div>
 			</div>
-		</Modal>
+		</div>
 	);
 };
 

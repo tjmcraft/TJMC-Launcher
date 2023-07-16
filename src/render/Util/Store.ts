@@ -17,7 +17,7 @@ type ActionHandler = (
   payload: any,
 ) => GlobalState | void | Promise<void>;
 
-type MapStateToProps<OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => any;
+type MapStateToProps<OwnProps = AnyLiteral> = (global: GlobalState, ownProps?: OwnProps) => Partial<GlobalState>;
 
 export class StateStore {
 
@@ -41,7 +41,7 @@ export class StateStore {
 		}
 	};
 
-	getState = (selector: MapStateToProps<any> = (state) => (state)) => selector(this.currentState) ?? undefined;
+	getState = <T extends MapStateToProps>(selector: T): ReturnType<T> => selector(this.currentState) as ReturnType<T>;
 
 
 	private updateContainers = (currentState) => {
@@ -107,10 +107,18 @@ export class StateStore {
 		this.reducers[name].push(reducer);
 	};
 
+	removeReducer = (name: ActionNames, reducer: ActionHandler) => {
+		if (!this.reducers[name]) return;
+		const index = this.reducers[name].indexOf(reducer);
+		if (index !== -1) {
+			this.reducers[name].splice(index, 1);
+		}
+	};
+
 	getDispatch = () => this.actions;
 
-	withState = <OwnProps>(
-		selector: MapStateToProps<OwnProps> = () => ({}),
+	withState = (
+		selector: MapStateToProps,
 		debug?: any
 	) => {
 		return (callback: Function) => {
@@ -145,12 +153,17 @@ export class StateStore {
 
 }
 
-export const StoreCaching = (store: StateStore, initialState: {}, cache_key: string = null) => {
+export const StoreCaching = <T extends AnyLiteral>(
+	store: StateStore,
+	initialState: T,
+	cachingKeys: Array<keyof T>,
+	cache_key: string = "tjmc.global.state"
+) => {
 
 	if (typeof store != "object" || !(store instanceof StateStore)) throw new Error("Caching store in not instance of StateStore");
 
-	const STATE_CACHE_KEY = cache_key || "tjmc.global.state";
-	const INITIAL_STATE = initialState || {};
+	const STATE_CACHE_KEY = cache_key;
+	const INITIAL_STATE = initialState;
 	const UPDATE_THROTTLE = 5000;
 
 	const updateCacheThrottled = throttle(() => updateCache(), UPDATE_THROTTLE, false);
@@ -201,25 +214,10 @@ export const StoreCaching = (store: StateStore, initialState: {}, cache_key: str
 		if (!isCaching) {
 			return;
 		}
-		const global = store.getState();
+		const global = store.getState(e => e);
 		const reducedGlobal = {
 			...INITIAL_STATE,
-			...pick(global, [
-				"currentUserId",
-				"version_hash",
-				"theme",
-				"auth_state",
-				"settings",
-				"users",
-				"installations",
-				"versions",
-				"releases",
-				"currentMainScreen",
-				...(APP_ENV == "development" ? [
-					"currentSettingsScreen", "modals"
-				] : []),
-				"lastAppVersionId"
-			])
+			...pick(global, cachingKeys)
 		};
 		try {
 			const json = JSON.stringify(reducedGlobal);

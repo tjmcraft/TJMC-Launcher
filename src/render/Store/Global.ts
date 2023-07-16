@@ -1,8 +1,15 @@
 import { StateStore, StoreCaching } from "Util/Store";
 
+type ActionNames = string;
+type ActionPayload = any;
+
+interface ActionOptions {
+	silent?: boolean;
+}
+type Actions = Record<ActionNames, (payload?: ActionPayload, options?: ActionOptions) => void>;
+
 export type GlobalState = {
 	currentUserId?: string;
-	version_hash?: string;
 	theme: string;
 	auth_state: string;
 	hostConnectionState: string;
@@ -17,8 +24,6 @@ export type GlobalState = {
 		debug_host: boolean;
 		debug_api: boolean;
 		enable_preloader: boolean;
-		full_settings: boolean;
-		full_chooser: boolean;
 		dev_disable_faloc: boolean;
 		exp_more_border: boolean;
 	};
@@ -28,14 +33,21 @@ export type GlobalState = {
 	versions: Array<any>;
 	modals: Array<{
 		isShown: boolean;
+		isClosing: boolean;
 		label: string;
 		layer: string;
 		props: AnyLiteral;
 	}>;
 	configuration?: AnyLiteral;
 	releases: Array<any>;
-	currentMainScreen: string;
+	currentMainScreen: {
+		type: 'installation';
+		hash: string;
+	} | {
+		type: 'map';
+	};
 	currentSettingsScreen: string;
+	isSettingsOpen: boolean;
 	lastAppVersionId?: string;
 	update: {
 		popupLock: boolean;
@@ -50,7 +62,6 @@ export type GlobalState = {
 
 const INITIAL_STATE: GlobalState = {
 	currentUserId: undefined,
-	version_hash: undefined,
 	theme: "system",
 	auth_state: "pending",
 	hostConnectionState: "connectionStateBroken",
@@ -65,8 +76,6 @@ const INITIAL_STATE: GlobalState = {
 		debug_host: false,
 		debug_api: false,
 		enable_preloader: true,
-		full_settings: false,
-		full_chooser: false,
 		dev_disable_faloc: false,
 		exp_more_border: false,
 	},
@@ -77,8 +86,12 @@ const INITIAL_STATE: GlobalState = {
 	modals: [],
 	configuration: undefined,
 	releases: [],
-	currentMainScreen: "cube",
+	currentMainScreen: {
+		type: 'installation',
+		hash: undefined,
+	},
 	currentSettingsScreen: "my-account",
+	isSettingsOpen: false,
 	lastAppVersionId: undefined,
 	update: {
 		status: "not-available",
@@ -88,10 +101,29 @@ const INITIAL_STATE: GlobalState = {
 	}
 };
 
-export type MapStateToProps<T extends AnyFunction, OwnProps = undefined> = (global: GlobalState, ownProps?: OwnProps) => ReturnType<T>;
+type ActionHandler = (
+  global: GlobalState,
+  actions: Actions,
+  payload: any,
+) => GlobalState | void | Promise<void>;
+
+export type MapStateToProps<T extends AnyFunction, OwnProps = AnyLiteral> = (global: GlobalState, ownProps?: OwnProps) => ReturnType<T>;
 
 const stateStore = new StateStore();
-const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE);
+const { loadCache, resetCache } = StoreCaching(stateStore, INITIAL_STATE, [
+	"currentUserId",
+	"theme",
+	"auth_state",
+	"settings",
+	"users",
+	"installations",
+	"versions",
+	"releases",
+	"currentMainScreen",
+	"currentSettingsScreen",
+	"isSettingsOpen",
+	"lastAppVersionId",
+]);
 
 stateStore.addCallback(async (global) => {
 	window.__debug__ && console.debug("->", { ...global });
@@ -109,9 +141,13 @@ window.resetCache = stateStore.getDispatch().reset;
 window._gstore = stateStore;
 
 export const getDispatch = stateStore.getDispatch;
-export const getState = <T extends MapStateToProps<T>>(selector?: T): ReturnType<T> => stateStore.getState(selector);
+export const getState =
+	<T extends MapStateToProps<T>>(selector: T): ReturnType<T> => stateStore.getState(selector);
 export const setState = stateStore.setState;
 export const withState = stateStore.withState;
-export const addReducer = stateStore.addReducer;
+export const addReducer: (name: ActionNames, reducer: ActionHandler) => void =
+	(...args) => stateStore.addReducer(...args);
+export const removeReducer: (name: ActionNames, reducer: ActionHandler) => void =
+	(...args) => stateStore.removeReducer(...args);
 export const addCallback = stateStore.addCallback;
 export const removeCallback = stateStore.removeCallback;

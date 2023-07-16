@@ -1,26 +1,48 @@
-import { createElement, memo } from "react";
+import { createElement, memo, useCallback, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
-import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
+import { selectInstallation } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
+import { addReducer, removeReducer } from "Store/Global";
 
 
-const CubeContent = () => {
+const CubeContent = ({ hash }) => {
 
-	const { hash, hasInstallations } = useGlobal(global => {
-		const versionHash = selectCurrentVersionHash(global);
-		const version = selectInstallation(global, versionHash) || undefined;
+	const { hasInstallation, hasModals } = useGlobal(global => {
+		const version = selectInstallation(global, hash) || undefined;
 		return {
-			hash: versionHash,
-			hasInstallations: version !== undefined,
+			hasInstallation: version !== undefined,
+			hasModals: global.modals.length > 0
 		};
-	});
+	}, [hash]);
+
+	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const runCurrentInstallation = () => actions.invokeLaunch({ hash: hash });
+		const stopCurrentInstallation = () => actions.revokeLaunch({ hash: hash });
+		const runInstallationForce = () => actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
+		const editInstallation = () => actions.openInstallationEditor({ hash: hash });
+		const hostActions = {
+			runCurrentInstallation,
+			stopCurrentInstallation,
+			runInstallationForce,
+			editInstallation,
+		};
+		if (hostActions.hasOwnProperty(type))
+			(hostActions[type])(data);
+	}, [hash]);
+
+	useEffect(() => {
+		if (!hasInstallation || hasModals) return;
+		const handler = (global, actions, payload) => runShortcutAction(actions, payload);
+		addReducer('runShortcutAction', handler);
+		return () => removeReducer('runShortcutAction', handler);
+	}, [runShortcutAction, hasInstallation, hasModals]);
 
 	return (
-		hasInstallations ? (
+		hasInstallation ? (
 			<div className={buildClassName("main-content", "auto-s")}>
 				<CubeTopContainer hash={hash} />
 				<CubeMainContainer hash={hash} />
