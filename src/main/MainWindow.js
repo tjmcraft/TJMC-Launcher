@@ -109,7 +109,11 @@ exports.create = () => new Promise((resolve, reject) => {
 		state ? this.window.webContents.openDevTools() : this.window.webContents.closeDevTools()
 	)
 
-	this.window.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
+	if (process.env.NODE_ENV == 'development') {
+		this.window.loadURL('http://localhost:3333');
+	} else {
+		this.window.loadFile(path.resolve(__dirname, '../render/dist/index.html'));
+	}
 
 });
 
