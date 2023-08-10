@@ -13,7 +13,6 @@
         "plugin:react/recommended"
     ],
     "ignorePatterns": [
-        "src/main/*",
         "*/**/dist/*",
         "*-test.ts",
         "*-test.tsx"
