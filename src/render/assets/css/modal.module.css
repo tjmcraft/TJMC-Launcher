@@ -59,7 +59,7 @@
 
 .layer > .modal {
     position: relative;
-    background: var(--background-primary);
+    background: var(--background-secondary);
     display: flex;
     /* justify-content: center; */
     flex-direction: column;

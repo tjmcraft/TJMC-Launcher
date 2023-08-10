@@ -1,0 +1,41 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "target": "ES6",
+        "module": "CommonJS",
+        "sourceMap": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "checkJs": true,
+        "jsx": "react",
+        "jsxFactory": "createElement",
+        "jsxFragmentFactory": "Fragment",
+        "baseUrl": "./",
+        "skipLibCheck": true,
+        "strict": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "allowJs": true,
+        "lib": [
+            "DOM", "DOM.Iterable", "ES2019"
+        ],
+        "paths": {
+            "Libs/*": ["Libs/*"],
+            "Util/*": ["Util/*"],
+            "Store/*": ["Store/*"],
+            "SVG/*": ["assets/svg/*"],
+            "IMG/*": ["assets/images/*"],
+            "CSS/*": ["assets/css/*"],
+            "UI/*": ["ui/*"],
+            "Components/*": ["components/*"],
+            "Model/*": ["Model/*"],
+            "Hooks/*": ["hooks/*"],
+            "react": ["./node_modules/preact/compat/"],
+            "react-dom": ["./node_modules/preact/compat/"]
+        }
+    },
+    "exclude": ["node_modules", "dist", "build", ".vscode"],
+}

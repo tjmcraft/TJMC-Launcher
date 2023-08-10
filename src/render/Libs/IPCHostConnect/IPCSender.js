@@ -19,7 +19,7 @@ export default class IPCHostSender {
 	async connect() {
 		try {
 			Object.keys(this._handlers).forEach(event => {
-				window.electron.on(event, (sender, message) => this._handlers[event](message)); // handle all types
+				window.electron.on(event, (_sender, message) => this._handlers[event](message)); // handle all types
 			});
 			this._updateCallback(new TJMCConnectionState(TJMCConnectionState.connected));
 		} catch (e) {
@@ -39,7 +39,7 @@ export default class IPCHostSender {
 	}
 
 	sendWithInvoke(request) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			window.electron.invoke(request.type, request.data).then((message) => {
 				const result = message.data;
 				if (result) {
