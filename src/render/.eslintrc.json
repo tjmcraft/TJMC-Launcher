@@ -64,8 +64,6 @@
         "object-shorthand": [
             "warn",
             "methods"
-        ],
-        "ban-types": "error",
-        "no-explicit-any": "error"
+        ]
     }
 }

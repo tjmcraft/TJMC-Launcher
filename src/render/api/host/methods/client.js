@@ -67,7 +67,7 @@ export async function invokeRequest(request, shouldReturnTrue = false, shouldThr
 
 	try {
 		// console.debug(">> INVOKE SWING SEND", request);
-		let result = await client.invoke(request);
+		const result = await client.invoke(request);
 		// console.debug(">> INVOKE SWING PATCH", result);
 
 		if (!ignoreUpdates) {

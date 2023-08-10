@@ -14,7 +14,7 @@ type Actions = Record<ActionNames, (payload?: ActionPayload, options?: ActionOpt
 type ActionHandler = (
   global: GlobalState,
   actions: Actions,
-  payload: any,
+  payload: ActionPayload,
 ) => GlobalState | void | Promise<void>;
 
 type MapStateToProps<OwnProps = AnyLiteral> = (global: GlobalState, ownProps?: OwnProps) => Partial<GlobalState>;
@@ -26,11 +26,11 @@ export class StateStore {
 	private reducers: Record<string, ActionHandler[]> = {};
 	private actions: Actions = {};
 	private containers: Map<string, {
-		selector: MapStateToProps<any>;
+		selector: MapStateToProps<AnyLiteral>;
 		ownProps?: AnyLiteral;
 		mappedProps?: AnyLiteral;
 		callback: Function;
-		debug?: any;
+		debug?: AnyLiteral;
 	}> = new Map();
 
 	setState = (state = null, options = null) => {
@@ -119,7 +119,7 @@ export class StateStore {
 
 	withState = (
 		selector: MapStateToProps,
-		debug?: any
+		debug?: AnyLiteral
 	) => {
 		return (callback: Function) => {
 			const id = generateIdFor(this.containers);
