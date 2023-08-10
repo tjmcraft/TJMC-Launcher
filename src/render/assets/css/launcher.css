@@ -269,9 +269,6 @@ button.small {
     min-height: 28px;
     font-size: 14px;
 }
-button {
-
-}
 
 button.circle {
     min-width: unset;

@@ -51,6 +51,10 @@
             "consistent"
         ],
         "prefer-destructuring": "off",
+        "prefer-const": ["error", {
+            "destructuring": "any",
+            "ignoreReadBeforeAssign": false
+        }],
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
         "quote-props": [
@@ -60,6 +64,8 @@
         "object-shorthand": [
             "warn",
             "methods"
-        ]
+        ],
+        "ban-types": "error",
+        "no-explicit-any": "error"
     }
 }
