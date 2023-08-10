@@ -131,7 +131,7 @@
     "asar": true,
     "compression": "maximum",
     "icon": "icons/icon.png",
-    "nodeGypRebuild": true,
+    "nodeGypRebuild": false,
     "npmRebuild": true,
     "mac": {
       "category": "public.app-category.games",
