@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import React, { createElement } from "react";
 
 export function SVG(name) {
 	const SVGS = {
