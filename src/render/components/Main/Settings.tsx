@@ -926,12 +926,11 @@ const Settings = () => {
 		<div className={buildClassName("container", "main", "settings")} id="user-settings">
 			<nav className="leftColumn">
 				<div className="box">
-
 					<UserPanel>
-						<button className="circle">
-							<i className="icon-logout"/>
+						<button className="circle" onClick={() => closeSettings()}>
+							<i className="icon-close"/>
 						</button>
-				</UserPanel>
+					</UserPanel>
 				</div>
 				<div className="r-box">
 					<div className="sidebar">
