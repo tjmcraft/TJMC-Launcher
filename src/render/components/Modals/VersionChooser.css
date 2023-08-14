@@ -1,6 +1,9 @@
 #version-selector.container > .leftColumn {
   gap: 0;
 }
+#version-selector.container > .middleColumn {
+  background-color: var(--background-primary);
+}
 
 .middleHeader {
   position: relative;

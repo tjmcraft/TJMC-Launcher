@@ -9,7 +9,7 @@ import { selectInstallation, selectInstance } from "Model/Selectors/installation
 const InstanceItem: FC<{
 	instanceId: string;
 }> = ({ instanceId }) => {
-	const { killInstance } = getDispatch();
+	const { openCubeLogs, closeCubeLogs, killInstance } = getDispatch();
 	const { hash, name } = useGlobal(global => {
 		const instance = selectInstance(global, instanceId);
 		const version = selectInstallation(global, instance.hash);
@@ -18,9 +18,10 @@ const InstanceItem: FC<{
 			hash: instance.hash,
 		};
 	}, [instanceId]);
+	const handleClick = useCallback(() => openCubeLogs(instanceId), [openCubeLogs, instanceId]);
 	const handleKill = useCallback(() => killInstance(instanceId), [killInstance, instanceId]);
 	return instanceId && (
-		<div className={buildClassName('item', 'navItem', 'noAction')}>
+		<div className={buildClassName('item', 'navItem')} onClick={handleClick}>
 			<span>{name || hash || instanceId}</span>
 			<button className="circle" onClick={handleKill} title="Kill instance"><i className="icon-close"></i></button>
 		</div>

@@ -1,24 +1,68 @@
-import { Fragment, createElement, memo, useCallback, useEffect } from "react";
+import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
 import { addReducer, getDispatch, removeReducer } from "Store/Global";
-import { selectInstallation } from "Model/Selectors/installations";
+import { selectInstallation, selectInstance } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
 
+const InstanceLog = ({ instanceId }) => {
+
+	const ref = createRef<HTMLDivElement>();
+
+	const { closeCubeLogs } = getDispatch();
+	const { instanceName, stderr, stdout } = useGlobal(global => {
+		const instance = selectInstance(global, instanceId);
+		const version = selectInstallation(global, instance.hash);
+		return {
+			instanceName: version.name,
+			stdout: instance.stdout,
+			stderr: instance.stderr,
+		};
+	}, [instanceId]);
+
+	useEffect(() => {
+		const { current } = ref;
+		if (!current) return;
+		const ex = current.scrollTop + 150 <= current.scrollHeight - current.clientHeight;
+		if (!ex) {
+			current.scrollBy({
+				top: current.scrollHeight,
+				behavior: 'instant',
+			});
+		}
+	}, [stdout, stderr]);
+
+	return instanceId != undefined && (
+		<div className="r-box">
+			<div className="header-w">
+				<span>
+					<i className="icon-bug"></i>
+					<span>{instanceName || instanceId}</span>
+				</span>
+				<button className="circle" onClick={() => closeCubeLogs()}>
+					<i className="icon-close"></i>
+				</button>
+			</div>
+			<div className={buildClassName('scroller', 'thin-s', 'log')} ref={ref}>
+				<span>log log</span>
+				{stdout.map(e => (<span>{e}</span>))}
+			</div>
+		</div>
+	)
+}
 
 const CubeContent = ({ hash }) => {
 
-	const { openCubeLogs, closeCubeLogs } = getDispatch();
 
-	const { hasInstallation, hasModals, isCubeLogsOpen } = useGlobal(global => {
+	const { hasInstallation, hasModals, currentLogsHash } = useGlobal(global => {
 		const version = selectInstallation(global, hash) || undefined;
 		return {
 			hasInstallation: version !== undefined,
 			hasModals: global.modals.length > 0,
-			isCubeLogsOpen: global.isCubeLogsOpen,
+			currentLogsHash: global.currentLogsHash,
 		};
 	}, [hash]);
 
@@ -47,52 +91,14 @@ const CubeContent = ({ hash }) => {
 	return (
 		hasInstallation ? (
 			<Fragment>
-				<div className="r-box" onDoubleClick={() => openCubeLogs()}>
+				<div className="r-box">
 					<div className={buildClassName("main-content", "auto-s")}>
 						<CubeTopContainer hash={hash} />
 						<CubeMainContainer hash={hash} />
 					</div>
 				</div>
-				{isCubeLogsOpen && (
-							<div className="r-box">
-								<div className="header-w">
-									<span>
-										<i className="icon-bug"></i>
-										<span>Логи</span>
-									</span>
-									<button className="circle" onClick={() => closeCubeLogs()}>
-										<i className="icon-close"></i>
-									</button>
-								</div>
-								<div className={buildClassName('scroller', 'thin-s', 'log')}>
-									<span>log log</span>
-									<span>log log</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-									<span>lof lof lof</span>
-								</div>
-							</div>
+				{currentLogsHash != undefined && (
+					<InstanceLog instanceId={currentLogsHash} />
 						)}
 			</Fragment>
 		) : (

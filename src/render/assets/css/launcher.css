@@ -1003,7 +1003,7 @@ background-color: var(--sbw-background-main);
     min-height: 0;
     height: 100%;
     /* flex: 1 1 auto; */
-    overflow: hidden scroll;
+    overflow: hidden overlay;
     user-select: none;
     padding-top: 12px;
     padding-right: 0px;

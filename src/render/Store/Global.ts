@@ -46,7 +46,7 @@ export type GlobalState = {
 	} | {
 		type: 'map';
 	};
-	isCubeLogsOpen: boolean;
+	currentLogsHash?: string;
 	currentSettingsScreen: string;
 	isSettingsOpen: boolean;
 	lastAppVersionId?: string;
@@ -91,7 +91,7 @@ const INITIAL_STATE: GlobalState = {
 		type: 'installation',
 		hash: undefined,
 	},
-	isCubeLogsOpen: false,
+	currentLogsHash: undefined,
 	currentSettingsScreen: "my-account",
 	isSettingsOpen: false,
 	lastAppVersionId: undefined,
