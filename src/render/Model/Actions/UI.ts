@@ -111,6 +111,18 @@ addReducer("closeSettings", (global, _actions, _update) => {
 		isSettingsOpen: false,
 	};
 });
+addReducer("openCubeLogs", (global, _actions, _update) => {
+	return {
+		...global,
+		isCubeLogsOpen: true,
+	};
+});
+addReducer("closeCubeLogs", (global, _actions, _update) => {
+	return {
+		...global,
+		isCubeLogsOpen: false,
+	};
+});
 
 addReducer("openVersionChooserModal", (_global, _actions, _update) => {
 	void addModal({

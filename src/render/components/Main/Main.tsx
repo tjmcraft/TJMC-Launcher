@@ -1,4 +1,4 @@
-import { createElement, memo, useCallback, useEffect } from "react";
+import { Fragment, createElement, memo, useCallback, useEffect } from "react";
 
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
@@ -39,11 +39,19 @@ const Main = () => {
 				<InstanceScroller />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
+
 				{currentMainScreen.type == 'installation' && (
-					<CubeContent hash={currentMainScreen.hash} />
+					<Fragment>
+
+							<CubeContent hash={currentMainScreen.hash} />
+
+
+					</Fragment>
 				)}
 				{currentMainScreen.type == 'map' && (
-					<MapContainer />
+					<div className="r-box">
+						<MapContainer />
+					</div>
 				)}
 			</div>
 		</div>

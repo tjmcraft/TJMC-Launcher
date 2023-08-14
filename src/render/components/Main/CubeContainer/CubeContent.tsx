@@ -1,21 +1,24 @@
-import { createElement, memo, useCallback, useEffect } from "react";
+import { Fragment, createElement, memo, useCallback, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
+import { addReducer, getDispatch, removeReducer } from "Store/Global";
 import { selectInstallation } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
-import { addReducer, removeReducer } from "Store/Global";
 
 
 const CubeContent = ({ hash }) => {
 
-	const { hasInstallation, hasModals } = useGlobal(global => {
+	const { openCubeLogs, closeCubeLogs } = getDispatch();
+
+	const { hasInstallation, hasModals, isCubeLogsOpen } = useGlobal(global => {
 		const version = selectInstallation(global, hash) || undefined;
 		return {
 			hasInstallation: version !== undefined,
-			hasModals: global.modals.length > 0
+			hasModals: global.modals.length > 0,
+			isCubeLogsOpen: global.isCubeLogsOpen,
 		};
 	}, [hash]);
 
@@ -43,12 +46,57 @@ const CubeContent = ({ hash }) => {
 
 	return (
 		hasInstallation ? (
-			<div className={buildClassName("main-content", "auto-s")}>
-				<CubeTopContainer hash={hash} />
-				<CubeMainContainer hash={hash} />
-			</div>
+			<Fragment>
+				<div className="r-box" onDoubleClick={() => openCubeLogs()}>
+					<div className={buildClassName("main-content", "auto-s")}>
+						<CubeTopContainer hash={hash} />
+						<CubeMainContainer hash={hash} />
+					</div>
+				</div>
+				{isCubeLogsOpen && (
+							<div className="r-box">
+								<div className="header-w">
+									<span>
+										<i className="icon-bug"></i>
+										<span>Логи</span>
+									</span>
+									<button className="circle" onClick={() => closeCubeLogs()}>
+										<i className="icon-close"></i>
+									</button>
+								</div>
+								<div className={buildClassName('scroller', 'thin-s', 'log')}>
+									<span>log log</span>
+									<span>log log</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+									<span>lof lof lof</span>
+								</div>
+							</div>
+						)}
+			</Fragment>
 		) : (
-			<div className={buildClassName("main-content", "d-flex", "centred")}>
+			<div className={buildClassName("main-content", "d-flex", "centred", "r-box")}>
 				<h1>{"Выберите версию"}</h1>
 			</div>
 		)
