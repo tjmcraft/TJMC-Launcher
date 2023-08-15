@@ -1,4 +1,4 @@
-import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect } from "react";
+import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
@@ -10,7 +10,10 @@ import CubeMainContainer from "./CubeMainContainer";
 
 const InstanceLog = ({ instanceId }) => {
 
+	if (instanceId == undefined) return;
+
 	const ref = createRef<HTMLDivElement>();
+	const [isInteracted, setIsInteracted] = useState(false);
 
 	const { closeCubeLogs } = getDispatch();
 	const { instanceName, stderr, stdout } = useGlobal(global => {
@@ -23,19 +26,22 @@ const InstanceLog = ({ instanceId }) => {
 		};
 	}, [instanceId]);
 
-	useEffect(() => {
+	const handleInteract = useCallback(() => setIsInteracted(true), [setIsInteracted]);
+
+	useLayoutEffect(() => {
 		const { current } = ref;
 		if (!current) return;
-		const ex = current.scrollTop + 150 <= current.scrollHeight - current.clientHeight;
-		if (!ex) {
+		const ex = current.scrollTop + 50 >= current.scrollHeight - current.clientHeight;
+		if (!isInteracted || ex) {
 			current.scrollBy({
 				top: current.scrollHeight,
-				behavior: 'instant',
+				behavior: 'smooth',
 			});
+			setIsInteracted(false);
 		}
 	}, [stdout, stderr]);
 
-	return instanceId != undefined && (
+	return (
 		<div className="r-box">
 			<div className="header-w">
 				<span>
@@ -46,7 +52,7 @@ const InstanceLog = ({ instanceId }) => {
 					<i className="icon-close"></i>
 				</button>
 			</div>
-			<div className={buildClassName('scroller', 'thin-s', 'log')} ref={ref}>
+			<div className={buildClassName('scroller', 'thin-s', 'log')} ref={ref} onScroll={handleInteract}>
 				<span>log log</span>
 				{stdout.map(e => (<span>{e}</span>))}
 			</div>
