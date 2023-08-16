@@ -1,4 +1,4 @@
-import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
@@ -12,7 +12,9 @@ const InstanceLog = ({ instanceId }) => {
 
 	if (instanceId == undefined) return;
 
-	const ref = createRef<HTMLDivElement>();
+	const ref = useRef<HTMLDivElement>();
+	const reachedTop = useRef<number>(0);
+	const prevScroll = useRef<number>(0);
 	const [isInteracted, setIsInteracted] = useState(false);
 
 	const { closeCubeLogs } = getDispatch();
@@ -26,18 +28,22 @@ const InstanceLog = ({ instanceId }) => {
 		};
 	}, [instanceId]);
 
-	const handleInteract = useCallback(() => setIsInteracted(true), [setIsInteracted]);
+	const handleInteract = useCallback((e) => {
+		// setIsInteracted(true);
+		// console.debug('>US', e);
+		prevScroll.current = (ref.current.scrollHeight - ref.current.clientHeight) - ref.current.scrollTop;
+	}, [setIsInteracted]);
 
 	useLayoutEffect(() => {
 		const { current } = ref;
 		if (!current) return;
-		const ex = current.scrollTop + 50 >= current.scrollHeight - current.clientHeight;
-		if (!isInteracted || ex) {
+		const unr = reachedTop.current != current.scrollTop;
+		if (current.scrollHeight - current.clientHeight <= 0 || unr && prevScroll.current <= 50) {
 			current.scrollBy({
 				top: current.scrollHeight,
 				behavior: 'smooth',
 			});
-			setIsInteracted(false);
+			reachedTop.current = current.scrollHeight;
 		}
 	}, [stdout, stderr]);
 
