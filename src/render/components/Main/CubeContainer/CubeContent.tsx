@@ -1,4 +1,4 @@
-import { Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { FC, Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
@@ -8,14 +8,13 @@ import { selectInstallation, selectInstance } from "Model/Selectors/installation
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
 
-const InstanceLog = ({ instanceId }) => {
+const InstanceLog = memo<{instanceId:string}>(({ instanceId }) => {
 
 	if (instanceId == undefined) return;
 
 	const ref = useRef<HTMLDivElement>();
-	const reachedTop = useRef<number>(0);
+	const reachedTop = useRef<number>(1);
 	const prevScroll = useRef<number>(0);
-	const [isInteracted, setIsInteracted] = useState(false);
 
 	const { closeCubeLogs } = getDispatch();
 	const { instanceName, stderr, stdout } = useGlobal(global => {
@@ -29,16 +28,17 @@ const InstanceLog = ({ instanceId }) => {
 	}, [instanceId]);
 
 	const handleInteract = useCallback((e) => {
-		// setIsInteracted(true);
-		// console.debug('>US', e);
 		prevScroll.current = (ref.current.scrollHeight - ref.current.clientHeight) - ref.current.scrollTop;
-	}, [setIsInteracted]);
+	}, []);
 
 	useLayoutEffect(() => {
 		const { current } = ref;
 		if (!current) return;
+		const fst = current.scrollHeight - current.clientHeight <= 0;
 		const unr = reachedTop.current != current.scrollTop;
-		if (current.scrollHeight - current.clientHeight <= 0 || unr && prevScroll.current <= 50) {
+		const usr = prevScroll.current <= 50;
+		// console.log('noscr:', fst, 'unrc:', unr, 'usro:', usr);
+		if (fst || unr && usr) {
 			current.scrollBy({
 				top: current.scrollHeight,
 				behavior: 'smooth',
@@ -64,7 +64,7 @@ const InstanceLog = ({ instanceId }) => {
 			</div>
 		</div>
 	)
-}
+});
 
 const CubeContent = ({ hash }) => {
 
