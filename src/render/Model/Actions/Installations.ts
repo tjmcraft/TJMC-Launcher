@@ -57,6 +57,19 @@ addReducer("killInstance", (_global, _actions, payload) => {
 addReducer("killAllInstances", (_global, _actions, _payload) => {
 	void callHost("killAllInstances");
 });
+addReducer("openCubeLogs", (global, _actions, payload) => {
+	if (!payload) return;
+	return {
+		...global,
+		currentLogsHash: payload,
+	};
+});
+addReducer("closeCubeLogs", (global, _actions, _update) => {
+	return {
+		...global,
+		currentLogsHash: undefined,
+	};
+});
 
 addReducer("getGlobalVersions", () => {
 	void callHost("fetchVersions");

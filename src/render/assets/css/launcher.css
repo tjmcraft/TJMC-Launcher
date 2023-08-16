@@ -923,6 +923,9 @@ body {
     overflow: hidden;
     background-color: var(--background-secondary-alt);
 }
+.r-box + .r-box {
+    max-height: 40vh;
+}
 
 .container > .leftColumn .r-box.installations {
     flex: 1 1 100%;
@@ -932,18 +935,18 @@ body {
     background-color: transparent;
 }
 
-.container > .leftColumn .r-box .header-w {
+.r-box .header-w {
     z-index: 1;
     display: flex;
     align-items: center;
     color: var(--interactive-normal);
     padding: 8px 16px;
 }
-.container > .leftColumn .r-box .header-w:hover {
+.r-box .header-w:hover {
     color: var(--interactive-hover);
 }
 
-.container > .leftColumn .r-box .header-w span {
+.r-box .header-w span {
     -webkit-box-align: center;
     -ms-flex-align: center;
     -webkit-margin-end: auto;
@@ -958,19 +961,19 @@ body {
     font-size: 1rem;
     font-weight: 600;
 }
-.container > .leftColumn .r-box.instances {
+.container .r-box.instances {
     flex: 0 0 auto;
     min-height: 10vh;
     max-height: 35vh;
     overflow: hidden overlay;
 }
-.container > .leftColumn .r-box.instances .header-w {
+.container .r-box.instances .header-w {
     padding: 4px 16px 4px 18px;
     /* height: 28px; */
     margin-bottom: 4px;
     z-index: 2;
 }
-.container > .leftColumn .r-box.instances .navItem {
+.container .r-box.instances .navItem {
     margin-bottom: 1px;
     margin-left: 8px;
     margin-right: 8px;
@@ -980,25 +983,18 @@ body {
     padding: 8px;
     gap: 8px;
 }
-.container.main > .middleColumn {
-    --border-radius-mid: 8px;
-    border-top-left-radius: var(--border-radius-mid);
-    border-bottom-left-radius: var(--border-radius-mid);
-    border-top-right-radius: var(--border-radius-mid);
-    border-bottom-right-radius: var(--border-radius-mid);
-}
 .container > .middleColumn {
     display: flex;
     flex-direction: column;
     position: relative;
     flex-grow: 1;
     overflow: hidden;
-    background-color: var(--sbw-background-main);
+    gap: 8px;
   }
 
-  .container.settings > .middleColumn {
-    background-color: var(--sbw-background-main);
-  }
+.container.settings > .middleColumn > .r-box {
+background-color: var(--sbw-background-main);
+}
 
 
 .scroller {
@@ -1007,7 +1003,7 @@ body {
     min-height: 0;
     height: 100%;
     /* flex: 1 1 auto; */
-    overflow: hidden scroll;
+    overflow: hidden overlay;
     user-select: none;
     padding-top: 12px;
     padding-right: 0px;
@@ -2271,4 +2267,31 @@ a:hover {
 .description .subtitle {
     margin-top: 24px;
     color: inherit;
+}
+
+
+.log {
+    padding: 10px 0 10px 8px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    cursor: default;
+    color: var(--interactive-active) !important;
+    background-color: var(--background-modifier-selected) !important;
+}
+.log > span {
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: 500;
+    width: 100%;
+    padding: 0 10px;
+    line-height: normal;
+    user-select: text;
+    cursor: auto;
+}
+.log > span:hover {
+    background-color: var(--background-modifier-hover) !important;
 }

@@ -1,21 +1,80 @@
-import { createElement, memo, useCallback, useEffect } from "react";
+import { FC, Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
-import { selectInstallation } from "Model/Selectors/installations";
+import { addReducer, getDispatch, removeReducer } from "Store/Global";
+import { selectInstallation, selectInstance } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
-import { addReducer, removeReducer } from "Store/Global";
 
+const InstanceLog = memo<{instanceId:string}>(({ instanceId }) => {
+
+	if (instanceId == undefined) return;
+
+	const ref = useRef<HTMLDivElement>();
+	const reachedTop = useRef<number>(1);
+	const prevScroll = useRef<number>(0);
+
+	const { closeCubeLogs } = getDispatch();
+	const { instanceName, stderr, stdout } = useGlobal(global => {
+		const instance = selectInstance(global, instanceId);
+		const version = selectInstallation(global, instance.hash);
+		return {
+			instanceName: version.name,
+			stdout: instance.stdout,
+			stderr: instance.stderr,
+		};
+	}, [instanceId]);
+
+	const handleInteract = useCallback((e) => {
+		prevScroll.current = (ref.current.scrollHeight - ref.current.clientHeight) - ref.current.scrollTop;
+	}, []);
+
+	useLayoutEffect(() => {
+		const { current } = ref;
+		if (!current) return;
+		const fst = current.scrollHeight - current.clientHeight <= 0;
+		const unr = reachedTop.current != current.scrollTop;
+		const usr = prevScroll.current <= 50;
+		// console.log('noscr:', fst, 'unrc:', unr, 'usro:', usr);
+		if (fst || unr && usr) {
+			current.scrollBy({
+				top: current.scrollHeight,
+				behavior: 'smooth',
+			});
+			reachedTop.current = current.scrollHeight;
+		}
+	}, [stdout, stderr]);
+
+	return (
+		<div className="r-box">
+			<div className="header-w">
+				<span>
+					<i className="icon-bug"></i>
+					<span>{instanceName || instanceId}</span>
+				</span>
+				<button className="circle" onClick={() => closeCubeLogs()}>
+					<i className="icon-close"></i>
+				</button>
+			</div>
+			<div className={buildClassName('scroller', 'thin-s', 'log')} ref={ref} onScroll={handleInteract}>
+				<span>log log</span>
+				{stdout.map(e => (<span>{e}</span>))}
+			</div>
+		</div>
+	)
+});
 
 const CubeContent = ({ hash }) => {
 
-	const { hasInstallation, hasModals } = useGlobal(global => {
+
+	const { hasInstallation, hasModals, currentLogsHash } = useGlobal(global => {
 		const version = selectInstallation(global, hash) || undefined;
 		return {
 			hasInstallation: version !== undefined,
-			hasModals: global.modals.length > 0
+			hasModals: global.modals.length > 0,
+			currentLogsHash: global.currentLogsHash,
 		};
 	}, [hash]);
 
@@ -43,12 +102,19 @@ const CubeContent = ({ hash }) => {
 
 	return (
 		hasInstallation ? (
-			<div className={buildClassName("main-content", "auto-s")}>
-				<CubeTopContainer hash={hash} />
-				<CubeMainContainer hash={hash} />
-			</div>
+			<Fragment>
+				<div className="r-box">
+					<div className={buildClassName("main-content", "auto-s")}>
+						<CubeTopContainer hash={hash} />
+						<CubeMainContainer hash={hash} />
+					</div>
+				</div>
+				{currentLogsHash != undefined && (
+					<InstanceLog instanceId={currentLogsHash} />
+						)}
+			</Fragment>
 		) : (
-			<div className={buildClassName("main-content", "d-flex", "centred")}>
+			<div className={buildClassName("main-content", "d-flex", "centred", "r-box")}>
 				<h1>{"Выберите версию"}</h1>
 			</div>
 		)

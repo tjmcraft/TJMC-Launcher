@@ -4,6 +4,7 @@ const LoggerUtil = require("../util/loggerutil");
 const { spawn } = require('child_process');
 const logger = LoggerUtil('%c[InstanceManager]', 'color: #f6fe10; font-weight: bold');
 
+const lessKeys = ['hash', 'javaPath', 'javaArgs', 'stdout', 'stderr'];
 
 const instances = new Map();
 
@@ -23,25 +24,31 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 		}
 	);
 
-	if (!instances.get(id)) {
-		const instance = Object.seal({
-			process: currentProcess,
-			controller: controller,
-			hash: hash,
-			javaPath: javaPath,
-			javaArgs: javaArgs,
-		});
-		instances.set(id, instance);
-		runCallbacks();
-	};
+	if (instances.get(id)) return;
+
+	const instance = Object.seal({
+		process: currentProcess,
+		controller: controller,
+		hash: hash,
+		javaPath: javaPath,
+		javaArgs: javaArgs,
+		stdout: [],
+		stderr: [],
+	});
+	instances.set(id, instance);
+	runCallbacks();
 
 	if (!options.disableLogging) {
 		currentProcess.stdout.on('data', (data) => {
+			instance.stdout.push(data.toString('utf-8'));
 			logger.log(`{${hash}}`, data.toString('utf-8'));
+			runCallbacks();
 		});
 
 		currentProcess.stderr.on('data', (data) => {
+			instance.stderr.push(data.toString('utf-8'));
 			logger.error(`{${hash}}`, data.toString('utf-8'));
+			runCallbacks();
 		});
 
 		currentProcess.on('close', (code) => {
@@ -57,7 +64,7 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 exports.getInstances = (less = false) => {
 	if (less) {
 		return Object.fromEntries(Object.entries(Object.fromEntries(instances)).map(([k, v]) =>
-			[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => ['hash'].includes(k)))]
+			[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => lessKeys.includes(k)))]
 		));
 	}
 	return ([...instances] || []).map(([k, v]) => v);
@@ -93,7 +100,7 @@ this.removeCallback = (callback = (instances) => void 0) => {
 
 const runCallbacks = () => {
 	const filteredInstances = Object.fromEntries(Object.entries(Object.fromEntries(instances)).map(([k, v]) =>
-		[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => ['hash'].includes(k)))]
+		[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => lessKeys.includes(k)))]
 	));
 	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances) : null);
 };
