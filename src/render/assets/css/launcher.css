@@ -2271,8 +2271,7 @@ a:hover {
 
 
 .log {
-    padding-right: 0 !important;
-    padding: 10px 8px;
+    padding: 10px 0 10px 8px;
     width: 100%;
     height: 100%;
     display: flex;
