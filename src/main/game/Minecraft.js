@@ -120,6 +120,14 @@ const DownloadQueue = function (progressHandler = () => void 0) {
         return result.every(Boolean);
     };
 
+    this.length = 0;
+
+    Object.defineProperty(this, 'length', {
+        writable: false,
+        configurable: false,
+        get: () => queue.length,
+    })
+
     return this;
 }
 

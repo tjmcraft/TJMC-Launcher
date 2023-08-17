@@ -256,6 +256,8 @@ const InstanceController = new function () {
 		}
 	});
 
+	this.performPreflightChecks = (unit) => { };
+
 	this.get = (key) => instances.get(key);
 	this.remove = (key) => instances.delete(key);
 

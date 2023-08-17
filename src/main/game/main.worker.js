@@ -9,8 +9,72 @@ const LoggerUtil = require('../util/loggerutil');
 
 const instances = new Map();
 
+const processInstance = () => {}
+
 if (!isMainThread) {
 	const logger = LoggerUtil('%c[MainWorker]', 'color: #ff9119; font-weight: bold;');
+	parentPort.on('message', async ({ type, payload }) => {
+		if (type != 'check') return;
+		if (!payload) return;
+		const { version_hash, launcherOptions } = payload;
+
+		try {
+			const options = Object.assign({}, launcherOptions);
+			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+
+			options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
+			options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
+			options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
+
+			const status = await new Promise(async (resolve, reject) => {
+				const instance = new Minecraft(options);
+				{
+					const handleProgress = (() => {
+						var totalProgress = 0;
+						let prev = {};
+						return ({ progress, type }) => {
+							if (!prev[type]) prev[type] = 0;
+							totalProgress += progress - prev[type];
+							prev[type] = progress;
+							return totalProgress;
+						};
+					})();
+					instance.on('progress', ({task, total,type}) => {
+						const current = handleProgress({
+							progress: task / total,
+							type: type,
+						});
+						parentPort.postMessage({
+							type: 'instance:check:progress',
+							payload: {
+								task: current,
+								total: 3,
+							},
+						});
+					});
+				}
+
+				if (!fs.existsSync(options.overrides.path.version))
+					fs.mkdirSync(options.overrides.path.version, { recursive: true });
+				if (!fs.existsSync(options.overrides.path.gameDirectory))
+					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
+
+				const [client, classes, natives, assets] = await Promise.all([
+					instance.loadClient(options.manifest),
+					instance.getClasses(options.manifest),
+					instance.getNatives(options.manifest),
+				]);
+				const downloadStatus = instance.downloadQueue.length;
+				return resolve(downloadStatus);
+			});
+			parentPort.postMessage({ type: 'instance:status', payload: status });
+		} catch (e) {
+			logger.error(e);
+			parentPort.postMessage({ type: 'error', payload: e });
+		} finally {
+			instances.delete(version_hash);
+		}
+	});
 	parentPort.on('message', async ({ type, payload }) => {
 		if (type != 'start') return;
 		if (!payload) return;
