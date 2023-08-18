@@ -9,6 +9,114 @@ const LoggerUtil = require('../util/loggerutil');
 
 const instances = new Map();
 
+/**
+ *
+ * @param {Object} options
+ * @param {AbortController} controller
+ * @param {Console} logger
+ * @returns
+ */
+const resolveJava = (options, controller, logger) => new Promise(async (resolve, reject) => {
+	const externalJava = options.installation.javaPath;
+	const recommendedJava = options.manifest.javaVersion;
+
+	const instance = new JavaManager(options.overrides.path.root);
+	instance.on('download-progress', (e) => {
+		const progress = (e.current / e.total);
+		parentPort.postMessage({ type: 'java:progress', payload: progress });
+	});
+
+	const checkJava = async (javaPath, type = 'external') => {
+		if (!["", undefined].includes(javaPath)) {
+			const java = await instance.checkJava(javaPath);
+			if (!java.run) {
+				logger.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
+			} else {
+				logger.debug(`Using Java (${javaPath}) version ${java.version} ${java.arch}`);
+				return javaPath;
+			}
+		}
+		return undefined;
+	};
+
+	const checkExternal = async () => checkJava(externalJava, 'external');
+	const checkRecommended = async () => {
+		const recommended = instance.pickRecommended({ javaVersion: recommendedJava });
+		const cachedJava = () => instance.getRecommendedJava(recommended.component);
+		const downloadJava = () => instance.downloadJava(recommended.component, controller.signal);
+		for (const task of [cachedJava, downloadJava]) {
+			const java = await task();
+			if (await checkJava(java, 'recommended')) return java;
+		}
+		return undefined;
+	}
+	const checkInternal = async () => checkJava('java', 'internal');
+
+	for (const task of [checkExternal, checkRecommended, checkInternal]) {
+		if (controller.signal.aborted) break;
+		const java = await task();
+		if (java != void 0) {
+			return resolve(java);
+		}
+	}
+	return reject("No valid java found");
+	// return parentPort.postMessage({ type: 'error', payload: "No java found!" });
+});
+
+/**
+ *
+ * @param {Object} options
+ * @param {AbortController} controller
+ * @returns
+ */
+const resolveArgs = (options, controller) => new Promise(async (resolve, reject) => {
+	const instance = new Minecraft(options);
+	{
+		const handleProgress = (() => {
+			var totalProgress = 0;
+			let prev = {};
+			return ({ progress, type }) => {
+				if (!prev[type]) prev[type] = 0;
+				totalProgress += progress - prev[type];
+				prev[type] = progress;
+				return totalProgress;
+			};
+		})();
+		instance.on('progress', ({task, total,type}) => {
+			const current = handleProgress({
+				progress: task / total,
+				type: type,
+			});
+			parentPort.postMessage({
+				type: 'args:progress',
+				payload: {
+					task: current,
+					total: 3,
+				},
+			});
+		});
+		instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
+	}
+
+	if (!fs.existsSync(options.overrides.path.version))
+		fs.mkdirSync(options.overrides.path.version, { recursive: true });
+	if (!fs.existsSync(options.overrides.path.gameDirectory))
+		fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
+
+	const [client, classes, natives, assets] = await Promise.all([
+		instance.loadClient(options.manifest),
+		instance.getClasses(options.manifest),
+		instance.getNatives(options.manifest),
+		instance.getAssets(options.manifest),
+	]);
+	if (controller.signal.aborted) return;
+	const downloadStatus = await instance.downloadQueue.load(controller.signal);
+	const nativePath = await instance.extractNatives(natives);
+	if (controller.signal.aborted) return;
+	const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
+	return resolve(args);
+});
+
 const processInstance = () => {}
 
 if (!isMainThread) {
@@ -105,101 +213,10 @@ if (!isMainThread) {
 			logger.debug("Launcher compiled options:", options);
 			if (controller.signal.aborted) return;
 
-			const javaPath = await new Promise(async (resolve, reject) => {
-				const externalJava = launcherOptions.installation.javaPath;
-				const recommendedJava = launcherOptions.manifest.javaVersion;
-
-				const instance = new JavaManager(launcherOptions.overrides.path.root);
-				instance.on('download-progress', (e) => {
-					const progress = (e.current / e.total);
-					parentPort.postMessage({ type: 'java:progress', payload: progress });
-				});
-
-				const checkJava = async (javaPath, type = 'external') => {
-					if (!["", undefined].includes(javaPath)) {
-						const java = await instance.checkJava(javaPath);
-						if (!java.run) {
-							logger.error(`Wrong ${type} java (${javaPath}) => ${java.message}`);
-						} else {
-							logger.debug(`Using Java (${javaPath}) version ${java.version} ${java.arch}`);
-							return javaPath;
-						}
-					}
-					return undefined;
-				};
-
-				const checkExternal = async () => checkJava(externalJava, 'external');
-				const checkRecommended = async () => {
-					const recommended = instance.pickRecommended({ javaVersion: recommendedJava });
-					const cachedJava = () => instance.getRecommendedJava(recommended.component);
-					const downloadJava = () => instance.downloadJava(recommended.component, controller.signal);
-					for (const task of [cachedJava, downloadJava]) {
-						const java = await task();
-						if (await checkJava(java, 'recommended')) return java;
-					}
-					return undefined;
-				}
-				const checkInternal = async () => checkJava('java', 'internal');
-
-				for (const task of [checkExternal, checkRecommended, checkInternal]) {
-					if (controller.signal.aborted) break;
-					const java = await task();
-					if (java != void 0) {
-						return resolve(java);
-					}
-				}
-				return reject("No valid java found");
-				// return parentPort.postMessage({ type: 'error', payload: "No java found!" });
-			});
+			const javaPath = await resolveJava(options, controller, logger);
 			parentPort.postMessage({ type: 'javaPath', payload: javaPath });
 
-			const javaArgs = await new Promise(async (resolve, reject) => {
-				const instance = new Minecraft(options);
-				{
-					const handleProgress = (() => {
-						var totalProgress = 0;
-						let prev = {};
-						return ({ progress, type }) => {
-							if (!prev[type]) prev[type] = 0;
-							totalProgress += progress - prev[type];
-							prev[type] = progress;
-							return totalProgress;
-						};
-					})();
-					instance.on('progress', ({task, total,type}) => {
-						const current = handleProgress({
-							progress: task / total,
-							type: type,
-						});
-						parentPort.postMessage({
-							type: 'args:progress',
-							payload: {
-								task: current,
-								total: 3,
-							},
-						});
-					});
-					instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
-				}
-
-				if (!fs.existsSync(options.overrides.path.version))
-					fs.mkdirSync(options.overrides.path.version, { recursive: true });
-				if (!fs.existsSync(options.overrides.path.gameDirectory))
-					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
-
-				const [client, classes, natives, assets] = await Promise.all([
-					instance.loadClient(options.manifest),
-					instance.getClasses(options.manifest),
-					instance.getNatives(options.manifest),
-					instance.getAssets(options.manifest),
-				]);
-				if (controller.signal.aborted) return;
-				const downloadStatus = await instance.downloadQueue.load(controller.signal);
-				const nativePath = await instance.extractNatives(natives);
-				if (controller.signal.aborted) return;
-				const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
-				return resolve(args);
-			});
+			const javaArgs = await resolveArgs(options, controller);
 			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
 
 		} catch (e) {

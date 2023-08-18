@@ -11,6 +11,11 @@ const logger = require('../util/loggerutil')('%c[MinecraftCore]', 'color: #be160
 const MC_RES_URL = "https://resources.download.minecraft.net";
 
 /**
+ * @typedef MinecraftOptions
+ * @type {import('..').MinecraftOptions}
+ */
+
+/**
  * @typedef {string} FileType
  */
 
@@ -123,7 +128,6 @@ const DownloadQueue = function (progressHandler = () => void 0) {
     this.length = 0;
 
     Object.defineProperty(this, 'length', {
-        writable: false,
         configurable: false,
         get: () => queue.length,
     })
@@ -132,27 +136,6 @@ const DownloadQueue = function (progressHandler = () => void 0) {
 }
 
 class Minecraft extends EventEmitter {
-
-    /**
-     * @typedef MinecraftOptions
-     * @type {object}
-     * @property {object} overrides - Object that describes overrides
-     * @property {object} overrides.path - Object that describes all path overrides
-     * @property {string} overrides.path.versions - Path to version directory (where main jar located)
-     * @property {string} overrides.path.minecraft - Path to minecraft (root) directory
-     * @property {string} overrides.path.gameDirectory - Path to game directory
-     * @property {string} mcPath - Path to main jar
-     * @property {import('../managers/InstallationsManager').Installation} installation - Installation object
-     * @property {object} java - Minecraft java options
-     * @property {object} java.memory - Minecraft java memory options
-     * @property {number} java.memory.min - Minecraft minimum java memory
-     * @property {number} java.memory.max - Minecraft maximum java memory
-     * @property {object} auth - Minecraft auth
-     * @property {object} auth.access_token - Minecraft auth token
-     * @property {object} auth.uuid - Minecraft auth uuid (offline)
-     * @property {object} auth.username - Minecraft auth username
-     * @property {object} auth.user_properties - Minecraft auth user properties
-     */
 
     /**
      * @type {MinecraftOptions}

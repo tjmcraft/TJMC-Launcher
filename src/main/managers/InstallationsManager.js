@@ -26,26 +26,7 @@ module.exports.removeCallback = config.removeCallback;
 
 /**
  * @typedef Installation
- * @type {object}
- * @property {Date} created The date when installation is created
- * @property {string} icon Icon of installation (feature)
- * @property {'custom'} type Type of installation
- * @property {fs.PathLike} gameDir Game directory
- * @property {fs.PathLike} versionDir Version directory
- * @property {fs.PathLike} mcPath Path when main jar is located
- * @property {fs.PathLike} javaPath Path when java executable is located
- * @property {string} javaArgs Additional arguments for java
- * @property {Date} lastUsed Last used time
- * @property {Date} lastSync Last success file sync time
- * @property {string} lastVersionId Version id
- * @property {string} name Name of Installation
- * @property {object} resolution Resolution object
- * @property {number} resolution.width Resolution width
- * @property {number} resolution.height Resolution height
- * @property {boolean} resolution.fullscreen Resolution fullscreen mode
- * @property {boolean} checkHash Check hash of installation files
- * @property {boolean} checkFiles Check files in installation directories
- * @property {boolean} autoConnect Connect to TJMC server automatically
+ * @type {import('..').Installation}
  */
 
 /**
