@@ -183,6 +183,9 @@ const InstanceController = new function () {
 							if (type == 'javaArgs') {
 								argsController.resolve(payload);
 							}
+							if (type == 'check:status') {
+
+							}
 						}
 						MainWorker.off('message', EventHandler);
 					}
@@ -247,7 +250,63 @@ const InstanceController = new function () {
 		}
 	});
 
-	this.performPreflightChecks = (unit) => { };
+	this.performPreflightChecks = async (unit) => {
+		const { version_hash, controller, params } = unit;
+		if (!version_hash) throw new Error("version_hash is required");
+
+		const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
+		const currentInstallation = await InstallationsManager.getInstallation(version_hash);
+		if (!currentInstallation) throw new Error("Installation does not exist on given hash");
+
+		if (params.forceCheck) {
+			Object.assign(currentInstallation, {
+				checkHash: true,
+				checkFiles: true,
+			})
+		}
+		const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
+
+		const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
+			manifest: versionFile,
+			installation: currentInstallation,
+			auth: {
+				access_token: undefined,
+				user_properties: {},
+				username: "MakAndJo",
+				uuid: undefined,
+			}
+		}, params);
+		Object.assign(launcherOptions.overrides.path, {
+			root: launcherDir
+		});
+
+		MainWorker.postMessage({ type: 'start', payload: { version_hash, launcherOptions } });
+
+		const argsController = promiseControl();
+
+		{
+			const EventHandler = async ({ type, payload }) => {
+				if (!controller.signal.aborted) {
+					if (type == 'error') {
+						argsController.reject(payload);
+					}
+					if (type == 'check:status') {
+						argsController.resolve(payload);
+					}
+				}
+				MainWorker.off('message', EventHandler);
+			}
+			MainWorker.on('message', EventHandler);
+		}
+
+
+		const status = await promiseRequest(argsController);
+
+		InstallationsManager.modifyInstallation(version_hash, {
+			status: status
+		});
+
+	};
 
 	this.get = (key) => instances.get(key);
 	this.remove = (key) => instances.delete(key);

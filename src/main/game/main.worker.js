@@ -161,7 +161,7 @@ const processInstance = async (options, controller, logger, checkOnly = false) =
 
 	let javaArgs = await resolveArgs(options, controller, logger, checkOnly);
 	javaArgs = [javaPath, javaArgs].flat().filter(e => e);
-	// logger.debug('ja', javaArgs)
+
 	return javaArgs;
 }
 
@@ -171,24 +171,15 @@ if (!isMainThread) {
 		if (type != 'check') return;
 		if (!payload) return;
 		const { version_hash, launcherOptions } = payload;
-		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!" });
 		try {
 
 			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 			const options = Object.assign({}, launcherOptions);
 
 			const controller = new AbortController();
-			instances.set(version_hash, {
-				controller
-			});
 
-			controller.signal.addEventListener('abort', () => {
-				logger.debug("Aborting...");
-				instances.delete(version_hash);
-			});
-
-			const javaArgs = await processInstance(options, controller, logger, true);
-			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
+			const instanceStatus = await processInstance(options, controller, logger, true);
+			parentPort.postMessage({ type: 'check:status', payload: instanceStatus });
 		} catch (e) {
 			logger.error(e);
 			parentPort.postMessage({ type: 'error', payload: e });
