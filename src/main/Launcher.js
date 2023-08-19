@@ -250,11 +250,9 @@ const InstanceController = new function () {
 		}
 	});
 
-	this.performPreflightChecks = async (unit) => {
-		const { version_hash, controller, params } = unit;
+	this.performPreflightChecks = async ({ version_hash, params = {} }) => {
 		if (!version_hash) throw new Error("version_hash is required");
 
-		const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
 		const currentInstallation = await InstallationsManager.getInstallation(version_hash);
 		if (!currentInstallation) throw new Error("Installation does not exist on given hash");
 
@@ -286,13 +284,11 @@ const InstanceController = new function () {
 
 		{
 			const EventHandler = async ({ type, payload }) => {
-				if (!controller.signal.aborted) {
-					if (type == 'error') {
-						argsController.reject(payload);
-					}
-					if (type == 'check:status') {
-						argsController.resolve(payload);
-					}
+				if (type == 'error') {
+					argsController.reject(payload);
+				}
+				if (type == 'check:status') {
+					argsController.resolve(payload);
 				}
 				MainWorker.off('message', EventHandler);
 			}
@@ -350,3 +346,10 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 	});
 	void this.startLaunch(version_hash, params);
 };
+
+exports.preflightChecks = async () => {
+	const installations = InstallationsManager.getInstallations();
+	Object.entries(installations).map(([key, unit]) => {
+		InstanceController.performPreflightChecks({ version_hash: key });
+	});
+}

@@ -173,8 +173,8 @@ if (!isMainThread) {
 		const { version_hash, launcherOptions } = payload;
 		try {
 
-			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 			const options = Object.assign({}, launcherOptions);
+			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
 
 			const controller = new AbortController();
 

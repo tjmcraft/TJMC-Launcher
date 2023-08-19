@@ -98,7 +98,9 @@ const initHandlers = async () => {
 	Object.keys(requestChannels).forEach(channel => {
 		const event = requestChannels[channel];
 		ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
-	})
+	});
+
+	void Launcher.preflightChecks();
 
 	{ // Updates
 		autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));

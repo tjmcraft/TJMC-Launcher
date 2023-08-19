@@ -209,8 +209,9 @@ class Minecraft extends EventEmitter {
             .filter(lib => !this.parseRule(lib))
             .filter(lib => lib.natives[this.getOS()])
             .filter(Boolean);
-        const natives = await Promise.all(stat.map(async (library, index) => {
+        const natives = (await Promise.all(stat.map(async (library, index) => {
             const native = (library.classifiers || library.downloads?.classifiers)[library.natives[this.getOS()]];
+            if (!native) return;
             const lib = library.name.split(':');
             const nativePath = native.path || path.join(`${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`,
                 `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}-${library.natives[this.getOS()]}.jar`);
@@ -234,7 +235,7 @@ class Minecraft extends EventEmitter {
                 total: stat.length,
             });
             return filePath;
-        }));
+        }))).filter(Boolean);
 
         this.emit('progress', {
             type: 'natives',

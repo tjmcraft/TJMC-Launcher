@@ -89,7 +89,7 @@ exports.createInstallation = async function (options = {}) {
 
 /**
  * Get all known Installations from config
- * @returns {Object.<string,Installation>}
+ * @returns {Object<string,Installation>}
  */
 exports.getInstallations = () => {
     return config.getOption("profiles");
@@ -201,4 +201,4 @@ exports.moveInstallationPosition = async function (startHash, endHash) {
         return endHash;
     }
     return undefined;
-}
+};
