@@ -280,7 +280,7 @@ const InstanceController = new function () {
 			root: launcherDir
 		});
 
-		MainWorker.postMessage({ type: 'start', payload: { version_hash, launcherOptions } });
+		MainWorker.postMessage({ type: 'check', payload: { version_hash, launcherOptions } });
 
 		const argsController = promiseControl();
 
