@@ -67,11 +67,13 @@ const resolveJava = (options, controller, logger) => new Promise(async (resolve,
  *
  * @param {Object} options
  * @param {AbortController} controller
+ * @param {Console} logger
+ * @param {boolean} checkOnly
  * @returns
  */
-const resolveArgs = (options, controller) => new Promise(async (resolve, reject) => {
+const resolveArgs = (options, controller, logger, checkOnly = false) => new Promise(async (resolve, reject) => {
 	const instance = new Minecraft(options);
-	{
+	if (!checkOnly) {
 		const handleProgress = (() => {
 			var totalProgress = 0;
 			let prev = {};
@@ -98,26 +100,70 @@ const resolveArgs = (options, controller) => new Promise(async (resolve, reject)
 		instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
 	}
 
-	if (!fs.existsSync(options.overrides.path.version))
+	if (!fs.existsSync(options.overrides.path.version)) {
+		if (checkOnly) {}
 		fs.mkdirSync(options.overrides.path.version, { recursive: true });
-	if (!fs.existsSync(options.overrides.path.gameDirectory))
+	}
+	if (!fs.existsSync(options.overrides.path.gameDirectory)) {
+		if (checkOnly) {}
 		fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
+	}
 
-	const [client, classes, natives, assets] = await Promise.all([
-		instance.loadClient(options.manifest),
-		instance.getClasses(options.manifest),
-		instance.getNatives(options.manifest),
-		instance.getAssets(options.manifest),
-	]);
-	if (controller.signal.aborted) return;
-	const downloadStatus = await instance.downloadQueue.load(controller.signal);
-	const nativePath = await instance.extractNatives(natives);
-	if (controller.signal.aborted) return;
-	const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
-	return resolve(args);
+	if (checkOnly) {
+		const [client, classes, natives, assets] = await Promise.all([
+			instance.loadClient(options.manifest),
+			instance.getClasses(options.manifest),
+			instance.getNatives(options.manifest),
+		]);
+		if (controller.signal.aborted) return;
+		return resolve(instance.downloadQueue.length);
+	} else {
+		const [client, classes, natives, assets] = await Promise.all([
+			instance.loadClient(options.manifest),
+			instance.getClasses(options.manifest),
+			instance.getNatives(options.manifest),
+			instance.getAssets(options.manifest),
+		]);
+		if (controller.signal.aborted) return;
+		const downloadStatus = await instance.downloadQueue.load(controller.signal);
+		const nativePath = await instance.extractNatives(natives);
+		if (controller.signal.aborted) return;
+		const args = instance.constructJVMArguments(options.manifest, nativePath, classes);
+		return resolve(args);
+	}
 });
 
-const processInstance = () => {}
+
+/**
+ *
+ * @param {Object} options
+ * @param {AbortController} controller
+ * @param {Console} logger
+ * @param {boolean} checkOnly
+ * @returns
+ */
+const processInstance = async (options, controller, logger, checkOnly = false) => {
+	options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
+	options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
+	options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
+	options.auth = Object.assign({}, options.auth, {
+		uuid: getOfflineUUID(options.auth.username)
+	});
+
+	logger.debug("Launcher compiled options:", options);
+	if (controller.signal.aborted) return;
+
+	let javaPath = undefined;
+
+	if (!checkOnly) {
+		javaPath = await resolveJava(options, controller, logger);
+	}
+
+	let javaArgs = await resolveArgs(options, controller, logger, checkOnly);
+	javaArgs = [javaPath, javaArgs].flat().filter(e => e);
+	// logger.debug('ja', javaArgs)
+	return javaArgs;
+}
 
 if (!isMainThread) {
 	const logger = LoggerUtil('%c[MainWorker]', 'color: #ff9119; font-weight: bold;');
@@ -125,57 +171,24 @@ if (!isMainThread) {
 		if (type != 'check') return;
 		if (!payload) return;
 		const { version_hash, launcherOptions } = payload;
-
+		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!" });
 		try {
-			const options = Object.assign({}, launcherOptions);
+
 			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+			const options = Object.assign({}, launcherOptions);
 
-			options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
-			options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
-			options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
-
-			const status = await new Promise(async (resolve, reject) => {
-				const instance = new Minecraft(options);
-				{
-					const handleProgress = (() => {
-						var totalProgress = 0;
-						let prev = {};
-						return ({ progress, type }) => {
-							if (!prev[type]) prev[type] = 0;
-							totalProgress += progress - prev[type];
-							prev[type] = progress;
-							return totalProgress;
-						};
-					})();
-					instance.on('progress', ({task, total,type}) => {
-						const current = handleProgress({
-							progress: task / total,
-							type: type,
-						});
-						parentPort.postMessage({
-							type: 'instance:check:progress',
-							payload: {
-								task: current,
-								total: 3,
-							},
-						});
-					});
-				}
-
-				if (!fs.existsSync(options.overrides.path.version))
-					fs.mkdirSync(options.overrides.path.version, { recursive: true });
-				if (!fs.existsSync(options.overrides.path.gameDirectory))
-					fs.mkdirSync(options.overrides.path.gameDirectory, { recursive: true });
-
-				const [client, classes, natives, assets] = await Promise.all([
-					instance.loadClient(options.manifest),
-					instance.getClasses(options.manifest),
-					instance.getNatives(options.manifest),
-				]);
-				const downloadStatus = instance.downloadQueue.length;
-				return resolve(downloadStatus);
+			const controller = new AbortController();
+			instances.set(version_hash, {
+				controller
 			});
-			parentPort.postMessage({ type: 'instance:status', payload: status });
+
+			controller.signal.addEventListener('abort', () => {
+				logger.debug("Aborting...");
+				instances.delete(version_hash);
+			});
+
+			const javaArgs = await processInstance(options, controller, logger, true);
+			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
 		} catch (e) {
 			logger.error(e);
 			parentPort.postMessage({ type: 'error', payload: e });
@@ -190,35 +203,21 @@ if (!isMainThread) {
 		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!" });
 		try {
 
+			const options = Object.assign({}, launcherOptions);
+			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
+
 			const controller = new AbortController();
 			instances.set(version_hash, {
 				controller
 			});
 
-			const options = Object.assign({}, launcherOptions);
-			const logger = LoggerUtil(`%c[LaunchWorker-${options.installation.hash}]`, 'color: #16be00; font-weight: bold');
-
 			controller.signal.addEventListener('abort', () => {
 				logger.debug("Aborting...");
 				instances.delete(version_hash);
-			})
-
-			options.overrides.path.gameDirectory = options.installation.gameDir || path.resolve(options.overrides.path.gameDirectory || options.overrides.path.minecraft);
-			options.overrides.path.version = options.installation.versionPath || path.join(options.overrides.path.versions, options.installation.lastVersionId);
-			options.mcPath = options.installation.mcPath || path.join(options.overrides.path.version, `${options.installation.lastVersionId}.jar`);
-			options.auth = Object.assign({}, options.auth, {
-				uuid: getOfflineUUID(options.auth.username)
 			});
 
-			logger.debug("Launcher compiled options:", options);
-			if (controller.signal.aborted) return;
-
-			const javaPath = await resolveJava(options, controller, logger);
-			parentPort.postMessage({ type: 'javaPath', payload: javaPath });
-
-			const javaArgs = await resolveArgs(options, controller);
+			const javaArgs = await processInstance(options, controller, logger);
 			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
-
 		} catch (e) {
 			logger.error(e);
 			parentPort.postMessage({ type: 'error', payload: e });

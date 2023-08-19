@@ -97,7 +97,6 @@ const InstanceController = new function () {
 				getInstallation: 0,
 				getVersionManifest: 0,
 				collectOptions: 0,
-				loadJava: 0,
 				constructArgs: 0,
 				createInstance: 0,
 			});
@@ -163,7 +162,7 @@ const InstanceController = new function () {
 				MainWorker.postMessage({ type: 'start', payload: { version_hash, launcherOptions } });
 
 				const argsController = promiseControl();
-				const javaController = promiseControl();
+
 				{
 					const EventHandler = async ({ type, payload }) => {
 						if (!controller.signal.aborted) {
@@ -178,12 +177,7 @@ const InstanceController = new function () {
 								const progress = (payload.current / payload.total);
 								return handleProgress({ type: `download`, progress: progress, time: payload.time });
 							}
-							if (type == 'javaPath') {
-								javaController.resolve(payload);
-								return handleProgress({ type: 'load:java', progress: 1 });
-							}
 							if (type == 'error') {
-								javaController.reject(payload);
 								argsController.reject(payload);
 							}
 							if (type == 'javaArgs') {
@@ -195,9 +189,6 @@ const InstanceController = new function () {
 					MainWorker.on('message', EventHandler);
 				}
 
-				performanceMarks.loadJava = performance.now();
-				const javaPath = await promiseRequest(javaController);
-				performanceMarks.loadJava = performance.now() - performanceMarks.loadJava;
 				performanceMarks.constructArgs = performance.now();
 				const javaArgs = await promiseRequest(argsController);
 				performanceMarks.constructArgs = performance.now() - performanceMarks.constructArgs;
@@ -206,8 +197,8 @@ const InstanceController = new function () {
 
 				{
 					performanceMarks.createInstance = performance.now();
-					logger.debug(javaPath, javaArgs.join(" "));
-					const jvm = createInstance(version_hash, javaPath, javaArgs, {
+					logger.debug(javaArgs.join(" "));
+					const jvm = createInstance(version_hash, javaArgs.shift(), javaArgs, {
 						cwd: launcherOptions.java.cwd || launcherOptions.overrides.path.minecraft,
 						detached: launcherOptions.java.detached
 					});
