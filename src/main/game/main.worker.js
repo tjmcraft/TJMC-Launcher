@@ -116,7 +116,7 @@ const resolveArgs = (options, controller, logger, checkOnly = false) => new Prom
 			instance.getNatives(options.manifest),
 		]);
 		if (controller.signal.aborted) return;
-		return resolve(instance.downloadQueue.length);
+		return resolve(instance.downloadQueue.length != 0 ? 2 : 1);
 	} else {
 		const [client, classes, natives, assets] = await Promise.all([
 			instance.loadClient(options.manifest),
@@ -153,16 +153,16 @@ const processInstance = async (options, controller, logger, checkOnly = false) =
 	logger.debug("Launcher compiled options:", options);
 	if (controller.signal.aborted) return;
 
-	let javaPath = undefined;
-
 	if (!checkOnly) {
-		javaPath = await resolveJava(options, controller, logger);
+		let javaPath = await resolveJava(options, controller, logger);
+		let javaArgs = await resolveArgs(options, controller, logger);
+		javaArgs = [javaPath, javaArgs].flat().filter(e => e);
+
+		return javaArgs;
+	} else {
+		return await resolveArgs(options, controller, logger, checkOnly);
 	}
 
-	let javaArgs = await resolveArgs(options, controller, logger, checkOnly);
-	javaArgs = [javaPath, javaArgs].flat().filter(e => e);
-
-	return javaArgs;
 }
 
 if (!isMainThread) {
@@ -179,10 +179,10 @@ if (!isMainThread) {
 			const controller = new AbortController();
 
 			const instanceStatus = await processInstance(options, controller, logger, true);
-			parentPort.postMessage({ type: 'check:status', payload: instanceStatus });
+			parentPort.postMessage({ type: 'check:status', payload: instanceStatus, version_hash });
 		} catch (e) {
 			logger.error(e);
-			parentPort.postMessage({ type: 'error', payload: e });
+			parentPort.postMessage({ type: 'error', payload: e, version_hash });
 		} finally {
 			instances.delete(version_hash);
 		}
@@ -191,7 +191,7 @@ if (!isMainThread) {
 		if (type != 'start') return;
 		if (!payload) return;
 		const { version_hash, launcherOptions } = payload;
-		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!" });
+		if (instances.get(version_hash)) return parentPort.postMessage({ type: 'error', payload: "Installation already in work!", version_hash });
 		try {
 
 			const options = Object.assign({}, launcherOptions);
@@ -208,10 +208,10 @@ if (!isMainThread) {
 			});
 
 			const javaArgs = await processInstance(options, controller, logger);
-			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs });
+			parentPort.postMessage({ type: 'javaArgs', payload: javaArgs, version_hash });
 		} catch (e) {
 			logger.error(e);
-			parentPort.postMessage({ type: 'error', payload: e });
+			parentPort.postMessage({ type: 'error', payload: e, version_hash });
 		} finally {
 			instances.delete(version_hash);
 		}

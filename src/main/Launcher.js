@@ -283,7 +283,8 @@ const InstanceController = new function () {
 		const argsController = promiseControl();
 
 		{
-			const EventHandler = async ({ type, payload }) => {
+			const EventHandler = async ({ type, payload, version_hash: hash }) => {
+				if (version_hash != hash) return;
 				if (type == 'error') {
 					argsController.reject(payload);
 				}
