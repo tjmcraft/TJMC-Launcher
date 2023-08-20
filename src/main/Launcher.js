@@ -239,7 +239,8 @@ const InstanceController = new function () {
 				logger.error(error);
 				emit('error', { error: error.message || error });
 				InstallationsManager.modifyInstallation(version_hash, {
-					lastSync: undefined
+					lastSync: undefined,
+					status: 2,
 				});
 			} finally {
 				return terminateInstance();
