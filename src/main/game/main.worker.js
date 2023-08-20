@@ -116,7 +116,7 @@ const resolveArgs = (options, controller, logger, checkOnly = false) => new Prom
 			instance.getNatives(options.manifest),
 		]);
 		if (controller.signal.aborted) return;
-		return resolve(instance.downloadQueue.length != 0 ? 2 : 1);
+		return resolve(instance.downloadQueue.length != 0 ? 1 : 2);
 	} else {
 		const [client, classes, natives, assets] = await Promise.all([
 			instance.loadClient(options.manifest),

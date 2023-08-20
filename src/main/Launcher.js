@@ -231,7 +231,8 @@ const InstanceController = new function () {
 					lastUsed: new Date().toISOString(),
 					...(currentInstallation.checkHash ? {
 						lastSync: new Date().toISOString()
-					} : {})
+					} : {}),
+					status: 3
 				});
 
 			} catch (error) {

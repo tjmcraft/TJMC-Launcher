@@ -54,6 +54,7 @@ const DEFAULT_PROFILE = Object.seal({
     checkHash: undefined,
     checkFiles: undefined,
     autoConnect: undefined,
+    status: 0,
 });
 
 /**
