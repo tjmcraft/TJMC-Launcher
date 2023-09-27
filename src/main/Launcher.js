@@ -266,6 +266,8 @@ const InstanceController = new function () {
 		}
 		const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
 
+		console.time('prf:' + version_hash);
+
 		const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
 			manifest: versionFile,
 			installation: currentInstallation,
@@ -305,6 +307,8 @@ const InstanceController = new function () {
 			status: status
 		});
 
+		console.debug("+>", version_hash, status);
+		console.timeEnd('prf:' + version_hash);
 	};
 
 	this.get = (key) => instances.get(key);

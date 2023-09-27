@@ -150,7 +150,7 @@ const processInstance = async (options, controller, logger, checkOnly = false) =
 		uuid: getOfflineUUID(options.auth.username)
 	});
 
-	logger.debug("Launcher compiled options:", options);
+	// logger.debug("Instance options:", options);
 	if (controller.signal.aborted) return;
 
 	if (!checkOnly) {

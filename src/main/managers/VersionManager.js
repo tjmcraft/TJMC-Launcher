@@ -48,7 +48,6 @@ exports.getLocalVersions = async function () {
  * @param {String} version - Version of Minecraft
  */
 exports.getVersionManifest = async function (version, progressHandler = (e) => void 0) {
-    logger.debug(`Loading ${version} version manifest...`);
     if (!versions_directory) return;
     const versionPath = path.join(versions_directory, version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
@@ -56,6 +55,7 @@ exports.getVersionManifest = async function (version, progressHandler = (e) => v
     if (fs.existsSync(versionJsonPath)) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
+        logger.debug(`Creating ${version} version manifest...`);
         const parsed = await this.getGlobalVersions();
         const cvv = parsed.find(v => v.id == version);
         c_version = await downloadFile(cvv.url ?? `https://tlaun.ch/repo/versions/${version}.json`, progressHandler);
