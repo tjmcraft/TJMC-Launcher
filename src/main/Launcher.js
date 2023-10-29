@@ -266,7 +266,11 @@ const InstanceController = new function () {
 		}
 		const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
 
-		console.time('prf:' + version_hash);
+		// console.time('prf:' + version_hash);
+
+		const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
+		const handleProgress = (e) => emit('progress', e);
+		handleProgress({ type: 'preflight', progress: 0 });
 
 		const launcherOptions = Object.assign({}, ConfigManager.getAllOptionsSync(), {
 			manifest: versionFile,
@@ -307,8 +311,10 @@ const InstanceController = new function () {
 			status: status
 		});
 
-		console.debug("+>", version_hash, status);
-		console.timeEnd('prf:' + version_hash);
+		handleProgress({ type: 'terminated', progress: 0 });
+
+		console.debug("[check]", version_hash, "->", status);
+		// console.timeEnd('prf:' + version_hash);
 	};
 
 	this.get = (key) => instances.get(key);
@@ -355,8 +361,10 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 };
 
 exports.preflightChecks = async () => {
+	console.time('pfc');
 	const installations = InstallationsManager.getInstallations();
-	Object.entries(installations).map(([key, unit]) => {
-		InstanceController.performPreflightChecks({ version_hash: key });
-	});
+	for ([key, unit] of Object.entries(installations)) {
+		await InstanceController.performPreflightChecks({ version_hash: key })
+	}
+	console.timeEnd('pfc');
 }

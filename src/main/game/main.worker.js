@@ -157,7 +157,6 @@ const processInstance = async (options, controller, logger, checkOnly = false) =
 		let javaPath = await resolveJava(options, controller, logger);
 		let javaArgs = await resolveArgs(options, controller, logger);
 		javaArgs = [javaPath, javaArgs].flat().filter(e => e);
-
 		return javaArgs;
 	} else {
 		return await resolveArgs(options, controller, logger, checkOnly);
