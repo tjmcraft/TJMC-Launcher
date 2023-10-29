@@ -1,5 +1,5 @@
 const fs = require('node:fs');
-const crypto = require('node:crypto');
+const { createHash } = require('node:crypto');
 
 /**
  * Compare file hash with given
@@ -8,6 +8,6 @@ const crypto = require('node:crypto');
  * @returns
  */
 exports.checkFileHash = (file, hash) => new Promise((resolve) => {
-	const sha1 = crypto.createHash('sha1');
+	const sha1 = createHash('sha1');
 	fs.createReadStream(file).on('data', data => sha1.update(data)).on('end', () => resolve(sha1.digest('hex') == hash));
-})
+});
