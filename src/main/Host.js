@@ -10,6 +10,7 @@ const requestChannels = Object.seal({
 	revokeAuth: 'auth:revokeAuth',
 	invokeLaunch: 'invokeLaunch',
 	revokeLaunch: 'revokeLaunch',
+	runPreflightChecks: 'runPreflightChecks',
 	fetchInstallations: 'fetchInstallations',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
@@ -247,6 +248,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.killAllInstances, async () =>
 			await InstanceManager.killAllInstances()
 		);
+		WSSHost.addReducer(requestChannels.runPreflightChecks, async () => {
+			console.debug(">>", 'run sec pref');
+			void Launcher.preflightChecks();
+		});
 	}
 
 	{ // Installations

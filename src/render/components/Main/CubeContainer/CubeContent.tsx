@@ -79,6 +79,7 @@ const CubeContent = ({ hash }) => {
 	}, [hash]);
 
 	const runShortcutAction = useCallback((actions, { type, data }) => {
+		const runPreflightChecks = () => actions.runPreflightChecks();
 		const runCurrentInstallation = () => actions.invokeLaunch({ hash: hash });
 		const stopCurrentInstallation = () => actions.revokeLaunch({ hash: hash });
 		const runInstallationForce = () => actions.invokeLaunch({ hash: hash, params: { forceCheck: true } });
@@ -88,6 +89,7 @@ const CubeContent = ({ hash }) => {
 			stopCurrentInstallation,
 			runInstallationForce,
 			editInstallation,
+			runPreflightChecks,
 		};
 		if (hostActions.hasOwnProperty(type))
 			(hostActions[type])(data);

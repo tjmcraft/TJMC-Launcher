@@ -107,3 +107,9 @@ export async function openInstallationFolder(hash) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function runPreflightChecks() {
+	await invokeRequest({
+		type: "runPreflightChecks",
+	}, false, false, true);
+	return void 0;
+}

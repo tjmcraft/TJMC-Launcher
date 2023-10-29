@@ -121,6 +121,14 @@ const createMenu = async () => {
                     accelerator: resolveHotKey('F3'),
                     click: () => runActionInRenderer('createInstallation')
                 },
+                {
+                    type: 'separator'
+                },
+                {
+                    label: 'Run preflight checks',
+                    accelerator: resolveHotKey('F6'),
+                    click: () => runActionInRenderer('runPreflightChecks'),
+                },
             ]
         },
         { role: 'windowMenu' },

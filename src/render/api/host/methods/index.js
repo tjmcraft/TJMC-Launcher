@@ -17,6 +17,7 @@ export {
 	removeInstallation,
 	moveInstallationPosition,
 	openInstallationFolder,
+	runPreflightChecks,
 } from './installation';
 export {
 	fetchInstances,

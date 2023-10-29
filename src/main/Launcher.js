@@ -360,11 +360,15 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 	void this.startLaunch(version_hash, params);
 };
 
+let pfcLock = false;
 exports.preflightChecks = async () => {
 	console.time('pfc');
+	if (pfcLock) return;
+	pfcLock = true;
 	const installations = InstallationsManager.getInstallations();
 	for ([key, unit] of Object.entries(installations)) {
 		await InstanceController.performPreflightChecks({ version_hash: key })
 	}
+	pfcLock = false;
 	console.timeEnd('pfc');
 }

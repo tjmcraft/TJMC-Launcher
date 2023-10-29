@@ -98,6 +98,9 @@ addReducer("revokeLaunch", (global, _actions, payload) => {
 		isProcessing: false
 	});
 });
+addReducer("runPreflightChecks", (global, _actions, _payload) => {
+	void callHost("runPreflightChecks");
+});
 
 export const selectFolder = ({ title }) => callHost("selectFolder", { title });
 export const selectFile = ({ title }) => callHost("selectFile", { title });
