@@ -364,12 +364,13 @@ class Minecraft extends EventEmitter {
                         'https://tlaun.ch/repo/libraries/',
                         'https://files.minecraftforge.net/maven/',
                         'https://dl.liteloader.com/versions/',
+                        'https://maven.fabricmc.net/',
                         'https://repo1.maven.org/maven2/',
                         'https://maven.minecraftforge.net/',
                         'https://search.maven.org/remotecontent?filepath=',
                         (library.url || '')
                     ].map(e => e + jar_name))
-                ].filter(Boolean);
+                ].filter(Boolean).filter(e => e.includes('http') && e.includes('.jar'));
                 this.downloadQueue.push({
                     type: 'classes',
                     size: size,
