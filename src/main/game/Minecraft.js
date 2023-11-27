@@ -360,6 +360,7 @@ class Minecraft extends EventEmitter {
                 const urls = [
                     ...([library.downloads?.artifact?.url, library.artifact?.url, library.url, library.exact_url]),
                     ...([
+                        (library.url || ''),
                         'https://libraries.minecraft.net/',
                         'https://tlaun.ch/repo/libraries/',
                         'https://files.minecraftforge.net/maven/',
@@ -368,7 +369,6 @@ class Minecraft extends EventEmitter {
                         'https://repo1.maven.org/maven2/',
                         'https://maven.minecraftforge.net/',
                         'https://search.maven.org/remotecontent?filepath=',
-                        (library.url || '')
                     ].map(e => e + jar_name))
                 ].filter(Boolean).filter(e => e.includes('http') && e.includes('.jar'));
                 this.downloadQueue.push({
