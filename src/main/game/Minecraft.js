@@ -193,7 +193,7 @@ class Minecraft extends EventEmitter {
      */
     async loadClient(version) {
         if (this.checkFiles && (
-            !fs.existsSync(this.options.mcPath) ||
+            !fs.existsSync(this.options.mcPath) || fs.statSync(this.options.mcPath).size <= 0 ||
             (this.checkHash && !await checkFileHash(this.options.mcPath, version.downloads.client.sha1))
         )) {
             this.downloadQueue.push({
@@ -225,7 +225,7 @@ class Minecraft extends EventEmitter {
                 `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}-${library.natives[this.getOS()]}.jar`);
             const filePath = path.join(librariesDirectory, nativePath);
             if (this.checkFiles && (
-                !fs.existsSync(filePath) ||
+                !fs.existsSync(filePath) || fs.statSync(filePath).size <= 0 ||
                 (this.checkHash && !await checkFileHash(filePath, native.sha1))
             )) {
                 (index <= 0) && logger.debug(`Downloading natives...`);
@@ -279,7 +279,7 @@ class Minecraft extends EventEmitter {
         let count = 0;
         const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'));
         const assetsIndexPath = path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`);
-        if (!fs.existsSync(assetsIndexPath)) await downloadToFile(version.assetIndex.url, assetsIndexPath, true);
+        if (!fs.existsSync(assetsIndexPath) || fs.statSync(assetsIndexPath).size <= 0) await downloadToFile(version.assetIndex.url, assetsIndexPath, true);
         const index = JSON.parse(fs.readFileSync(assetsIndexPath, { encoding: 'utf8' }));
 
         const emitProgress = (e) => this.emit('progress', {
@@ -292,7 +292,7 @@ class Minecraft extends EventEmitter {
             const subAsset = path.join(assetDirectory, 'objects', subHash);
             const assetPath = path.join(subAsset, hash);
             if (this.checkFiles && (
-                !fs.existsSync(assetPath) ||
+                !fs.existsSync(assetPath) || fs.statSync(assetPath).size <= 0 ||
                 (this.checkHash && !await checkFileHash(assetPath, hash))
             )) {
                 (number <= 0) && logger.debug(`Downloading assets...`);
@@ -352,7 +352,7 @@ class Minecraft extends EventEmitter {
             const size = library.downloads?.artifact?.size || library?.size || library?.artifact?.size || 0;
 
             if (this.checkFiles && (
-                !fs.existsSync(jarFile) ||
+                !fs.existsSync(jarFile) || fs.statSync(jarFile).size <= 0 ||
                 (this.checkHash && hash != void 0 && !await checkFileHash(jarFile, hash))
             )) {
                 logger.debug("<<", "download", name);
