@@ -36,7 +36,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 
 	const items = useMemo(() => [
 		{ type: "separator" },
-		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user'  },
+		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user' },
 		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
 		{ type: "separator" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
@@ -60,7 +60,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
 					onClick={handleSelect(e.tab)}>
 					{e.icon ? (
-						<i className={e.icon}/>
+						<i className={e.icon} />
 					) : ''}
 					<span>{e.content || ''}</span>
 					<span className="next"><i className="icon-next" /></span>
@@ -928,7 +928,7 @@ const Settings = () => {
 				<div className="box">
 					<UserPanel>
 						<button className="circle" onClick={() => closeSettings()}>
-							<i className="icon-close"/>
+							<i className="icon-close" />
 						</button>
 					</UserPanel>
 				</div>
@@ -944,10 +944,9 @@ const Settings = () => {
 			</nav>
 			<div className="middleColumn">
 				<div className="r-box">
-				<div className={buildClassName("content", "auto-s", "centred")}>
-					<ActiveTab current={currentSettingsScreen} />
-				</div>
-
+					<div className={buildClassName("content", "auto-s", "centred")}>
+						<ActiveTab current={currentSettingsScreen} />
+					</div>
 				</div>
 			</div>
 		</div>

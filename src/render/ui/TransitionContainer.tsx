@@ -6,7 +6,8 @@ import forceReflow from "Util/forceReflow";
 type OwnProps = {
 	children: React.ReactNode;
 	className?: string;
-	isShown: boolean;
+	isShown?: boolean;
+	shouldTruncate?: boolean;
 	duration?: number;
 	noOpenTransition?: boolean;
 	noCloseTransition?: boolean;
@@ -17,6 +18,7 @@ const TransitionContainer: React.FC<OwnProps> = ({
 	children,
 	className = undefined,
 	isShown = false,
+	shouldTruncate = true,
 	duration = 350,
 	noOpenTransition = false,
 	noCloseTransition = false,
@@ -40,7 +42,7 @@ const TransitionContainer: React.FC<OwnProps> = ({
 
 	if (containerRef.current) forceReflow(containerRef.current);
 
-	return shouldRender && (
+	return (shouldTruncate ? shouldRender : true) && (
 		<div ref={containerRef} className={buildClassName(className, transitionClassNames)}>
 			{children}
 		</div>

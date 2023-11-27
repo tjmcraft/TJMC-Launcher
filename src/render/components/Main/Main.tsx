@@ -39,13 +39,9 @@ const Main = () => {
 				<InstanceScroller />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
-
 				{currentMainScreen.type == 'installation' && (
 					<Fragment>
-
-							<CubeContent hash={currentMainScreen.hash} />
-
-
+						<CubeContent hash={currentMainScreen.hash} />
 					</Fragment>
 				)}
 				{currentMainScreen.type == 'map' && (

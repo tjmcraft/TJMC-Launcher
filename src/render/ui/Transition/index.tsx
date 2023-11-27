@@ -42,6 +42,7 @@ const Transition: React.FC<TransitionProps> = ({
       <TransitionContainer key={key}
         duration={TRANSITION_DURATION}
         isShown={key === activeKey}
+        shouldTruncate={false}
         noOpenTransition={renderKeys.length <= 1}
         className={buildClassName("TransitionElement", "trans-" + key)}
       >
