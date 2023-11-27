@@ -388,7 +388,7 @@ class Minecraft extends EventEmitter {
             if (library.mod || library.downloadOnly) return false;
 
             return (`${jarPath}${path.sep}${name}`);
-        }))).filter(Boolean);
+        }))).filter(Boolean).filter((value,index,self) => self.indexOf(value) === index);
 
         this.emit('progress', {
             type: 'classes',
