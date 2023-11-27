@@ -604,6 +604,11 @@ class Minecraft extends EventEmitter {
                     //args = args.concat(args[i].value)
                     args.splice(i, 1, ...args[i].value)
                 }
+                for (let ob of Object.keys(this.fields)) {
+                    if (args[i].includes(ob)) {
+                        args[i] = args[i].replace(ob, this.fields[ob])
+                    }
+                }
             } else {
                 args[i] = null
             }
