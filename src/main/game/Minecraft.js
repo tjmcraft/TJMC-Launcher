@@ -177,6 +177,7 @@ class Minecraft extends EventEmitter {
             autoConnect: this.options.installation.autoConnect ?? false,
             javaArgs: this.options.installation.javaArgs ?? '',
         };
+        this.libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
 
         const handleProgress = ({ current, total, time, type }) => this.emit('download', {
             current: current,
@@ -334,7 +335,6 @@ class Minecraft extends EventEmitter {
      * @param {Object} classJson - version JSON
      */
     async getClasses(classJson) {
-        const libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
         const parsed = classJson.libraries
             .filter(lib => [lib.url, lib.artifact, lib.downloads?.artifact, lib.exact_url, lib.name].some(e => e != undefined))
             .filter(lib => !this.parseRule(lib))
@@ -343,7 +343,7 @@ class Minecraft extends EventEmitter {
         const libs = (await Promise.all(parsed.map(async library => {
 
             const lib = library.name.split(':');
-            const jarPath = path.join(libraryDirectory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
+            const jarPath = path.join(this.libraryDirectory, `${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`);
             const name = `${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}.jar`;
             const jarFile = path.join(jarPath, name);
             logger.debug(">>", "load", name);
@@ -468,6 +468,8 @@ class Minecraft extends EventEmitter {
             '${resolution_width}': this.overrides.resolution.width,
             '${resolution_height}': this.overrides.resolution.height,
             '${classpath}': `${cp.join(this.javaSeparator) + jar}`,
+            '${classpath_separator}': this.javaSeparator,
+            '${library_directory}': this.libraryDirectory,
             '${natives_directory}': tempNativePath,
             '${game_libraries_directory}': this.options.overrides.path.versions,
             '${launcher_name}': 'TJMC',
@@ -595,7 +597,7 @@ class Minecraft extends EventEmitter {
             } else if (typeof args[i] === 'string' && !(args[i] === undefined)) {
                 for (let ob of Object.keys(this.fields)) {
                     if (args[i].includes(ob)) {
-                        args[i] = args[i].replace(ob, this.fields[ob])
+                        args[i] = args[i].replaceAll(ob, this.fields[ob])
                     }
                 }
             } else if (typeof args[i] === 'object' && !args[i].rules) {
@@ -607,7 +609,7 @@ class Minecraft extends EventEmitter {
                 }
                 for (let ob of Object.keys(this.fields)) {
                     if (args[i].includes(ob)) {
-                        args[i] = args[i].replace(ob, this.fields[ob])
+                        args[i] = args[i].replaceAll(ob, this.fields[ob])
                     }
                 }
             } else {
