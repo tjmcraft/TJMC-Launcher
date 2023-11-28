@@ -1,6 +1,7 @@
 const log = require('electron-log/main');
 const { launcherDir } = require('../Paths');
 const path = require('path');
+const fs = require('fs');
 
 log.transports.file.level = 'debug';
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
