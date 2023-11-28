@@ -1,6 +1,25 @@
+const log = require('electron-log/main');
+const { launcherDir } = require('../Paths');
+const path = require('path');
+
+log.transports.file.level = 'debug';
+log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
+log.transports.file.resolvePathFn = () => path.join(launcherDir, 'logs/main.log');
+log.transports.file.archiveLogFn = function archiveLog(file) {
+    file = file.toString();
+    const info = path.parse(file);
+
+    try {
+        fs.renameSync(file, path.join(info.dir, info.name + '.old' + info.ext));
+    } catch (e) {
+        console.warn('Could not rotate log', e);
+    }
+}
+log.transports.file.maxSize = 1024;
+
 class LoggerUtil {
 
-    constructor(prefix, style){
+    constructor(prefix, style) {
         this.prefix = prefix
         this.style = style
         this.disabled = false
@@ -8,31 +27,31 @@ class LoggerUtil {
 
     log() {
         if (this.disabled) return;
-        console.log.apply(null, [this.prefix, this.style, ...arguments, "\r"])
+        log.log.apply(null, [this.prefix, this.style, ...arguments])
     }
 
     info() {
         if (this.disabled) return;
-        console.info.apply(null, [this.prefix, this.style, ...arguments, "\r"])
+        log.info.apply(null, [this.prefix, this.style, ...arguments])
     }
 
     warn() {
         if (this.disabled) return;
-        console.warn.apply(null, [this.prefix, this.style, ...arguments, "\r"])
+        log.warn.apply(null, [this.prefix, this.style, ...arguments])
     }
 
     debug() {
         if (this.disabled) return;
-        console.debug.apply(null, [this.prefix, this.style, ...arguments, "\r"])
+        log.debug.apply(null, [this.prefix, this.style, ...arguments])
     }
 
     error() {
         if (this.disabled) return;
-        console.error.apply(null, [this.prefix, this.style, ...arguments, "\r"])
+        log.error.apply(null, [this.prefix, this.style, ...arguments])
     }
 
 }
 
-module.exports = function (prefix, style){
+module.exports = function (prefix, style) {
     return new LoggerUtil(prefix, style)
 }
