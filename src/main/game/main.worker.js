@@ -102,7 +102,8 @@ if (!isMainThread) {
 							return totalProgress;
 						};
 					})();
-					instance.on('progress', ({task, total,type}) => {
+					instance.on('progress', ({ task, total, type }) => {
+						(task == 0 && total == 0) && ((task = 1) && (total = 1));
 						const current = handleProgress({
 							progress: task / total,
 							type: type,
@@ -115,7 +116,9 @@ if (!isMainThread) {
 							},
 						});
 					});
-					instance.on('download', (e) => parentPort.postMessage({ type: 'args:download', payload: e }));
+					instance.on('download', (e) => {
+						parentPort.postMessage({ type: 'args:download', payload: e })
+					});
 				}
 
 				if (!fs.existsSync(options.overrides.path.version))
