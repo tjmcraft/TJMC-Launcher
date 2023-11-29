@@ -10,6 +10,7 @@ import { Modal } from 'UI/Modal';
 
 import style from 'CSS/modal.module.css';
 import "CSS/markdown.css";
+import mountainImg from "IMG/mountain.png";
 
 
 const Header = (({ title, date }) => {
@@ -39,7 +40,14 @@ const WhatsNewContainer = memo(() => {
 				<Fragment>
 					<Header title={latestRelease.name} date={latestRelease.published_at} />
 					<Content>
-						<img src="https://cdn.tjmc.ru/images/1501915239_image.gif" style={{ height: "20em" }} />
+						<img
+							style={{ height: "20em" }}
+							src={mountainImg}
+							onError={({ currentTarget }) => {
+								currentTarget.onerror = void 0;
+								currentTarget.src = mountainImg;
+							}}
+						/>
 						<div className={buildClassName("colorStandart", "size14")}>
 							<span className="markdown">
 								<Markdown remarkPlugins={[remarkGfm]} children={latestRelease.body} />

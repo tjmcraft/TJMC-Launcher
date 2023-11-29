@@ -1,4 +1,4 @@
-import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment } from "react";
+import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment, useLayoutEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -7,10 +7,11 @@ import { getDispatch } from "Store/Global";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
-import useEffectAfterMount from "Hooks/useEffectAfterMount";
 import { selectCurrentUser } from "Model/Selectors/user";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
+import useBrowserOnline from "Hooks/useBrowserOnline";
+import useEffectAfterMount from "Hooks/useEffectAfterMount";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
@@ -19,6 +20,7 @@ import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/RangeSlider";
 
 import iconImage from "IMG/icon.png";
+import headImage from "IMG/default_head.png";
 import style from "CSS/settings.module.css";
 import "CSS/markdown.css";
 import SettingSwitch from "UI/SettingSwitch";
@@ -32,12 +34,15 @@ import UserPanel from "./UserPanel";
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 
+	const user = useGlobal(selectCurrentUser);
+
 	const hostOnline = useHostOnline();
+	const online = useBrowserOnline();
 
 	const items = useMemo(() => [
 		{ type: "separator" },
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user' },
-		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
+		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: [!online, user.permission == 'offline'].some(Boolean), icon: 'icon-loop' },
 		{ type: "separator" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
 		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline, icon: 'icon-permissions' },
@@ -52,6 +57,10 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const handleSelect = (tab) => tab ? () => {
 		onScreenSelect(tab);
 	} : undefined;
+
+	useLayoutEffect(() => {
+		if (items.find(e => e.tab == currentScreen).disabled) onScreenSelect("my-account"); // fallback
+	}, [currentScreen]);
 
 	return (
 		<Fragment>
@@ -184,11 +193,17 @@ const MyAccountTab = memo(() => {
 					<div className={style.zxcBox}>
 						<div className="ictx-flex">
 							<div className={buildClassName("icon", "ns")}>
-								<span style={{
-									backgroundImage: user.avatar != void 0 ?
-										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256)` :
-										`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`
-								}} className="accountAvatar" />
+								<span className={buildClassName("accountAvatar")} >
+									<img
+										src={user.avatar != void 0 ?
+											`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256` :
+											`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`}
+										onError={({ currentTarget }) => {
+											currentTarget.onerror = void 0;
+											currentTarget.src = headImage;
+										}}
+									/>
+								</span>
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>
 								<span className={buildClassName("vbx", "cu")}>
@@ -234,7 +249,7 @@ const SkinTab = memo(() => {
 	const user = useGlobal(selectCurrentUser);
 
 	const handleChangeClick = useCallback(() => {
-		window.open(`https://www.tjmc.ru/login/skinch.php`);
+		window.open(`https://id.tjmc.ru/client/skin`);
 	}, []);
 
 	const handleDownloadClick = useCallback(() => {
@@ -863,7 +878,13 @@ const AboutTab = memo(() => {
 									<div className={buildClassName("pctx-flex", "alt")}>
 										<div className={buildClassName("ictx-flex", "align-top")}>
 											<div className="icon">
-												<img src={release.author.avatar_url} />
+												<img
+													src={release.author.avatar_url}
+													onError={({ currentTarget }) => {
+														currentTarget.onerror = void 0;
+														currentTarget.src = headImage;
+													}}
+												/>
 												<span>{release.author.login}</span>
 											</div>
 											<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
