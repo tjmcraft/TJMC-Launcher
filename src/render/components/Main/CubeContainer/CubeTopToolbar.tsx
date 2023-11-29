@@ -1,9 +1,10 @@
-import { createElement, useCallback, memo, useMemo } from "react";
+import { createElement, useCallback, memo, useMemo, useEffect, useState } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import useGlobalProgress from "Hooks/useGlobalProgress";
 import useHostOnline from "Hooks/useHostOnline";
+import useReservedKey from "Hooks/useReservedKey";
 import { selectInstallation } from "Model/Selectors/installations";
 
 import Button from "UI/Button";
@@ -34,9 +35,15 @@ const CubeTopToolbar = ({ hash }) => {
 		};
 	}, [hash, progressType]);
 
-	const handlePlayClick = useCallback(() => (!isLoading ?
-		invokeLaunch({ hash }) : revokeLaunch({ hash })
-	), [hash, isLoading, invokeLaunch, revokeLaunch]);
+	const altPressed = useReservedKey('alt');
+
+	const handlePlayClick = useCallback((e) => {
+		if (!isLoading) {
+			if (e.altKey) {
+				invokeLaunch({ hash, params: { forceCheck: true } });
+			} else invokeLaunch({ hash });
+		} else revokeLaunch({ hash });
+	}, [hash, isLoading, invokeLaunch, revokeLaunch]);
 
 	const subtitle = useMemo(() => {
 		if (isLoading && progressType != void 0) {
@@ -49,7 +56,7 @@ const CubeTopToolbar = ({ hash }) => {
 				download: 'downloading resources',
 				aborting: 'aborting',
 				terminated: 'terminated',
-			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time/60) > 0 ? `${Math.floor(time/60)}m\xa0` : ''}${Math.round(time%60)}s` : ''}`;
+			})[progressType] || "loading"}\xa0-\xa0${toFixedNumber(progress, 0)}%\xa0${time ? `-\xa0${Math.floor(time / 60) > 0 ? `${Math.floor(time / 60)}m\xa0` : ''}${Math.round(time % 60)}s` : ''}`;
 		}
 		return type;
 	}, [type, progressType, isLoading, progress, time]);
@@ -68,7 +75,7 @@ const CubeTopToolbar = ({ hash }) => {
 				isFilled={true}
 				isPrimary={!isLoading}
 				disabled={!hostOnline || progressType == 'aborting'}
-			>{isLoading ? (progressType ? 'Остановить' : 'Отменить') : 'Играть'}</Button>
+			>{isLoading ? (progressType ? 'Остановить' : 'Отменить') : altPressed ? 'Обновить' : 'Играть'}</Button>
 		</div>
 	);
 };

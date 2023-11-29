@@ -8,6 +8,7 @@ import useGlobalProgress from "Hooks/useGlobalProgress";
 import { selectInstallation } from "Model/Selectors/installations";
 import useContextMenu from "Hooks/useContextMenu";
 import useContextMenuPosition from "Hooks/useContextMenuPosition";
+import useReservedKey from "Hooks/useReservedKey";
 
 import { Menu, MenuItem } from "UI/Menu";
 import PendingProgress from "UI/PendingProgress";
@@ -78,9 +79,20 @@ const ContextMenu: FC<{
 		getRootElement,
 		getMenuElement, () => ({ withPortal: true }));
 
-	const handleLaunchClick = useCallback(() => (!isProcessing ?
-		invokeLaunch({ hash }) : revokeLaunch({ hash })
-	), [hash, invokeLaunch, revokeLaunch, isProcessing]);
+	const handleLaunchClick = useCallback((e) => {
+		if (!isProcessing) {
+			if (e.altKey) {
+				invokeLaunch({ hash, params: { forceCheck: true } });
+			} else invokeLaunch({ hash });
+		}
+		else revokeLaunch({ hash })
+	}, [hash, invokeLaunch, revokeLaunch, isProcessing]);
+
+	const handleLaunchForceClick = useCallback((e) => {
+		if (!isProcessing) {
+			invokeLaunch({ hash, params: { forceCheck: true } });
+		}
+	}, [hash, invokeLaunch, revokeLaunch, isProcessing]);
 
 	const handleRemoveClick = useCallback(() => {
 		alert({
@@ -134,6 +146,10 @@ const ContextMenu: FC<{
 				<MenuItem compact onClick={handleEditClick}>
 					<i className="icon-edit" />
 					{'Редактировать'}
+				</MenuItem>
+				<MenuItem compact onClick={handleLaunchForceClick}>
+					<i className={"icon-reload"} />
+					{'Переустановить'}
 				</MenuItem>
 				<MenuItem compact onClick={handleOpenFolderClick}>
 					<i className="icon-folder" />
