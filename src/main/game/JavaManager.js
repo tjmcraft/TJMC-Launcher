@@ -26,7 +26,7 @@ class JavaManager extends EventEmitter {
         } else {
           return ({ run: true, version: stderr.match(/"(.*?)"/).pop(), arch: stderr.includes('64-Bit') ? '64-Bit' : '32-Bit' });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     return ({ run: false });
   }
