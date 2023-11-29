@@ -44,29 +44,49 @@ function isExactHotkey(hotkey: Hotkey, event: KeyboardEvent): boolean {
     altKey, ctrlKey, metaKey, shiftKey, key: pressedKey,
   } = event;
 
-  if (alt !== altKey) {
-    return false;
-  }
-
-  if (mod) {
-    if (!ctrlKey && !metaKey) {
+  if (key) {
+    if (alt !== altKey) {
       return false;
     }
+    if (mod) {
+      if (!ctrlKey && !metaKey) {
+        return false;
+      }
+    } else {
+      if (ctrl !== ctrlKey) {
+        return false;
+      }
+      if (meta !== metaKey) {
+        return false;
+      }
+    }
+    if (shift !== shiftKey) {
+      return false;
+    }
+    return Boolean(pressedKey.toLowerCase() === key.toLowerCase() ||
+      event.code.replace('Key', '').toLowerCase() === key.toLowerCase());
   } else {
-    if (ctrl !== ctrlKey) {
-      return false;
+    if (alt && event.key.toLowerCase() == 'alt') {
+      return true;
     }
-    if (meta !== metaKey) {
-      return false;
+    if (mod) {
+      if (event.key.toLowerCase() == 'ctrl' || event.key.toLowerCase() == 'meta') {
+        return true;
+      }
+    } else {
+      if (ctrl && event.key.toLowerCase() == 'ctrl') {
+        return true;
+      }
+      if (meta && event.key.toLowerCase() == 'meta') {
+        return true;
+      }
     }
-  }
-  if (shift !== shiftKey) {
-    return false;
+    if (shift && event.key.toLowerCase() == 'shift') {
+      return true;
+    }
   }
 
-  return Boolean(key
-    && (pressedKey.toLowerCase() === key.toLowerCase()
-      || event.code.replace('Key', '').toLowerCase() === key.toLowerCase()));
+  return false;
 }
 
 export function getHotkeyMatcher(hotkey: string): CheckHotkeyMatch {
