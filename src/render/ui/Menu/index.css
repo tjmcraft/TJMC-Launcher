@@ -89,6 +89,7 @@
 .menu .menuItem.compact {
 	font-size: .875rem;
 	padding: 0.25rem;
+	padding-right: 0.75em;
 	transform: scale(1);
 }
 .menu .menuItem.selected {

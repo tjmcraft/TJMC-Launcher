@@ -100,7 +100,7 @@ const createMenu = async () => {
                 },
                 {
                     label: 'Start With Force',
-                    accelerator: resolveHotKey('Ctrl+F5'),
+                    accelerator: resolveHotKey('Alt+F5'),
                     click: () => runActionInRenderer('runInstallationForce')
                 },
                 {

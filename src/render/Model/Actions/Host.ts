@@ -68,13 +68,34 @@ addReducer("setConfig", async (_global, actions, payload) => {
 	}
 });
 
-addReducer("invokeLaunch", (global, _actions, payload) => {
+addReducer("invokeLaunch", (global, actions, payload) => {
 
 	if (!payload) return;
 	const { hash, params } = payload;
 
 	const current = selectInstallation(global, hash);
 	if (current.isProcessing) return;
+
+	if (params['forceCheck'] && !params['forceCheckAccepted']) {
+		return actions.alert({
+			title: `Предупреждение`,
+			content: `Вы уверены что хотите обновить версию? Будут обновлены все библиотеки и другие ресурсы.\nВ случае если вы вносили изменения в корневые файлы версии, то они будут потеряны!`,
+			type: "warn",
+			buttons: [
+				{
+					name: "Отмена",
+					closeOverlay: true,
+				},
+				{
+					name: "Продолжить",
+					class: ["filled", "colorBrand"],
+					closeOverlay: true,
+					callback: () => actions.invokeLaunch(Object.assign({}, payload, { params: { ...payload.params, forceCheck: true, forceCheckAccepted: true } })),
+				}
+			],
+			mini: true
+		});
+	}
 
 	void callHost("invokeLaunch", hash, params);
 
