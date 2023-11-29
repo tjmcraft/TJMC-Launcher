@@ -15,8 +15,8 @@ const UserIcon = forwardRef<HTMLDivElement,any>((props, ref) => {
 		<div className={buildClassName("avatar")} ref={ref} {...props}>
 			<img
 				src={user.avatar != void 0 ?
-				`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256)` :
-				`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`}
+				`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256` :
+				`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`}
 				onError={({ currentTarget }) => {
 					currentTarget.onerror = void 0;
 					currentTarget.src = headImage;
