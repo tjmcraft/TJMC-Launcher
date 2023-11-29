@@ -1244,8 +1244,15 @@ i {
     background-color: transparent;
 }
 .avatarWrapper > .avatar {
-    width: auto;
-    height: 100%;
+    width: 38px;
+    height: 38px;
+}
+
+.bimAvatar {
+    position: relative;
+    background-position: 50%;
+    background-size: 100%;
+    background-repeat: no-repeat;
 }
 
 .avatar {
@@ -1789,9 +1796,7 @@ a.anchor:hover {
 
 .ictx-flex>.icon>.accountAvatar {
     position: relative;
-    background-position: 50%;
     background-size: 90%;
-    background-repeat: no-repeat;
     width: 100px;
     height: 100px;
 }
