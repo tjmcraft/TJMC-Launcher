@@ -140,7 +140,11 @@ const InstanceController = new function () {
 
 			performanceMarks.getVersionManifest = performance.now();
 
-			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
+			const versionFile = await VersionManager.getVersionManifest(
+				currentInstallation.lastVersionId,
+				() => void 0,
+				currentInstallation.checkFiles && currentInstallation.checkHash
+			);
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
 			try {
@@ -224,7 +228,7 @@ const InstanceController = new function () {
 					});
 					jvm.on('close', (code) => {
 						if (![null, 0, 143].includes(code)) {
-							emit('close', { error: logg_out });
+							emit('close', { error: logg_out, code: code });
 							InstallationsManager.modifyInstallation(version_hash, {
 								lastSync: undefined
 							});

@@ -146,9 +146,7 @@ exports.getInstallationSync = (hash) => {
 		installation.autoConnect = installation.autoConnect ?? getOption('minecraft.autoConnect');
 		installation.javaPath = installation.javaPath ?? getOption('java.path');
 		installation.javaArgs = installation.javaArgs ?? getOption('java.args');
-		if (!installation.lastSync ||
-			(new Date().getTime() - new Date(installation.lastSync).getTime()) > (1e3 * 3600)
-		) { // force sync if expired
+		if (!installation.lastSync) { // force sync if error
 			installation.checkHash = true;
 			installation.checkFiles = true;
 		}

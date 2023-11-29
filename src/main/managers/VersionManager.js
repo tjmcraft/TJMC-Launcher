@@ -47,13 +47,13 @@ exports.getLocalVersions = async function () {
  * Gets Main JSON of given version
  * @param {String} version - Version of Minecraft
  */
-exports.getVersionManifest = async function (version, progressHandler = (e) => void 0) {
+exports.getVersionManifest = async function (version, progressHandler = (e) => void 0, forceRebuild = false) {
     logger.debug(`Loading ${version} version manifest...`);
     if (!versions_directory) return;
     const versionPath = path.join(versions_directory, version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
     var c_version = null;
-    if (fs.existsSync(versionJsonPath)) {
+    if (!forceRebuild && fs.existsSync(versionJsonPath)) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
         const parsed = await this.getGlobalVersions();
