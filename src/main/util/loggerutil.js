@@ -1,15 +1,14 @@
+const fs = require('fs');
+const path = require('path');
 const log = require('electron-log/main');
 const { launcherDir } = require('../Paths');
-const path = require('path');
-const fs = require('fs');
 
 log.transports.file.level = 'debug';
 log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 log.transports.file.resolvePathFn = () => path.join(launcherDir, 'logs/main.log');
-log.transports.file.archiveLogFn = function archiveLog(file) {
+log.transports.file.archiveLogFn = (file) => {
     file = file.toString();
     const info = path.parse(file);
-
     try {
         fs.renameSync(file, path.join(info.dir, info.name + '.old' + info.ext));
     } catch (e) {

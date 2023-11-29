@@ -5,6 +5,9 @@ const { downloadFile, postBody } = require('../util/download');
 const { getOfflineUUID, buildUrl } = require('../util/Tools');
 const { randomString } = require('../util/Random');
 const { launcherDir } = require('../Paths');
+const loggerutil = require('../util/loggerutil');
+
+const logger = loggerutil('%c[AuthManager]', 'color: #a6aefe; font-weight: bold');
 
 const API_HOST = "https://api.tjmc.ru/v2/";
 const OAUTH_HOST = "https://oauth.tjmc.ru/";
@@ -100,7 +103,7 @@ class AuthManager extends EventEmitter {
 			this.logoutCurrentUser();
 			return undefined;
 		}
-		console.debug('[currentUser]', response.user);
+		logger.debug("getCurrentUser", "<<", response.user);
 		return response.user;
 	};
 
@@ -132,7 +135,7 @@ class AuthManager extends EventEmitter {
 
 	logoutCurrentUser = async () => {
 		if (!this.currentUserId) return;
-		console.debug('[logout]', this.currentUserId);
+		logger.debug("logoutCurrentUser", ">>", this.currentUserId);
 		await keytar.deletePassword(KEYTAR_KEY, this.currentUserId);
 		config.setOption('currentUserId', '');
 		this.currentUserId = undefined;
@@ -164,14 +167,14 @@ class AuthManager extends EventEmitter {
 
 	handleCode = async (code) => {
 		this.emit('handle-code');
-		console.debug(">>", "handleCode");
+		logger.debug(">>", "handleCode");
 		const response = await postBody(OAUTH_HOST + "token", {
 			grant_type: 'authorization_code',
 			client_id: CLIENT_ID,
 			client_secret: CLIENT_SECRET,
 			code: code,
 		});
-		console.debug(">>", response);
+		logger.debug("handleCode", ">>", response);
 		if (response.accessToken) {
 			await this.handleTokenResponse(response, false);
 		}
@@ -179,14 +182,14 @@ class AuthManager extends EventEmitter {
 
 	handleRefreshToken = async (refreshToken) => {
 		this.emit('handle-refresh');
-		console.debug(">>", "handleRefreshToken");
+		logger.debug(">>", "handleRefreshToken");
 		const response = await postBody(OAUTH_HOST + "token", {
 			grant_type: 'refresh_token',
 			client_id: CLIENT_ID,
 			client_secret: CLIENT_SECRET,
 			refresh_token: refreshToken,
 		});
-		console.debug(">>", response);
+		logger.debug("handleRefreshToken", "<<", response);
 		if (response.accessToken) {
 			return await this.handleTokenResponse(response, true);
 		}
