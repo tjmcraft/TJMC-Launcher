@@ -17,6 +17,7 @@ import "./VersionChooser.css";
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
 
+
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
 	const handleSelect = useCallback((item) => {
@@ -30,9 +31,11 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	const search = (item) => !searchParam || item.id.toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1;
 	const sort = (a, b) => {
 		if (searchParam) {
-			if (a.id.toLowerCase().indexOf(searchParam.toLowerCase()) > b.id.toLowerCase().indexOf(searchParam.toLowerCase())) {
+			let aId = a.id.toLowerCase().indexOf(searchParam.toLowerCase());
+			let bId = b.id.toLowerCase().indexOf(searchParam.toLowerCase());
+			if (aId > bId) {
 				return 1;
-			} else if (a.id.toLowerCase().indexOf(searchParam.toLowerCase()) < b.id.toLowerCase().indexOf(searchParam.toLowerCase())) {
+			} else if (aId < bId) {
 				return -1;
 			}
 		}
@@ -40,14 +43,15 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	};
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
-		const value = e.target.value;
-		console.debug(">>", value);
-		setSearchParam(value);
+		setSearchParam(e.target.value);
 	}, []);
-	const handleClear = useCallback(() => {
-		setSearchParam(null);
-	}, []);
+	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
+
+	const inputRef = useRef<HTMLInputElement>();
+	useEffect(() => {
+		setTimeout(() => inputRef.current.focus(), 150);
+	}, []);
 
 	return (
 		<Fragment>
@@ -69,6 +73,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 			</div>
 			<div className="sidebar-bottom">
 				<TextInput id="versions-search"
+					ref={inputRef}
 					autoFocus={true}
 					placeholder="Введите название версии"
 					onChange={handleInput}
