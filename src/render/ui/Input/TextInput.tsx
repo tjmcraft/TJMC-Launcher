@@ -1,12 +1,31 @@
-import { createElement, useRef, memo } from "react";
+import { createElement, useRef, memo, forwardRef } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
 import style from "./input.module.css";
 
-const TextInput = ({
-	ref = undefined,
+type OwnProps = {
+	id?: string,
+	className?: string,
+	name?: string,
+	value?: any,
+	label?: string,
+	error?: any,
+	disabled?: boolean,
+	readOnly?: boolean,
+	placeholder?: string,
+	autoComplete?: any,
+	maxLength?: number,
+	autoFocus?: boolean,
+	required?: boolean,
+	onChange?: AnyToVoidFunction,
+	onInput?: AnyToVoidFunction,
+	onClear?: AnyToVoidFunction,
+	small?: boolean,
+};
+
+const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	id = undefined,
 	className = undefined,
 	name = undefined,
@@ -24,11 +43,12 @@ const TextInput = ({
 	onInput = void 0,
 	onClear = void 0,
 	small = false,
-}) => {
+}, ref) => {
 
 	id = id || `inp-${randomString(5)}`;
-	let inputRef = useRef(undefined);
+	let inputRef = useRef<HTMLInputElement>(null);
 	if (ref) {
+		// @ts-ignore
 		inputRef = ref;
 	}
 
@@ -86,6 +106,6 @@ const TextInput = ({
 			</span>
 		</div>
 	);
-};
+});
 
 export default memo(TextInput);
