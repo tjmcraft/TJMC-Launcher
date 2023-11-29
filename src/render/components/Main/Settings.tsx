@@ -1,4 +1,4 @@
-import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment } from "react";
+import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment, useLayoutEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -7,10 +7,11 @@ import { getDispatch } from "Store/Global";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
-import useEffectAfterMount from "Hooks/useEffectAfterMount";
 import { selectCurrentUser } from "Model/Selectors/user";
 import { selectCurrentTheme } from "Model/Selectors/UI";
 import { selectSettings } from "Model/Selectors/Settings";
+import useBrowserOnline from "Hooks/useBrowserOnline";
+import useEffectAfterMount from "Hooks/useEffectAfterMount";
 import bytesToSize from "Util/bytesToSize";
 import platform from "platform";
 
@@ -32,12 +33,15 @@ import UserPanel from "./UserPanel";
 
 const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 
+	const user = useGlobal(selectCurrentUser);
+
 	const hostOnline = useHostOnline();
+	const online = useBrowserOnline();
 
 	const items = useMemo(() => [
 		{ type: "separator" },
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user' },
-		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: false, icon: 'icon-loop' },
+		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: [!online, user.permission == 'offline'].some(Boolean), icon: 'icon-loop' },
 		{ type: "separator" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
 		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline, icon: 'icon-permissions' },
@@ -52,6 +56,10 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	const handleSelect = (tab) => tab ? () => {
 		onScreenSelect(tab);
 	} : undefined;
+
+	useLayoutEffect(() => {
+		if (items.find(e => e.tab == currentScreen).disabled) onScreenSelect("my-account"); // fallback
+	}, [currentScreen]);
 
 	return (
 		<Fragment>
