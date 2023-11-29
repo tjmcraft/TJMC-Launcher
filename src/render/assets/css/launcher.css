@@ -1776,14 +1776,20 @@ a.anchor:hover {
     width: 100px;
     height: 100px;
 }
+.ictx-flex>.icon>.accountAvatar>img {
+    width: 90%;
+    height: 90%;
+    object-fit: cover;
+    z-index: 1;
+}
 .ictx-flex>.icon>.accountAvatar.premium {
     position: relative;
-    border-radius: 50%;
-    background-position: 50%;
-    background-size: 70%;
-    background-repeat: no-repeat;
     width: 100px;
     height: 100px;
+}
+.ictx-flex>.icon>.accountAvatar.premium>img {
+    width: 70%;
+    height: 70%;
 }
 .ictx-flex>.icon>.accountAvatar.premium::before {
     content: "";
@@ -1797,6 +1803,7 @@ a.anchor:hover {
        linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
             mask-composite: exclude;
+            z-index: 2;
 }
 .ictx-flex>.icon>img {
     max-width: 100%;

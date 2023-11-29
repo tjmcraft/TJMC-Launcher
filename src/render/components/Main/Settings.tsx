@@ -20,6 +20,7 @@ import { RadioGroup } from "UI/Radio";
 import RangeSlider from "UI/RangeSlider";
 
 import iconImage from "IMG/icon.png";
+import headImage from "IMG/default_head.png";
 import style from "CSS/settings.module.css";
 import "CSS/markdown.css";
 import SettingSwitch from "UI/SettingSwitch";
@@ -192,11 +193,17 @@ const MyAccountTab = memo(() => {
 					<div className={style.zxcBox}>
 						<div className="ictx-flex">
 							<div className={buildClassName("icon", "ns")}>
-								<span style={{
-									backgroundImage: user.avatar != void 0 ?
-										`url(https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256)` :
-										`url(https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35)`
-								}} className={buildClassName("accountAvatar", "bimAvatar")} />
+								<span className={buildClassName("accountAvatar")} >
+									<img
+										src={user.avatar != void 0 ?
+										`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256` :
+										`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`}
+										onError={({ currentTarget }) => {
+											currentTarget.onerror = void 0;
+											currentTarget.src = headImage;
+										}}
+									/>
+								</span>
 							</div>
 							<div className={buildClassName("flex-group", "vertical")}>
 								<span className={buildClassName("vbx", "cu")}>
