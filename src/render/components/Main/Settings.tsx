@@ -196,8 +196,8 @@ const MyAccountTab = memo(() => {
 								<span className={buildClassName("accountAvatar")} >
 									<img
 										src={user.avatar != void 0 ?
-										`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256` :
-										`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`}
+											`https://cdn.tjmc.ru/avatars/${user.id}/${user.avatar}.png?size=256` :
+											`https://api.tjmc.ru/v1/skin.render?user=${user.username}&headOnly=true&vr=-25&hr=35`}
 										onError={({ currentTarget }) => {
 											currentTarget.onerror = void 0;
 											currentTarget.src = headImage;
@@ -878,7 +878,13 @@ const AboutTab = memo(() => {
 									<div className={buildClassName("pctx-flex", "alt")}>
 										<div className={buildClassName("ictx-flex", "align-top")}>
 											<div className="icon">
-												<img src={release.author.avatar_url} />
+												<img
+													src={release.author.avatar_url}
+													onError={({ currentTarget }) => {
+														currentTarget.onerror = void 0;
+														currentTarget.src = headImage;
+													}}
+												/>
 												<span>{release.author.login}</span>
 											</div>
 											<div className={buildClassName("flex-group", "vertical", "w100", "text-sel")}>
