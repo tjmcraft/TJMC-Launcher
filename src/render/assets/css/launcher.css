@@ -183,30 +183,6 @@ code {
     display: none;
 }
 
-#mainBar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #000000a0;
-    width: 100%;
-    height: 48px;
-}
-
-#nick {
-    margin: 8px 0 8px 8px;
-    /* padding: 4px; */
-    background-image: url(../images/user-icon.png);
-    background-position: 4px;
-    background-repeat: no-repeat;
-    padding: 2px 2px 2px 32px;
-    background-size: 24px;
-}
-
-#version {
-    margin: 8px 0 8px 8px;
-}
-
 
 /* ================= Top Bar ================= */
 
