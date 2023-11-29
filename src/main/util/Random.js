@@ -1,5 +1,16 @@
+/**
+ * Generate random number (int)
+ * @param {number} min minimum number
+ * @param {number} max maximum number
+ * @returns
+ */
 const randomInteger = (min = 0, max = 1) => Math.floor(min + Math.random() * (max + 1 - min));
 
+/**
+ * Generate random string with given length
+ * @param {number} length
+ * @returns
+ */
 const randomString = (length) => {
 	let result = '';
 	let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -10,6 +21,11 @@ const randomString = (length) => {
 	return result;
 };
 
+/**
+ * Generate uuid for object keys
+ * @param {Object} obj any object
+ * @returns {string}
+ */
 const generateIdFor = (obj) => {
 	let id;
 
@@ -20,6 +36,4 @@ const generateIdFor = (obj) => {
 	return id;
 };
 
-exports.randomInteger = randomInteger;
-exports.randomString = randomString;
-exports.generateIdFor = generateIdFor;
+module.exports = { randomInteger, randomString, generateIdFor };

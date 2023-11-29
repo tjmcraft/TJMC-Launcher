@@ -1,11 +1,17 @@
 
-const { generateIdFor } = require("../util/Random");
-const LoggerUtil = require("../util/loggerutil");
 const { spawn } = require('child_process');
+const LoggerUtil = require("../util/loggerutil");
+const { generateIdFor } = require("../util/Random");
 const logger = LoggerUtil('%c[InstanceManager]', 'color: #f6fe10; font-weight: bold');
 
+/**
+ * Keys deleted before goes to renderer
+ */
 const lessKeys = ['hash', 'javaPath', 'javaArgs', 'stdout', 'stderr'];
 
+/**
+ * Instances map
+ */
 const instances = new Map();
 
 exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
