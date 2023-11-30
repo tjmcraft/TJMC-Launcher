@@ -2,7 +2,7 @@ import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback,
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
-import { cleanObject } from "Util/Iterates";
+import { cleanObject, searchInArray } from "Util/Iterates";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
@@ -28,19 +28,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	}, [onSelect]);
 
 	const [searchParam, setSearchParam] = useState("");
-	const search = (item) => !searchParam || item.id.toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1;
-	const sort = (a, b) => {
-		if (searchParam) {
-			let aId = a.id.toLowerCase().indexOf(searchParam.toLowerCase());
-			let bId = b.id.toLowerCase().indexOf(searchParam.toLowerCase());
-			if (aId > bId) {
-				return 1;
-			} else if (aId < bId) {
-				return -1;
-			}
-		}
-		return 0;
-	};
+
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
 		setSearchParam(e.target.value);
@@ -63,7 +51,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 								className={buildClassName('item', 'navItem', 'bgL')} />)
 					)}
 					{versions.length > 0 && (
-						versions.filter(search).sort(sort).map((item, i) =>
+						searchInArray(versions, searchParam, e => e.id).map((item, i) =>
 							<div key={i}
 								className={buildClassName('item', 'navItem', selected?.id == item.id && 'selected')}
 								onClick={handleSelect(item)}

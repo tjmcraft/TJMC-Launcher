@@ -10,12 +10,13 @@ import InstanceItem from "./InstanceItem";
 import Tooltip from "UI/Tooltip";
 import { TextInput } from "UI/Input";
 import captureEscKeyListener from "Util/captureEscKeyListener";
+import { searchInObject } from "Util/Iterates";
 
 
 const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
 
 	const { moveInstallationPosition } = getDispatch();
-	const { hash: currentHash } = useGlobal(global => ({ hash: selectCurrentVersionHash(global) }));
+	const currentHash = useGlobal(global => selectCurrentVersionHash(global));
 
 	const [dragOverItem, setDragOverItem] = useState(undefined);
 
@@ -61,17 +62,6 @@ export const InstallationsScroller = memo(() => {
 	const installations = useGlobal(global => selectInstallations(global));
 
 	const [searchParam, setSearchParam] = useState("");
-	const search = useCallback(([key,item]) => !searchParam || item['name'].toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1, [searchParam]);
-	const sort = useCallback(([,a], [,b]) => {
-		if (!searchParam) return 0;
-		let aId = a['name'].toLowerCase().indexOf(searchParam.toLowerCase());
-		let bId = b['name'].toLowerCase().indexOf(searchParam.toLowerCase());
-		if (aId > bId) {
-			return 1;
-		} else if (aId < bId) {
-			return -1;
-		}
-	}, [searchParam]);
 
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
@@ -103,7 +93,7 @@ export const InstallationsScroller = memo(() => {
 				/>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
-				<CubeSidebarItems installations={Object.entries(installations).filter(search).sort(sort).map(([k,v]) => k)} />
+				<CubeSidebarItems installations={Object.keys(searchInObject(installations, searchParam, e => e.name))} />
 			</div>
 		</div>
 	);
