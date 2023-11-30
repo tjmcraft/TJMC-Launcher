@@ -922,8 +922,12 @@ body {
 .r-box .header-w:hover {
     color: var(--interactive-hover);
 }
+.r-box .header-w-wrap {
+    min-height: 52px;
+    position: relative;
+}
 
-.r-box .header-w > span {
+.r-box .header-w > span.title {
     -webkit-box-align: center;
     -ms-flex-align: center;
     -webkit-margin-end: auto;
@@ -943,6 +947,9 @@ body {
     position: relative;
     flex: 1;
     padding: 0;
+}
+.r-box .header-w > button:first-of-type {
+    margin-inline-start: auto;
 }
 
 .container .r-box.instances {

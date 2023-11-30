@@ -12,6 +12,7 @@ type OwnProps = {
 	noOpenTransition?: boolean;
 	noCloseTransition?: boolean;
 	onCloseTransitionEnd?: NoneToVoidFunction;
+	name?: 'push' | 'slide';
 };
 
 const TransitionContainer: React.FC<OwnProps> = ({
@@ -23,6 +24,7 @@ const TransitionContainer: React.FC<OwnProps> = ({
 	noOpenTransition = false,
 	noCloseTransition = false,
 	onCloseTransitionEnd = void 0,
+	name = 'push',
 }) => {
 
 	const containerRef = useRef<HTMLDivElement>();
@@ -34,7 +36,7 @@ const TransitionContainer: React.FC<OwnProps> = ({
 		isShown,
 		onCloseTransitionEnd,
 		noOpenTransition,
-		undefined,
+		`Transition-${name}`,
 		noCloseTransition,
 		{},
 		duration

@@ -11,6 +11,7 @@ export type TransitionProps = {
   renderCount?: number;
   className?: string;
   children: React.ReactNode | ChildrenFn;
+  name?: 'push' | 'slide';
 };
 
 const TRANSITION_DURATION = 250;
@@ -20,7 +21,10 @@ const Transition: React.FC<TransitionProps> = ({
   renderCount,
   className,
   children,
+  name = 'push'
 }) => {
+
+  const container = useRef();
 
   const rendersRef = useRef<Record<number, React.ReactNode | ChildrenFn>>({});
   const prevActiveKey = usePrevious<any>(activeKey);
@@ -45,6 +49,7 @@ const Transition: React.FC<TransitionProps> = ({
         shouldTruncate={false}
         noOpenTransition={renderKeys.length <= 1}
         className={buildClassName("TransitionElement", "trans-" + key)}
+        name={name}
       >
         {
           typeof render === 'function'

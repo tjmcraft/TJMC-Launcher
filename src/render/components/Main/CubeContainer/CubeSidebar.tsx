@@ -12,6 +12,7 @@ import { TextInput } from "UI/Input";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import { searchInObject } from "Util/Iterates";
 import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
+import Transition from "UI/Transition";
 
 
 const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
@@ -81,25 +82,11 @@ export const InstallationsScroller = memo(() => {
 		isSearchOpen ? setTimeout(() => inputRef.current.focus(), 50) : void 0;
 	}, [isSearchOpen]);
 
-	return (
-		<div className={buildClassName("r-box", "installations")} ref={menuRef}>
-			<div className="header-w">
-				{!isSearchOpen ? (
-					<Fragment>
-						<span>
-							<i className="icon-forums"></i>
-							<span>Мои установки</span>
-						</span>
-						<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
-							<i className="icon-add"></i>
-						</button>
-						<button className="circle" onClick={() => setIsSearchOpen(true)}>
-							<i className="icon-search"></i>
-						</button>
-						<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
-					</Fragment>
-				) : (
-					<Fragment>
+	function renderContent() {
+		switch (isSearchOpen) {
+			case true:
+				return (
+					<div className="header-w">
 						<span className="search">
 							<TextInput id="installations-search"
 								ref={inputRef}
@@ -115,9 +102,47 @@ export const InstallationsScroller = memo(() => {
 						<button className="circle" onClick={() => setIsSearchOpen(false)}>
 							<i className="icon-close" />
 						</button>
-					</Fragment>
-				)}
-			</div>
+					</div>
+				);
+			default:
+				return (
+					<div className="header-w">
+						<span className="title">
+							<i className="icon-forums"></i>
+							<span>Мои установки</span>
+						</span>
+						<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
+							<i className="icon-add"></i>
+						</button>
+						<button className="circle" onClick={() => setIsSearchOpen(true)}>
+							<i className="icon-search"></i>
+						</button>
+						<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
+					</div>
+				);
+		}
+	};
+
+	function getActiveKey() {
+		switch (isSearchOpen) {
+			case true:
+				return 1;
+			default:
+				return 0;
+		}
+	}
+
+	return (
+		<div className={buildClassName("r-box", "installations")} ref={menuRef}>
+
+			<Transition
+					activeKey={getActiveKey()}
+				className="header-w-wrap"
+				name='slide'
+				>
+					{renderContent}
+				</Transition>
+
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<CubeSidebarItems installations={Object.keys(searchInObject(installations, isSearchOpen ? searchParam : "", e => e.name))} />
 			</div>
