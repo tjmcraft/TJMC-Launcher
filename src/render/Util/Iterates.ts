@@ -182,3 +182,18 @@ export const cleanObject = function (obj) {
 	});
 	return Object.keys(emptyObject)?.length > 0 ? emptyObject : undefined;
 };
+
+export const searchInObject = function (object, field, query) {
+	const search = ([key, item]) => !query || item[field].toString().toLowerCase().indexOf(query.toLowerCase()) > -1;
+	const sort = ([, a], [, b]) => {
+		if (!query) return 0;
+		let aId = a[field].toLowerCase().indexOf(query.toLowerCase());
+		let bId = b[field].toLowerCase().indexOf(query.toLowerCase());
+		if (aId > bId) {
+			return 1;
+		} else if (aId < bId) {
+			return -1;
+		}
+	};
+	return Object.fromEntries(Object.entries(object).filter(search).sort(sort));
+}
