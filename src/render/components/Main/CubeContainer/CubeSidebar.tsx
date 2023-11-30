@@ -11,6 +11,7 @@ import Tooltip from "UI/Tooltip";
 import { TextInput } from "UI/Input";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import { searchInObject } from "Util/Iterates";
+import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 
 
 const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
@@ -58,11 +59,14 @@ const CubeSidebarItems = memo(({ installations }: { installations: Array<string>
 export const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
 	const addVersionButton = useRef();
+	const menuRef = useRef();
 
 	const installations = useGlobal(global => selectInstallations(global));
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 	const handleSearchOpen = useCallback(() => setIsSearchOpen(e => !e), []);
+
+	useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
 
 	const [searchParam, setSearchParam] = useState("");
 	const handleInput = useCallback((e) => {
@@ -70,38 +74,46 @@ export const InstallationsScroller = memo(() => {
 		setSearchParam(e.target.value);
 	}, []);
 	const handleClear = useCallback(() => setSearchParam(null), []);
-	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
+	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
+
+	const inputRef = useRef<HTMLInputElement>();
+	useEffect(() => {
+		isSearchOpen ? setTimeout(() => inputRef.current.focus(), 50) : void 0;
+	}, [isSearchOpen]);
 
 	return (
-		<div className={buildClassName("r-box", "installations")}>
+		<div className={buildClassName("r-box", "installations")} ref={menuRef}>
 			<div className="header-w">
 				{!isSearchOpen ? (
-					<span>
-						<i className="icon-forums"></i>
-						<span>Мои установки</span>
-					</span>
+					<Fragment>
+						<span>
+							<i className="icon-forums"></i>
+							<span>Мои установки</span>
+						</span>
+						<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
+							<i className="icon-add"></i>
+						</button></Fragment>
 				) : (
 					<span className="search">
 						<TextInput id="installations-search"
+							ref={inputRef}
 							onChange={handleInput}
 							onClear={handleClear}
 							value={searchParam}
 							autoFocus={false}
 							placeholder="Введите название версии"
-							small
+								small={true}
+								withClear={false}
 						/>
 					</span>
 				)}
 				<button className="circle" onClick={handleSearchOpen}>
 					{isSearchOpen ? <i className="icon-close" /> : <i className="icon-search"></i>}
 				</button>
-				<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
-					<i className="icon-add"></i>
-				</button>
 				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
-				<CubeSidebarItems installations={Object.keys(searchInObject(installations, searchParam, e => e.name))} />
+				<CubeSidebarItems installations={Object.keys(searchInObject(installations, isSearchOpen ? searchParam : "", e => e.name))} />
 			</div>
 		</div>
 	);

@@ -67,7 +67,9 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 					onChange={handleInput}
 					onClear={handleClear}
 					value={searchParam}
-					small />
+					small
+					withClear
+				/>
 			</div>
 		</Fragment>
 	);
