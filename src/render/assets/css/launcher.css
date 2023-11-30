@@ -925,6 +925,7 @@ body {
 .r-box .header-w-wrap {
     min-height: 52px;
     position: relative;
+    overflow: hidden;
 }
 
 .r-box .header-w > span.title {

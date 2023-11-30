@@ -138,7 +138,7 @@ export const InstallationsScroller = memo(() => {
 			<Transition
 					activeKey={getActiveKey()}
 				className="header-w-wrap"
-				name='slide'
+				name='slide-v'
 				>
 					{renderContent}
 				</Transition>

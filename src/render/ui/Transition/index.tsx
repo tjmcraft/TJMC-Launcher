@@ -3,7 +3,7 @@ import buildClassName from "Util/buildClassName";
 import { createElement, useRef } from "react";
 
 import "./Transition.css";
-import TransitionContainer from "UI/TransitionContainer";
+import TransitionContainer, { TCProps } from "UI/TransitionContainer";
 
 export type ChildrenFn = (isActive: boolean, isFrom: boolean, currentKey: number) => React.ReactNode;
 export type TransitionProps = {
@@ -11,7 +11,7 @@ export type TransitionProps = {
   renderCount?: number;
   className?: string;
   children: React.ReactNode | ChildrenFn;
-  name?: 'push' | 'slide';
+  name?: TCProps['name'];
 };
 
 const TRANSITION_DURATION = 250;

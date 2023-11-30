@@ -61,3 +61,29 @@
   transform: translateX(-100%);
   opacity: 0;
 }
+
+.TransitionWrap > *.Transition-slide-v {
+  transition: all 0.25s ease-in-out;
+}
+.TransitionWrap > *.Transition-slide-v:first-child {
+  z-index: 12;
+}
+.TransitionWrap > *.Transition-slide-v:last-child {
+  z-index: 11;
+}
+.TransitionWrap > *.Transition-slide-v.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: all;
+}
+.TransitionWrap > *.Transition-slide-v:not(.open):first-child {
+  transform: translateY(100%);
+  opacity: 0;
+  visibility: hidden;
+}
+.TransitionWrap > *.Transition-slide-v:not(.open):last-child {
+  transform: translateY(-100%);
+  visibility: hidden;
+  opacity: 0;
+}
