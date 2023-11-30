@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useCallback, useState, useRef } from "react";
+import { memo, createElement, Fragment, useCallback, useState, useRef, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -8,12 +8,13 @@ import { selectCurrentVersionHash, selectInstallations, selectInstances } from "
 import CubeSidebarItem from "./CubeSidebarItem";
 import InstanceItem from "./InstanceItem";
 import Tooltip from "UI/Tooltip";
+import { TextInput } from "UI/Input";
+import captureEscKeyListener from "Util/captureEscKeyListener";
 
 
-const CubeSidebarItems = memo(() => {
+const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
+
 	const { moveInstallationPosition } = getDispatch();
-
-	const installations = useGlobal(global => Object.keys(selectInstallations(global)));
 	const { hash: currentHash } = useGlobal(global => ({ hash: selectCurrentVersionHash(global) }));
 
 	const [dragOverItem, setDragOverItem] = useState(undefined);
@@ -55,8 +56,30 @@ const CubeSidebarItems = memo(() => {
 
 export const InstallationsScroller = memo(() => {
 	const { openVersionChooserModal } = getDispatch();
-	const onClick = () => openVersionChooserModal();
 	const addVersionButton = useRef();
+
+	const installations = useGlobal(global => selectInstallations(global));
+
+	const [searchParam, setSearchParam] = useState("");
+	const search = useCallback(([key,item]) => !searchParam || item['name'].toString().toLowerCase().indexOf(searchParam.toLowerCase()) > -1, [searchParam]);
+	const sort = useCallback(([,a], [,b]) => {
+		if (!searchParam) return 0;
+		let aId = a['name'].toLowerCase().indexOf(searchParam.toLowerCase());
+		let bId = b['name'].toLowerCase().indexOf(searchParam.toLowerCase());
+		if (aId > bId) {
+			return 1;
+		} else if (aId < bId) {
+			return -1;
+		}
+	}, [searchParam]);
+
+	const handleInput = useCallback((e) => {
+		e.stopPropagation();
+		setSearchParam(e.target.value);
+	}, []);
+	const handleClear = useCallback(() => setSearchParam(null), []);
+	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
+
 	return (
 		<div className={buildClassName("r-box", "installations")}>
 			<div className="header-w">
@@ -64,13 +87,23 @@ export const InstallationsScroller = memo(() => {
 					<i className="icon-forums"></i>
 					<span>Мои установки</span>
 				</span>
-				<button className="circle" onClick={onClick} ref={addVersionButton}>
+				<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
 					<i className="icon-add"></i>
 				</button>
 				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 			</div>
+			<div>
+				<TextInput id="installations-search"
+					onChange={handleInput}
+					onClear={handleClear}
+					value={searchParam}
+					autoFocus={false}
+					placeholder="Введите название версии"
+					small
+				/>
+			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
-				<CubeSidebarItems />
+				<CubeSidebarItems installations={Object.entries(installations).filter(search).sort(sort).map(([k,v]) => k)} />
 			</div>
 		</div>
 	);
@@ -103,21 +136,21 @@ export const InstanceScroller = memo(() => {
 	}, [killAllInstances, alert]);
 	return instances.length > 0 && (
 		<div className={buildClassName("r-box", "instances")}>
-		<div className={buildClassName('scroller', 'thin-s')}>
-			<h2 className='header-w'>
+			<div className={buildClassName('scroller', 'thin-s')}>
+				<h2 className='header-w'>
 					<span>
-					<i className="icon-play"></i>
-					<span>Сейчас запущено</span>
+						<i className="icon-play"></i>
+						<span>Сейчас запущено</span>
 					</span>
 					<button className="circle" onClick={handleKillAll} title="Kill all instances">
 						<i className="icon-close"></i>
 					</button>
-			</h2>
-			{instances.map((instanceId) =>
-				<InstanceItem
-					key={instanceId}
-					instanceId={instanceId}
-				/>)}
+				</h2>
+				{instances.map((instanceId) =>
+					<InstanceItem
+						key={instanceId}
+						instanceId={instanceId}
+					/>)}
 			</div>
 		</div>
 	);
