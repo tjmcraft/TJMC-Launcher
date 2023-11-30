@@ -92,25 +92,31 @@ export const InstallationsScroller = memo(() => {
 						</span>
 						<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
 							<i className="icon-add"></i>
-						</button></Fragment>
+						</button>
+						<button className="circle" onClick={() => setIsSearchOpen(true)}>
+							<i className="icon-search"></i>
+						</button>
+						<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
+					</Fragment>
 				) : (
-					<span className="search">
-						<TextInput id="installations-search"
-							ref={inputRef}
-							onChange={handleInput}
-							onClear={handleClear}
-							value={searchParam}
-							autoFocus={false}
-							placeholder="Введите название версии"
+					<Fragment>
+						<span className="search">
+							<TextInput id="installations-search"
+								ref={inputRef}
+								onChange={handleInput}
+								onClear={handleClear}
+								value={searchParam}
+								autoFocus={false}
+								placeholder="Введите название версии"
 								small={true}
 								withClear={false}
-						/>
-					</span>
+							/>
+						</span>
+						<button className="circle" onClick={() => setIsSearchOpen(false)}>
+							<i className="icon-close" />
+						</button>
+					</Fragment>
 				)}
-				<button className="circle" onClick={handleSearchOpen}>
-					{isSearchOpen ? <i className="icon-close" /> : <i className="icon-search"></i>}
-				</button>
-				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<CubeSidebarItems installations={Object.keys(searchInObject(installations, isSearchOpen ? searchParam : "", e => e.name))} />
