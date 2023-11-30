@@ -863,8 +863,8 @@ const AboutTab = memo(() => {
 							<div className="description">{APP_COPYRIGHT}</div>
 							<span className={buildClassName("flex-group", "horizontal")}>
 								<a href="https://github.com/tjmcraft/TJMC-Launcher" className="anchor" target="_blank" rel="noreferrer">Source (GitHub)</a>
-								<a href="https://www.tjmc.ru/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
-								<a href="https://www.tjmc.ru/launcher" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
+								<a href="https://play.tjmc.ru/help" className="anchor" target="_blank" rel="noreferrer">Поддержка</a>
+								<a href="https://launcher.tjmc.ru/" className="anchor" target="_blank" rel="noreferrer">Сайт</a>
 							</span>
 						</div>
 					</div>
