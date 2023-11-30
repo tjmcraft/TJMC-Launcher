@@ -76,7 +76,7 @@ addReducer("invokeLaunch", (global, actions, payload) => {
 	const current = selectInstallation(global, hash);
 	if (current.isProcessing) return;
 
-	if (params['forceCheck'] && !params['forceCheckAccepted']) {
+	if (params?.forceCheck && !params?.forceCheckAccepted) {
 		return actions.alert({
 			title: `Предупреждение`,
 			content: `Вы уверены что хотите обновить версию? Будут обновлены все библиотеки и другие ресурсы.\nВ случае если вы вносили изменения в корневые файлы версии, то они будут потеряны!`,
