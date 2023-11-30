@@ -61,8 +61,10 @@ export const InstallationsScroller = memo(() => {
 
 	const installations = useGlobal(global => selectInstallations(global));
 
-	const [searchParam, setSearchParam] = useState("");
+	const [isSearchOpen, setIsSearchOpen] = useState(false);
+	const handleSearchOpen = useCallback(() => setIsSearchOpen(e => !e), []);
 
+	const [searchParam, setSearchParam] = useState("");
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
 		setSearchParam(e.target.value);
@@ -73,24 +75,30 @@ export const InstallationsScroller = memo(() => {
 	return (
 		<div className={buildClassName("r-box", "installations")}>
 			<div className="header-w">
-				<span>
-					<i className="icon-forums"></i>
-					<span>Мои установки</span>
-				</span>
+				{!isSearchOpen ? (
+					<span>
+						<i className="icon-forums"></i>
+						<span>Мои установки</span>
+					</span>
+				) : (
+					<span className="search">
+						<TextInput id="installations-search"
+							onChange={handleInput}
+							onClear={handleClear}
+							value={searchParam}
+							autoFocus={false}
+							placeholder="Введите название версии"
+							small
+						/>
+					</span>
+				)}
+				<button className="circle" onClick={handleSearchOpen}>
+					{isSearchOpen ? <i className="icon-close" /> : <i className="icon-search"></i>}
+				</button>
 				<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
 					<i className="icon-add"></i>
 				</button>
 				<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
-			</div>
-			<div>
-				<TextInput id="installations-search"
-					onChange={handleInput}
-					onClear={handleClear}
-					value={searchParam}
-					autoFocus={false}
-					placeholder="Введите название версии"
-					small
-				/>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<CubeSidebarItems installations={Object.keys(searchInObject(installations, searchParam, e => e.name))} />

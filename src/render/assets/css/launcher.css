@@ -255,7 +255,7 @@ button.circle {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.3125rem;
+    padding: 8px;
     font-size: 14px;
     color: var(--interactive-normal);
 }
@@ -916,13 +916,14 @@ body {
     display: flex;
     align-items: center;
     color: var(--interactive-normal);
-    padding: 8px 16px;
+    padding: 8px 8px;
+    gap: 4px;
 }
 .r-box .header-w:hover {
     color: var(--interactive-hover);
 }
 
-.r-box .header-w span {
+.r-box .header-w > span {
     -webkit-box-align: center;
     -ms-flex-align: center;
     -webkit-margin-end: auto;
@@ -933,10 +934,17 @@ body {
     gap: 8px;
     margin-inline-end: auto;
     min-width: 0;
-    min-height: 32px;
+    min-height: 36px;
     font-size: 1rem;
     font-weight: 600;
+    padding: 0 8px;
 }
+.r-box .header-w > span.search {
+    position: relative;
+    flex: 1;
+    padding: 0;
+}
+
 .container .r-box.instances {
     flex: 0 0 auto;
     min-height: 10vh;
@@ -969,7 +977,7 @@ body {
   }
 
 .container.settings > .middleColumn > .r-box {
-background-color: var(--sbw-background-main);
+    background-color: var(--sbw-background-main);
 }
 
 
