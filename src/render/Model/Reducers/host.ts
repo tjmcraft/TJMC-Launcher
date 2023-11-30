@@ -113,6 +113,25 @@ export function updateStatus(global, actions, payload) {
 				mini: true
 			});
 		}
+	} else if (status == 'error') {
+		actions.alert({
+			title: `Ошибка при обновлении`,
+			content: `Вам необходимо загрузить и установить последнюю версию самостоятельно, чтобы завершить обновление!`,
+			type: "warn",
+			buttons: [
+				{
+					name: "Позже",
+					closeOverlay: true,
+				},
+				{
+					name: "Продолжить",
+					class: ["filled", "colorBrand"],
+					closeOverlay: true,
+					callback: () => window.open('https://github.com/tjmcraft/TJMC-Launcher/releases'),
+				}
+			],
+			mini: true
+		});
 	}
 }
 
