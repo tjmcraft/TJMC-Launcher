@@ -4,6 +4,7 @@ import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
 
 import style from "./input.module.css";
+import useInputFocusOnOpen from "Hooks/useInputFocusOnOpen";
 
 type OwnProps = {
 	id?: string,
@@ -18,6 +19,7 @@ type OwnProps = {
 	autoComplete?: any,
 	maxLength?: number,
 	autoFocus?: boolean,
+	autoFocusOnOpen?: boolean,
 	required?: boolean,
 	onChange?: AnyToVoidFunction,
 	onInput?: AnyToVoidFunction,
@@ -39,6 +41,7 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	autoComplete = undefined,
 	maxLength = undefined,
 	autoFocus = false,
+	autoFocusOnOpen = false,
 	required = false,
 	onChange = void 0,
 	onInput = void 0,
@@ -53,6 +56,8 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 		// @ts-ignore
 		inputRef = ref;
 	}
+
+	useInputFocusOnOpen(inputRef, autoFocusOnOpen);
 
 	const fullClassName = buildClassName(
 		className,

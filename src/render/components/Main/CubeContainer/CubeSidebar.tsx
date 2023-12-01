@@ -65,9 +65,8 @@ export const InstallationsScroller = memo(() => {
 	const installations = useGlobal(global => selectInstallations(global));
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
-	const handleSearchOpen = useCallback(() => setIsSearchOpen(e => !e), []);
 
-	useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
+	// useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
 
 	const [searchParam, setSearchParam] = useState("");
 	const handleInput = useCallback((e) => {
@@ -77,22 +76,19 @@ export const InstallationsScroller = memo(() => {
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
 
-	const inputRef = useRef<HTMLInputElement>();
-	useEffect(() => {
-		isSearchOpen ? setTimeout(() => inputRef.current.focus(), 50) : void 0;
-	}, [isSearchOpen]);
-
-	function renderContent() {
+	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {
-			case true:
+			case true: {
+				console.debug("re");
 				return (
 					<div className="header-w">
 						<span className="search">
 							<TextInput id="installations-search"
-								ref={inputRef}
+								key={activeKey}
 								onChange={handleInput}
 								onClear={handleClear}
 								value={searchParam}
+								autoFocusOnOpen
 								autoFocus={false}
 								placeholder="Введите название версии"
 								small={true}
@@ -104,7 +100,8 @@ export const InstallationsScroller = memo(() => {
 						</button>
 					</div>
 				);
-			default:
+			}
+			case false:
 				return (
 					<div className="header-w">
 						<span className="title">
@@ -120,6 +117,7 @@ export const InstallationsScroller = memo(() => {
 						<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
 					</div>
 				);
+			default: return undefined;
 		}
 	};
 
@@ -138,7 +136,8 @@ export const InstallationsScroller = memo(() => {
 			<Transition
 					activeKey={getActiveKey()}
 				className="header-w-wrap"
-				name='slide-v'
+				name='slide'
+				direction='reverse'
 				>
 					{renderContent}
 				</Transition>

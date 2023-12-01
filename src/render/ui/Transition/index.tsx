@@ -12,6 +12,7 @@ export type TransitionProps = {
   className?: string;
   children: React.ReactNode | ChildrenFn;
   name?: TCProps['name'];
+  direction?: TCProps['direction'];
 };
 
 const TRANSITION_DURATION = 250;
@@ -21,7 +22,8 @@ const Transition: React.FC<TransitionProps> = ({
   renderCount,
   className,
   children,
-  name = 'push'
+  name = 'push',
+  direction = 'auto',
 }) => {
 
   const container = useRef();
@@ -50,6 +52,7 @@ const Transition: React.FC<TransitionProps> = ({
         noOpenTransition={renderKeys.length <= 1}
         className={buildClassName("TransitionElement", "trans-" + key)}
         name={name}
+        direction={direction}
       >
         {
           typeof render === 'function'

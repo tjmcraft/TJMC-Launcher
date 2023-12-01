@@ -13,6 +13,7 @@ export type TCProps = {
 	noCloseTransition?: boolean;
 	onCloseTransitionEnd?: NoneToVoidFunction;
 	name?: 'push' | 'slide' | 'slide-v';
+	direction?: 'auto' | 'reverse';
 };
 
 const TransitionContainer: React.FC<TCProps> = ({
@@ -25,6 +26,7 @@ const TransitionContainer: React.FC<TCProps> = ({
 	noCloseTransition = false,
 	onCloseTransitionEnd = void 0,
 	name = 'push',
+	direction = 'auto',
 }) => {
 
 	const containerRef = useRef<HTMLDivElement>();
@@ -36,7 +38,7 @@ const TransitionContainer: React.FC<TCProps> = ({
 		isShown,
 		onCloseTransitionEnd,
 		noOpenTransition,
-		`Transition-${name}`,
+		buildClassName(`Transition-${name}`, direction == 'reverse' && 'rev'),
 		noCloseTransition,
 		{},
 		duration
