@@ -66,7 +66,7 @@ export const InstallationsScroller = memo(() => {
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-	// useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
+	useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
 
 	const [searchParam, setSearchParam] = useState("");
 	const handleInput = useCallback((e) => {
@@ -79,7 +79,6 @@ export const InstallationsScroller = memo(() => {
 	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {
 			case true: {
-				console.debug("re");
 				return (
 					<div className="header-w">
 						<span className="search">

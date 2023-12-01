@@ -9,7 +9,6 @@ export default function useInputFocusOnOpen(
 	isOpen?: boolean,
 	onClose?: NoneToVoidFunction
 ) {
-	console.debug(">>", 'mut');
 	useEffect(() => {
 		if (isOpen) {
 			setTimeout(() => {
