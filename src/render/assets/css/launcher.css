@@ -916,7 +916,7 @@ body {
     display: flex;
     align-items: center;
     color: var(--interactive-normal);
-    padding: 8px 8px;
+    padding: 8px;
     gap: 4px;
 }
 .r-box .header-w:hover {
