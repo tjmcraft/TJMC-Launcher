@@ -131,15 +131,13 @@ export const InstallationsScroller = memo(() => {
 
 	return (
 		<div className={buildClassName("r-box", "installations")} ref={menuRef}>
-
 			<Transition
-					activeKey={getActiveKey()}
+				activeKey={getActiveKey()}
 				className="header-w-wrap"
 				name='slide'
-				>
-					{renderContent}
-				</Transition>
-
+			>
+				{renderContent}
+			</Transition>
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<CubeSidebarItems installations={Object.keys(searchInObject(installations, isSearchOpen ? searchParam : "", e => e.name))} />
 			</div>
