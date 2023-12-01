@@ -1,4 +1,4 @@
-import { createElement, useRef, memo, forwardRef } from "react";
+import { createElement, useRef, memo, forwardRef, HTMLInputTypeAttribute } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
@@ -9,9 +9,12 @@ import useInputFocusOnOpen from "Hooks/useInputFocusOnOpen";
 type OwnProps = {
 	id?: string,
 	className?: string,
+	inputClassName?: string,
 	name?: string,
 	value?: any,
 	label?: string,
+	title?: string,
+	type?: HTMLInputTypeAttribute,
 	error?: any,
 	disabled?: boolean,
 	readOnly?: boolean,
@@ -31,9 +34,12 @@ type OwnProps = {
 const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	id = undefined,
 	className = undefined,
+	inputClassName = undefined,
 	name = undefined,
 	value = undefined,
 	label = undefined,
+	title = undefined,
+	type = 'text',
 	error = undefined,
 	disabled = false,
 	readOnly = false,
@@ -82,8 +88,9 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 					ref={inputRef}
 					id={id}
 					name={name}
-					className={""}
-					type="text"
+					className={inputClassName}
+					type={type}
+					title={title}
 					value={value || ''}
 					autoFocus={autoFocus}
 					autoComplete={autoComplete}
