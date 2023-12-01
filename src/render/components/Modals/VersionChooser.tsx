@@ -36,11 +36,6 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
 
-	const inputRef = useRef<HTMLInputElement>();
-	useEffect(() => {
-		setTimeout(() => inputRef.current.focus(), 150);
-	}, []);
-
 	return (
 		<Fragment>
 			<div className="sidebar-region">
@@ -61,7 +56,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 			</div>
 			<div className="sidebar-bottom">
 				<TextInput id="versions-search"
-					ref={inputRef}
+					autoFocusOnOpen={true}
 					autoFocus={true}
 					placeholder="Введите название версии"
 					onChange={handleInput}
