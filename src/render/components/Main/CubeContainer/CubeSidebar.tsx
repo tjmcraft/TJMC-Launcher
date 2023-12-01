@@ -136,7 +136,6 @@ export const InstallationsScroller = memo(() => {
 					activeKey={getActiveKey()}
 				className="header-w-wrap"
 				name='slide'
-				direction='reverse'
 				>
 					{renderContent}
 				</Transition>
