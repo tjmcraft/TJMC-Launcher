@@ -1,7 +1,7 @@
 import { RefObject, useEffect } from "react";
 
 // Focus slows down animation, also it breaks transition layout in Chrome
-const FOCUS_DELAY_MS = 350;
+const FOCUS_DELAY_MS = 400;
 const MODAL_HIDE_DELAY_MS = 300;
 
 export default function useInputFocusOnOpen(

@@ -39,8 +39,9 @@
   opacity: 0;
 }
 
-.TransitionWrap > *.Transition-slide {
-  transition: all 0.25s ease-in-out;
+.TransitionWrap > *.Transition-slide,
+.TransitionWrap > *.Transition-slide-v {
+  transition: .35s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .TransitionWrap > *.Transition-slide:first-child {
   z-index: 12;
@@ -72,10 +73,6 @@
   transform: translateX(100%);
 }
 
-.TransitionWrap > *.Transition-slide-v {
-  transition: 0.25s ease-in-out;
-  transition-delay: 1ms;
-}
 .TransitionWrap > *.Transition-slide-v:first-child {
   z-index: 12;
 }
