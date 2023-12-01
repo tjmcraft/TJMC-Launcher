@@ -43,6 +43,7 @@ const App = () => {
 				<Preloader />
 				<Transition
 					activeKey={getActiveKey()}
+					name="push"
 				>
 					{renderContent}
 				</Transition>

@@ -3,7 +3,7 @@ import buildClassName from "Util/buildClassName";
 import useShowTransition from "Hooks/useShowTransition";
 import forceReflow from "Util/forceReflow";
 
-type OwnProps = {
+export type TCProps = {
 	children: React.ReactNode;
 	className?: string;
 	isShown?: boolean;
@@ -12,9 +12,11 @@ type OwnProps = {
 	noOpenTransition?: boolean;
 	noCloseTransition?: boolean;
 	onCloseTransitionEnd?: NoneToVoidFunction;
+	name?: 'push' | 'slide' | 'slide-v';
+	direction?: 'auto' | 'reverse';
 };
 
-const TransitionContainer: React.FC<OwnProps> = ({
+const TransitionContainer: React.FC<TCProps> = ({
 	children,
 	className = undefined,
 	isShown = false,
@@ -23,6 +25,8 @@ const TransitionContainer: React.FC<OwnProps> = ({
 	noOpenTransition = false,
 	noCloseTransition = false,
 	onCloseTransitionEnd = void 0,
+	name = 'push',
+	direction = 'auto',
 }) => {
 
 	const containerRef = useRef<HTMLDivElement>();
@@ -34,7 +38,7 @@ const TransitionContainer: React.FC<OwnProps> = ({
 		isShown,
 		onCloseTransitionEnd,
 		noOpenTransition,
-		undefined,
+		buildClassName(`Transition-${name}`, direction == 'reverse' && 'rev'),
 		noCloseTransition,
 		{},
 		duration

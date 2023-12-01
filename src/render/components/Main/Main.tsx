@@ -76,9 +76,7 @@ const MainContainer = () => {
 	}, [runShortcutAction]);
 
 	function renderContent() {
-		if (isSettingsOpen) {
-			return <Settings />;
-		}
+		if (isSettingsOpen) return <Settings />;
 		return <Main />;
 	}
 
@@ -91,6 +89,7 @@ const MainContainer = () => {
 		<div className="app-container">
 			<Transition
 				activeKey={getActiveKey()}
+				name="push"
 			>
 				{renderContent}
 			</Transition>

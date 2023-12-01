@@ -182,3 +182,33 @@ export const cleanObject = function (obj) {
 	});
 	return Object.keys(emptyObject)?.length > 0 ? emptyObject : undefined;
 };
+
+export const searchInArray = function (array, query, predicate = (e) => e) {
+	const search = (item) => !query || predicate(item).toString().toLowerCase().indexOf(query.toLowerCase()) > -1;
+	const sort = (a, b) => {
+		if (!query) return 0;
+		let aId = predicate(a).toString().toLowerCase().indexOf(query.toLowerCase());
+		let bId = predicate(b).toString().toLowerCase().indexOf(query.toLowerCase());
+		if (aId > bId) {
+			return 1;
+		} else if (aId < bId) {
+			return -1;
+		}
+	};
+	return array.filter(search).sort(sort);
+}
+
+export const searchInObject = function (object, query, predicate = (e) => e) {
+	const search = ([key, item]) => !query || predicate(item).toString().toLowerCase().indexOf(query.toLowerCase()) > -1;
+	const sort = ([, a], [, b]) => {
+		if (!query) return 0;
+		let aId = predicate(a).toString().toLowerCase().indexOf(query.toLowerCase());
+		let bId = predicate(b).toString().toLowerCase().indexOf(query.toLowerCase());
+		if (aId > bId) {
+			return 1;
+		} else if (aId < bId) {
+			return -1;
+		}
+	};
+	return Object.fromEntries(Object.entries(object).filter(search).sort(sort));
+}

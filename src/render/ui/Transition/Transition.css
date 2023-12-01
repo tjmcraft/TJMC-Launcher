@@ -13,24 +13,86 @@
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(.65,-0.3,0.3,1.3);
+  transition: all 0.25s linear;
 }
-.TransitionWrap > *.open {
+
+.TransitionWrap > *.Transition-push.open,
+.TransitionWrap > *.Transition-slide.open,
+.TransitionWrap > *.Transition-slide-v.open {
   opacity: 1;
-  transform: translateZ(0px);
+  visibility: visible;
+  transform: none;
+  -webkit-transform: none;
   pointer-events: all;
 }
-.TransitionWrap > *:first-child {
+
+.TransitionWrap > *.Transition-push {
+  transition: all .25s cubic-bezier(.65,-0.3,0.3,1.3);
+}
+.TransitionWrap > *.Transition-slide,
+.TransitionWrap > *.Transition-slide-v {
+  transition: .25s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.TransitionWrap > *.Transition-push:first-child {
   z-index: 12;
 }
-.TransitionWrap > *:last-child {
+.TransitionWrap > *.Transition-push:last-child {
   z-index: 11;
 }
-.TransitionWrap > *:not(.open):first-child {
-  transform: scale(1.1) translateZ(0px);
+.TransitionWrap > *.Transition-push:not(.open):first-child {
+  transform: scale(1.1) translateZ(0);
+  visibility: hidden;
   opacity: 0;
 }
-.TransitionWrap > *:not(.open):last-child {
-  transform: scale(0.9) translateZ(0px);
+.TransitionWrap > *.Transition-push:not(.open):last-child {
+  transform: scale(0.9) translateZ(0);
+  visibility: hidden;
   opacity: 0;
+}
+
+.TransitionWrap > *.Transition-slide:first-child {
+  z-index: 12;
+}
+.TransitionWrap > *.Transition-slide:last-child {
+  z-index: 11;
+}
+.TransitionWrap > *.Transition-slide:not(.open):first-child {
+  transform: translateX(-100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.TransitionWrap > *.Transition-slide:not(.open):last-child {
+  transform: translateX(100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.TransitionWrap > *.Transition-slide.rev:not(.open):first-child {
+  transform: translateX(100%);
+}
+.TransitionWrap > *.Transition-slide.rev:not(.open):last-child {
+  transform: translateX(-100%);
+}
+
+.TransitionWrap > *.Transition-slide-v:first-child {
+  z-index: 12;
+}
+.TransitionWrap > *.Transition-slide-v:last-child {
+  z-index: 11;
+}
+.TransitionWrap > *.Transition-slide-v:not(.open):first-child {
+  transform: translateY(-100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.TransitionWrap > *.Transition-slide-v:not(.open):last-child {
+  transform: translateY(100%);
+  visibility: hidden;
+  opacity: 0;
+}
+.TransitionWrap > *.Transition-slide-v.rev:not(.open):first-child {
+  transform: translateY(100%);
+}
+.TransitionWrap > *.Transition-slide-v.rev:not(.open):last-child {
+  transform: translateY(-100%);
 }

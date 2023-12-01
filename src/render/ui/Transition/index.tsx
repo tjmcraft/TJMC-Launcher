@@ -3,7 +3,7 @@ import buildClassName from "Util/buildClassName";
 import { createElement, useRef } from "react";
 
 import "./Transition.css";
-import TransitionContainer from "UI/TransitionContainer";
+import TransitionContainer, { TCProps } from "UI/TransitionContainer";
 
 export type ChildrenFn = (isActive: boolean, isFrom: boolean, currentKey: number) => React.ReactNode;
 export type TransitionProps = {
@@ -11,6 +11,8 @@ export type TransitionProps = {
   renderCount?: number;
   className?: string;
   children: React.ReactNode | ChildrenFn;
+  name?: TCProps['name'];
+  direction?: TCProps['direction'];
 };
 
 const TRANSITION_DURATION = 250;
@@ -20,7 +22,11 @@ const Transition: React.FC<TransitionProps> = ({
   renderCount,
   className,
   children,
+  name = 'push',
+  direction = 'auto',
 }) => {
+
+  const container = useRef();
 
   const rendersRef = useRef<Record<number, React.ReactNode | ChildrenFn>>({});
   const prevActiveKey = usePrevious<any>(activeKey);
@@ -45,6 +51,8 @@ const Transition: React.FC<TransitionProps> = ({
         shouldTruncate={false}
         noOpenTransition={renderKeys.length <= 1}
         className={buildClassName("TransitionElement", "trans-" + key)}
+        name={name}
+        direction={direction}
       >
         {
           typeof render === 'function'

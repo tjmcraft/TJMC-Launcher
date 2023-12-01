@@ -74,6 +74,7 @@ const Authentication = () => {
 								value={login || ''}
 								label="Username"
 								error={authError}
+								withClear={true}
 							/>
 							<Button
 								onClick={handleOfflineAuth}
