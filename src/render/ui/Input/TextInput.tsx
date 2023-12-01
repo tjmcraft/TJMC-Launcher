@@ -1,4 +1,4 @@
-import { createElement, useRef, memo, forwardRef, HTMLInputTypeAttribute } from "react";
+import { createElement, useRef, memo, forwardRef, HTMLInputTypeAttribute, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
@@ -23,6 +23,7 @@ type OwnProps = {
 	maxLength?: number,
 	autoFocus?: boolean,
 	autoFocusOnOpen?: boolean,
+	focused?: boolean,
 	required?: boolean,
 	onChange?: AnyToVoidFunction,
 	onInput?: AnyToVoidFunction,
@@ -48,6 +49,7 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	maxLength = undefined,
 	autoFocus = false,
 	autoFocusOnOpen = false,
+	focused = undefined,
 	required = false,
 	onChange = void 0,
 	onInput = void 0,
@@ -64,6 +66,15 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	}
 
 	useInputFocusOnOpen(inputRef, autoFocusOnOpen);
+
+	useEffect(() => {
+    if (!inputRef.current) return;
+    if (focused) {
+      inputRef.current.focus();
+    } else {
+      inputRef.current.blur();
+    }
+  }, [focused, placeholder]);
 
 	const fullClassName = buildClassName(
 		className,

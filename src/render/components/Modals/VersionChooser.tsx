@@ -17,7 +17,6 @@ import "./VersionChooser.css";
 
 const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
 
-
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
 	const handleSelect = useCallback((item) => {
@@ -28,7 +27,6 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	}, [onSelect]);
 
 	const [searchParam, setSearchParam] = useState("");
-
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
 		setSearchParam(e.target.value);

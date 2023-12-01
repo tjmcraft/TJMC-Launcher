@@ -1,18 +1,19 @@
 import { memo, createElement, Fragment, useCallback, useState, useRef, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
+import captureEscKeyListener from "Util/captureEscKeyListener";
+import { searchInObject } from "Util/Iterates";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
+import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
+import useHotkeys from "Hooks/useHotkeys";
 
-import CubeSidebarItem from "./CubeSidebarItem";
-import InstanceItem from "./InstanceItem";
 import Tooltip from "UI/Tooltip";
 import { TextInput } from "UI/Input";
-import captureEscKeyListener from "Util/captureEscKeyListener";
-import { searchInObject } from "Util/Iterates";
-import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import Transition from "UI/Transition";
+import InstanceItem from "./InstanceItem";
+import CubeSidebarItem from "./CubeSidebarItem";
 
 
 const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
@@ -75,6 +76,8 @@ export const InstallationsScroller = memo(() => {
 	}, []);
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
+
+	useHotkeys({ 'Ctrl+F': () => setIsSearchOpen(true) });
 
 	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {
