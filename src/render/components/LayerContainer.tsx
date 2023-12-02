@@ -88,7 +88,7 @@ const Modals = () => {
 	);
 };
 
-const LayerContainer = memo(() => {
+const LayerContainer = memo(({ isActive }: { isActive: boolean }) => {
 
 	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 
@@ -126,7 +126,7 @@ const LayerContainer = memo(() => {
 	}, [isAuthReady]);
 
 	return (
-		<div className={buildClassName("layerContainer")}>
+		<div className={buildClassName("layerContainer", isActive && "active")}>
 			<Modals />
 		</div>
 	);

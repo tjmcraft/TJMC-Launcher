@@ -12,7 +12,7 @@ import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSid
 import { addReducer, removeReducer } from "Store/Global";
 
 
-const Main = () => {
+const Main = ({ isActive }: { isActive: boolean }) => {
 
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
@@ -35,7 +35,7 @@ const Main = () => {
 		<div className={buildClassName("container", "main")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
 				<UserPanelMain />
-				<InstallationsScroller />
+				<InstallationsScroller isActive={isActive} />
 				<InstanceScroller />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
@@ -54,7 +54,7 @@ const Main = () => {
 	);
 };
 
-const MainContainer = () => {
+const MainContainer = ({ isActive }: { isActive: boolean }) => {
 
 	const isSettingsOpen = useGlobal(global => global.isSettingsOpen);
 
@@ -75,9 +75,9 @@ const MainContainer = () => {
 		return () => removeReducer('runShortcutAction', handler);
 	}, [runShortcutAction]);
 
-	function renderContent() {
+	function renderContent(a, b, c) {
 		if (isSettingsOpen) return <Settings />;
-		return <Main />;
+		return <Main isActive={isActive} />;
 	}
 
 	function getActiveKey() {

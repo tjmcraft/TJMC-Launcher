@@ -58,7 +58,7 @@ const CubeSidebarItems = memo(({ installations }: { installations: Array<string>
 	);
 });
 
-export const InstallationsScroller = memo(() => {
+export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) => {
 	const { openVersionChooserModal } = getDispatch();
 	const addVersionButton = useRef();
 	const menuRef = useRef();
@@ -77,7 +77,7 @@ export const InstallationsScroller = memo(() => {
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
 
-	useHotkeys({ 'Ctrl+F': () => setIsSearchOpen(true) });
+	useHotkeys(isActive ? { 'Ctrl+F': () => setIsSearchOpen(true) } : undefined);
 
 	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {
