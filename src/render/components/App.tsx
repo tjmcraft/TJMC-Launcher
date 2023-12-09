@@ -20,10 +20,10 @@ const App = () => {
 	const AuthState = useGlobal(global => global.auth_state);
 	const isModalsOpen = useGlobal(global => global.modals.length > 0);
 
-	function renderContent() {
+	function renderContent(a,b,c) {
 		switch (AuthState) {
 			case "ready":
-				return <Main isActive={!isModalsOpen} />;
+				return <Main isActive={!isModalsOpen && c == 1} />;
 			default:
 				return <Auth />
 		}
