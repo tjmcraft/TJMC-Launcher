@@ -70,11 +70,11 @@ function isExactHotkey(hotkey: Hotkey, event: KeyboardEvent): boolean {
       return true;
     }
     if (mod) {
-      if (event.key.toLowerCase() == 'ctrl' || event.key.toLowerCase() == 'meta') {
+      if (event.key.toLowerCase() == 'control' || event.key.toLowerCase() == 'meta') {
         return true;
       }
     } else {
-      if (ctrl && event.key.toLowerCase() == 'ctrl') {
+      if (ctrl && event.key.toLowerCase() == 'control') {
         return true;
       }
       if (meta && event.key.toLowerCase() == 'meta') {

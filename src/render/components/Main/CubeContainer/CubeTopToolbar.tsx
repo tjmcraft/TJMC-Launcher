@@ -35,11 +35,12 @@ const CubeTopToolbar = ({ hash }) => {
 		};
 	}, [hash, progressType]);
 
-	const altPressed = useReservedKey('alt');
+	const altPressed = useReservedKey('mod');
 
 	const handlePlayClick = useCallback((e) => {
+		console.debug(e);
 		if (!isLoading) {
-			if (e.altKey) {
+			if (e.ctrlKey || e.metaKey) {
 				invokeLaunch({ hash, params: { forceCheck: true } });
 			} else invokeLaunch({ hash });
 		} else revokeLaunch({ hash });
