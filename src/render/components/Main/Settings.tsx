@@ -854,7 +854,7 @@ const AboutTab = memo(() => {
 									</div>
 								</div>
 							</div>
-							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click}>
+							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click} role="button">
 								<span>Подробнее</span>
 							</button>
 						</div>
