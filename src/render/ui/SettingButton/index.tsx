@@ -15,7 +15,7 @@ const SettingButton = ({
 		if (typeof action === "function") action.call(this, id);
 	}, [id, action]);
 	return (
-		<SettingContainer note={note} title={title} forId={id}>
+		<SettingContainer note={note} title={title} onTitleClick={handleClick}>
 			<button id={id} className={buildClassName("filled", "small")} onClick={handleClick}>{name || "click"}</button>
 		</SettingContainer>
 	);
