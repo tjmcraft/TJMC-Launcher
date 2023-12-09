@@ -14,13 +14,17 @@ export default function useReservedKey(hotkey) {
       }
       if (getHotkeyMatcher(hotkey)(e)) {
         setIsPressed(true);
+      } else {
+        setIsPressed(false);
       }
     };
     const handleKeyUp = (e: KeyboardEvent) => {
       if (!shouldFireEvent(e)) {
         return;
       }
-      setIsPressed(false);
+      if (getHotkeyMatcher(hotkey)(e)) {
+        setIsPressed(false);
+      }
     };
     document.documentElement.addEventListener('keydown', handleKeyDown);
     document.documentElement.addEventListener('keyup', handleKeyUp);
