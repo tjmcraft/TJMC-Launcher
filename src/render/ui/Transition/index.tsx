@@ -17,14 +17,14 @@ export type TransitionProps = {
 
 const TRANSITION_DURATION = 250;
 
-const Transition: React.FC<TransitionProps> = ({
+const Transition = ({
   activeKey,
   renderCount,
   className,
   children,
   name = 'push',
   direction = 'auto',
-}) => {
+}: TransitionProps) => {
 
   const container = useRef();
 

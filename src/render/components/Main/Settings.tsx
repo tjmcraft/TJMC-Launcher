@@ -932,7 +932,7 @@ const ActiveTab = ({ current }) => {
 	}
 };
 
-const Settings = () => {
+const Settings = ({ isActive }: { isActive: boolean }) => {
 
 	const { selectSettingsScreen, closeSettings } = getDispatch();
 	const currentSettingsScreen = useGlobal(global => global.currentSettingsScreen);
@@ -944,7 +944,7 @@ const Settings = () => {
 	useEffect(() => captureEscKeyListener(closeSettings), [closeSettings]);
 
 	return (
-		<div className={buildClassName("container", "main", "settings")} id="user-settings">
+		<div className={buildClassName("container", "main", "settings", isActive && "active")} id="user-settings">
 			<nav className="leftColumn">
 				<div className="box">
 					<UserPanel>

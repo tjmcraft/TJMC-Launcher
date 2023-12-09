@@ -32,7 +32,7 @@ const Main = ({ isActive }: { isActive: boolean }) => {
 	}, [runShortcutAction]);
 
 	return (
-		<div className={buildClassName("container", "main")}>
+		<div className={buildClassName("container", "main", isActive && "active")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
 				<UserPanelMain />
 				<InstallationsScroller isActive={isActive} />
@@ -76,8 +76,8 @@ const MainContainer = ({ isActive }: { isActive: boolean }) => {
 	}, [runShortcutAction]);
 
 	function renderContent(a, b, c) {
-		if (isSettingsOpen) return <Settings />;
-		return <Main isActive={isActive} />;
+		if (isSettingsOpen) return <Settings isActive={isActive && c == 1} />;
+		return <Main isActive={isActive && c == 0} />;
 	}
 
 	function getActiveKey() {
