@@ -30,36 +30,4 @@ const UserPanel: React.FC<{
 	);
 };
 
-export const UserPanelMain = () => {
-	const { selectMainScreen, openSettings } = getDispatch();
-	const currentMainScreen = useGlobal(global => global.currentMainScreen);
-
-	const mapButton = useRef();
-	const settingsButton = useRef();
-
-	const onMapClick = () => selectMainScreen({ type: 'map' });
-	const onSettingsClick = () => openSettings();
-
-	return (
-		<UserPanel>
-			<button ref={mapButton}
-					id="map-button"
-					className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
-					onClick={onMapClick}
-				>
-					<i className="icon-location"/>
-				</button>
-				<Tooltip forRef={mapButton}>Карта</Tooltip>
-				<button ref={settingsButton}
-					id="settings-button"
-					className="circle"
-					onClick={onSettingsClick}
-				>
-					<i className="icon-settings"/>
-				</button>
-				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
-		</UserPanel>
-	)
-};
-
 export default memo(UserPanel);

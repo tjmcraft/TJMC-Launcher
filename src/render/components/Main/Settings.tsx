@@ -948,7 +948,7 @@ const Settings = ({ isActive }: { isActive: boolean }) => {
 			<nav className="leftColumn">
 				<div className="box">
 					<UserPanel>
-						<button className="circle" onClick={() => closeSettings()}>
+						<button className="circle" onClick={() => closeSettings()} role="button" tabIndex={1}>
 							<i className="icon-close" />
 						</button>
 					</UserPanel>
