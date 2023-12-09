@@ -66,6 +66,8 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 		<Fragment>
 			{items.map((e, i) => (
 				<div key={i}
+					role="tab"
+					tabIndex={-1}
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
 					onClick={handleSelect(e.tab)}>
 					{e.icon ? (
@@ -954,7 +956,7 @@ const Settings = ({ isActive }: { isActive: boolean }) => {
 					</UserPanel>
 				</div>
 				<div className="r-box">
-					<div className="sidebar">
+					<div className="sidebar" role="tablist">
 						<SideBarItems
 							currentScreen={currentSettingsScreen}
 							onScreenSelect={handleScreenSelect}
