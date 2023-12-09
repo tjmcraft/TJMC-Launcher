@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getHotkeyMatcher } from 'Util/parseHotkeys';
+import useBackgroundMode from './useBackgroundMode';
 
 const IGNORE_TAGS = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
 
 export default function useReservedKey(hotkey) {
   const [isPressed, setIsPressed] = useState(false);
+  useBackgroundMode(() => setIsPressed(false));
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!shouldFireEvent(e)) {
