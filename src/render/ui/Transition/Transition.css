@@ -14,6 +14,10 @@
   pointer-events: none;
   overflow: hidden;
   transition: all 0.25s linear;
+  visibility: hidden;
+}
+.TransitionWrap > *:not(.shown) {
+  display: none;
 }
 
 .TransitionWrap > *.Transition-push.open,
