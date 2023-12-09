@@ -39,10 +39,10 @@
 }
 
 .TransitionWrap > *.Transition-push:first-child {
-  z-index: 11;
+  z-index: 12;
 }
 .TransitionWrap > *.Transition-push:last-child {
-  z-index: 12;
+  z-index: 11;
 }
 .TransitionWrap > *.Transition-push:not(.open):first-child {
   transform: scale(1.1) translateZ(0);
