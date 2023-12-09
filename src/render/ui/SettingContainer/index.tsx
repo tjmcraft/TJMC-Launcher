@@ -7,7 +7,7 @@ const SettingContainer = ({
 	inputMode = false,
 	note = undefined,
 	title = undefined,
-	forId = undefined,
+	onTitleClick = () => void 0,
 	disabled = false,
 	children = undefined,
 }) => {
@@ -22,7 +22,7 @@ const SettingContainer = ({
 	return (
 		<div className={buildClassName(style.settingContainer, disabled && style.disabled)}>
 			<div className={style.labelRow}>
-				{title && <label htmlFor={forId} className={style.title}>{title || ""}</label>}
+				{title && <label onClick={onTitleClick} className={style.title}>{title || ""}</label>}
 				<div className={style.control}>
 					{children}
 				</div>

@@ -17,7 +17,7 @@ const ToggleSwitch: FC<OwnProps> = ({
 }) => {
 	return (
 		<label className={style.toggleSwitch}>
-			<input type="checkbox" id={id} checked={checked} onChange={onChange} disabled={disabled} />
+			<input type="checkbox" id={id} checked={checked} onClick={onChange} disabled={disabled} />
 			<span className={style.slider} />
 		</label>
 	);
