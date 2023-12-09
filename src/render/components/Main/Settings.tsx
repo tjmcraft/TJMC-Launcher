@@ -54,9 +54,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 		{ type: "separator" },
 	], [hostOnline]);
 
-	const handleSelect = (tab) => tab ? () => {
-		onScreenSelect(tab);
-	} : undefined;
+	const handleSelect = (tab) => tab ? onScreenSelect(tab) : undefined;
 
 	useLayoutEffect(() => {
 		if (items.find(e => e.tab == currentScreen).disabled) onScreenSelect("my-account"); // fallback
@@ -67,9 +65,11 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 			{items.map((e, i) => (
 				<div key={i}
 					role="tab"
-					tabIndex={-1}
+					tabIndex={e.type == "navItem" ? 0 : -1}
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
-					onClick={handleSelect(e.tab)}>
+					onClick={() => handleSelect(e.tab)}
+					onKeyUp={({code}) => code == 'Enter' && handleSelect(e.tab)}
+				>
 					{e.icon ? (
 						<i className={e.icon} />
 					) : ''}
