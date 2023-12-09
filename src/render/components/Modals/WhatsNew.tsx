@@ -24,7 +24,7 @@ const Header = (({ title, date }) => {
 					{new Date(date).toLocaleString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 				</div>
 			</div>
-			<div className="button" onClick={onClose}><i className="icon-close"></i></div>
+			<div className="button" onClick={onClose} role="button" tabIndex={1}><i className="icon-close"></i></div>
 		</div>
 	);
 });

@@ -227,6 +227,9 @@ button {
     box-sizing: border-box;
 }
 
+[role="button"] {
+    position: relative;
+}
 [role="button"]:focus::before {
     position: absolute;
     z-index: 1;
@@ -237,6 +240,10 @@ button {
     border: 2px solid var(--text-link);
     border-radius: calc(5px + 3px);
     content: "";
+}
+[href]:focus {
+    text-decoration: underline;
+    color: var(--text-link);
 }
 
 button.small {
