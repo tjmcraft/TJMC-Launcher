@@ -227,7 +227,13 @@ button {
     box-sizing: border-box;
 }
 
-[role="button"]:focus::before {
+[role="button"], button, [role="tab"] {
+    position: relative;
+}
+[role="button"]:focus:focus-visible::before,
+button:focus:focus-visible::before ,
+[role="tab"]:focus:focus-visible::before
+{
     position: absolute;
     z-index: 1;
     top: calc(-1px - 3px);
@@ -237,6 +243,10 @@ button {
     border: 2px solid var(--text-link);
     border-radius: calc(5px + 3px);
     content: "";
+}
+[href]:focus {
+    text-decoration: underline;
+    color: var(--text-link);
 }
 
 button.small {
@@ -828,7 +838,7 @@ body {
     position: relative;
     width: auto;
     height: 100%;
-    overflow: hidden;
+    /* overflow: hidden; */
     display: flex;
     flex-direction: row;
     flex-shrink: 0;

@@ -1,18 +1,52 @@
-import { Fragment, createElement, memo, useCallback, useEffect } from "react";
+import { Fragment, createElement, memo, useCallback, useEffect, useRef } from "react";
 
+import { addReducer, getDispatch, removeReducer } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import buildClassName from "Util/buildClassName";
 
+import Transition from "UI/Transition";
 import CubeContent from "./CubeContainer/CubeContent";
 import MapContainer from "./MapContainer";
-import Transition from "UI/Transition";
 import Settings from "./Settings";
-import { UserPanelMain } from "./UserPanel";
 import { InstallationsScroller, InstanceScroller } from "./CubeContainer/CubeSidebar";
-import { addReducer, removeReducer } from "Store/Global";
+import UserPanel from "./UserPanel";
+import Tooltip from "UI/Tooltip";
 
+const UserPanelMain = () => {
+	const { selectMainScreen, openSettings } = getDispatch();
+	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
-const Main = () => {
+	const mapButton = useRef();
+	const settingsButton = useRef();
+
+	const onMapClick = () => selectMainScreen({ type: 'map' });
+	const onSettingsClick = () => openSettings();
+
+	return (
+		<UserPanel>
+			<button ref={mapButton}
+					id="map-button"
+					className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
+					onClick={onMapClick}
+					role="button" tabIndex={1}
+				>
+					<i className="icon-location"/>
+				</button>
+				<Tooltip forRef={mapButton}>Карта</Tooltip>
+				<button ref={settingsButton}
+					id="settings-button"
+					className="circle"
+				onClick={onSettingsClick}
+				role="button" tabIndex={2}
+				>
+					<i className="icon-settings"/>
+				</button>
+				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
+		</UserPanel>
+	)
+};
+
+const Main = ({ isActive }: { isActive: boolean }) => {
 
 	const currentMainScreen = useGlobal(global => global.currentMainScreen);
 
@@ -32,10 +66,10 @@ const Main = () => {
 	}, [runShortcutAction]);
 
 	return (
-		<div className={buildClassName("container", "main")}>
+		<div className={buildClassName("container", "main", isActive && "active")}>
 			<nav className={buildClassName("leftColumn", "sidebar")}>
 				<UserPanelMain />
-				<InstallationsScroller />
+				<InstallationsScroller isActive={isActive} />
 				<InstanceScroller />
 			</nav>
 			<div className={buildClassName("middleColumn", "content")}>
@@ -54,7 +88,7 @@ const Main = () => {
 	);
 };
 
-const MainContainer = () => {
+const MainContainer = ({ isActive }: { isActive: boolean }) => {
 
 	const isSettingsOpen = useGlobal(global => global.isSettingsOpen);
 
@@ -75,9 +109,9 @@ const MainContainer = () => {
 		return () => removeReducer('runShortcutAction', handler);
 	}, [runShortcutAction]);
 
-	function renderContent() {
-		if (isSettingsOpen) return <Settings />;
-		return <Main />;
+	function renderContent(a, b, c) {
+		if (isSettingsOpen) return <Settings isActive={isActive && c == 1} />;
+		return <Main isActive={isActive && c == 0} />;
 	}
 
 	function getActiveKey() {

@@ -58,9 +58,10 @@ const CubeSidebarItems = memo(({ installations }: { installations: Array<string>
 	);
 });
 
-export const InstallationsScroller = memo(() => {
+export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) => {
 	const { openVersionChooserModal } = getDispatch();
 	const addVersionButton = useRef();
+	const searchButton = useRef();
 	const menuRef = useRef();
 
 	const installations = useGlobal(global => selectInstallations(global));
@@ -77,7 +78,7 @@ export const InstallationsScroller = memo(() => {
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
 
-	useHotkeys({ 'Ctrl+F': () => setIsSearchOpen(true) });
+	useHotkeys(isActive ? { 'Ctrl+F': () => setIsSearchOpen(true) } : undefined);
 
 	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {
@@ -97,7 +98,7 @@ export const InstallationsScroller = memo(() => {
 								withClear={false}
 							/>
 						</span>
-						<button className="circle" onClick={() => setIsSearchOpen(false)}>
+						<button className="circle" onClick={() => setIsSearchOpen(false)} title="Закрыть">
 							<i className="icon-close" />
 						</button>
 					</div>
@@ -113,10 +114,11 @@ export const InstallationsScroller = memo(() => {
 						<button className="circle" onClick={openVersionChooserModal} ref={addVersionButton}>
 							<i className="icon-add"></i>
 						</button>
-						<button className="circle" onClick={() => setIsSearchOpen(true)}>
+						<button className="circle" onClick={() => setIsSearchOpen(true)} ref={searchButton}>
 							<i className="icon-search"></i>
 						</button>
-						<Tooltip forRef={addVersionButton}>Добавить версию</Tooltip>
+						<Tooltip forRef={addVersionButton}>Добавить</Tooltip>
+						<Tooltip forRef={searchButton}>Найти</Tooltip>
 					</div>
 				);
 			default: return undefined;

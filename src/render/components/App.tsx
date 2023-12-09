@@ -1,5 +1,6 @@
 import { memo, createElement, Fragment, useEffect } from "react";
 
+import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 
@@ -17,11 +18,12 @@ const App = () => {
 	useEffect(initApi, [initApi]);
 
 	const AuthState = useGlobal(global => global.auth_state);
+	const isModalsOpen = useGlobal(global => global.modals.length > 0);
 
-	function renderContent() {
+	function renderContent(a,b,c) {
 		switch (AuthState) {
 			case "ready":
-				return <Main />;
+				return <Main isActive={!isModalsOpen && c == 1} />;
 			default:
 				return <Auth />
 		}
@@ -39,7 +41,7 @@ const App = () => {
 	return (
 		<Fragment>
 			<Frame />
-			<div className="app">
+			<div className={buildClassName('app', isModalsOpen && 'blurred')}>
 				<Preloader />
 				<Transition
 					activeKey={getActiveKey()}
@@ -48,7 +50,7 @@ const App = () => {
 					{renderContent}
 				</Transition>
 			</div>
-			<LayerContainer />
+			<LayerContainer isActive={isModalsOpen} />
 		</Fragment>
 	);
 };

@@ -1,7 +1,8 @@
-import { createElement } from "react";
+import { createElement, useEffect, useRef } from "react";
 
 import style from 'CSS/modal.module.css';
 import buildClassName from "Util/buildClassName";
+import trapFocus from "Util/focusTrap";
 
 export const Modal = ({
 	children,
@@ -11,6 +12,10 @@ export const Modal = ({
 	width = ''
 }) => {
 
+	const modalRef = useRef<HTMLDivElement>();
+
+	useEffect(() => (modalRef.current ? trapFocus(modalRef.current) : undefined));
+
 	const classNames = buildClassName(
 		style.modal,
 		mini && style.mini,
@@ -18,7 +23,7 @@ export const Modal = ({
 		full && style.full,
 	);
 
-	return <div className={classNames} role="alertdialog" tabIndex={-1} aria-modal="true" style={{width:width}}>{children}</div>;
+	return <div ref={modalRef} className={classNames} role="alertdialog" tabIndex={-1} aria-modal="true" style={{width:width}}>{children}</div>;
 };
 
 export const ModalFooter = ({ children }) => {

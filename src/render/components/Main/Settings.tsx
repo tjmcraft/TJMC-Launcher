@@ -54,9 +54,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 		{ type: "separator" },
 	], [hostOnline]);
 
-	const handleSelect = (tab) => tab ? () => {
-		onScreenSelect(tab);
-	} : undefined;
+	const handleSelect = (tab) => tab ? onScreenSelect(tab) : undefined;
 
 	useLayoutEffect(() => {
 		if (items.find(e => e.tab == currentScreen).disabled) onScreenSelect("my-account"); // fallback
@@ -66,8 +64,12 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 		<Fragment>
 			{items.map((e, i) => (
 				<div key={i}
+					role="tab"
+					tabIndex={e.type == "navItem" ? 0 : -1}
 					className={buildClassName("item", e.type, e.tab == currentScreen && "selected", e.disabled && "disabled")}
-					onClick={handleSelect(e.tab)}>
+					onClick={() => handleSelect(e.tab)}
+					onKeyUp={({code}) => code == 'Enter' && handleSelect(e.tab)}
+				>
 					{e.icon ? (
 						<i className={e.icon} />
 					) : ''}
@@ -854,7 +856,7 @@ const AboutTab = memo(() => {
 									</div>
 								</div>
 							</div>
-							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click}>
+							<button className={buildClassName("r", "filled", "colorBrand")} onClick={whats_new_click} role="button">
 								<span>Подробнее</span>
 							</button>
 						</div>
@@ -932,7 +934,7 @@ const ActiveTab = ({ current }) => {
 	}
 };
 
-const Settings = () => {
+const Settings = ({ isActive }: { isActive: boolean }) => {
 
 	const { selectSettingsScreen, closeSettings } = getDispatch();
 	const currentSettingsScreen = useGlobal(global => global.currentSettingsScreen);
@@ -944,17 +946,17 @@ const Settings = () => {
 	useEffect(() => captureEscKeyListener(closeSettings), [closeSettings]);
 
 	return (
-		<div className={buildClassName("container", "main", "settings")} id="user-settings">
+		<div className={buildClassName("container", "main", "settings", isActive && "active")} id="user-settings">
 			<nav className="leftColumn">
 				<div className="box">
 					<UserPanel>
-						<button className="circle" onClick={() => closeSettings()}>
+						<button className="circle" onClick={() => closeSettings()} role="button" tabIndex={1}>
 							<i className="icon-close" />
 						</button>
 					</UserPanel>
 				</div>
 				<div className="r-box">
-					<div className="sidebar">
+					<div className="sidebar" role="tablist">
 						<SideBarItems
 							currentScreen={currentSettingsScreen}
 							onScreenSelect={handleScreenSelect}
