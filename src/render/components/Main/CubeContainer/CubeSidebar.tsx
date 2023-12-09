@@ -78,7 +78,7 @@ export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) 
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => isSearchOpen && captureEscKeyListener(() => setIsSearchOpen(false)), [isSearchOpen]);
 
-	useHotkeys(isActive ? { 'Ctrl+F': () => setIsSearchOpen(true) } : undefined);
+	useHotkeys(isActive ? { 'Mod+F': () => setIsSearchOpen(true) } : undefined);
 
 	function renderContent(isActive, isPrev, activeKey) {
 		switch (isSearchOpen) {

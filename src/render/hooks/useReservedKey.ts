@@ -20,9 +20,7 @@ export default function useReservedKey(hotkey) {
       if (!shouldFireEvent(e)) {
         return;
       }
-      if (getHotkeyMatcher(hotkey)(e)) {
-        setIsPressed(false);
-      }
+      setIsPressed(false);
     };
     document.documentElement.addEventListener('keydown', handleKeyDown);
     document.documentElement.addEventListener('keyup', handleKeyUp);

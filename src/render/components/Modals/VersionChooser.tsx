@@ -14,8 +14,9 @@ import { InputGroup, PathInput, TextInput } from "UI/Input";
 import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
+import useHotkeys from "Hooks/useHotkeys";
 
-const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) => {
+const Sidebar = ({ isActive = false, type = undefined, onSelect = void 0, selected = undefined }) => {
 
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
@@ -33,6 +34,9 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 	}, []);
 	const handleClear = useCallback(() => setSearchParam(null), []);
 	useEffect(() => searchParam && captureEscKeyListener(() => handleClear()), [searchParam, handleClear]);
+
+	const searchRef = useRef<HTMLInputElement>();
+	useHotkeys(isActive ? { 'Mod+F': () => searchRef.current?.focus() } : undefined);
 
 	return (
 		<Fragment>
@@ -54,6 +58,7 @@ const Sidebar = ({ type = undefined, onSelect = void 0, selected = undefined }) 
 			</div>
 			<div className="sidebar-bottom">
 				<TextInput id="versions-search"
+					ref={searchRef}
 					autoFocusOnOpen={true}
 					autoFocus={true}
 					placeholder="Введите название версии"
@@ -319,7 +324,7 @@ const VersionChooser = () => {
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector items={versionTypes} onSelect={handleTypeSelect} />
-					<Sidebar type={selectedType} onSelect={handleVersionSelect} selected={selectedVersion} />
+					<Sidebar type={selectedType} onSelect={handleVersionSelect} selected={selectedVersion} isActive={leftOpen} />
 				</div>
 				<div className="middleColumn">
 					{selectedVersion ? (
