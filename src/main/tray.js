@@ -2,6 +2,8 @@ const { Tray, Menu, app } = require("electron");
 const { openDir, platformIcon } = require("./helpers");
 
 const ConfigManager = require('./managers/ConfigManager');
+const InstallationsManager = require("./managers/InstallationsManager");
+const Launcher = require('./Launcher');
 const MainWindow = require("./MainWindow");
 
 /**
@@ -16,6 +18,19 @@ exports.createTray = async () => {
     process.platform === "win32" && tray.on('click', function (event) {
         MainWindow.restore();
     })
+    this.updateTray();
+};
+exports.destroyTray = () => tray != void 0 && tray.destroy();
+
+/**
+ *
+ * @param {ReturnType<typeof InstallationsManager.getInstallations> | undefined} installations
+ */
+exports.updateTray = (installations = undefined) => {
+    if (!installations) installations = InstallationsManager.getInstallations();
+    installations = Object.fromEntries(Object.entries(installations).filter(([k, v]) => v.lastUsed).sort(([, a], [, b]) => {
+        return new Date(a.lastUsed) - new Date(b.lastUsed);
+    }).slice(1).slice(-5).reverse());
     const menu = Menu.buildFromTemplate([
         {
             label: 'TJMC-Launcher',
@@ -23,6 +38,13 @@ exports.createTray = async () => {
             enabled: process.platform != "win32",
             click: () => process.platform != "win32" && MainWindow.restore(),
         },
+        {
+            type: 'separator'
+        },
+        ...(Object.entries(installations).map(([hash,e]) => ({
+            label: e.name,
+            click: () => Launcher.launchWithEmit(hash),
+        }))),
         {
             type: 'separator'
         },
@@ -47,5 +69,4 @@ exports.createTray = async () => {
     ]);
     tray.setContextMenu(menu);
     tray.setToolTip("TJMC-Launcher");
-};
-exports.destroyTray = () => tray != void 0 && tray.destroy();
+}
