@@ -179,7 +179,7 @@ export const InstanceScroller = memo(() => {
 		<div className={buildClassName("r-box", "instances")}>
 			<div className={buildClassName('scroller', 'thin-s')}>
 				<h2 className='header-w'>
-					<span>
+					<span className="title">
 						<i className="icon-play"></i>
 						<span>Сейчас запущено</span>
 					</span>
