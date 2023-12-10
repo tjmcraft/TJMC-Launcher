@@ -50,7 +50,7 @@ const InstanceLog = memo<{instanceId:string}>(({ instanceId }) => {
 	return (
 		<div className="r-box">
 			<div className="header-w">
-				<span>
+				<span className="title">
 					<i className="icon-bug"></i>
 					<span>{instanceName || instanceId}</span>
 				</span>
