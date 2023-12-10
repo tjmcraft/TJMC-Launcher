@@ -971,9 +971,7 @@ body {
     overflow: hidden overlay;
 }
 .container .r-box.instances .header-w {
-    padding: 4px 16px 4px 18px;
-    /* height: 28px; */
-    margin-bottom: 4px;
+    padding: 4px 8px;
     z-index: 2;
 }
 .container .r-box.instances .navItem {
