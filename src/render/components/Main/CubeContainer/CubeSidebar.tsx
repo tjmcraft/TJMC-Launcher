@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useCallback, useState, useRef, useEffect } from "react";
+import { memo, createElement, useCallback, useState, useRef, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import captureEscKeyListener from "Util/captureEscKeyListener";
@@ -6,7 +6,6 @@ import { searchInObject } from "Util/Iterates";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
-import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import useHotkeys from "Hooks/useHotkeys";
 
 import Tooltip from "UI/Tooltip";
@@ -68,8 +67,6 @@ export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) 
 
 	const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-	useVirtualBackdrop(isSearchOpen, menuRef, () => setIsSearchOpen(false));
-
 	const [searchParam, setSearchParam] = useState("");
 	const handleInput = useCallback((e) => {
 		e.stopPropagation();
@@ -93,7 +90,7 @@ export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) 
 								value={searchParam}
 								autoFocusOnOpen
 								autoFocus={false}
-								placeholder="Введите название версии"
+								placeholder="Введите название установки"
 								small={true}
 								withClear={false}
 							/>
