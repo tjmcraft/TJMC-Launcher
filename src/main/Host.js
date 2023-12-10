@@ -75,10 +75,12 @@ exports.start = async () => {
 }
 
 const os = require('os');
+const { throttle } = require('./util/Shedulers');
 const { ipcMain, dialog, shell, app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
+const Tray = require('./tray');
 const Launcher = require('./Launcher');
 
 const ConfigManager = require('./managers/ConfigManager');
@@ -248,9 +250,11 @@ const initHandlers = async () => {
 	}
 
 	{ // Installations
+		const updateTray = throttle(() => Tray.updateTray(), 2e3, true);
 		InstallationsManager.addCallback(config => {
 			// console.debug("Update Installations:", config);
 			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
+			updateTray();
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
 			const installations = InstallationsManager.getInstallations();
