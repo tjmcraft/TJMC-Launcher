@@ -3,7 +3,7 @@ const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; 
 
 const { Worker } = require("node:worker_threads");
 const path = require('node:path');
-const { promiseControl, promiseRequest } = require('./util/Shedulers');
+const { promiseControl, promiseRequest, throttle } = require('./util/Shedulers');
 const { launcherDir } = require('./Paths');
 
 const MainWindow = require('./MainWindow');
@@ -35,18 +35,20 @@ const runMainThread = () => {
 };
 queueMicrotask(runMainThread);
 
+const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
+
 const eventListener = (event, args) => {
 	switch (event) {
 		case 'progress': {
-			MainWindow.setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
+			setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
 			Bridge.emit(ackChannels.gameProgressLoad, args);
 		}; break;
 		case 'close': {
-			MainWindow.setProgressBar(-1);
+			setProgressBar(-1);
 			Bridge.emit(ackChannels.gameStartupError, args);
 		}; break;
 		case 'error': {
-			MainWindow.setProgressBar(-1);
+			setProgressBar(-1);
 			Bridge.emit(ackChannels.gameError, args);
 		}; break;
 		default: break;
@@ -58,7 +60,11 @@ const useTotalProgress = (emit) => {
 	let prev = {};
 	return ({ type, progress, time }) => {
 		if (!prev[type]) prev[type] = 0;
-		totalProgress += progress - prev[type];
+		if (progress >= 0) {
+			totalProgress += progress - prev[type];
+		} else {
+			totalProgress = 0;
+		}
 		typeof emit === 'function' && emit({
 			type, progress, time,
 			totalProgress: (Math.round(totalProgress * 100) / 100) / 3,
@@ -108,7 +114,7 @@ const InstanceController = new function () {
 
 			const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
 			const terminateInstance = () => {
-				handleProgress({ type: 'terminated', progress: 0 });
+				handleProgress({ type: 'terminated', progress: -1 });
 				logger.debug("Performance marks:");
 				// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
 				Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
@@ -119,7 +125,7 @@ const InstanceController = new function () {
 
 			controller.signal.addEventListener('abort', () => {
 				logger.warn("Aborting..");
-				handleProgress({ type: 'aborting', progress: 0 });
+				handleProgress({ type: 'aborting', progress: -1 });
 				MainWorker.postMessage({ type: 'abort', payload: { version_hash } });
 				terminateInstance();
 			}, { once: true });
