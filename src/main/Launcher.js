@@ -37,23 +37,40 @@ queueMicrotask(runMainThread);
 
 const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
 
-const eventListener = (event, args) => {
-	switch (event) {
-		case 'progress': {
-			setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
-			Bridge.emit(ackChannels.gameProgressLoad, args);
-		}; break;
-		case 'close': {
-			setProgressBar(-1);
-			Bridge.emit(ackChannels.gameStartupError, args);
-		}; break;
-		case 'error': {
-			setProgressBar(-1);
-			Bridge.emit(ackChannels.gameError, args);
-		}; break;
-		default: break;
-	}
-}
+const createEventListener = (version_hash) => {
+	return (event, args) => {
+		args = Object.assign({ version_hash }, args);
+		switch (event) {
+			case 'progress': {
+				setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
+				Bridge.emit(ackChannels.gameProgressLoad, args);
+			}; break;
+			case 'spawn': {
+				Bridge.emit(ackChannels.gameStartup, args);
+			}; break;
+			case 'window_appear': {
+				if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+					MainWindow.hide();
+				}
+				Bridge.emit(ackChannels.gameStartup, args);
+			}; break;
+			case 'close': { // [error]
+				MainWindow.show();
+				Bridge.emit(ackChannels.gameStartupError, args);
+			}; break;
+			case 'exit': {
+				if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+					MainWindow.show();
+				}
+			}; break;
+			case 'error': {
+				MainWindow.show();
+				Bridge.emit(ackChannels.gameError, args);
+			}; break;
+			default: break;
+		}
+	};
+};
 
 const useTotalProgress = (emit) => {
 	let totalProgress = 0;
@@ -112,7 +129,7 @@ const InstanceController = new function () {
 
 			performanceMarks.startup = performance.now();
 
-			const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
+			const emit = createEventListener(version_hash);
 			const terminateInstance = () => {
 				handleProgress({ type: 'terminated', progress: -1 });
 				logger.debug("Performance marks:");
@@ -231,6 +248,7 @@ const InstanceController = new function () {
 					});
 					jvm.stdout.on('data', (data) => {
 						logg_out = std_out = data.toString('utf-8');
+						if (std_out.toString().toLowerCase().indexOf('lwjgl') !== -1) emit('window_appear');
 					});
 					jvm.on('close', (code) => {
 						if (![null, 0, 143].includes(code)) {
@@ -240,6 +258,8 @@ const InstanceController = new function () {
 							});
 						}
 					});
+					jvm.on('exit', () => emit('exit'));
+					jvm.on('spawn', () => emit('spawn'));
 					performanceMarks.createInstance = performance.now() - performanceMarks.createInstance;
 				}
 

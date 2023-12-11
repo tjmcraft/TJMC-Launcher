@@ -14,6 +14,14 @@ const lessKeys = ['hash', 'javaPath', 'javaArgs', 'stdout', 'stderr'];
  */
 const instances = new Map();
 
+/**
+ *
+ * @param {string} hash
+ * @param {import('fs').PathLike} javaPath
+ * @param {string} javaArgs
+ * @param {object} options
+ * @returns
+ */
 exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 	// logger.debug(`Launching ${hash} with arguments ${javaPath} ${javaArgs.join(' ')}`);
 
@@ -42,27 +50,29 @@ exports.createInstance = function (hash, javaPath, javaArgs, options = {}) {
 		stderr: [],
 	});
 	instances.set(id, instance);
-	runCallbacks();
+	runCallbacks('create');
 
 	if (!options.disableLogging) {
 		currentProcess.stdout.on('data', (data) => {
 			instance.stdout.push(data.toString('utf-8'));
 			logger.log(`{${hash}}`, data.toString('utf-8'));
-			runCallbacks();
+			runCallbacks('stdout');
 		});
 
 		currentProcess.stderr.on('data', (data) => {
 			instance.stderr.push(data.toString('utf-8'));
 			logger.error(`{${hash}}`, data.toString('utf-8'));
-			runCallbacks();
+			runCallbacks('stderr');
 		});
 
 		currentProcess.on('close', (code) => {
 			logger.warn(`{${hash}}`, "ExitCode:", code);
 			instances.delete(id);
-			runCallbacks();
+			runCallbacks('close');
 		});
 	}
+
+	currentProcess.on('spawn', () => runCallbacks('spawn'));
 
 	return currentProcess;
 }
@@ -95,18 +105,18 @@ exports.killAllInstances = async () => {
 
 const callbacks = [void 0];
 
-this.addCallback = (callback = (instances) => void 0) => {
+this.addCallback = (callback = (instances, event = null) => void 0) => {
 	if (typeof callback === "function") callbacks.push(callback);
 };
 
-this.removeCallback = (callback = (instances) => void 0) => {
+this.removeCallback = (callback = (instances, event = null) => void 0) => {
 	const index = callbacks.indexOf(callback);
 	if (index !== -1) callbacks.splice(index, 1);
 };
 
-const runCallbacks = () => {
+const runCallbacks = (event = null) => {
 	const filteredInstances = Object.fromEntries(Object.entries(Object.fromEntries(instances)).map(([k, v]) =>
 		[k, Object.fromEntries(Object.entries(v).filter(([k, v]) => lessKeys.includes(k)))]
 	));
-	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances) : null);
+	callbacks.forEach((callback) => typeof callback === "function" ? callback(filteredInstances, event) : null);
 };

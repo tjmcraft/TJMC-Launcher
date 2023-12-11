@@ -42,6 +42,7 @@ const ackChannels = Object.seal({
 	updateInstallations: 'updateInstallations',
 	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
+	gameStartup: 'game.startup.success',
 	gameStartupError: 'game.startup.error',
 	gameError: 'game.error',
 	updateStatus: 'update.status',

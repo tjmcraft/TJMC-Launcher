@@ -128,6 +128,7 @@ exports.restore = () => {
 };
 exports.focus = () => this.window != void 0 && this.window.focus();
 exports.show = () => this.window != void 0 && this.window.show();
+exports.hide = () => this.window != void 0 && this.window.hide();
 exports.destroy = () => this.window != void 0 && this.window.destroy();
 exports.setProgressBar = (progress) => this.window != void 0 && this.window.setProgressBar(progress);
 exports.send = (channel, ...args) => this.window != void 0 && this.window.webContents.send(channel, ...args);
