@@ -233,16 +233,16 @@ const initHandlers = async () => {
 			MainWindow.show();
 			WSSHost.emit(ackChannels.gameError, args);
 		});
-		Launcher.on('exit', () => {
+		Launcher.on('exit', (args) => {
 			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
 				MainWindow.show();
 			}
 		});
-		Launcher.on('close', () => { // error
+		Launcher.on('close', (args) => { // error
 			MainWindow.show();
 			WSSHost.emit(ackChannels.gameStartupError, args);
 		});
-		Launcher.on('window_appear', () => {
+		Launcher.on('window_appear', (args) => {
 			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
 				MainWindow.hide();
 			}

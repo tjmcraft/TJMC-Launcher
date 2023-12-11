@@ -40,8 +40,13 @@ queueMicrotask(runMainThread);
  * @returns {(event: LauncherEvent, args: any) => void}
  */
 const createEventListener = (version_hash) => {
+	let window_appeared = false;
 	return (event, args) => {
 		args = Object.assign({ version_hash }, args);
+		if (event == 'window_appear') { // once
+			if (window_appeared) return;
+			window_appeared = true;
+		}
 		runAction(event, args);
 	};
 };
