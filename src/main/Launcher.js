@@ -7,7 +7,6 @@ const { promiseControl, promiseRequest, throttle } = require('./util/Shedulers')
 const { launcherDir } = require('./Paths');
 
 const MainWindow = require('./MainWindow');
-const { Bridge, ackChannels } = require('./Host');
 const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -35,25 +34,22 @@ const runMainThread = () => {
 };
 queueMicrotask(runMainThread);
 
-const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
-
-const eventListener = (event, args) => {
-	switch (event) {
-		case 'progress': {
-			setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
-			Bridge.emit(ackChannels.gameProgressLoad, args);
-		}; break;
-		case 'close': {
-			setProgressBar(-1);
-			Bridge.emit(ackChannels.gameStartupError, args);
-		}; break;
-		case 'error': {
-			setProgressBar(-1);
-			Bridge.emit(ackChannels.gameError, args);
-		}; break;
-		default: break;
-	}
-}
+/**
+ * Create emit function for instance
+ * @param {string} version_hash
+ * @returns {(event: LauncherEvent, args: any) => void}
+ */
+const createEventListener = (version_hash) => {
+	let window_appeared = false;
+	return (event, args) => {
+		args = Object.assign({ version_hash }, args);
+		if (event == 'window_appear') { // once
+			if (window_appeared) return;
+			window_appeared = true;
+		}
+		runAction(event, args);
+	};
+};
 
 const useTotalProgress = (emit) => {
 	let totalProgress = 0;
@@ -112,7 +108,7 @@ const InstanceController = new function () {
 
 			performanceMarks.startup = performance.now();
 
-			const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
+			const emit = createEventListener(version_hash);
 			const terminateInstance = () => {
 				handleProgress({ type: 'terminated', progress: -1 });
 				logger.debug("Performance marks:");
@@ -231,6 +227,7 @@ const InstanceController = new function () {
 					});
 					jvm.stdout.on('data', (data) => {
 						logg_out = std_out = data.toString('utf-8');
+						if (std_out.toString().toLowerCase().indexOf('lwjgl') !== -1) emit('window_appear');
 					});
 					jvm.on('close', (code) => {
 						if (![null, 0, 143].includes(code)) {
@@ -240,6 +237,8 @@ const InstanceController = new function () {
 							});
 						}
 					});
+					jvm.on('exit', () => emit('exit'));
+					jvm.on('spawn', () => emit('spawn'));
 					performanceMarks.createInstance = performance.now() - performanceMarks.createInstance;
 				}
 
@@ -307,4 +306,52 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 		}
 	});
 	void this.startLaunch(version_hash, params);
+};
+
+/**
+ * @typedef LauncherEvent
+ * @type {'progress'|'spawn'|'window_appear'|'close'|'exit'|'error'}
+ */
+
+/**
+ * @type {Record<LauncherEvent,object[]>}
+ */
+const reducers = {};
+/**
+ * @type {Record<LauncherEvent,Function>}
+ */
+const actions = {};
+
+/**
+ * Run event
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ * @returns {void}
+ */
+const runAction = (event, payload = undefined) => actions[event] ? actions[event](payload) : void 0;
+
+/**
+ * Dispatch
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ */
+const onDispatch = (event, payload) => {
+	if (Array.isArray(reducers[event])) { // if reducers for this name exists
+		reducers[event].forEach((reducer) => {
+			reducer(payload);
+		});
+	}
+};
+
+/**
+ * EventEmitter
+ * @param {LauncherEvent} event
+ * @param {() => void} callback
+ */
+exports.on = (event, callback) => {
+	if (!reducers[event]) {
+		reducers[event] = [];
+		actions[event] = (payload) => onDispatch(event, payload);
+	}
+	reducers[event].push(callback);
 };

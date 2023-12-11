@@ -36,6 +36,7 @@ const DEFAULT_CONFIG = Object.seal({
             height: 720
         },
         autoConnect: false,
+        hideOnLaunch: true,
     },
 });
 
