@@ -342,6 +342,14 @@ const MinecraftSettingsTab = memo(() => {
 									setConfig({ key: "minecraft.autoConnect", value: s });
 								}}
 							/>
+							<SettingSwitch id="minecraft.hideOnLaunch"
+								title="Скрывать после запуска"
+								note="Автоматически скрывать окно лаунчера после появления окна игры"
+								checked={config.minecraft.hideOnLaunch}
+								action={(s) => {
+									setConfig({ key: "minecraft.hideOnLaunch", value: s });
+								}}
+							/>
 						</div>
 					</div>
 					<div className={style.settingGroupContainer}>
