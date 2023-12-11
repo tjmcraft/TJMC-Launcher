@@ -90,6 +90,8 @@ const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
 
+const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
+
 /**
 * Init reducers for TCHost
 */
@@ -101,7 +103,7 @@ const initHandlers = async () => {
 	Object.keys(requestChannels).forEach(channel => {
 		const event = requestChannels[channel];
 		ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
-	})
+	});
 
 	{ // Updates
 		autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
@@ -223,6 +225,29 @@ const initHandlers = async () => {
 	}
 
 	{ // Launching
+		Launcher.on('progress', (args) => {
+			setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
+			WSSHost.emit(ackChannels.gameProgressLoad, args);
+		});
+		Launcher.on('error', (args) => {
+			MainWindow.show();
+			WSSHost.emit(ackChannels.gameError, args);
+		});
+		Launcher.on('exit', () => {
+			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+				MainWindow.show();
+			}
+		});
+		Launcher.on('close', () => { // error
+			MainWindow.show();
+			WSSHost.emit(ackChannels.gameStartupError, args);
+		});
+		Launcher.on('window_appear', () => {
+			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+				MainWindow.hide();
+			}
+			WSSHost.emit(ackChannels.gameStartup, args);
+		});
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
 			return await Launcher.launchWithEmit(data.version_hash, data.params);

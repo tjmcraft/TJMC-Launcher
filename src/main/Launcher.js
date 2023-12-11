@@ -7,7 +7,6 @@ const { promiseControl, promiseRequest, throttle } = require('./util/Shedulers')
 const { launcherDir } = require('./Paths');
 
 const MainWindow = require('./MainWindow');
-const { Bridge, ackChannels } = require('./Host');
 const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -35,40 +34,15 @@ const runMainThread = () => {
 };
 queueMicrotask(runMainThread);
 
-const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
-
+/**
+ * Create emit function for instance
+ * @param {string} version_hash
+ * @returns {(event: LauncherEvent, args: any) => void}
+ */
 const createEventListener = (version_hash) => {
 	return (event, args) => {
 		args = Object.assign({ version_hash }, args);
-		switch (event) {
-			case 'progress': {
-				setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
-				Bridge.emit(ackChannels.gameProgressLoad, args);
-			}; break;
-			case 'spawn': {
-				Bridge.emit(ackChannels.gameStartup, args);
-			}; break;
-			case 'window_appear': {
-				if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
-					MainWindow.hide();
-				}
-				Bridge.emit(ackChannels.gameStartup, args);
-			}; break;
-			case 'close': { // [error]
-				MainWindow.show();
-				Bridge.emit(ackChannels.gameStartupError, args);
-			}; break;
-			case 'exit': {
-				if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
-					MainWindow.show();
-				}
-			}; break;
-			case 'error': {
-				MainWindow.show();
-				Bridge.emit(ackChannels.gameError, args);
-			}; break;
-			default: break;
-		}
+		runAction(event, args);
 	};
 };
 
@@ -327,4 +301,52 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 		}
 	});
 	void this.startLaunch(version_hash, params);
+};
+
+/**
+ * @typedef LauncherEvent
+ * @type {'progress'|'spawn'|'window_appear'|'close'|'exit'|'error'}
+ */
+
+/**
+ * @type {Record<LauncherEvent,object[]>}
+ */
+const reducers = {};
+/**
+ * @type {Record<LauncherEvent,Function>}
+ */
+const actions = {};
+
+/**
+ * Run event
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ * @returns {void}
+ */
+const runAction = (event, payload = undefined) => actions[event] ? actions[event](payload) : void 0;
+
+/**
+ * Dispatch
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ */
+const onDispatch = (event, payload) => {
+	if (Array.isArray(reducers[event])) { // if reducers for this name exists
+		reducers[event].forEach((reducer) => {
+			reducer(payload);
+		});
+	}
+};
+
+/**
+ * EventEmitter
+ * @param {LauncherEvent} event
+ * @param {() => void} callback
+ */
+exports.on = (event, callback) => {
+	if (!reducers[event]) {
+		reducers[event] = [];
+		actions[event] = (payload) => onDispatch(event, payload);
+	}
+	reducers[event].push(callback);
 };
