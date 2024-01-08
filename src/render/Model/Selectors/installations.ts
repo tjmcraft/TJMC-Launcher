@@ -1,3 +1,4 @@
+import { GlobalState } from "Store/Global";
 
 export function selectCurrentVersionHash(global) {
 	return global.currentMainScreen?.hash || undefined;
@@ -7,7 +8,7 @@ export function selectInstallations(global) {
 	return global.installations || {};
 }
 
-export function selectInstallation(global, versionHash) {
+export function selectInstallation(global: GlobalState, versionHash: string): HostInstallationWithHash {
 	if (global.installations && Object(global.installations).hasOwnProperty(versionHash)) {
 		return { hash: versionHash, ...global.installations[versionHash] };
 	}

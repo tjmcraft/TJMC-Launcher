@@ -1,4 +1,4 @@
-import { memo, createElement, useState, useMemo } from "react";
+import React, { memo, createElement, useState, useMemo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { compareObjects } from "Util/Iterates";
@@ -12,7 +12,10 @@ import { InputGroup, PathInput } from "UI/Input";
 import SettingSwitch from "UI/SettingSwitch";
 
 
-const InstallationForm = ({ version, onCancel }) => {
+const InstallationForm: React.FC<{
+	version: HostInstallationWithHash,
+	onCancel: AnyToVoidFunction,
+}> = ({ version, onCancel }) => {
 
 	const { editInstallation, closeModal } = getDispatch();
 	const config = useGlobal(global => global.configuration);
@@ -44,7 +47,7 @@ const InstallationForm = ({ version, onCancel }) => {
 
 	const handleSubmit = () => {
 		console.debug("def", version_opts_default);
-		let data = compareObjects(version_opts_default, {
+		const data = compareObjects(version_opts_default, {
 			name: name || version_opts_default.name,
 			type: version.type,
 			resolution: {
@@ -97,15 +100,15 @@ const InstallationForm = ({ version, onCancel }) => {
 								type="number"
 								name="installation-resolution-width"
 								value={width}
-								onChange={(e) => setWidth(e.target.value)}
-								placeholder={config?.minecraft?.launch?.width || "<auto>"} />
+								onChange={(e) => setWidth(Number(e.target.value))}
+								placeholder={config?.minecraft?.launch?.width.toString() || "<auto>"} />
 							<span className="resolutionCross">✖</span>
 							<input
 								type="number"
 								name="installation-resolution-height"
 								value={height}
-								onChange={(e) => setHeight(e.target.value)}
-								placeholder={config?.minecraft?.launch?.height || "<auto>"} />
+								onChange={(e) => setHeight(Number(e.target.value))}
+								placeholder={config?.minecraft?.launch?.height.toString() || "<auto>"} />
 						</div>
 					</InputGroup>
 				</div>
@@ -166,7 +169,7 @@ const InstallationForm = ({ version, onCancel }) => {
 	);
 };
 
-const InstallationEditor = (props) => {
+const InstallationEditor: React.FC<{ hash: string }> = (props) => {
 	const { closeModal } = getDispatch();
 	const selectedVersion = useGlobal(global => selectInstallation(global, props.hash));
 	console.debug("[InstallationEditor]", props);
@@ -175,7 +178,7 @@ const InstallationEditor = (props) => {
 		<Modal mini={true} small={true}>
 			<div className={buildClassName("container", "left-closed")} id="version-selector">
 				<div className="middleColumn">
-					<InstallationForm version={selectedVersion} onCancel={closeModal} key={selectedVersion.id} />
+					<InstallationForm version={selectedVersion} onCancel={closeModal} key={selectedVersion.hash} />
 				</div>
 			</div>
 		</Modal>
