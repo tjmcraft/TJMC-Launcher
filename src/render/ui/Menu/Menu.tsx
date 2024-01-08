@@ -19,7 +19,7 @@ type OwnProps = {
 	children: React.ReactNode;
 };
 
-const Menu = forwardRef<HTMLDivElement, OwnProps>(({
+const Menu = forwardRef<HTMLDivElement, OwnProps>(function Menu({
 	full = false,
 	isOpen = false,
 	children,
@@ -29,7 +29,7 @@ const Menu = forwardRef<HTMLDivElement, OwnProps>(({
 	style = undefined,
 	positionX = undefined, positionY = undefined,
 	transformOriginX = undefined, transformOriginY = undefined,
-}, ref) => {
+}, ref) {
 
 	let menuRef = useRef<HTMLDivElement>(null);
 	if (ref) {

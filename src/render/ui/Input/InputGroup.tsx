@@ -1,8 +1,13 @@
-import { createElement, memo } from "react";
+import React, { createElement, memo } from "react";
 
 import style from "./input.module.css";
 
-const InputGroup = ({
+const InputGroup: React.FC<{
+	htmlFor: React.LabelHTMLAttributes<HTMLLabelElement>['htmlFor'];
+	inRef: React.ClassAttributes<HTMLSpanElement>['ref'];
+	title?: string;
+	children: React.ReactNode;
+}> = ({
 	htmlFor,
 	inRef = undefined,
 	title = undefined,
