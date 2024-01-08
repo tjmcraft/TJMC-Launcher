@@ -60,3 +60,15 @@ interface HostInstallation {
   checkFiles: boolean;
   autoConnect: boolean;
 }
+
+type HostInstallationWithHash = HostInstallation & { hash: string, isProcessing?: boolean };
+type VersionType = 'release' | 'modified' | 'snapshot' | 'pending' | 'old_beta' | 'old_alpha';
+type VersionTypes = Array<{ name: string; type: VersionType; }>;
+
+interface Version {
+  id: string;
+  releaseTime: string;
+  time: string;
+  type: VersionType;
+  url?: string;
+}

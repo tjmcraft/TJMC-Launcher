@@ -1,3 +1,5 @@
+import { PathLike } from "original-fs";
+
 // Types define
 type AnyLiteral = Record<string, any>;
 type AnyClass = new (...args: any[]) => any;
