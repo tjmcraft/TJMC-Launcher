@@ -1,4 +1,5 @@
 {
+    "parser": "@typescript-eslint/parser",
     "settings": {
         "react": {
             "version": "16.4"

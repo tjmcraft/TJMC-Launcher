@@ -28,5 +28,6 @@
         "ictx",
         "noreferrer",
         "preact"
-    ]
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }
