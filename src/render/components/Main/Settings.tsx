@@ -1,9 +1,9 @@
-import { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment, useLayoutEffect } from "react";
+import React, { memo, createElement, useCallback, useMemo, useState, useEffect, Fragment, useLayoutEffect } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import buildClassName from "Util/buildClassName";
-import { getDispatch } from "Store/Global";
+import { GlobalState, getDispatch } from "Store/Global";
 
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
@@ -32,7 +32,13 @@ import captureEscKeyListener from "Util/captureEscKeyListener";
 import UserPanel from "./UserPanel";
 
 
-const SideBarItems = ({ currentScreen, onScreenSelect }) => {
+const SideBarItems = ({
+	currentScreen,
+	onScreenSelect,
+}: {
+	currentScreen: GlobalState['currentSettingsScreen'],
+	onScreenSelect: (screen: GlobalState['currentSettingsScreen']) => void,
+}) => {
 
 	const user = useGlobal(selectCurrentUser);
 
@@ -81,7 +87,7 @@ const SideBarItems = ({ currentScreen, onScreenSelect }) => {
 	);
 };
 
-const InfoBox = memo(() => {
+const InfoBox = memo(function InfoBox() {
 	const os = platform.os;
 	const host = useGlobal(global => global.hostInfo);
 	return (
@@ -103,11 +109,11 @@ const InfoBox = memo(() => {
 	);
 });
 
-const TabItem = (({ id, children }) => {
-	return <div className="tab" id={id}>{children}</div>;
-});
+const TabItem: React.FC<{ id: string, children: React.ReactNode }> = ({ id, children }) => (
+	<div className="tab" id={id}>{children}</div>
+);
 
-const TestContainer = memo(() => {
+const TestContainer = memo(function TestContainer() {
 	const [selectedIndex, selectIndex] = useState(0);
 	const [checked, setChecked] = useState(false);
 	const [count, setCount] = useState(0);
@@ -172,8 +178,7 @@ const TestContainer = memo(() => {
 	);
 });
 
-
-const MyAccountTab = memo(() => {
+const MyAccountTab = memo(function MyAccountTab() {
 
 	const { logout, closeSettings } = getDispatch();
 	const user = useGlobal(selectCurrentUser);
@@ -247,7 +252,7 @@ const MyAccountTab = memo(() => {
 	);
 });
 
-const SkinTab = memo(() => {
+const SkinTab = memo(function SkinTab() {
 	const user = useGlobal(selectCurrentUser);
 
 	const handleChangeClick = useCallback(() => {
@@ -278,13 +283,13 @@ const SkinTab = memo(() => {
 	);
 });
 
-const MinecraftSettingsTab = memo(() => {
+const MinecraftSettingsTab = memo(function MinecraftSettingsTab() {
 
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
-	const [width, setWidth] = useState("0");
-	const [height, setHeight] = useState("0");
+	const [width, setWidth] = useState<HostConfig['minecraft']['launch']['width']>(0);
+	const [height, setHeight] = useState<HostConfig['minecraft']['launch']['height']>(0);
 
 	useEffect(() => setWidth(config?.minecraft?.launch?.width), [config?.minecraft?.launch?.width]);
 	useEffect(() => setHeight(config?.minecraft?.launch?.height), [config?.minecraft?.launch?.height]);
@@ -308,7 +313,7 @@ const MinecraftSettingsTab = memo(() => {
 								type="number"
 								name="settings-resolution-width"
 								value={width}
-								onChange={(e) => setWidth(e.target.value)}
+								onChange={(e) => setWidth(Number(e.target.value))}
 								onBlur={handleSaveConfigWidth}
 								placeholder={"<auto>"} />
 							<span className="resolutionCross">✖</span>
@@ -316,7 +321,7 @@ const MinecraftSettingsTab = memo(() => {
 								type="number"
 								name="settings-resolution-height"
 								value={height}
-								onChange={(e) => setHeight(e.target.value)}
+								onChange={(e) => setHeight(Number(e.target.value))}
 								onBlur={handleSaveConfigHeight}
 								placeholder={"<auto>"} />
 						</div>
@@ -384,12 +389,12 @@ const MinecraftSettingsTab = memo(() => {
 	);
 });
 
-const JavaSettingsTab = memo(() => {
+const JavaSettingsTab = memo(function JavaSettingsTab() {
 
 	const { setConfig } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 
-	const [javaArgs, setJavaArgs] = useState("");
+	const [javaArgs, setJavaArgs] = useState<HostConfig['java']['args']>("");
 
 	useEffect(() => setJavaArgs(config?.java?.args), [config?.java?.args]);
 
@@ -421,7 +426,7 @@ const JavaSettingsTab = memo(() => {
 							<input id="settings.java.args.input"
 								type="text"
 								name="settings-java-args"
-								value={javaArgs}
+								value={javaArgs.toString()}
 								onChange={(e) => setJavaArgs(e.target.value)}
 								onBlur={handleSaveJavaArgs}
 								placeholder="<java:args>" />
@@ -435,7 +440,7 @@ const JavaSettingsTab = memo(() => {
 									<div className={buildClassName("flex-child", "flex-group", "vertical")}>
 										<h5>Максимальное использование памяти</h5>
 										<RangeSlider id="java-memory-max"
-											value={Math.round((config.java.memory.max / 1024) * 1000) / 1000}
+											value={Math.round((Number(config.java.memory.max) / 1024) * 1000) / 1000}
 											min={0.5}
 											max={8}
 											step={0.1}
@@ -448,7 +453,7 @@ const JavaSettingsTab = memo(() => {
 									<div className={buildClassName("flex-child", "flex-group", "vertical")}>
 										<h5>Минимальное использование памяти</h5>
 										<RangeSlider id="java-memory-min"
-											value={Math.round((config.java.memory.min / 1024) * 1000) / 1000}
+											value={Math.round((Number(config.java.memory.min) / 1024) * 1000) / 1000}
 											min={0.5}
 											max={5}
 											step={0.1}
@@ -468,7 +473,7 @@ const JavaSettingsTab = memo(() => {
 							<SettingSwitch id="java.detached"
 								title="Независимый процесс"
 								note="Если этот параметр выключен, то при закрытии лаунчера, автоматически закроется процесс игры"
-								checked={config.java.detached}
+								checked={Boolean(config.java.detached)}
 								action={(s) => {
 									setConfig({ key: "java.detached", value: s });
 								}}
@@ -485,7 +490,7 @@ const JavaSettingsTab = memo(() => {
 	);
 });
 
-const LauncherSettingsTab = memo(() => {
+const LauncherSettingsTab = memo(function LauncherSettingsTab() {
 
 	const { setSettings, setConfig, alert } = getDispatch();
 	const settings = useGlobal(selectSettings);
@@ -651,7 +656,7 @@ const LauncherSettingsTab = memo(() => {
 	);
 });
 
-const LauncherAppearanceTab = memo(() => {
+const LauncherAppearanceTab = memo(function LauncherAppearanceTab() {
 
 	const { setSettings, setTheme } = getDispatch();
 	const settings = useGlobal(selectSettings);
@@ -714,7 +719,7 @@ const LauncherAppearanceTab = memo(() => {
 	);
 });
 
-const UpdatesContainer = memo(() => {
+const UpdatesContainer = memo(function UpdatesContainer() {
 
 	const config = useGlobal(global => global.configuration);
 	const { updateCheck, updateDownload, updateInstall, setConfig, setUpdatePopupLock } = getDispatch();
@@ -836,7 +841,7 @@ const UpdatesContainer = memo(() => {
 	);
 });
 
-const AboutTab = memo(() => {
+const AboutTab = memo(function AboutTab() {
 
 	const { openWhatsNewModal } = getDispatch();
 	const releases = useGlobal(global => global.releases);
@@ -904,7 +909,7 @@ const AboutTab = memo(() => {
 												</span>
 												<div className={buildClassName("colorStandart", "size14")}>
 													<span className="markdown">
-														<Markdown remarkPlugins={[remarkGfm]} children={release.body} />
+														<Markdown remarkPlugins={[remarkGfm]}>{release.body}</Markdown>
 													</span>
 												</div>
 											</div>
@@ -921,7 +926,7 @@ const AboutTab = memo(() => {
 	);
 });
 
-const ActiveTab = ({ current }) => {
+const ActiveTab = ({ current }: { current: GlobalState['currentSettingsScreen'] }) => {
 	switch (current) {
 		case "my-account":
 			return (<MyAccountTab />);
