@@ -1,4 +1,4 @@
-import { FC, createElement, memo, useCallback, useMemo, useRef, useState } from "react";
+import React, { FC, createElement, memo, useCallback, useMemo, useRef, useState } from "react";
 import { getPos } from "Libs/ElementEx";
 import style from "CSS/slider.module.css";
 import { randomString } from "Util/Random";
@@ -58,7 +58,7 @@ const RangeSlider: FC<OwnProps> = ({
 				bubbles: false,
 				cancelable: true
 			});
-			let cancelled = !trackRef.current.dispatchEvent(event);
+			const cancelled = !trackRef.current.dispatchEvent(event);
 			if (!cancelled) {
 				valRef.current = value;
 				setCurrentNotch(notch);

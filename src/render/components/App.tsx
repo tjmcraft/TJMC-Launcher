@@ -1,4 +1,4 @@
-import { memo, createElement, Fragment, useEffect } from "react";
+import React, { memo, createElement, Fragment, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -25,9 +25,9 @@ const App = () => {
 			case "ready":
 				return <Main isActive={!isModalsOpen && c == 1} />;
 			default:
-				return <Auth />
+				return <Auth />;
 		}
-	};
+	}
 
 	function getActiveKey() {
 		switch (AuthState) {

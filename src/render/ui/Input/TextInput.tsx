@@ -1,4 +1,4 @@
-import { createElement, useRef, memo, forwardRef, HTMLInputTypeAttribute, useEffect } from "react";
+import React, { createElement, useRef, memo, forwardRef, HTMLInputTypeAttribute, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
@@ -32,7 +32,7 @@ type OwnProps = {
 	withClear?: boolean,
 };
 
-const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
+const TextInput = forwardRef<HTMLInputElement, OwnProps>(function TextInput({
 	id = undefined,
 	className = undefined,
 	inputClassName = undefined,
@@ -56,7 +56,7 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	onClear = void 0,
 	small = false,
 	withClear = false,
-}, ref) => {
+}, ref) {
 
 	id = id || `inp-${randomString(5)}`;
 	let inputRef = useRef<HTMLInputElement>(null);
@@ -68,13 +68,13 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 	useInputFocusOnOpen(inputRef, autoFocusOnOpen);
 
 	useEffect(() => {
-    if (!inputRef.current) return;
-    if (focused) {
-      inputRef.current.focus();
-    } else {
-      inputRef.current.blur();
-    }
-  }, [focused, placeholder]);
+		if (!inputRef.current) return;
+		if (focused) {
+			inputRef.current.focus();
+		} else {
+			inputRef.current.blur();
+		}
+	}, [focused, placeholder]);
 
 	const fullClassName = buildClassName(
 		className,
@@ -122,10 +122,10 @@ const TextInput = forwardRef<HTMLInputElement, OwnProps>(({
 						style={{ ...(!canClear ? { display: 'none' } : {}) }}
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", "open")}>
-							<g fill="none" fill-rule="evenodd">
+							<g fill="none" fillRule="evenodd">
 								<path d="M0 0h18v18H0" />
-								<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
-								<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+								<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
+								<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
 							</g>
 						</svg>
 					</div>

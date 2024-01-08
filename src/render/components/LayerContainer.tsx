@@ -1,4 +1,4 @@
-import { Fragment, createElement, memo, useEffect, useState } from "react";
+import React, { Fragment, createElement, memo, useEffect, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch, getState } from "Store/Global";
@@ -22,7 +22,7 @@ const MODAL_STORE = {
 	"shortcuts-modal": ShortcutsModal,
 };
 
-const ModalLayer = ({ isShown, children }) => {
+const ModalLayer = ({ isShown, children }: { isShown: boolean, children: React.ReactNode }) => {
 
 	const { closeModal, onHideModal } = getDispatch();
 
@@ -30,7 +30,7 @@ const ModalLayer = ({ isShown, children }) => {
 		closeButton: true,
 		allowOutsideClick: true,
 		label: "layer-0", // if this appears -> thats a bug
-	}, children.props);
+	});
 
 	const [isModalOpen, setModalOpen] = useState(false);
 
@@ -62,7 +62,7 @@ const ModalLayer = ({ isShown, children }) => {
 
 	return (
 		<div className={buildClassName(style.layer, transitionClassNames)}>
-			<div className={buildClassName(style.backdrop)} layer-id={params.label} onClick={params.allowOutsideClick && closeModal} />
+			<div className={buildClassName(style.backdrop)} data-layer-id={params.label} onClick={params.allowOutsideClick && closeModal} />
 			{params.closeButton && createToolsContainer(closeModal)}
 			{children}
 		</div>
@@ -88,7 +88,7 @@ const Modals = () => {
 	);
 };
 
-const LayerContainer = memo(({ isActive }: { isActive: boolean }) => {
+const LayerContainer = memo(function LayerContainer({ isActive }: { isActive: boolean }) {
 
 	const isAuthReady = useGlobal(global => global.auth_state == "ready");
 

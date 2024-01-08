@@ -1,4 +1,4 @@
-import { PathLike } from "original-fs";
+type PathLike = string | Buffer | URL;
 
 // Types define
 type AnyLiteral = Record<string, any>;

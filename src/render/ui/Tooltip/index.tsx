@@ -1,4 +1,4 @@
-import { createElement, memo, useRef, useEffect, ReactNode, FC } from "react";
+import React, { createElement, memo, useRef, useEffect, ReactNode, FC } from "react";
 
 import useFlag from "Hooks/useFlag";
 import useTooltipPosition from "Hooks/useTooltipPosition";

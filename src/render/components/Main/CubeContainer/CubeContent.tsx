@@ -1,14 +1,14 @@
-import { FC, Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { FC, Fragment, RefObject, createElement, createRef, memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import useGlobal from "Hooks/useGlobal";
-import { addReducer, getDispatch, removeReducer } from "Store/Global";
+import { GlobalState, addReducer, getDispatch, removeReducer } from "Store/Global";
 import { selectInstallation, selectInstance } from "Model/Selectors/installations";
 
 import CubeTopContainer from "./CubeTopContainer";
 import CubeMainContainer from "./CubeMainContainer";
 
-const InstanceLog = memo<{instanceId:string}>(({ instanceId }) => {
+const InstanceLog = memo<{ instanceId: string }>(function InstanceLog({ instanceId }: { instanceId: GlobalState['currentLogsHash'] }) {
 
 	if (instanceId == undefined) return;
 
@@ -60,14 +60,13 @@ const InstanceLog = memo<{instanceId:string}>(({ instanceId }) => {
 			</div>
 			<div className={buildClassName('scroller', 'thin-s', 'log')} ref={ref} onScroll={handleInteract}>
 				<span>log log</span>
-				{stdout.map(e => (<span>{e}</span>))}
+				{stdout.map((e, key) => (<span key={key}>{e}</span>))}
 			</div>
 		</div>
 	)
 });
 
-const CubeContent = ({ hash }) => {
-
+const CubeContent = ({ hash }: { hash: string }) => {
 
 	const { hasInstallation, hasModals, currentLogsHash } = useGlobal(global => {
 		const version = selectInstallation(global, hash) || undefined;
@@ -111,7 +110,7 @@ const CubeContent = ({ hash }) => {
 				</div>
 				{currentLogsHash != undefined && (
 					<InstanceLog instanceId={currentLogsHash} />
-						)}
+				)}
 			</Fragment>
 		) : (
 			<div className={buildClassName("main-content", "d-flex", "centred", "r-box")}>

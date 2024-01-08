@@ -1,4 +1,4 @@
-import { createElement, memo } from "react";
+import React, { createElement, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
@@ -6,12 +6,20 @@ import { randomString } from "Util/Random";
 import RadioItem from "./RadioItem";
 import style from "./radio.module.css";
 
-const RadioGroup = ({
+type OwnProps<T extends string = string> = {
+	id?: string;
+	options: Record<T, string>;
+	direction: 'vertical' | 'horizontal';
+	checked?: T;
+	action: AnyToVoidFunction;
+}
+
+const RadioGroup: React.FC<OwnProps> = ({
 	id = undefined,
 	options,
 	direction,
-	checked,
-	action = void 0
+	checked = false,
+	action = () => {},
 }) => {
 
 	id = id || randomString(5);

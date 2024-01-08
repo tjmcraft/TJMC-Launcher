@@ -1,8 +1,8 @@
-import { memo, createElement } from "react";
+import React, { memo, createElement } from "react";
 import useGlobal from "Hooks/useGlobal";
 import { selectInstallation } from "Model/Selectors/installations";
 
-const Test = ({ hash }) => {
+const Test = ({ hash }: { hash: string }) => {
 	const { name } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
 		return { name: version.name };
@@ -10,8 +10,7 @@ const Test = ({ hash }) => {
 	return (<h1>{name} - {hash}</h1>);
 };
 
-const CubeMainContainer = ({ hash }) => {
-
+const CubeMainContainer = ({ hash }: { hash: string }) => {
 	if (APP_ENV == "production") return null;
 	return (
 		<div className="main">

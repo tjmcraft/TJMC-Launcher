@@ -1,14 +1,22 @@
+import React, { memo, createElement, useCallback } from "react";
+
 import { randomString } from "Util/Random";
-import { memo, createElement, useCallback } from "react";
+
 import SettingContainer from "../SettingContainer";
 import buildClassName from "Util/buildClassName";
 
-const SettingButton = ({
+const SettingButton: React.FC<{
+	id?: string;
+	title: string;
+	note?: string;
+	name: string;
+	action?: AnyToVoidFunction;
+}> = ({
 	id = undefined,
 	title,
 	note = undefined,
 	name,
-	action = void 0,
+	action = () => {},
 }) => {
 	id = id || randomString(5);
 	const handleClick = useCallback(() => {
