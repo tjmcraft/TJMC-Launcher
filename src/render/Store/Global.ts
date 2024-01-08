@@ -30,7 +30,7 @@ export type GlobalState = {
 	users: Record<string, AnyLiteral>;
 	installations: Record<string, HostInstallation>;
 	instances: Record<string, AnyLiteral>;
-	versions: Array<any>;
+	versions: Array<Version>;
 	modals: Array<{
 		isShown: boolean;
 		isClosing: boolean;

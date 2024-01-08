@@ -15,12 +15,8 @@ export function selectInstallation(global: GlobalState, versionHash: string): Ho
 	return undefined;
 }
 
-export function selectVersions(global, type) {
-	type = type || 'all';
-	if (global.versions) {
-		return global.versions.filter((version) => type == 'all' ? true : version.type == type);
-	}
-	return [];
+export function selectVersions(global: GlobalState, type: VersionType | undefined) {
+	return global.versions?.filter((version) => type === undefined ? true : version.type == type) || [];
 }
 
 

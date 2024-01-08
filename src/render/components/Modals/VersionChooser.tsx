@@ -1,4 +1,4 @@
-import { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
+import React, { createElement, memo, useEffect, useMemo, useState, useRef, useCallback, Fragment } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -16,7 +16,17 @@ import SettingSwitch from "UI/SettingSwitch";
 import "./VersionChooser.css";
 import useHotkeys from "Hooks/useHotkeys";
 
-const Sidebar = ({ isActive = false, type = undefined, onSelect = void 0, selected = undefined }) => {
+const Sidebar = ({
+	isActive = false,
+	type = undefined,
+	onSelect = void 0,
+	selected = undefined
+}: {
+	isActive: boolean,
+	type?: VersionType,
+	onSelect: AnyToVoidFunction,
+	selected?: Version,
+}) => {
 
 	const versions = useGlobal(global => selectVersions(global, type), [type]);
 
@@ -73,7 +83,15 @@ const Sidebar = ({ isActive = false, type = undefined, onSelect = void 0, select
 	);
 };
 
-const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 0 }) => {
+const DropdownSelector = ({
+	title = "Версии",
+	items = [],
+	onSelect = void 0
+}: {
+	title?: string;
+	items: VersionTypes;
+	onSelect: AnyToVoidFunction;
+}) => {
 
 	const [isOpen, setOpen] = useState(false);
 	const [selected, select] = useState(undefined);
@@ -105,10 +123,10 @@ const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 
 			<div className="header">
 				<h1>{selected ? selected.name : title}</h1>
 				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
-					<g fill="none" fill-rule="evenodd">
+					<g fill="none" fillRule="evenodd">
 						<path d="M0 0h18v18H0" />
-						<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
-						<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+						<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
+						<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
 					</g>
 				</svg>
 			</div>
@@ -119,8 +137,17 @@ const DropdownSelector = ({ title = "Версии", items = [], onSelect = void 
 	);
 };
 
-const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
-
+const VersionChooserContent = ({
+	version,
+	onCancel,
+	onBack,
+	isLeftOpen
+}: {
+	version: Version;
+	onCancel: AnyToVoidFunction;
+	onBack: AnyToVoidFunction;
+	isLeftOpen: boolean;
+}) => {
 	const { createInstallation, closeModal } = getDispatch();
 	const config = useGlobal(global => global.configuration);
 	const hostOnline = useHostOnline();
@@ -149,7 +176,7 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 	if (!version) return null;
 
 	const handleSubmit = () => {
-		let data = cleanObject(Object.assign(version_opts_default, {
+		const data = cleanObject(Object.assign(version_opts_default, {
 			name: name || version_opts_default.name,
 			type: version.type,
 			resolution: {
@@ -177,10 +204,10 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 				<div className="backButton">
 					<button onClick={onBack}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" className={buildClassName("button-4fai7c", isLeftOpen && "open")}>
-							<g fill="none" fill-rule="evenodd">
+							<g fill="none" fillRule="evenodd">
 								<path d="M0 0h18v18H0" />
-								<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
-								<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+								<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
+								<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
 							</g>
 						</svg>
 					</button>
@@ -215,14 +242,14 @@ const VersionChooserContent = ({ version, onCancel, onBack, isLeftOpen }) => {
 								name="installation-resolution-width"
 								value={width}
 								onChange={(e) => setWidth(e.target.value)}
-								placeholder={config?.minecraft?.launch?.width || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.width.toString() || "<auto>"} />
 							<span className="resolutionCross">✖</span>
 							<input
 								type="number"
 								name="installation-resolution-height"
 								value={height}
 								onChange={(e) => setHeight(e.target.value)}
-								placeholder={config?.minecraft?.launch?.height || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.height.toString() || "<auto>"} />
 						</div>
 					</InputGroup>
 				</div>
@@ -289,7 +316,7 @@ const VersionChooser = () => {
 
 	const [selectedType, selectType] = useState(undefined);
 	const [selectedVersion, selectVersion] = useState(undefined);
-	const versionTypes = useMemo(() => ([
+	const versionTypes: VersionTypes = useMemo(() => ([
 		{ name: 'Release', type: 'release' },
 		{ name: 'Modified', type: 'modified' },
 		{ name: 'Snapshot', type: 'snapshot' },
@@ -323,12 +350,26 @@ const VersionChooser = () => {
 		<Modal mini={false} small={false}>
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
-					<DropdownSelector items={versionTypes} onSelect={handleTypeSelect} />
-					<Sidebar type={selectedType} onSelect={handleVersionSelect} selected={selectedVersion} isActive={leftOpen} />
+					<DropdownSelector
+						items={versionTypes}
+						onSelect={handleTypeSelect}
+					/>
+					<Sidebar
+						type={selectedType}
+						onSelect={handleVersionSelect}
+						selected={selectedVersion}
+						isActive={leftOpen}
+					/>
 				</div>
 				<div className="middleColumn">
 					{selectedVersion ? (
-						<VersionChooserContent version={selectedVersion} onCancel={handleCancel} onBack={handleBack} isLeftOpen={leftOpen} key={selectedVersion.id} />
+						<VersionChooserContent
+							version={selectedVersion}
+							onCancel={handleCancel}
+							onBack={handleBack}
+							isLeftOpen={leftOpen}
+							key={selectedVersion.id}
+						/>
 					) : (
 						<div className={buildClassName("main-content", "d-flex", "vertical", "centred")}>
 							<h1>{"Выберите версию"}</h1>
