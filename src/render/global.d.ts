@@ -114,4 +114,4 @@ interface HostInstallation {
   autoConnect: boolean;
 }
 
-type HostInstallationWithHash = HostInstallation & { hash: string };
+type HostInstallationWithHash = HostInstallation & { hash: string, isProcessing?: boolean };

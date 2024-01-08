@@ -1,9 +1,9 @@
-import { memo, createElement, useCallback, useState, useRef, useEffect } from "react";
+import React, { memo, createElement, useCallback, useState, useRef, useEffect } from "react";
 
 import buildClassName from "Util/buildClassName";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import { searchInObject } from "Util/Iterates";
-import { getDispatch } from "Store/Global";
+import { GlobalState, getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 import { selectCurrentVersionHash, selectInstallations, selectInstances } from "Model/Selectors/installations";
 import useHotkeys from "Hooks/useHotkeys";
@@ -15,7 +15,7 @@ import InstanceItem from "./InstanceItem";
 import CubeSidebarItem from "./CubeSidebarItem";
 
 
-const CubeSidebarItems = memo(({ installations }: { installations: Array<string> }) => {
+const CubeSidebarItems = memo(function CubeSidebarItems({ installations }: { installations: Array<string> }) {
 
 	const { moveInstallationPosition } = getDispatch();
 	const currentHash = useGlobal(global => selectCurrentVersionHash(global));
@@ -24,7 +24,7 @@ const CubeSidebarItems = memo(({ installations }: { installations: Array<string>
 
 	const handleDragStart = useCallback((e, hash) => e.dataTransfer.setData("installation-hash", hash), []);
 	const handleDragEnd = useCallback((e) => {
-		const endHash = e.target.getAttribute('version-hash');
+		const endHash = e.target.getAttribute('data-hash');
 		const startHash = e.dataTransfer.getData("installation-hash");
 		e.dataTransfer.clearData();
 		window.__debug__ && console.debug("[drag]", startHash, ">>", endHash);
@@ -57,7 +57,7 @@ const CubeSidebarItems = memo(({ installations }: { installations: Array<string>
 	);
 });
 
-export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) => {
+export const InstallationsScroller = memo(function InstallationsScroller({ isActive }: { isActive: boolean }) {
 	const { openVersionChooserModal } = getDispatch();
 	const addVersionButton = useRef();
 	const searchButton = useRef();
@@ -120,7 +120,7 @@ export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) 
 				);
 			default: return undefined;
 		}
-	};
+	}
 
 	function getActiveKey() {
 		switch (isSearchOpen) {
@@ -147,7 +147,7 @@ export const InstallationsScroller = memo(({ isActive }: { isActive: boolean }) 
 	);
 });
 
-export const InstanceScroller = memo(() => {
+export const InstanceScroller = memo(function InstanceScroller() {
 	const { killAllInstances, alert } = getDispatch();
 	const instances = useGlobal(global => Object.keys(selectInstances(global)));
 	const handleKillAll = useCallback(() => {
