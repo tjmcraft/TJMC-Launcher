@@ -90,7 +90,7 @@ const InstallationForm: React.FC<{
 						placeholder="<папка по умолчанию>"
 						title="Папка игры"
 						onChange={setGameDir}
-						value={gameDir}
+						value={gameDir.toString()}
 					/>
 				</div>
 				<div className="children-zx1">
@@ -118,7 +118,7 @@ const InstallationForm: React.FC<{
 						title="Путь к Java"
 						placeholder="<java по умолчанию>"
 						onChange={setJavaPath}
-						value={javaPath}
+						value={javaPath.toString()}
 					/>
 				</div>
 				<div className="children-zx1">

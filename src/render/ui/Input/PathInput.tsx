@@ -1,4 +1,4 @@
-import { createElement, useState, useRef, useCallback, useEffect, memo } from "react";
+import React, { createElement, useState, useRef, useCallback, useEffect, memo } from "react";
 
 import { randomString } from "Util/Random";
 import { selectFile, selectFolder } from "Model/Actions/Host";
@@ -19,7 +19,15 @@ import style from "./input.module.css";
  * @param {string} [params.buttonTitle] button title for select
  * @returns {JSX.Element}
  */
-const PathInput = ({
+const PathInput: React.FC<{
+	type?: React.InputHTMLAttributes<HTMLInputElement>['type'];
+	onChange?: AnyToVoidFunction;
+	id?: string;
+	value?: string;
+	title?: string;
+	placeholder?: string;
+	buttonTitle?: string;
+}> = ({
 	type = "path",
 	onChange = (folder) => folder,
 	id = undefined,
