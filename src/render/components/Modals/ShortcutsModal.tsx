@@ -1,4 +1,4 @@
-import { memo, createElement } from "react";
+import React, { memo, createElement } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -10,7 +10,7 @@ import style from 'CSS/modal.module.css';
 import "./ShortcutsModal.css";
 import platform from "platform";
 
-const Header = (({ title, subtitle = undefined }) => {
+const Header = (({ title, subtitle = undefined }: { title: string | JSX.Element; subtitle?: string | JSX.Element }) => {
 	const { closeModal } = getDispatch();
 	const onClose = () => closeModal();
 	return (
@@ -26,7 +26,7 @@ const Header = (({ title, subtitle = undefined }) => {
 	);
 });
 
-const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
+const Content = (({ children }: { children: React.ReactNode }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
 const ShortcutsModal = () => {
 	const host = useGlobal(global => global.hostInfo);

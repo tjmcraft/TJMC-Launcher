@@ -1,9 +1,16 @@
-import { memo, createElement } from "react";
+import React, { memo, createElement } from "react";
 
 import style from './index.module.css';
 import buildClassName from "Util/buildClassName";
 
-const SettingContainer = ({
+const SettingContainer: React.FC<{
+	inputMode?: boolean;
+	note?: string | JSX.Element;
+	title?: string;
+	onTitleClick?: AnyToVoidFunction;
+	disabled?: boolean;
+	children?: React.ReactNode;
+}> = ({
 	inputMode = false,
 	note = undefined,
 	title = undefined,

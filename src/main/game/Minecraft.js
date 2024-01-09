@@ -134,7 +134,7 @@ class Minecraft extends EventEmitter {
 	 * @property {string} overrides.path.minecraft - Path to minecraft (root) directory
 	 * @property {string} overrides.path.gameDirectory - Path to game directory
 	 * @property {string} mcPath - Path to main jar
-	 * @property {import('../managers/InstallationsManager').Installation} installation - Installation object
+	 * @property {import('../global').HostInstallation} installation - Installation object
 	 * @property {object} java - Minecraft java options
 	 * @property {object} java.memory - Minecraft java memory options
 	 * @property {number} java.memory.min - Minecraft minimum java memory

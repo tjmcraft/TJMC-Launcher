@@ -28,9 +28,9 @@ export type GlobalState = {
 		exp_more_border: boolean;
 	};
 	users: Record<string, AnyLiteral>;
-	installations: Record<string, AnyLiteral>;
+	installations: Record<string, HostInstallation>;
 	instances: Record<string, AnyLiteral>;
-	versions: Array<any>;
+	versions: Array<Version>;
 	modals: Array<{
 		isShown: boolean;
 		isClosing: boolean;
@@ -38,7 +38,7 @@ export type GlobalState = {
 		layer: string;
 		props: AnyLiteral;
 	}>;
-	configuration?: AnyLiteral;
+	configuration?: HostConfig;
 	releases: Array<any>;
 	currentMainScreen: {
 		type: 'installation';

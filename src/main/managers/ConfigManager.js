@@ -2,6 +2,9 @@ const { launcherDir } = require('../Paths');
 const Config = require('../libs/Config');
 const path = require('path');
 
+/**
+ * @type {import('../global').HostConfig}
+ */
 const DEFAULT_CONFIG = Object.seal({
     java: {
         path: '',

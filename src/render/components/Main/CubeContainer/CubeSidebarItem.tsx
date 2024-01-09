@@ -1,4 +1,4 @@
-import { createElement, useCallback, useRef, memo, FC } from "react";
+import React, { createElement, useCallback, useRef, memo, FC } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -85,7 +85,7 @@ const ContextMenu: FC<{
 				invokeLaunch({ hash, params: { forceCheck: true } });
 			} else invokeLaunch({ hash });
 		}
-		else revokeLaunch({ hash })
+		else revokeLaunch({ hash });
 	}, [hash, invokeLaunch, revokeLaunch, isProcessing]);
 
 	const handleLaunchForceClick = useCallback((e) => {
@@ -224,7 +224,7 @@ const CubeSidebarItem: FC<{
 	return hash && (
 		<div
 			ref={containerRef}
-			version-hash={hash}
+			data-hash={hash}
 			className={fullClassName}
 			onClick={handleClick}
 			onContextMenu={handleContextMenu}

@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "outDir": "./dist",
-        "target": "ES6",
+        "target": "ESNext",
         "module": "CommonJS",
         "sourceMap": true,
         "noImplicitAny": false,
@@ -20,7 +20,7 @@
         "noUnusedParameters": false,
         "allowJs": true,
         "lib": [
-            "DOM", "DOM.Iterable", "ES2019"
+            "DOM", "DOM.Iterable", "ES2019",
         ],
         "paths": {
             "Libs/*": ["Libs/*"],

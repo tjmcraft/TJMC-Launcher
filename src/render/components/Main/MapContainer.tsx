@@ -1,10 +1,10 @@
-import { createElement, memo, useRef, useEffect, useCallback, useState, Fragment } from "react";
+import React, { createElement, memo, useRef, useEffect, useCallback, useState, Fragment } from "react";
 import buildClassName from "Util/buildClassName";
 import useBrowserOnline from "Hooks/useBrowserOnline";
 
 import Spinner from "UI/Spinner";
 
-const Map = memo(() => {
+const Map = memo(function Map() {
 	const [loadError, setLoadError] = useState(false);
 	const timer = useRef(undefined);
 	const handleLoad = useCallback(() => {
@@ -25,7 +25,7 @@ const Map = memo(() => {
 	);
 });
 
-const MapContainer = memo(() => {
+const MapContainer = memo(function MapContainer() {
 	const online = useBrowserOnline();
 	return (
 		<div className={buildClassName("main-content", "d-flex", "vertical", "centred")} style={{ padding: '0px' }}>

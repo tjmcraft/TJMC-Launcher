@@ -1,7 +1,7 @@
-import { memo, createElement } from "react";
+import React, { memo, createElement } from "react";
 import CubeTopToolbar from "./CubeTopToolbar";
 
-const CubeTopContainer = ({ hash }) => {
+const CubeTopContainer = ({ hash }: { hash: string }) => {
 	return (
 		<div className="top">
 			<img src={require('IMG/1042-1920x1080.jpg')} />

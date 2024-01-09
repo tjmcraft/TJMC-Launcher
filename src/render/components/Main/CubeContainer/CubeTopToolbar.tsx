@@ -1,4 +1,4 @@
-import { createElement, useCallback, memo, useMemo, useEffect, useState } from "react";
+import React, { createElement, useCallback, memo, useMemo, useEffect, useState } from "react";
 
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
@@ -11,7 +11,7 @@ import Button from "UI/Button";
 import { toFixedNumber } from "Util/Numbers";
 
 
-const CubeTopToolbar = ({ hash }) => {
+const CubeTopToolbar = ({ hash }: { hash: string }) => {
 
 	const { invokeLaunch, revokeLaunch } = getDispatch();
 

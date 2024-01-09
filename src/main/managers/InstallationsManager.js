@@ -25,32 +25,8 @@ module.exports.addCallback = config.addCallback;
 module.exports.removeCallback = config.removeCallback;
 
 /**
- * @typedef Installation
- * @type {object}
- * @property {Date} created The date when installation is created
- * @property {string} icon Icon of installation (feature)
- * @property {'custom'} type Type of installation
- * @property {fs.PathLike} gameDir Game directory
- * @property {fs.PathLike} versionDir Version directory
- * @property {fs.PathLike} mcPath Path when main jar is located
- * @property {fs.PathLike} javaPath Path when java executable is located
- * @property {string} javaArgs Additional arguments for java
- * @property {Date} lastUsed Last used time
- * @property {Date} lastSync Last success file sync time
- * @property {string} lastVersionId Version id
- * @property {string} name Name of Installation
- * @property {object} resolution Resolution object
- * @property {number} resolution.width Resolution width
- * @property {number} resolution.height Resolution height
- * @property {boolean} resolution.fullscreen Resolution fullscreen mode
- * @property {boolean} checkHash Check hash of installation files
- * @property {boolean} checkFiles Check files in installation directories
- * @property {boolean} autoConnect Connect to TJMC server automatically
- */
-
-/**
  * Default installation scheme
- * @type {Installation}
+ * @type {import('../global').HostInstallation}
  */
 const DEFAULT_PROFILE = Object.seal({
 	created: new Date().toISOString(),
@@ -108,7 +84,7 @@ exports.createInstallation = async function (options = {}) {
 
 /**
  * Get all known Installations from config
- * @returns {Object.<string,Installation>}
+ * @returns {Object.<string,import('../global').HostInstallation>}
  */
 exports.getInstallations = () => {
 	return config.getOption("profiles");
@@ -117,7 +93,7 @@ exports.getInstallations = () => {
 /**
  * Returns the installation with the given hash
  * @param {string} hash - The hash of the installation
- * @returns {Promise<Installation>} - The installation's object
+ * @returns {Promise<import('../global').HostInstallation>} - The installation's object
  */
 exports.getInstallation = async (hash) => {
 	return exports.getInstallationSync(hash);
@@ -126,7 +102,7 @@ exports.getInstallation = async (hash) => {
 /**
  * Returns the installation with the given hash (SYNC)
  * @param {string} hash - The hash of the installation
- * @returns {Installation} - The installation's object
+ * @returns {import('../global').HostInstallation} - The installation's object
  */
 exports.getInstallationSync = (hash) => {
 	const installations = this.getInstallations();
@@ -184,7 +160,7 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
 /**
  * Modify the installation with given hash
  * @param {string} hash The hash of the installation
- * @param {Installation} nextProps Props to modify
+ * @param {import('../global').HostInstallation} nextProps Props to modify
  */
 exports.modifyInstallation = async function (hash, nextProps) {
 	const installations = config.getOption("profiles");

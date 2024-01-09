@@ -1,4 +1,4 @@
-import { createElement, FC, memo, ReactNode, useCallback, useRef, useState } from "react";
+import React, { createElement, FC, memo, ReactNode, useCallback, useRef, useState } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { randomString } from "Util/Random";
@@ -84,10 +84,10 @@ const Select: FC<OwnProps> = ({
 					onClick={toggleIsOpen}
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
-						<g fill="none" fill-rule="evenodd">
+						<g fill="none" fillRule="evenodd">
 							<path d="M0 0h18v18H0" />
-							<path stroke="currentColor" d="M4.5 4.5l9 9" stroke-linecap="round" />
-							<path stroke="currentColor" d="M13.5 4.5l-9 9" stroke-linecap="round" />
+							<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
+							<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
 						</g>
 					</svg>
 				</div>

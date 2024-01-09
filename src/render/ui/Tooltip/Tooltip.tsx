@@ -1,4 +1,4 @@
-import { createElement, CSSProperties, ReactNode, forwardRef, memo } from "react";
+import React, { createElement, CSSProperties, ReactNode, forwardRef, memo } from "react";
 import useShowTransition from "Hooks/useShowTransition";
 import Portal from "UI/Portal";
 import buildClassName from "Util/buildClassName";
@@ -13,13 +13,13 @@ type OwnProps = {
 };
 
 
-const Tooltip = forwardRef<HTMLDivElement,OwnProps>(({
+const Tooltip = forwardRef<HTMLDivElement,OwnProps>(function Tooltip({
 	isOpen = false,
 	children,
 	onCloseEnd = void 0,
 	style = undefined,
 	positionX = undefined,
-}, ref) => {
+}, ref) {
 	const { transitionClassNames, shouldRender } = useShowTransition(isOpen, onCloseEnd, false, undefined, false, undefined, 100);
 	return shouldRender && (
 		<Portal>

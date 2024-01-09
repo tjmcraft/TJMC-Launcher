@@ -1,4 +1,4 @@
-import { createElement, useCallback, memo, FC } from "react";
+import React, { createElement, useCallback, memo, FC } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -19,7 +19,7 @@ const InstanceItem: FC<{
 		};
 	}, [instanceId]);
 	const handleClick = useCallback(() => openCubeLogs(instanceId), [openCubeLogs, instanceId]);
-	const handleKill = useCallback((e) => { e.stopPropagation(); killInstance(instanceId) }, [killInstance, instanceId]);
+	const handleKill = useCallback((e) => { e.stopPropagation(); killInstance(instanceId); }, [killInstance, instanceId]);
 	return instanceId && (
 		<div className={buildClassName('item', 'navItem')} onClick={handleClick}>
 			<span>{name || hash || instanceId}</span>

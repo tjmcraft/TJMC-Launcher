@@ -1,4 +1,4 @@
-import { FC, createElement, memo } from "react";
+import React, { FC, createElement, memo } from "react";
 
 import style from "CSS/toggleswitch.module.css";
 

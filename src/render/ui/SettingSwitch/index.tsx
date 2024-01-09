@@ -1,13 +1,22 @@
+import React, { memo, createElement, useCallback } from "react";
+
 import { randomString } from "Util/Random";
-import { memo, createElement, useCallback } from "react";
+
 import SettingContainer from "../SettingContainer";
 import ToggleSwitch from "../ToggleSwitch";
 
-const SettingSwitch = ({
+const SettingSwitch: React.FC<{
+	id?: string;
+	title: string;
+	note?: string;
+	action?: AnyToVoidFunction;
+	checked?: boolean;
+	disabled?: boolean;
+}> = ({
 	id = undefined,
 	title,
 	note = undefined,
-	action = void 0,
+	action = () => {},
 	checked = false,
 	disabled = false,
 }) => {

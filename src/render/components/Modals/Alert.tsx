@@ -1,4 +1,4 @@
-import { createElement, Fragment, memo } from "react";
+import React, { createElement, Fragment, memo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
@@ -10,8 +10,27 @@ import Button from "UI/Button";
 import appStyle from 'CSS/app.module.css';
 import style from 'CSS/modal.module.css';
 
+type AlertTypes = 'info' | 'error' | 'warn' | 'success';
+type AlertButton = {
+	name: string;
+	class: string | string[];
+	closeOverlay?: boolean;
+	callback?: AnyToVoidFunction;
+};
 
-const AlertContent = ({ title, content, type, multiline, buttons }) => {
+const AlertContent = ({
+	title,
+	content,
+	type,
+	multiline,
+	buttons,
+}: {
+	title: string;
+	content: string | JSX.Element;
+	type: AlertTypes;
+	multiline?: boolean;
+	buttons: AlertButton[];
+}) => {
 	const { closeModal } = getDispatch();
 	buttons = buttons || [
 		{
@@ -58,7 +77,19 @@ const AlertContent = ({ title, content, type, multiline, buttons }) => {
 	);
 };
 
-const Alert = ({ title, content, type, multiline = false, buttons }) => {
+const Alert = ({
+	title,
+	content,
+	type,
+	multiline = false,
+	buttons,
+}: {
+	title: string;
+	content: string | JSX.Element;
+	type: AlertTypes;
+	multiline?: boolean;
+	buttons: AlertButton[];
+}) => {
 	return (
 		<Modal small={multiline} mini={!multiline}>
 			<AlertContent

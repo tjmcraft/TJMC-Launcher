@@ -1,4 +1,4 @@
-import { Fragment, createElement, memo, useCallback, useEffect, useRef } from "react";
+import React, { Fragment, createElement, memo, useCallback, useEffect, useRef } from "react";
 
 import { addReducer, getDispatch, removeReducer } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
@@ -25,25 +25,25 @@ const UserPanelMain = () => {
 	return (
 		<UserPanel>
 			<button ref={mapButton}
-					id="map-button"
-					className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
-					onClick={onMapClick}
-					role="button" tabIndex={1}
-				>
-					<i className="icon-location"/>
-				</button>
-				<Tooltip forRef={mapButton}>Карта</Tooltip>
-				<button ref={settingsButton}
-					id="settings-button"
-					className="circle"
+				id="map-button"
+				className={buildClassName("circle", currentMainScreen.type == 'map' && "filled")}
+				onClick={onMapClick}
+				role="button" tabIndex={1}
+			>
+				<i className="icon-location" />
+			</button>
+			<Tooltip forRef={mapButton}>Карта</Tooltip>
+			<button ref={settingsButton}
+				id="settings-button"
+				className="circle"
 				onClick={onSettingsClick}
 				role="button" tabIndex={2}
-				>
-					<i className="icon-settings"/>
-				</button>
-				<Tooltip forRef={settingsButton}>Настройки</Tooltip>
+			>
+				<i className="icon-settings" />
+			</button>
+			<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 		</UserPanel>
-	)
+	);
 };
 
 const Main = ({ isActive }: { isActive: boolean }) => {

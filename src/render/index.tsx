@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import React, { createElement } from "react";
 import { render } from "react-dom";
 
 import "Model/Actions/UI";
@@ -24,10 +24,10 @@ window.__debug__ && console.debug('Global ENV:', window.GLOBAL_ENV);
 window.__debug__ && console.debug('Platform:', platform);
 window.__debug__ && console.debug('Build Info:', window.buildInfo);
 
-let mount = document.getElementById('app-mount'), root;
+var mount = document.getElementById('app-mount'), root;
 
 function init() {
-	let RootNode = require('./components/App').default;
+	const RootNode = require('./components/App').default;
 	root = render(<RootNode />, mount, root);
 }
 
