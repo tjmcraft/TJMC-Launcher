@@ -1,4 +1,4 @@
-import { createElement, memo, Fragment } from "react";
+import React, { createElement, memo, Fragment } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -13,7 +13,7 @@ import "CSS/markdown.css";
 import mountainImg from "IMG/mountain.png";
 
 
-const Header = (({ title, date }) => {
+const Header = (({ title, date }: { title: string; date: Date }) => {
 	const { closeModal } = getDispatch();
 	const onClose = () => closeModal();
 	return (
@@ -29,9 +29,9 @@ const Header = (({ title, date }) => {
 	);
 });
 
-const Content = (({ children }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
+const Content = (({ children }: { children: React.ReactNode }) => createElement('div', { class: buildClassName(style.content, 'thin-s') }, children));
 
-const WhatsNewContainer = memo(() => {
+const WhatsNewContainer = memo(function WhatsNewContainer() {
 	const releases = useGlobal(global => global.releases);
 	if (releases) {
 		const latestRelease = releases.find(e => e.tag_name == `v${APP_VERSION}`);
@@ -50,7 +50,7 @@ const WhatsNewContainer = memo(() => {
 						/>
 						<div className={buildClassName("colorStandart", "size14")}>
 							<span className="markdown">
-								<Markdown remarkPlugins={[remarkGfm]} children={latestRelease.body} />
+								<Markdown remarkPlugins={[remarkGfm]}>{latestRelease.body}</Markdown>
 							</span>
 						</div>
 					</Content>
@@ -69,7 +69,7 @@ const WhatsNewContainer = memo(() => {
 	return undefined;
 });
 
-const Footer = memo(() => {
+const Footer = memo(function Footer() {
 	return createElement('div', { class: style.footer },
 		createElement('a', { class: 'anchor', href: 'https://twitter.com/im_byte', rel: ['noreferrer', 'noopener'], target: '_blank' }, 'Twitter'),
 		createElement('a', { class: 'anchor', href: 'https://facebook.com/tjmcraft' }, 'Facebook'),
@@ -77,12 +77,11 @@ const Footer = memo(() => {
 		createElement('div', { class: buildClassName('size12', 'colorStandart') }, 'Подписывайтесь на наш канал, здесь говорят правду'));
 });
 
-const WhatsNew = memo(() => {
-	return (
-		<Modal small={true}>
-			<WhatsNewContainer />
-		</Modal>
-	);
-});
+const WhatsNew = () => (
+	<Modal small={true}>
+		<WhatsNewContainer />
+	</Modal>
+);
 
-export default WhatsNew;
+
+export default memo(WhatsNew);

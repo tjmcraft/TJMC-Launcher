@@ -417,7 +417,7 @@ const JavaSettingsTab = memo(function JavaSettingsTab() {
 							type="file"
 							placeholder="<java:path>"
 							onChange={handleChangeJavaPath}
-							value={config?.java?.path}
+							value={config?.java?.path.toString()}
 						/>
 					</div>
 					<div className={style.settingGroupContainer}>
