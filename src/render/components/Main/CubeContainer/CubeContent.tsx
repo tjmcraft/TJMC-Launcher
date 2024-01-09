@@ -63,7 +63,7 @@ const InstanceLog = memo<{ instanceId: string }>(function InstanceLog({ instance
 				{stdout.map((e, key) => (<span key={key}>{e}</span>))}
 			</div>
 		</div>
-	)
+	);
 });
 
 const CubeContent = ({ hash }: { hash: string }) => {

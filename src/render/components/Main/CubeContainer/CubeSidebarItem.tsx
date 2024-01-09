@@ -85,7 +85,7 @@ const ContextMenu: FC<{
 				invokeLaunch({ hash, params: { forceCheck: true } });
 			} else invokeLaunch({ hash });
 		}
-		else revokeLaunch({ hash })
+		else revokeLaunch({ hash });
 	}, [hash, invokeLaunch, revokeLaunch, isProcessing]);
 
 	const handleLaunchForceClick = useCallback((e) => {

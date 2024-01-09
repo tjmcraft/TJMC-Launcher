@@ -43,7 +43,7 @@ const UserPanelMain = () => {
 			</button>
 			<Tooltip forRef={settingsButton}>Настройки</Tooltip>
 		</UserPanel>
-	)
+	);
 };
 
 const Main = ({ isActive }: { isActive: boolean }) => {
