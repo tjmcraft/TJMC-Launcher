@@ -5,7 +5,7 @@ import buildClassName from "Util/buildClassName";
 
 const SettingContainer: React.FC<{
 	inputMode?: boolean;
-	note?: string;
+	note?: string | JSX.Element;
 	title?: string;
 	onTitleClick?: AnyToVoidFunction;
 	disabled?: boolean;

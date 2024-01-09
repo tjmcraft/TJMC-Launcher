@@ -8,7 +8,7 @@ import style from "./radio.module.css";
 
 type OwnProps<T extends string = string> = {
 	id?: string;
-	options: Record<T, string>;
+	options: Record<T, string | JSX.Element>;
 	direction: 'vertical' | 'horizontal';
 	checked?: T;
 	action: AnyToVoidFunction;

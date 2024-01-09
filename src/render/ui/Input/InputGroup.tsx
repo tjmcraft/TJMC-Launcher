@@ -4,7 +4,7 @@ import style from "./input.module.css";
 
 const InputGroup: React.FC<{
 	htmlFor: React.LabelHTMLAttributes<HTMLLabelElement>['htmlFor'];
-	inRef: React.ClassAttributes<HTMLSpanElement>['ref'];
+	inRef?: React.ClassAttributes<HTMLSpanElement>['ref'];
 	title?: string;
 	children: React.ReactNode;
 }> = ({
