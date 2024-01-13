@@ -10,7 +10,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/tjmcraft/TJMC-Launcher/badge)](https://www.codefactor.io/repository/github/tjmcraft/TJMC-Launcher)
 [![dev chat](https://discordapp.com/api/guilds/693099755269783643/widget.png?style=shield)](https://discord.gg/PpHb5gfR)
 
-This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to [TJMC-Company](https://github.com/tjmcraft) (for *non-commercial* purpose only). \
+This project was originally created by [MakAndJo](https://github.com/MakAndJo) and then moved to [TJMC](https://github.com/tjmcraft) company to integrate their microservices. \
 **TJMC-Launcher** is a simple to use, extremely fast, and well supported app, that allows you to install **pure** and **modded** versions of **Java Minecraft**. \
 **Current status:** [MVP+](https://ru.wikipedia.org/wiki/%D0%9C%D0%B8%D0%BD%D0%B8%D0%BC%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE_%D0%B6%D0%B8%D0%B7%D0%BD%D0%B5%D1%81%D0%BF%D0%BE%D1%81%D0%BE%D0%B1%D0%BD%D1%8B%D0%B9_%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82)
 
