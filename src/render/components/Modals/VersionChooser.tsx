@@ -343,7 +343,8 @@ const VersionChooser = () => {
 	useEffect(() => getGlobalVersions(), [getGlobalVersions]);
 	useEffect(() => (selectedVersion ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
 	useEffect(() => {
-		setTimeout(() => setLeftOpen(!selectedVersion), selectedVersion ? 200 : 100);
+		const timeout = setTimeout(() => setLeftOpen(!selectedVersion), selectedVersion ? 200 : 100);
+		return () => clearTimeout(timeout);
 	}, [selectedVersion]);
 
 	return (
