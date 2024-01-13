@@ -198,11 +198,17 @@ const VersionChooserContent = ({
 		}
 	};
 
+	const handleBack = useCallback((e) => {
+		if (isLeftOpen) {
+			onCancel(e);
+		} else onBack(e);
+	}, [isLeftOpen]);
+
 	return (
 		<div className={buildClassName("main-content", "d-flex")}>
 			<div className="middleHeader">
 				<div className="backButton">
-					<button onClick={onBack}>
+					<button onClick={handleBack}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" className={buildClassName("button-4fai7c", isLeftOpen && "open")}>
 							<g fill="none" fillRule="evenodd">
 								<path d="M0 0h18v18H0" />
@@ -312,10 +318,6 @@ const VersionChooserContent = ({
 
 const VersionChooser = () => {
 
-	const { getGlobalVersions } = getDispatch();
-
-	const [selectedType, selectType] = useState(undefined);
-	const [selectedVersion, selectVersion] = useState(undefined);
 	const versionTypes: VersionTypes = useMemo(() => ([
 		{ name: 'Release', type: 'release' },
 		{ name: 'Modified', type: 'modified' },
@@ -324,26 +326,30 @@ const VersionChooser = () => {
 		{ name: 'Beta', type: 'old_beta' },
 		{ name: 'Alpha', type: 'old_alpha' },
 	]), []);
-
-	const [leftOpen, setLeftOpen] = useState(true);
-
+	const [selectedType, selectType] = useState(undefined);
 	const handleTypeSelect = useCallback((item) => {
 		selectType(item.type);
 	}, [selectType]);
+
+	const [selectedVersion, selectVersion] = useState({ item: undefined });
 	const handleVersionSelect = useCallback((item) => {
-		selectVersion(item);
+		selectVersion({ item: item });
 	}, [selectVersion]);
+
+	const [leftOpen, setLeftOpen] = useState(true);
 	const handleCancel = useCallback(() => {
-		selectVersion(undefined);
+		selectVersion({ item: undefined });
 	}, [selectVersion]);
 	const handleBack = useCallback(() => {
 		setLeftOpen(state => !state);
 	}, [setLeftOpen]);
 
+	const { getGlobalVersions } = getDispatch();
 	useEffect(() => getGlobalVersions(), [getGlobalVersions]);
-	useEffect(() => (selectedVersion ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
+
+	useEffect(() => (selectedVersion.item ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
 	useEffect(() => {
-		const timeout = setTimeout(() => setLeftOpen(!selectedVersion), selectedVersion ? 200 : 100);
+		const timeout = setTimeout(() => setLeftOpen(!selectedVersion.item), selectedVersion ? 100 : 50);
 		return () => clearTimeout(timeout);
 	}, [selectedVersion]);
 
@@ -358,18 +364,18 @@ const VersionChooser = () => {
 					<Sidebar
 						type={selectedType}
 						onSelect={handleVersionSelect}
-						selected={selectedVersion}
+						selected={selectedVersion.item}
 						isActive={leftOpen}
 					/>
 				</div>
 				<div className="middleColumn">
-					{selectedVersion ? (
+					{selectedVersion.item ? (
 						<VersionChooserContent
-							version={selectedVersion}
+							version={selectedVersion.item}
 							onCancel={handleCancel}
 							onBack={handleBack}
 							isLeftOpen={leftOpen}
-							key={selectedVersion.id}
+							key={selectedVersion.item.id}
 						/>
 					) : (
 						<div className={buildClassName("main-content", "d-flex", "vertical", "centred")}>
