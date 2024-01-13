@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "An lightweight minecraft launcher by TJMC",
   "main": "src/main/main.js",
   "scripts": {
@@ -161,10 +161,15 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64", "ia32"]
+          "arch": [
+            "x64",
+            "ia32"
+          ]
         }
       ],
-      "publisherName": ["MakAndJo"],
+      "publisherName": [
+        "MakAndJo"
+      ],
       "icon": "icons/icon.ico"
     },
     "linux": {
