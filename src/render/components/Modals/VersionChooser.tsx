@@ -6,7 +6,6 @@ import { cleanObject, searchInArray } from "Util/Iterates";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
-import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from "UI/Modal";
@@ -15,6 +14,7 @@ import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
 import useHotkeys from "Hooks/useHotkeys";
+import DropdownSelector from "UI/DropdownSelector";
 
 const Sidebar = ({
 	isActive = false,
@@ -83,60 +83,6 @@ const Sidebar = ({
 	);
 };
 
-const DropdownSelector = ({
-	title = "Версии",
-	items = [],
-	onSelect = void 0
-}: {
-	title?: string;
-	items: VersionTypes;
-	onSelect: AnyToVoidFunction;
-}) => {
-
-	const [isOpen, setOpen] = useState(false);
-	const [selected, select] = useState(undefined);
-	const menuRef = useRef();
-
-	const handleClick = (e) => {
-		e.preventDefault();
-		setOpen((state) => !state);
-	};
-
-	const onClose = useCallback(() => {
-		setOpen(false);
-	}, [setOpen]);
-
-	const handleSelect = (item) => {
-		return (e) => {
-			e.stopPropagation();
-			select(item);
-			setOpen(false);
-			if (typeof onSelect === 'function') onSelect(item);
-		};
-	};
-
-	useEffect(() => (isOpen ? captureEscKeyListener(onClose) : undefined), [isOpen, onClose]);
-	useVirtualBackdrop(isOpen, menuRef, onClose);
-
-	return (
-		<div className="container-f" onClick={handleClick} ref={menuRef}>
-			<div className="header">
-				<h1>{selected ? selected.name : title}</h1>
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
-					<g fill="none" fillRule="evenodd">
-						<path d="M0 0h18v18H0" />
-						<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
-						<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
-					</g>
-				</svg>
-			</div>
-			<div className={buildClassName('dropdown', !isOpen && "hidden")}>
-				{items && items.map(item => createElement('span', { onClick: handleSelect(item) }, item.name))}
-			</div>
-		</div>
-	);
-};
-
 const VersionChooserContent = ({
 	version,
 	onCancel,
@@ -198,11 +144,17 @@ const VersionChooserContent = ({
 		}
 	};
 
+	const handleBack = useCallback((e) => {
+		if (isLeftOpen) {
+			onCancel(e);
+		} else onBack(e);
+	}, [isLeftOpen]);
+
 	return (
 		<div className={buildClassName("main-content", "d-flex")}>
 			<div className="middleHeader">
 				<div className="backButton">
-					<button onClick={onBack}>
+					<button onClick={handleBack}>
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" className={buildClassName("button-4fai7c", isLeftOpen && "open")}>
 							<g fill="none" fillRule="evenodd">
 								<path d="M0 0h18v18H0" />
@@ -312,10 +264,6 @@ const VersionChooserContent = ({
 
 const VersionChooser = () => {
 
-	const { getGlobalVersions } = getDispatch();
-
-	const [selectedType, selectType] = useState(undefined);
-	const [selectedVersion, selectVersion] = useState(undefined);
 	const versionTypes: VersionTypes = useMemo(() => ([
 		{ name: 'Release', type: 'release' },
 		{ name: 'Modified', type: 'modified' },
@@ -324,26 +272,31 @@ const VersionChooser = () => {
 		{ name: 'Beta', type: 'old_beta' },
 		{ name: 'Alpha', type: 'old_alpha' },
 	]), []);
-
-	const [leftOpen, setLeftOpen] = useState(true);
-
+	const [selectedType, selectType] = useState(undefined);
 	const handleTypeSelect = useCallback((item) => {
 		selectType(item.type);
 	}, [selectType]);
+
+	const [selectedVersion, selectVersion] = useState({ item: undefined });
 	const handleVersionSelect = useCallback((item) => {
-		selectVersion(item);
+		selectVersion({ item: item });
 	}, [selectVersion]);
+
+	const [leftOpen, setLeftOpen] = useState(true);
 	const handleCancel = useCallback(() => {
-		selectVersion(undefined);
+		selectVersion({ item: undefined });
 	}, [selectVersion]);
 	const handleBack = useCallback(() => {
 		setLeftOpen(state => !state);
 	}, [setLeftOpen]);
 
+	const { getGlobalVersions } = getDispatch();
 	useEffect(() => getGlobalVersions(), [getGlobalVersions]);
-	useEffect(() => (selectedVersion ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
+
+	useEffect(() => (selectedVersion.item ? captureEscKeyListener(handleCancel) : undefined), [selectedVersion, handleCancel]);
 	useEffect(() => {
-		setTimeout(() => setLeftOpen(!selectedVersion), selectedVersion ? 200 : 100);
+		const timeout = setTimeout(() => setLeftOpen(!selectedVersion.item), selectedVersion ? 100 : 50);
+		return () => clearTimeout(timeout);
 	}, [selectedVersion]);
 
 	return (
@@ -351,24 +304,25 @@ const VersionChooser = () => {
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector
+						title="Версии"
 						items={versionTypes}
 						onSelect={handleTypeSelect}
 					/>
 					<Sidebar
 						type={selectedType}
 						onSelect={handleVersionSelect}
-						selected={selectedVersion}
+						selected={selectedVersion.item}
 						isActive={leftOpen}
 					/>
 				</div>
 				<div className="middleColumn">
-					{selectedVersion ? (
+					{selectedVersion.item ? (
 						<VersionChooserContent
-							version={selectedVersion}
+							version={selectedVersion.item}
 							onCancel={handleCancel}
 							onBack={handleBack}
 							isLeftOpen={leftOpen}
-							key={selectedVersion.id}
+							key={selectedVersion.item.id}
 						/>
 					) : (
 						<div className={buildClassName("main-content", "d-flex", "vertical", "centred")}>
