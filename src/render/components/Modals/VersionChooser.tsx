@@ -304,6 +304,7 @@ const VersionChooser = () => {
 			<div className={buildClassName("container", !leftOpen && "left-closed")} id="version-selector">
 				<div className="leftColumn">
 					<DropdownSelector
+						title="Версии"
 						items={versionTypes}
 						onSelect={handleTypeSelect}
 					/>
