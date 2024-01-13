@@ -53,7 +53,6 @@
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 	border-radius: 5px;
 	font-size: medium;
-	transition: all .3s ease !important;
 	overflow: hidden;
 	text-align: start;
 	overscroll-behavior: contain;
