@@ -1,0 +1,93 @@
+
+.dropContainer {
+	cursor: pointer;
+	position: relative;
+	outline: 0;
+	font-size: 20px;
+}
+
+.dropContainer .header {
+	background-color: var(--background-secondary-alt);
+	box-shadow: 0 0px 5px 0px var(--color-shadow);
+	position: relative;
+	font-weight: 500;
+	padding: 0 16px;
+	height: 48px;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	z-index: 3;
+	transition: background-color .1s linear;
+	text-transform: none !important;
+	font-size: 16px !important;
+	user-select: none;
+	text-align: start;
+}
+
+.dropContainer .header h1 {
+	font-size: 16px;
+	line-height: 20px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	flex: 1;
+	user-select: none;
+	text-align: start;
+	color: var(--header-primary);
+}
+
+.dropContainer .header:hover {
+	background-color: #4f545c29;
+}
+
+.dropdown {
+	margin: 8px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: 22;
+	background-color: var(--background-floating);
+	min-width: 220px;
+	width: auto;
+	display: block;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+	font-size: medium;
+	transition: all .3s ease !important;
+	overflow: hidden;
+	text-align: start;
+	overscroll-behavior: contain;
+	transform: scale(0.5);
+	transform-origin: 50% 0;
+	opacity: 0;
+	transition: opacity .2s cubic-bezier(0.2, 0, 0.2, 1),transform .2s cubic-bezier(0.2, 0, 0.2, 1) !important;
+}
+
+.dropdown:global(:not(.shown)) {
+	display: none;
+}
+.dropdown:global(:not(.open)) {
+	pointer-events: none;
+}
+
+.dropdown:global(.open) {
+	transform: scale(1);
+	opacity: 1;
+}
+
+.dropdown span {
+	cursor: pointer;
+	color: var(--header-primary);
+	padding: 12px 15px;
+	text-decoration: none;
+	display: block;
+	/* border-radius: 5px; */
+	user-select: none;
+	font-weight: 500;
+	transition: none;
+}
+
+.dropdown span:hover {
+	background-color: var(--brand-color-1);
+	color: #eee;
+}

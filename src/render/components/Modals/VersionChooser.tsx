@@ -6,7 +6,6 @@ import { cleanObject, searchInArray } from "Util/Iterates";
 import captureEscKeyListener from "Util/captureEscKeyListener";
 import useGlobal from "Hooks/useGlobal";
 import useHostOnline from "Hooks/useHostOnline";
-import useVirtualBackdrop from "Hooks/useVirtualBackdrop";
 import { selectVersions } from "Model/Selectors/installations";
 
 import { Modal, ModalFooter } from "UI/Modal";
@@ -15,6 +14,7 @@ import SettingSwitch from "UI/SettingSwitch";
 
 import "./VersionChooser.css";
 import useHotkeys from "Hooks/useHotkeys";
+import DropdownSelector from "UI/DropdownSelector";
 
 const Sidebar = ({
 	isActive = false,
@@ -80,60 +80,6 @@ const Sidebar = ({
 				/>
 			</div>
 		</Fragment>
-	);
-};
-
-const DropdownSelector = ({
-	title = "Версии",
-	items = [],
-	onSelect = void 0
-}: {
-	title?: string;
-	items: VersionTypes;
-	onSelect: AnyToVoidFunction;
-}) => {
-
-	const [isOpen, setOpen] = useState(false);
-	const [selected, select] = useState(undefined);
-	const menuRef = useRef();
-
-	const handleClick = (e) => {
-		e.preventDefault();
-		setOpen((state) => !state);
-	};
-
-	const onClose = useCallback(() => {
-		setOpen(false);
-	}, [setOpen]);
-
-	const handleSelect = (item) => {
-		return (e) => {
-			e.stopPropagation();
-			select(item);
-			setOpen(false);
-			if (typeof onSelect === 'function') onSelect(item);
-		};
-	};
-
-	useEffect(() => (isOpen ? captureEscKeyListener(onClose) : undefined), [isOpen, onClose]);
-	useVirtualBackdrop(isOpen, menuRef, onClose);
-
-	return (
-		<div className="container-f" onClick={handleClick} ref={menuRef}>
-			<div className="header">
-				<h1>{selected ? selected.name : title}</h1>
-				<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" className={buildClassName("button-1w5pas", isOpen && "open")}>
-					<g fill="none" fillRule="evenodd">
-						<path d="M0 0h18v18H0" />
-						<path stroke="currentColor" d="M4.5 4.5l9 9" strokeLinecap="round" />
-						<path stroke="currentColor" d="M13.5 4.5l-9 9" strokeLinecap="round" />
-					</g>
-				</svg>
-			</div>
-			<div className={buildClassName('dropdown', !isOpen && "hidden")}>
-				{items && items.map(item => createElement('span', { onClick: handleSelect(item) }, item.name))}
-			</div>
-		</div>
 	);
 };
 
