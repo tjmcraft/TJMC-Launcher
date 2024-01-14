@@ -170,6 +170,7 @@
       "publisherName": [
         "MakAndJo"
       ],
+      "verifyUpdateCodeSignature": false,
       "icon": "icons/icon.ico"
     },
     "linux": {
