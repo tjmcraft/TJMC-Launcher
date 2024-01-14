@@ -194,14 +194,14 @@ const VersionChooserContent = ({
 								name="installation-resolution-width"
 								value={width}
 								onChange={(e) => setWidth(e.target.value)}
-								placeholder={config?.minecraft?.launch?.width.toString() || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.width?.toString() || "<auto>"} />
 							<span className="resolutionCross">✖</span>
 							<input
 								type="number"
 								name="installation-resolution-height"
 								value={height}
 								onChange={(e) => setHeight(e.target.value)}
-								placeholder={config?.minecraft?.launch?.height.toString() || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.height?.toString() || "<auto>"} />
 						</div>
 					</InputGroup>
 				</div>

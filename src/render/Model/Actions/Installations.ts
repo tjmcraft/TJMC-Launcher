@@ -19,7 +19,7 @@ addReducer("hostUpdate", (global, _actions, update) => {
 
 addReducer("createInstallation", async (_global, actions, payload) => {
 	if (!payload) return;
-	let { version, options } = payload;
+	var { version, options } = payload;
 	options = Object.assign({}, {
 		lastVersionId: version,
 	}, options);

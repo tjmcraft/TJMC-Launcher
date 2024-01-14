@@ -90,7 +90,7 @@ const InstallationForm: React.FC<{
 						placeholder="<папка по умолчанию>"
 						title="Папка игры"
 						onChange={setGameDir}
-						value={gameDir.toString()}
+						value={gameDir?.toString()}
 					/>
 				</div>
 				<div className="children-zx1">
@@ -101,14 +101,14 @@ const InstallationForm: React.FC<{
 								name="installation-resolution-width"
 								value={width}
 								onChange={(e) => setWidth(Number(e.target.value))}
-								placeholder={config?.minecraft?.launch?.width.toString() || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.width?.toString() || "<auto>"} />
 							<span className="resolutionCross">✖</span>
 							<input
 								type="number"
 								name="installation-resolution-height"
 								value={height}
 								onChange={(e) => setHeight(Number(e.target.value))}
-								placeholder={config?.minecraft?.launch?.height.toString() || "<auto>"} />
+								placeholder={config?.minecraft?.launch?.height?.toString() || "<auto>"} />
 						</div>
 					</InputGroup>
 				</div>
@@ -118,7 +118,7 @@ const InstallationForm: React.FC<{
 						title="Путь к Java"
 						placeholder="<java по умолчанию>"
 						onChange={setJavaPath}
-						value={javaPath.toString()}
+						value={javaPath?.toString()}
 					/>
 				</div>
 				<div className="children-zx1">

@@ -95,25 +95,25 @@ interface HostConfig {
 
 interface HostInstallation {
   created: Date;
-  icon: string;
+  icon?: string;
   type: 'custom';
-  gameDir: PathLike;
-  versionDir: PathLike;
-  mcPath: PathLike;
-  javaPath: PathLike;
-  javaArgs: string;
-  lastUsed: Date;
-  lastSync: Date;
+  gameDir?: PathLike;
+  versionDir?: PathLike;
+  mcPath?: PathLike;
+  javaPath?: PathLike;
+  javaArgs?: string;
+  lastUsed?: Date;
+  lastSync?: Date;
   lastVersionId: string;
   name: string;
-  resolution: {
-      width: number;
-      height: number;
-      fullscreen: boolean;
+  resolution?: {
+      width?: number;
+      height?: number;
+      fullscreen?: boolean;
   };
-  checkHash: boolean;
-  checkFiles: boolean;
-  autoConnect: boolean;
+  checkHash?: boolean;
+  checkFiles?: boolean;
+  autoConnect?: boolean;
 }
 
 type HostInstallationWithHash = HostInstallation & { hash: string, isProcessing?: boolean };
