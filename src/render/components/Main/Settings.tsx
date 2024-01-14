@@ -417,7 +417,7 @@ const JavaSettingsTab = memo(function JavaSettingsTab() {
 							type="file"
 							placeholder="<java:path>"
 							onChange={handleChangeJavaPath}
-							value={config?.java?.path.toString()}
+							value={config?.java?.path?.toString()}
 						/>
 					</div>
 					<div className={style.settingGroupContainer}>
@@ -426,7 +426,7 @@ const JavaSettingsTab = memo(function JavaSettingsTab() {
 							<input id="settings.java.args.input"
 								type="text"
 								name="settings-java-args"
-								value={javaArgs.toString()}
+								value={javaArgs?.toString()}
 								onChange={(e) => setJavaArgs(e.target.value)}
 								onBlur={handleSaveJavaArgs}
 								placeholder="<java:args>" />

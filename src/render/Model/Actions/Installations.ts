@@ -35,18 +35,18 @@ addReducer("editInstallation", async (_global, _actions, payload) => {
 });
 addReducer("removeInstallation", (_global, _actions, payload) => {
 	if (!payload) return;
-	let { hash, forceDeps } = payload;
+	const { hash, forceDeps } = payload;
 	void callHost("removeInstallation", { hash, forceDeps });
 });
 addReducer("moveInstallationPosition", (_global, _actions, payload) => {
 	if (!payload) return;
-	let { startHash, endHash } = payload;
+	const { startHash, endHash } = payload;
 	void callHost("moveInstallationPosition", { startHash, endHash });
 });
 
 addReducer("openInstallationFolder", (_global, _actions, payload) => {
 	if (!payload) return;
-	let { hash } = payload;
+	const { hash } = payload;
 	void callHost("openInstallationFolder", hash);
 });
 
