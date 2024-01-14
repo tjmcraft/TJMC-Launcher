@@ -1,6 +1,6 @@
 {
   "name": "tjmc-launcher",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "An lightweight minecraft launcher by TJMC",
   "main": "src/main/main.js",
   "scripts": {
