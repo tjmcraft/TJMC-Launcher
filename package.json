@@ -176,9 +176,10 @@
     "linux": {
       "target": [
         {
-          "target": "deb",
+          "target": "AppImage",
           "arch": [
             "x64",
+            "ia32",
             "arm64"
           ]
         },
@@ -186,6 +187,7 @@
           "target": "tar.gz",
           "arch": [
             "x64",
+            "ia32",
             "arm64"
           ]
         }
