@@ -4,7 +4,6 @@ import buildClassName from "Util/buildClassName";
 import { getDispatch } from "Store/Global";
 import useGlobal from "Hooks/useGlobal";
 
-import Frame from "Components/Frame";
 import LayerContainer from "Components/LayerContainer";
 import Preloader from "Components/Preloader";
 import Auth from "Components/Auth/Auth";
@@ -40,7 +39,6 @@ const App = () => {
 
 	return (
 		<Fragment>
-			<Frame />
 			<div className={buildClassName('app', isModalsOpen && 'blurred')}>
 				<Preloader />
 				<Transition

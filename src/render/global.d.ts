@@ -41,13 +41,6 @@ interface ElectronExpose {
   send: Function;
 }
 
-interface ElectronExpose {
-	on: Function;
-	off: Function;
-	invoke: Function;
-	send: Function;
-}
-
 interface Window {
   GLOBAL_ENV: any;
   buildInfo: any;
