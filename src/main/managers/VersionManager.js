@@ -47,13 +47,13 @@ exports.getLocalVersions = async function () {
  * Gets Main JSON of given version
  * @param {String} version - Version of Minecraft
  */
-exports.getVersionManifest = async function (version, progressHandler = (e) => void 0) {
+exports.getVersionManifest = async function (version, progressHandler = (e) => void 0, forceRebuild = false) {
     logger.debug(`Loading ${version} version manifest...`);
     if (!versions_directory) return;
     const versionPath = path.join(versions_directory, version);
     const versionJsonPath = path.join(versionPath, `${version}.json`);
     var c_version = null;
-    if (fs.existsSync(versionJsonPath)) {
+    if (!forceRebuild && fs.existsSync(versionJsonPath)) {
         c_version = JSON.parse(fs.readFileSync(versionJsonPath));
     } else {
         const parsed = await this.getGlobalVersions();
@@ -63,13 +63,17 @@ exports.getVersionManifest = async function (version, progressHandler = (e) => v
             const inherit = await this.getVersionManifest(c_version.inheritsFrom);
             c_version.mainClass = c_version.mainClass || inherit.mainClass;
             c_version.libraries = merge(c_version.libraries, inherit.libraries);
+            c_version.libraries = c_version.libraries.map(lib => {
+                delete lib.downloads?.artifact?.path;
+                return lib;
+            });
             c_version.downloads = c_version.downloads || inherit.downloads;
             c_version.assetIndex = c_version.assetIndex || inherit.assetIndex;
             c_version.javaVersion = c_version.javaVersion || inherit.javaVersion;
             c_version.minecraftArguments = c_version.minecraftArguments || inherit.minecraftArguments;
             if (c_version.arguments || inherit.arguments) {
-                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? merge(c_version.arguments.game, inherit.arguments.game) : c_version.arguments.game || inherit.arguments.game
-                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? merge(c_version.arguments.jvm, inherit.arguments.jvm) : c_version.arguments.jvm || inherit.arguments.jvm
+                c_version.arguments.game = c_version.arguments.game && inherit.arguments.game ? [...c_version.arguments.game, ...inherit.arguments.game] : c_version.arguments.game || inherit.arguments.game
+                c_version.arguments.jvm = c_version.arguments.jvm && inherit.arguments.jvm ? [...c_version.arguments.jvm, ...inherit.arguments.jvm] : c_version.arguments.jvm || inherit.arguments.jvm
             }
         }
         fs.mkdirSync(versionPath, { recursive: true });

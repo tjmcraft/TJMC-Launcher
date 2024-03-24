@@ -5,7 +5,6 @@ const TCHost = require('./libs/TCHost');
 
 const requestChannels = Object.seal({
 	requestHostInfo: 'requestHostInfo',
-	setProgress: 'setProgress',
 	fetchCurrentUser: 'auth:fetchCurrentUser',
 	requestAuth: 'auth:requestAuth',
 	revokeAuth: 'auth:revokeAuth',
@@ -43,6 +42,7 @@ const ackChannels = Object.seal({
 	updateInstallations: 'updateInstallations',
 	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
+	gameStartup: 'game.startup.success',
 	gameStartupError: 'game.startup.error',
 	gameError: 'game.error',
 	updateStatus: 'update.status',
@@ -76,10 +76,12 @@ exports.start = async () => {
 }
 
 const os = require('os');
+const { throttle } = require('./util/Shedulers');
 const { ipcMain, dialog, shell, app } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { checkForUpdates } = require('./Updater');
 const MainWindow = require('./MainWindow');
+const Tray = require('./tray');
 const Launcher = require('./Launcher');
 
 const ConfigManager = require('./managers/ConfigManager');
@@ -87,6 +89,8 @@ const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
+
+const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
 
 /**
 * Init reducers for TCHost
@@ -99,7 +103,7 @@ const initHandlers = async () => {
 	Object.keys(requestChannels).forEach(channel => {
 		const event = requestChannels[channel];
 		ipcMain.handle(event, WSSHost.handleIPCInvoke(event)); // handle rpc messages for electron sender
-	})
+	});
 
 	{ // Updates
 		autoUpdater.on('error', (e) => WSSHost.emit(ackChannels.updateStatus, { status: updateStatus.error }));
@@ -186,9 +190,6 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.relaunchHost, () => {
 			app.relaunch();
 		});
-		WSSHost.addReducer(requestChannels.setProgress, (data) => {
-			if (data.progress) win?.setProgressBar(data.progress);
-		});
 		WSSHost.addReducer(requestChannels.openMinecraftFolder, async () => {
 			shell.openPath(ConfigManager.getMinecraftDirectory());
 		});
@@ -224,6 +225,29 @@ const initHandlers = async () => {
 	}
 
 	{ // Launching
+		Launcher.on('progress', (args) => {
+			setProgressBar(args.totalProgress > 0 ? args.totalProgress : -1);
+			WSSHost.emit(ackChannels.gameProgressLoad, args);
+		});
+		Launcher.on('error', (args) => {
+			MainWindow.show();
+			WSSHost.emit(ackChannels.gameError, args);
+		});
+		Launcher.on('exit', (args) => {
+			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+				MainWindow.show();
+			}
+		});
+		Launcher.on('close', (args) => { // error
+			MainWindow.show();
+			WSSHost.emit(ackChannels.gameStartupError, args);
+		});
+		Launcher.on('window_appear', (args) => {
+			if (ConfigManager.getOption('minecraft.hideOnLaunch')) {
+				MainWindow.hide();
+			}
+			WSSHost.emit(ackChannels.gameStartup, args);
+		});
 		WSSHost.addReducer(requestChannels.invokeLaunch, async (data) => {
 			if (!data.version_hash) return false;
 			return await Launcher.launchWithEmit(data.version_hash, data.params);
@@ -252,9 +276,11 @@ const initHandlers = async () => {
 	}
 
 	{ // Installations
+		const updateTray = throttle(() => Tray.updateTray(), 2e3, true);
 		InstallationsManager.addCallback(config => {
 			// console.debug("Update Installations:", config);
 			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
+			updateTray();
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {
 			const installations = InstallationsManager.getInstallations();

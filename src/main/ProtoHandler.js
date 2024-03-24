@@ -16,7 +16,7 @@ const setInstanceProtocolHandler = () => {
 		// TODO: Figure out bug in setAsDefaultProtocolClient on Linux
 		// Set Protocol Handler on Linux manually because of bug in Electron
 		try {
-			require('child_process').exec(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
+			require('child_process').execSync(`${command} ${DEFAULT_PROTOCOL_HANDLER} ${packageName}`)
 			logger.info("Successfully set protocol handler on Linux.")
 		} catch (e) {
 			logger.warn(`Failed to set Protocol Handler on Linux: ${e}`)
@@ -65,7 +65,7 @@ const protoHandler = (link) => {
 exports.protoHandler = protoHandler;
 
 const handleArgsLink = (args) => {
-	if (process.platform === 'win32') {
+	if (process.platform != 'darwin') {
 		const deepLink = args.find((arg) => arg.startsWith(DEFAULT_PROTOCOL_HANDLER + '://'));
 		if (deepLink) return protoHandler(deepLink);
 	}

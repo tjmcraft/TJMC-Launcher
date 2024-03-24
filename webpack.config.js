@@ -3,7 +3,8 @@ const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
-const { DefinePlugin } = require("webpack");
+const PreactRefreshPlugin = require('@prefresh/webpack');
+const webpack = require("webpack");
 const pkg = require('./package.json');
 
 const basePath = path.resolve(__dirname, 'src', 'render');
@@ -39,10 +40,10 @@ const optimization = () => {
 
 module.exports = {
 	entry: {
-		main: path.resolve(basePath, 'index.js')
+		main: path.resolve(basePath, 'index.tsx')
 	},
 	resolve: {
-		extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.css', '.png', '.*'],
+		extensions: ['.tsx', '.jsx', '.ts', '.js', '.json', '.css', '.png', '.*'],
 		alias: {
 			Libs: path.resolve(basePath, 'Libs'),
 			Util: path.resolve(basePath, 'Util'),
@@ -51,6 +52,7 @@ module.exports = {
 			IMG: path.resolve(basePath, 'assets', 'images'),
 			CSS: path.resolve(basePath, 'assets', 'css'),
 			UI: path.resolve(basePath, 'ui'),
+			Components: path.resolve(basePath, 'components'),
 			Model: path.resolve(basePath, 'Model'),
 			Hooks: path.resolve(basePath, 'hooks'),
 			react: "preact/compat",
@@ -68,14 +70,9 @@ module.exports = {
 	},
 	mode: isDev ? "development" : "production",
 	devtool: 'source-map',
-	// target: 'electron-renderer',
 	devServer: {
-		historyApiFallback: true,
-		compress: true,
-		hot: isDev,
-		liveReload: true,
-		allowedHosts: "all",
-		port: 3333
+		port: 3333,
+		hot: true,
 	},
 	optimization: optimization(),
 	performance: {
@@ -84,9 +81,14 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.(ts|tsx|js|jsx)$/,
+				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader',
+			},
+			{
+				test: /\.(ts|tsx)$/,
+				exclude: /node_modules/,
+				loader: 'ts-loader',
 			},
 			{
 				test: /\.css$/,
@@ -105,7 +107,7 @@ module.exports = {
 						loader: 'css-loader',
 						options: {
 							modules: {
-								localIdentName: isDev ? "[name]__[local]-[hash:base64:6]" : "[local]-[hash:base64:6]",
+								localIdentName: isDev ? "[name]__[local]" : "[local]-[hash:base64:6]",
 							}
 						}
 					}
@@ -133,7 +135,7 @@ module.exports = {
 
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: '[name].[contenthash].css',
+			filename: isDev ? '[name].[local].css' : '[name].[contenthash].css',
 			chunkFilename: '[name].[chunkhash].css',
 			ignoreOrder: true,
 		}),
@@ -152,7 +154,7 @@ module.exports = {
 			},
 			scriptLoading: "defer"
 		}),
-		new DefinePlugin({
+		new webpack.DefinePlugin({
 			APP_NAME: JSON.stringify(pkg['build']['productName']),
 			APP_ENV: JSON.stringify(isDev ? "development" : "production"),
 			APP_VERSION: JSON.stringify(pkg['version']),
@@ -160,5 +162,9 @@ module.exports = {
 			AUTHOR: JSON.stringify(pkg['author']),
 			HTML_TIMESTAMP: JSON.stringify(Date.now()),
 		}),
+		...(isDev ? [
+			new webpack.HotModuleReplacementPlugin(),
+			new PreactRefreshPlugin(),
+		] : [])
 	],
 };

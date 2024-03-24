@@ -3,7 +3,7 @@ import * as methods from './methods';
 
 let onUpdate;
 
-export async function initApi(_onUpdate, initialArgs) {
+export async function initApi(_onUpdate, _initialArgs) {
 	onUpdate = _onUpdate;
 
 	initUpdates(onUpdate);

@@ -6,13 +6,19 @@
         "похуй",
         "прелоадер",
         "asar",
+        "GSTATE",
+        "gstore",
         "icns",
         "keytar",
         "loggerutil",
         "msort",
         "natsort",
+        "noopener",
         "nsis",
-        "realname"
+        "pctx",
+        "prefresh",
+        "realname",
+        "scroller"
     ],
     "cSpell.language": "en,ru",
     "cSpell.ignoreWords": [
@@ -22,5 +28,6 @@
         "ictx",
         "noreferrer",
         "preact"
-    ]
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }

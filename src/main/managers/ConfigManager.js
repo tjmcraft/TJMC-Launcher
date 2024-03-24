@@ -2,6 +2,9 @@ const { launcherDir } = require('../Paths');
 const Config = require('../libs/Config');
 const path = require('path');
 
+/**
+ * @type {import('../global').HostConfig}
+ */
 const DEFAULT_CONFIG = Object.seal({
     java: {
         path: '',
@@ -36,6 +39,7 @@ const DEFAULT_CONFIG = Object.seal({
             height: 720
         },
         autoConnect: false,
+        hideOnLaunch: true,
     },
 });
 

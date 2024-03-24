@@ -13,7 +13,10 @@
           "${workspaceRoot}/src/main/main.js",
           "--remote-debugging-port=9222"
         ],
-        "webRoot": "${workspaceRoot}"
+        "webRoot": "${workspaceRoot}",
+        "env": {
+          "NODE_ENV": "development",
+        }
       },
       {
         "name": "Debug Main Process",
@@ -24,8 +27,13 @@
         "windows": {
           "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
         },
-        "program": "${workspaceRoot}/src/main/main.js",
-        "protocol": "inspector",
+        "env": {
+          "ELECTRON_ENABLE_LOGGING": "true",
+          "ELECTRON_ENABLE_STACK_DUMPING": "true",
+          "ELECTRON_RUN_AS_NODE": null
+        },
+        "args": ["."],
+        "outputCapture": "console",
       }
     ]
   }

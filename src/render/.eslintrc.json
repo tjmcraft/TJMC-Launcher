@@ -1,12 +1,22 @@
 {
+    "parser": "@typescript-eslint/parser",
+    "settings": {
+        "react": {
+            "version": "16.4"
+        }
+    },
     "env": {
         "browser": true,
         "es2021": true
     },
     "extends": [
         "eslint:recommended",
-        "preact"
-        // "plugin:react/recommended"
+        "plugin:react/recommended"
+    ],
+    "ignorePatterns": [
+        "dist/*",
+        "*-test.ts",
+        "*-test.tsx"
     ],
     "ignorePatterns": ["dist/*"],
     "globals": {
@@ -17,14 +27,17 @@
         "ecmaVersion": "latest",
         "sourceType": "module"
     },
-    "plugins": [
-        "react"
-    ],
     "rules": {
-        "indent": ["warn", "tab", { "SwitchCase": 1 }],
+        "indent": [
+            "warn",
+            "tab",
+            {
+                "SwitchCase": 1
+            }
+        ],
         "semi": "warn",
         "no-implicit-coercion": "error",
-        "react-hooks/exhaustive-deps": "error",
+        // "react-hooks/exhaustive-deps": "error",
         "arrow-body-style": "off",
         "no-else-return": "off",
         "no-plusplus": "off",
@@ -40,12 +53,23 @@
         "no-nested-ternary": "off",
         "no-lonely-if": "off",
         "function-paren-newline": [
-            "warn", "consistent"
+            "warn",
+            "consistent"
         ],
         "prefer-destructuring": "off",
+        "prefer-const": ["error", {
+            "destructuring": "any",
+            "ignoreReadBeforeAssign": false
+        }],
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error",
-        "quote-props": ["warn", "as-needed"],
-        "object-shorthand": ["warn", "methods"]
+        "quote-props": [
+            "warn",
+            "as-needed"
+        ],
+        "object-shorthand": [
+            "warn",
+            "methods"
+        ]
     }
 }

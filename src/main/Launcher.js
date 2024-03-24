@@ -3,11 +3,10 @@ const logger = require('./util/loggerutil')('%c[Main-Launch]', 'color: #ff2119; 
 
 const { Worker } = require("node:worker_threads");
 const path = require('node:path');
-const { promiseControl, promiseRequest } = require('./util/Shedulers');
+const { promiseControl, promiseRequest, throttle } = require('./util/Shedulers');
 const { launcherDir } = require('./Paths');
 
 const MainWindow = require('./MainWindow');
-const { Bridge, ackChannels } = require('./Host');
 const AuthManager = require('./managers/AuthManager');
 const ConfigManager = require('./managers/ConfigManager');
 const VersionManager = require('./managers/VersionManager');
@@ -35,30 +34,33 @@ const runMainThread = () => {
 };
 queueMicrotask(runMainThread);
 
-const eventListener = (event, args) => {
-	switch (event) {
-		case 'progress': {
-			MainWindow.setProgressBar(args.progress > 0 ? args.progress : -1);
-			Bridge.emit(ackChannels.gameProgressLoad, args);
-		}; break;
-		case 'close': {
-			MainWindow.setProgressBar(-1);
-			Bridge.emit(ackChannels.gameStartupError, args);
-		}; break;
-		case 'error': {
-			MainWindow.setProgressBar(-1);
-			Bridge.emit(ackChannels.gameError, args);
-		}; break;
-		default: break;
-	}
-}
+/**
+ * Create emit function for instance
+ * @param {string} version_hash
+ * @returns {(event: LauncherEvent, args: any) => void}
+ */
+const createEventListener = (version_hash) => {
+	let window_appeared = false;
+	return (event, args) => {
+		args = Object.assign({ version_hash }, args);
+		if (event == 'window_appear') { // once
+			if (window_appeared) return;
+			window_appeared = true;
+		}
+		runAction(event, args);
+	};
+};
 
 const useTotalProgress = (emit) => {
 	let totalProgress = 0;
 	let prev = {};
 	return ({ type, progress, time }) => {
 		if (!prev[type]) prev[type] = 0;
-		totalProgress += progress - prev[type];
+		if (progress >= 0) {
+			totalProgress += progress - prev[type];
+		} else {
+			totalProgress = 0;
+		}
 		typeof emit === 'function' && emit({
 			type, progress, time,
 			totalProgress: (Math.round(totalProgress * 100) / 100) / 3,
@@ -106,9 +108,9 @@ const InstanceController = new function () {
 
 			performanceMarks.startup = performance.now();
 
-			const emit = (eventName, args) => eventListener(eventName, Object.assign({ version_hash }, args));
+			const emit = createEventListener(version_hash);
 			const terminateInstance = () => {
-				handleProgress({ type: 'terminated', progress: 0 });
+				handleProgress({ type: 'terminated', progress: -1 });
 				logger.debug("Performance marks:");
 				// console.table(Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })));
 				Object.entries(performanceMarks).map(e => ({ name: e[0], value: e[1] })).forEach(e => logger.debug(e.name, '->', e.value + 'ms'));
@@ -119,7 +121,7 @@ const InstanceController = new function () {
 
 			controller.signal.addEventListener('abort', () => {
 				logger.warn("Aborting..");
-				handleProgress({ type: 'aborting', progress: 0 });
+				handleProgress({ type: 'aborting', progress: -1 });
 				MainWorker.postMessage({ type: 'abort', payload: { version_hash } });
 				terminateInstance();
 			}, { once: true });
@@ -140,7 +142,11 @@ const InstanceController = new function () {
 
 			performanceMarks.getVersionManifest = performance.now();
 
-			const versionFile = await VersionManager.getVersionManifest(currentInstallation.lastVersionId);
+			const versionFile = await VersionManager.getVersionManifest(
+				currentInstallation.lastVersionId,
+				() => void 0,
+				currentInstallation.checkFiles && currentInstallation.checkHash
+			);
 			performanceMarks.getVersionManifest = performance.now() - performanceMarks.getVersionManifest;
 
 			try {
@@ -221,15 +227,18 @@ const InstanceController = new function () {
 					});
 					jvm.stdout.on('data', (data) => {
 						logg_out = std_out = data.toString('utf-8');
+						if (std_out.toString().toLowerCase().indexOf('lwjgl') !== -1) emit('window_appear');
 					});
 					jvm.on('close', (code) => {
 						if (![null, 0, 143].includes(code)) {
-							emit('close', { error: logg_out });
+							emit('close', { error: logg_out, code: code });
 							InstallationsManager.modifyInstallation(version_hash, {
 								lastSync: undefined
 							});
 						}
 					});
+					jvm.on('exit', () => emit('exit'));
+					jvm.on('spawn', () => emit('spawn'));
 					performanceMarks.createInstance = performance.now() - performanceMarks.createInstance;
 				}
 
@@ -297,4 +306,52 @@ exports.launchWithEmit = async (version_hash, params = {}) => {
 		}
 	});
 	void this.startLaunch(version_hash, params);
+};
+
+/**
+ * @typedef LauncherEvent
+ * @type {'progress'|'spawn'|'window_appear'|'close'|'exit'|'error'}
+ */
+
+/**
+ * @type {Record<LauncherEvent,object[]>}
+ */
+const reducers = {};
+/**
+ * @type {Record<LauncherEvent,Function>}
+ */
+const actions = {};
+
+/**
+ * Run event
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ * @returns {void}
+ */
+const runAction = (event, payload = undefined) => actions[event] ? actions[event](payload) : void 0;
+
+/**
+ * Dispatch
+ * @param {LauncherEvent} event
+ * @param {any} payload
+ */
+const onDispatch = (event, payload) => {
+	if (Array.isArray(reducers[event])) { // if reducers for this name exists
+		reducers[event].forEach((reducer) => {
+			reducer(payload);
+		});
+	}
+};
+
+/**
+ * EventEmitter
+ * @param {LauncherEvent} event
+ * @param {() => void} callback
+ */
+exports.on = (event, callback) => {
+	if (!reducers[event]) {
+		reducers[event] = [];
+		actions[event] = (payload) => onDispatch(event, payload);
+	}
+	reducers[event].push(callback);
 };
