@@ -34,7 +34,7 @@ exports.create = () => new Promise((resolve, reject) => {
 
 	require('./menu').createMenu();
 
-	let windowState = require('./libs/WindowState')({
+	let windowState = require('@tjmc/window-state')({
 		width: 1280,
 		height: 720
 	});
