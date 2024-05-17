@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
+    "@tjmc/config": "^1.0.6",
     "@tjmc/window-state": "^1.0.0",
     "adm-zip": "^0.5.1",
     "body-parser": "^1.20.0",
