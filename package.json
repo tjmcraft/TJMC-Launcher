@@ -46,7 +46,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
-    "electron-log": "^5.0.1",
+    "electron-log": "5.0.2",
     "electron-updater": "^4.6.5",
     "express-mysql-session": "^2.1.8",
     "express-session": "^1.17.3",
