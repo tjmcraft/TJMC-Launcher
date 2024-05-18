@@ -178,6 +178,8 @@ class Minecraft extends EventEmitter {
 			javaArgs: this.options.installation.javaArgs ?? '',
 		};
 		this.libraryDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
+		this.assetsDirectory = path.join(this.options.overrides.path.minecraft, 'assets');
+		this.nativesDirectory = path.join(this.options.overrides.path.version, 'natives');
 
 		const handleProgress = ({ current, total, time, type }) => this.emit('download', {
 			current: current,
@@ -213,7 +215,6 @@ class Minecraft extends EventEmitter {
 	 */
 	async getNatives(version) {
 		let count = 0;
-		const librariesDirectory = path.join(this.options.overrides.path.minecraft, 'libraries');
 		const stat = version.libraries
 			.filter(lib => lib.classifiers || lib.downloads?.classifiers)
 			.filter(lib => !this.parseRule(lib))
@@ -224,7 +225,7 @@ class Minecraft extends EventEmitter {
 			const lib = library.name.split(':');
 			const nativePath = native.path || path.join(`${lib[0].replace(/\./g, '/')}/${lib[1]}/${lib[2]}`,
 				`${lib[1]}-${lib[2]}${lib[3] ? '-' + lib[3] : ''}-${library.natives[this.getOS()]}.jar`);
-			const filePath = path.join(librariesDirectory, nativePath);
+			const filePath = path.join(this.libraryDirectory, nativePath);
 			if (this.checkFiles && (
 				!fs.existsSync(filePath) || fs.statSync(filePath).size <= 0 ||
 				(this.checkHash && !await checkFileHash(filePath, native.sha1))
@@ -261,15 +262,14 @@ class Minecraft extends EventEmitter {
 	 * @param {Array} natives
 	 */
 	async extractNatives(natives) {
-		const nativesDirectory = path.resolve(path.join(this.options.overrides.path.version, 'natives'));
-		fs.mkdirSync(nativesDirectory, { recursive: true });
+		fs.mkdirSync(this.nativesDirectory, { recursive: true });
 		await Promise.all(natives.map(async (native) => {
 			console.debug("[natives]", native);
 			try {
-				new Zip(native).extractAllTo(nativesDirectory, true)
+				new Zip(native).extractAllTo(this.nativesDirectory, true)
 			} catch (e) { logger.warn(e) }
 		}));
-		return nativesDirectory;
+		return this.nativesDirectory;
 	}
 
 	/**
@@ -278,8 +278,7 @@ class Minecraft extends EventEmitter {
 	 */
 	async getAssets(version) {
 		let count = 0;
-		const assetDirectory = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'));
-		const assetsIndexPath = path.join(assetDirectory, 'indexes', `${version.assetIndex.id}.json`);
+		const assetsIndexPath = path.join(this.assetsDirectory, 'indexes', `${version.assetIndex.id}.json`);
 		if (!fs.existsSync(assetsIndexPath) || fs.statSync(assetsIndexPath).size <= 0) await downloadToFile(version.assetIndex.url, assetsIndexPath, true);
 		const index = JSON.parse(fs.readFileSync(assetsIndexPath, { encoding: 'utf8' }));
 
@@ -290,7 +289,7 @@ class Minecraft extends EventEmitter {
 		const assetProcessor = async (asset, number) => {
 			const { hash, size } = index.objects[asset];
 			const subHash = hash.substring(0, 2);
-			const subAsset = path.join(assetDirectory, 'objects', subHash);
+			const subAsset = path.join(this.assetsDirectory, 'objects', subHash);
 			const assetPath = path.join(subAsset, hash);
 			if (this.checkFiles && (
 				!fs.existsSync(assetPath) || fs.statSync(assetPath).size <= 0 ||
@@ -447,8 +446,6 @@ class Minecraft extends EventEmitter {
 	 * Construct the argument array that will be passed to the JVM process.
 	 */
 	constructJVMArguments(versionFile, tempNativePath, cp) {
-		const assetRoot = path.resolve(path.join(this.options.overrides.path.minecraft, 'assets'))
-		const assetPath = path.join(assetRoot)
 		const jar = this.javaSeparator + this.options.mcPath;
 		this.fields = {
 			'${auth_access_token}': this.options.auth.access_token || this.options.auth.uuid,
@@ -461,8 +458,8 @@ class Minecraft extends EventEmitter {
 			'${version_name}': this.overrides.version.name,
 			'${assets_index_name}': versionFile.assetIndex.id,
 			'${game_directory}': this.options.overrides.path.gameDirectory,
-			'${assets_root}': assetPath,
-			'${game_assets}': assetPath,
+			'${assets_root}': this.assetsDirectory,
+			'${game_assets}': this.assetsDirectory,
 			'${version_type}': this.overrides.version.type,
 			'${clientid}': this.options.auth.access_token,
 			'${resolution_width}': this.overrides.resolution.width,
