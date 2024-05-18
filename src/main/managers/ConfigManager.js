@@ -1,6 +1,7 @@
 const { launcherDir } = require('../Paths');
-const Config = require('../libs/Config');
+const Config = require('@tjmc/config');
 const path = require('path');
+const loggerutil = require('../util/loggerutil');
 
 /**
  * @type {import('../global').HostConfig}
@@ -43,12 +44,13 @@ const DEFAULT_CONFIG = Object.seal({
     },
 });
 
+const logger = loggerutil('%c[ConfigManager]', 'color: #1052a5; font-weight: bold');
+
 const config = new Config({
-    prefix: "ConfigManager",
-    color: "#1052a5",
     configName: 'launcher-config.json',
     configDir: launcherDir,
     defaultConfig: DEFAULT_CONFIG,
+    logger: logger,
 });
 
 module.exports.load = () => config.load();

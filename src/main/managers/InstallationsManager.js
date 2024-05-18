@@ -1,23 +1,24 @@
-const fs = require('node:fs');
 const path = require('node:path');
-const Config = require('../libs/Config');
+const Config = require('@tjmc/config');
 const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
 const { launcherDir } = require('../Paths');
+const LoggerUtil = require('../util/loggerutil');
 
 
 /* ============= INSTALLATIONS ============= */
 
+const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold');
+
 const config = new Config({
-	prefix: "InstallationsManager",
-	color: "#0066d6",
 	configName: "launcher-profiles.json",
 	configDir: launcherDir,
 	defaultConfig: Object.seal({
 		tjmcVersion: '1.0.0',
 		profiles: {},
-	})
+	}),
+	logger: logger,
 });
 
 module.exports.load = () => config.load();
