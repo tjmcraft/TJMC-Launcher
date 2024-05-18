@@ -1,9 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { launcherDir } = require('../Paths');
 const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
-const { launcherDir } = require('../Paths');
 const LoggerUtil = require('../util/loggerutil');
 const CallbackStore = require('../util/CallbackStore');
 
@@ -15,9 +15,10 @@ const callbacks = new CallbackStore();
 const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold');
 
 const installations = {};
-const versions_directory = path.join(launcherDir, "instances");
+var versions_directory = path.join(launcherDir, "instances");
 
 module.exports.load = () => {
+	versions_directory = path.join(getOption('overrides.path.versions'), "instances");
 	if (!fs.existsSync(versions_directory)) fs.mkdirSync(versions_directory, { recursive: true });
 	try {
 		fs.readdirSync(versions_directory).forEach(folder_name => {
