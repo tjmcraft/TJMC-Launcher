@@ -56,6 +56,7 @@ module.exports.removeCallback = (callback = () => void 0) => {
  */
 const writeInstallationProfile = (profile) => {
 	installations[profile.hash] = profile;
+	versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
 	const instancePath = path.join(versions_directory, profile.name, 'instance.json');
 	if (!fs.existsSync(instancePath)) fs.mkdirSync(path.join(instancePath, '..'), { recursive: true });
 	try {
@@ -136,10 +137,7 @@ exports.getInstallations = () => {
  * @returns {Promise<import('../global').HostInstallation>} - The installation's object
  */
 exports.getInstallation = async (hash) => {
-	if (hash && Object(installations).hasOwnProperty(hash)) {
-		return installations[hash];
-	}
-	return undefined;
+	return this.getInstallationSync(hash);
 }
 
 /**
@@ -149,12 +147,15 @@ exports.getInstallation = async (hash) => {
  */
 exports.getInstallationSync = (hash) => {
 	if (hash && Object(installations).hasOwnProperty(hash)) {
+		/**
+		 * @type {import('../global').HostInstallation}
+		 */
 		let installation = installations[hash];
 		installation = Object.assign({}, DEFAULT_PROFILE, {
 			hash: hash,
 		}, installation);
 		installation.gameDir = installation.gameDir ??
-			path.resolve(getOption('overrides.path.gameDirectory') || getOption('overrides.path.minecraft'));
+			path.resolve(getOption('overrides.path.minecraft'), "instances", installation.name);
 		installation.versionDir = installation.versionDir ??
 			path.join(getOption('overrides.path.versions'), installation.lastVersionId);
 		installation.mcPath = installation.mcPath ??
@@ -193,6 +194,7 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
 			await removeVersion(installation.lastVersionId);
 		}
 		delete installations[hash];
+		versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
 		const ver_path = path.join(versions_directory, installation.name);
 		fs.rmSync(ver_path, { recursive: true, force: true });
 		callbacks.runCallbacks(installations);
