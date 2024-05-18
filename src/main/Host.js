@@ -18,7 +18,6 @@ const requestChannels = Object.seal({
 	createInstallation: 'createInstallation',
 	editInstallation: 'editInstallation',
 	removeInstallation: 'removeInstallation',
-	moveInstallationPosition: 'moveInstallationPosition',
 	fetchConfiguration: 'fetchConfiguration',
 	setConfiguration: 'setConfiguration',
 	fetchSystemMem: 'fetchSystemMem',
@@ -278,7 +277,7 @@ const initHandlers = async () => {
 	{ // Installations
 		const updateTray = throttle(() => Tray.updateTray(), 2e3, true);
 		InstallationsManager.addCallback(config => {
-			// console.debug("Update Installations:", config);
+			console.debug("Update Installations:", config);
 			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
 			updateTray();
 		});
@@ -296,9 +295,6 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.removeInstallation, async ({ hash, forceDeps }) =>
 			await InstallationsManager.removeInstallation(hash, forceDeps)
 		);
-		WSSHost.addReducer(requestChannels.moveInstallationPosition, async ({ startHash, endHash }) => {
-			await InstallationsManager.moveInstallationPosition(startHash, endHash);
-		});
 		WSSHost.addReducer(requestChannels.fetchVersions, async () => {
 			const versions = await VersionManager.getGlobalVersions();
 			return { versions };

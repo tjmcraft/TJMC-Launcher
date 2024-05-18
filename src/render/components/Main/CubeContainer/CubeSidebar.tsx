@@ -1,4 +1,4 @@
-import React, { memo, createElement, useCallback, useState, useRef, useEffect } from "react";
+import React, { memo, createElement, useCallback, useState, useRef, useEffect, useMemo } from "react";
 
 import buildClassName from "Util/buildClassName";
 import captureEscKeyListener from "Util/captureEscKeyListener";
@@ -13,11 +13,34 @@ import { TextInput } from "UI/Input";
 import Transition from "UI/Transition";
 import InstanceItem from "./InstanceItem";
 import CubeSidebarItem from "./CubeSidebarItem";
+import useLocalStorageCache from "Hooks/useLocalStorageCache";
+
+const useSortedInstance = (instances: Array<string>) => {
+	const [ordered, setOrdered] = useLocalStorageCache('instancesOrder', () => [] as string[], JSON.stringify, JSON.parse);
+	const sorted = useRef<Array<string>>();
+	useMemo(() => {
+		sorted.current = instances.slice().sort((a, b) => ordered.indexOf(a) - ordered.indexOf(b));
+	}, [instances, ordered]);
+
+	const setPosition = (startHash: string, endHash: string) => {
+		const items = sorted.current.slice();
+		const startIndex = items.findIndex(e => e == startHash);
+		const endIndex = items.findIndex(e => e == endHash);
+		const [draggedItem] = items.splice(startIndex, 1);
+		items.splice(endIndex, 0, draggedItem);
+		setOrdered(items);
+	};
+
+	return {
+		instances: sorted.current,
+		setPosition,
+	};
+};
 
 
 const CubeSidebarItems = memo(function CubeSidebarItems({ installations }: { installations: Array<string> }) {
 
-	const { moveInstallationPosition } = getDispatch();
+	const { instances, setPosition } = useSortedInstance(installations);
 	const currentHash = useGlobal(global => selectCurrentVersionHash(global));
 
 	const [dragOverItem, setDragOverItem] = useState(undefined);
@@ -28,10 +51,10 @@ const CubeSidebarItems = memo(function CubeSidebarItems({ installations }: { ins
 		const startHash = e.dataTransfer.getData("installation-hash");
 		e.dataTransfer.clearData();
 		window.__debug__ && console.debug("[drag]", startHash, ">>", endHash);
-		moveInstallationPosition({ startHash: startHash, endHash: endHash });
-	}, [moveInstallationPosition]);
+		setPosition(startHash, endHash);
+	}, []);
 
-	return installations.length ? (
+	return instances.length ? (
 		<div
 			className="installations"
 			onDragLeave={() => setDragOverItem(undefined)}
@@ -39,7 +62,7 @@ const CubeSidebarItems = memo(function CubeSidebarItems({ installations }: { ins
 			onDragOver={e => e.preventDefault()}
 			onDrop={handleDragEnd}
 		>
-			{installations.map((hash) => (
+			{instances.map((hash) => (
 				<CubeSidebarItem
 					key={hash}
 					hash={hash}

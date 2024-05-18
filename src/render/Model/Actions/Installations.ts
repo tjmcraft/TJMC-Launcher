@@ -38,11 +38,6 @@ addReducer("removeInstallation", (_global, _actions, payload) => {
 	const { hash, forceDeps } = payload;
 	void callHost("removeInstallation", { hash, forceDeps });
 });
-addReducer("moveInstallationPosition", (_global, _actions, payload) => {
-	if (!payload) return;
-	const { startHash, endHash } = payload;
-	void callHost("moveInstallationPosition", { startHash, endHash });
-});
 
 addReducer("openInstallationFolder", (_global, _actions, payload) => {
 	if (!payload) return;
