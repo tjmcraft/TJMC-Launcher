@@ -18,7 +18,7 @@ const installations = {};
 var versions_directory = path.join(launcherDir, "instances");
 
 module.exports.load = () => {
-	versions_directory = path.join(getOption('overrides.path.versions'), "instances");
+	versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
 	if (!fs.existsSync(versions_directory)) fs.mkdirSync(versions_directory, { recursive: true });
 	try {
 		fs.readdirSync(versions_directory).forEach(folder_name => {
