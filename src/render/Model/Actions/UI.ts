@@ -2,6 +2,7 @@ import { addModal, closeModal, unloadModal } from "Model/Reducers/ui";
 import { debounce } from "Util/Shedulers";
 import { addCallback, addReducer, getState, setState } from "Store/Global";
 import getPreferredColorScheme from "Util/getPreferredColorScheme";
+import { matchColorScheme } from "Util/colorScheme";
 
 const switchPlatform = (platform) => {
 	platform = platform || "web";
@@ -12,12 +13,6 @@ const switchPlatform = (platform) => {
 	});
 	const token = platforms[platform] || "platform-web";
 	return (document.documentElement.classList.add(token), true);
-};
-
-const matchColorScheme = (callback = () => { }) => {
-	const colorScheme = window.matchMedia('(prefers-color-scheme: dark)'); // Current web color scheme [browser]
-	colorScheme.addEventListener('change', () => callback()); // Register new eventListener for colorScheme change [browser]
-	return colorScheme.matches;
 };
 
 /**
