@@ -1,4 +1,4 @@
-const Config = require('../libs/Config');
+const Config = require('@tjmc/config');
 const keytar = require('keytar');
 const EventEmitter = require('node:events');
 const { downloadFile, postBody } = require('../util/download');
@@ -16,14 +16,13 @@ const CLIENT_SECRET = "client1.secret";
 const KEYTAR_KEY = 'ru.tjmc.launcher.auth';
 
 const config = new Config({
-	prefix: "AuthConfig",
-	color: "#a0a255",
 	configName: 'auth-config.json',
 	configDir: launcherDir,
 	defaultConfig: Object.seal({
 		currentUserId: "",
 		users: [],
-	})
+	}),
+	logger: logger,
 });
 
 class AuthManager extends EventEmitter {

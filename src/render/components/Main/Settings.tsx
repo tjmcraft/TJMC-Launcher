@@ -48,7 +48,6 @@ const SideBarItems = ({
 	const items = useMemo(() => [
 		{ type: "separator" },
 		{ type: "navItem", content: "Моя учётная запись", tab: "my-account", icon: 'icon-user' },
-		{ type: "navItem", content: "Сменить скин", tab: "skin", disabled: [!online, user.permission == 'offline'].some(Boolean), icon: 'icon-loop' },
 		{ type: "separator" },
 		{ type: "navItem", content: "Игровые настройки", tab: "minecraft-settings", disabled: !hostOnline, icon: 'icon-replace' },
 		{ type: "navItem", content: "Настройки Java", tab: "java-settings", disabled: !hostOnline, icon: 'icon-permissions' },
@@ -247,37 +246,6 @@ const MyAccountTab = memo(function MyAccountTab() {
 				{APP_ENV == "development" && (
 					<TestContainer />
 				)}
-			</div>
-		</TabItem>
-	);
-});
-
-const SkinTab = memo(function SkinTab() {
-	const user = useGlobal(selectCurrentUser);
-
-	const handleChangeClick = useCallback(() => {
-		window.open(`https://id.tjmc.ru/client/skin`);
-	}, []);
-
-	const handleDownloadClick = useCallback(() => {
-		window.open(`https://api.tjmc.ru/v1/skin.render?user=${user.username}&format=raw&dl=true`);
-	}, [user]);
-
-	return user && (
-		<TabItem id="skin">
-			<h2>Конфигурация скина</h2>
-			<div className="children">
-				<div className={style.settingGroupContainer}>
-					<div className={style.zxcBox}>
-						<div className="skin-flex">
-							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&vr=-25&hr=35`} />
-							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18`} />
-							<img src={`https://api.tjmc.ru/v1/skin.render?user=${user.username}&ratio=18&hr=90`} />
-						</div>
-						<button className={buildClassName("filled", "colorBrand", "w100")} onClick={handleChangeClick}>{"Изменить"}</button>
-						<button className={buildClassName("filled", "w100")} onClick={handleDownloadClick}>{"Скачать"}</button>
-					</div>
-				</div>
 			</div>
 		</TabItem>
 	);
@@ -930,8 +898,6 @@ const ActiveTab = ({ current }: { current: GlobalState['currentSettingsScreen'] 
 	switch (current) {
 		case "my-account":
 			return (<MyAccountTab />);
-		case "skin":
-			return (<SkinTab />);
 		case "minecraft-settings":
 			return (<MinecraftSettingsTab />);
 		case "java-settings":
