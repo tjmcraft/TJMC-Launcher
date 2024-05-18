@@ -276,9 +276,9 @@ const initHandlers = async () => {
 
 	{ // Installations
 		const updateTray = throttle(() => Tray.updateTray(), 2e3, true);
-		InstallationsManager.addCallback(config => {
-			console.debug("Update Installations:", config);
-			config?.profiles && WSSHost.emit(ackChannels.updateInstallations, { installations: config.profiles });
+		InstallationsManager.addCallback(installations => {
+			console.debug("Update Installations:", installations);
+			installations && WSSHost.emit(ackChannels.updateInstallations, { installations: installations });
 			updateTray();
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallations, async () => {

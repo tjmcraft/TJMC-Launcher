@@ -1,36 +1,78 @@
+const fs = require('node:fs');
 const path = require('node:path');
-const Config = require('@tjmc/config');
 const { getOption } = require('./ConfigManager');
 const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
 const { launcherDir } = require('../Paths');
 const LoggerUtil = require('../util/loggerutil');
+const CallbackStore = require('../util/CallbackStore');
+
+const callbacks = new CallbackStore();
 
 
 /* ============= INSTALLATIONS ============= */
 
 const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold');
 
-const config = new Config({
-	configName: "launcher-profiles.json",
-	configDir: launcherDir,
-	defaultConfig: Object.seal({
-		tjmcVersion: '1.0.0',
-		profiles: {},
-	}),
-	logger: logger,
-});
+const installations = {};
+const versions_directory = path.join(launcherDir, "instances");
 
-module.exports.load = () => config.load();
-module.exports.addCallback = config.addCallback;
-module.exports.removeCallback = config.removeCallback;
+module.exports.load = () => {
+	if (!fs.existsSync(versions_directory)) fs.mkdirSync(versions_directory, { recursive: true });
+	try {
+		fs.readdirSync(versions_directory).forEach(folder_name => {
+			const ver_path = path.join(versions_directory, folder_name, 'instance.json');
+			if (fs.existsSync(ver_path)) {
+				let profile = null;
+				try {
+					profile = JSON.parse(fs.readFileSync(ver_path, 'utf8'));
+					installations[profile.hash] = profile;
+				} catch (err) {
+					logger.error("Error reading instance file for: " + folder_name + "\n" + error);
+				}
+				if (profile && folder_name != profile.name)
+					fs.renameSync(path.join(versions_directory, folder_name), path.join(versions_directory, profile.name));
+			}
+		});
+		return (installations);
+	} catch (error) {
+		logger.error("Error while parsing local versions: " + error)
+		return
+	}
+};
+
+module.exports.addCallback = (callback = () => void 0) => {
+	if (callback) callbacks.addCallback(callback);
+};
+module.exports.removeCallback = (callback = () => void 0) => {
+	if (callback) callbacks.removeCallback(callback);
+};
+
+/**
+ * Write Installation to instance file
+ * @param {import('../global').HostInstallation} profile
+ * @returns
+ */
+const writeInstallationProfile = (profile) => {
+	installations[profile.hash] = profile;
+	const instancePath = path.join(versions_directory, profile.name, 'instance.json');
+	if (!fs.existsSync(instancePath)) fs.mkdirSync(path.join(instancePath, '..'), { recursive: true });
+	try {
+		const content = JSON.stringify(installations[profile.hash], null, 4);
+		fs.writeFileSync(instancePath, content, 'utf-8');
+	} catch (err) {
+		logger.error("Error while writing instance file: " + profile.name + "\n" + err);
+	}
+	callbacks.runCallbacks(installations);
+	return profile.hash;
+};
 
 /**
  * Default installation scheme
  * @type {import('../global').HostInstallation}
  */
 const DEFAULT_PROFILE = Object.seal({
-	created: new Date().toISOString(),
+	created_at: new Date().toISOString(),
 	icon: undefined,
 	type: 'custom',
 	gameDir: undefined,
@@ -68,16 +110,12 @@ const DEFAULT_PROFILE = Object.seal({
 exports.createInstallation = async function (options = {}) {
 	const current_date = new Date().toISOString();
 	options = Object.assign(DEFAULT_PROFILE, { // reassign
-		created: current_date,
+		created_at: current_date,
 	}, options);
 	const profile = cleanObject(options);
-	const installations = config.getOption("profiles");
 	if (profile) {
 		const hash = generateIdFor(installations);
-		const next = Object.assign({}, {
-			[hash]: profile
-		}, installations);
-		config.setOption("profiles", next);
+		writeInstallationProfile({ ...profile, hash });
 		return hash;
 	}
 	return undefined;
@@ -88,7 +126,7 @@ exports.createInstallation = async function (options = {}) {
  * @returns {Object.<string,import('../global').HostInstallation>}
  */
 exports.getInstallations = () => {
-	return config.getOption("profiles");
+	return installations;
 }
 
 /**
@@ -97,7 +135,10 @@ exports.getInstallations = () => {
  * @returns {Promise<import('../global').HostInstallation>} - The installation's object
  */
 exports.getInstallation = async (hash) => {
-	return exports.getInstallationSync(hash);
+	if (hash && Object(installations).hasOwnProperty(hash)) {
+		return installations[hash];
+	}
+	return undefined;
 }
 
 /**
@@ -106,7 +147,6 @@ exports.getInstallation = async (hash) => {
  * @returns {import('../global').HostInstallation} - The installation's object
  */
 exports.getInstallationSync = (hash) => {
-	const installations = this.getInstallations();
 	if (hash && Object(installations).hasOwnProperty(hash)) {
 		let installation = installations[hash];
 		installation = Object.assign({}, DEFAULT_PROFILE, {
@@ -145,14 +185,16 @@ exports.getInstallationSync = (hash) => {
  */
 exports.removeInstallation = async function (hash, forceDeps = false) {
 	const { removeVersion } = require('./VersionManager');
-	const installations = config.getOption("profiles");
+	const installations = this.getInstallations();
 	if (hash && Object(installations).hasOwnProperty(hash)) {
 		const installation = installations[hash];
 		if (forceDeps) {
 			await removeVersion(installation.lastVersionId);
 		}
 		delete installations[hash];
-		config.setOption("profiles", installations);
+		const ver_path = path.join(versions_directory, installation.name);
+		fs.rmSync(ver_path, { recursive: true, force: true });
+		callbacks.runCallbacks(installations);
 		return hash;
 	}
 	return undefined;
@@ -164,7 +206,6 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
  * @param {import('../global').HostInstallation} nextProps Props to modify
  */
 exports.modifyInstallation = async function (hash, nextProps) {
-	const installations = config.getOption("profiles");
 	if (hash && Object(installations).hasOwnProperty(hash)) {
 		const installation = installations[hash];
 		Object.assign(installation, nextProps, {
@@ -174,25 +215,8 @@ exports.modifyInstallation = async function (hash, nextProps) {
 			},
 		});
 		installations[hash] = cleanObject(installation);
-		config.setOption("profiles", installations);
+		writeInstallationProfile({ ...installation, hash });
 		return hash;
-	}
-	return undefined;
-}
-
-exports.moveInstallationPosition = async function (startHash, endHash) {
-	const installations = config.getOption("profiles");
-	if (!startHash || !endHash) return;
-	if (startHash === endHash) return;
-	if (Object(installations).hasOwnProperty(startHash) && Object(installations).hasOwnProperty(endHash)) {
-		const items = [...Object.entries(installations)];
-		const startIndex = items.findIndex(e => e[0] == startHash);
-		const endIndex = items.findIndex(e => e[0] == endHash);
-		const [draggedItem] = items.splice(startIndex, 1);
-		items.splice(endIndex, 0, draggedItem);
-		const next = Object.fromEntries(items);
-		config.setOption("profiles", next);
-		return endHash;
 	}
 	return undefined;
 }
