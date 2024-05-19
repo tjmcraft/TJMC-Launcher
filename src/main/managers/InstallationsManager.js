@@ -22,18 +22,7 @@ module.exports.load = () => {
 	if (!fs.existsSync(versions_directory)) fs.mkdirSync(versions_directory, { recursive: true });
 	try {
 		fs.readdirSync(versions_directory).forEach(folder_name => {
-			const ver_path = path.join(versions_directory, folder_name, 'instance.json');
-			if (fs.existsSync(ver_path)) {
-				let profile = null;
-				try {
-					profile = JSON.parse(fs.readFileSync(ver_path, 'utf8'));
-					installations[profile.hash] = profile;
-				} catch (err) {
-					logger.error("Error reading instance file for: " + folder_name + "\n" + error);
-				}
-				if (profile && folder_name != profile.name)
-					fs.renameSync(path.join(versions_directory, folder_name), path.join(versions_directory, profile.name));
-			}
+			readInstallationProfile(folder_name);
 		});
 		return (installations);
 	} catch (error) {
@@ -49,6 +38,25 @@ module.exports.removeCallback = (callback = () => void 0) => {
 	if (callback) callbacks.removeCallback(callback);
 };
 
+/**
+ * Read Installation file
+ * @param {import('../global').HostInstallation} profile
+ * @returns
+ */
+const readInstallationProfile = (profile_name) => {
+	const instancePath = path.join(getVersionsDirectory(), profile_name, 'instance.json');
+	if (!fs.existsSync(instancePath)) return;
+	let profile = null;
+	try {
+		profile = JSON.parse(fs.readFileSync(instancePath, 'utf-8'));
+		installations[profile.hash] = profile;
+	} catch (err) {
+		logger.error("Error reading instance file for: " + folder_name + "\n" + error);
+	}
+	if (profile && folder_name != profile.name)
+		fs.renameSync(path.join(versions_directory, folder_name), path.join(versions_directory, profile.name));
+	return profile;
+};
 /**
  * Write Installation to instance file
  * @param {import('../global').HostInstallation} profile
