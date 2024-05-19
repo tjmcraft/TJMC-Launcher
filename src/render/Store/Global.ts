@@ -29,6 +29,7 @@ export type GlobalState = {
 	};
 	users: Record<string, AnyLiteral>;
 	installations: Record<string, HostInstallation>;
+	screenshotsByInstallationHash: Record<keyof GlobalState['installations'], string>;
 	instances: Record<string, AnyLiteral>;
 	versions: Array<Version>;
 	modals: Array<{
@@ -82,6 +83,7 @@ const INITIAL_STATE: GlobalState = {
 	},
 	users: {},
 	installations: {},
+	screenshotsByInstallationHash: {},
 	instances: {},
 	versions: [],
 	modals: [],

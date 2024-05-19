@@ -24,5 +24,6 @@ export async function initHost(_onUpdate, initialArgs) {
 }
 
 export function callHost(fnName, ...args) {
+	if (methods[fnName] === undefined) throw Error("Provider rejected host call due to method is not exists");
 	return methods[fnName](...args);
 }

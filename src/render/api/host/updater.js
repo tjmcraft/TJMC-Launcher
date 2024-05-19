@@ -58,6 +58,12 @@ export function updater(update) {
 			type: "updateInstallations",
 			installations: payload.installations,
 		});
+	} else if (type == "updateInstallationScreenshots") {
+		payload?.screenshots && onUpdate({
+			type: "updateInstallationScreenshots",
+			screenshots: payload.screenshots,
+			profile_name: payload.profile_name,
+		});
 	} else if (type == "updateConfiguration") {
 		payload?.configuration && onUpdate({
 			type: "updateConfiguration",

@@ -94,3 +94,23 @@ export async function openInstallationFolder(hash) {
 	if (!result) return undefined;
 	return result.payload;
 }
+
+
+export async function fetchInstallationScreenshots(name) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "fetchInstallationScreenshots",
+			data: { name: name },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	result.payload?.screenshots && onUpdate({
+		type: "updateInstallationScreenshots",
+		screenshots: result.payload.screenshots,
+		profile_name: result.payload.profile_name,
+	});
+	return result.payload;
+}

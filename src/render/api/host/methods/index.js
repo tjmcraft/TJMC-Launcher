@@ -11,11 +11,11 @@ export {
 } from './host';
 export {
 	fetchInstallations,
+	fetchInstallationScreenshots,
 	fetchVersions,
 	createInstallation,
 	editInstallation,
 	removeInstallation,
-	moveInstallationPosition,
 	openInstallationFolder,
 } from './installation';
 export {

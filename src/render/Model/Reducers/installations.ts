@@ -65,3 +65,14 @@ export function updateInstallationProgress(global, update) {
 	}
 	return void 0;
 }
+
+export function updateInstallationScreenshots(global, update) {
+	const { profile_name, screenshots } = update;
+	return {
+		...global,
+		screenshotsByInstallationHash: {
+			...global.screenshotsByInstallationHash,
+			[profile_name]: screenshots
+		}
+	};
+}

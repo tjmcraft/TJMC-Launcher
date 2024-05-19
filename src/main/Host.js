@@ -11,6 +11,7 @@ const requestChannels = Object.seal({
 	invokeLaunch: 'invokeLaunch',
 	revokeLaunch: 'revokeLaunch',
 	fetchInstallations: 'fetchInstallations',
+	fetchInstallationScreenshots: 'fetchInstallationScreenshots',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
 	killAllInstances: 'killAllInstances',
@@ -39,6 +40,7 @@ const ackChannels = Object.seal({
 	updateCurrentUser: 'auth:updateCurrentUser',
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
+	updateInstallationScreenshots: 'updateInstallationScreenshots',
 	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
 	gameStartup: 'game.startup.success',
@@ -88,6 +90,7 @@ const VersionManager = require('./managers/VersionManager');
 const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
+const InstanceScreenshotService = require('./services/InstanceScreenshotService');
 
 const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
 
@@ -302,6 +305,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.openInstallationFolder, async ({ hash }) => {
 			const installation = await InstallationsManager.getInstallation(hash);
 			shell.openPath(installation.versionDir);
+		});
+		WSSHost.addReducer(requestChannels.fetchInstallationScreenshots, async ({ name }) => {
+			const screenshots = await InstanceScreenshotService.getScreenshots(name);
+			return { profile_name: name, screenshots };
 		});
 	}
 
