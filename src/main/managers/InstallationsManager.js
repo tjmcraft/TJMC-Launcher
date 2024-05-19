@@ -15,10 +15,10 @@ const callbacks = new CallbackStore();
 const logger = LoggerUtil('%c[InstallationsManager]', 'color: #0066d6; font-weight: bold');
 
 const installations = {};
-var versions_directory = path.join(launcherDir, "instances");
+const getVersionsDirectory = () => path.join(getOption('overrides.path.minecraft'), "instances");
 
 module.exports.load = () => {
-	versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
+	let versions_directory = getVersionsDirectory();
 	if (!fs.existsSync(versions_directory)) fs.mkdirSync(versions_directory, { recursive: true });
 	try {
 		fs.readdirSync(versions_directory).forEach(folder_name => {
@@ -56,8 +56,7 @@ module.exports.removeCallback = (callback = () => void 0) => {
  */
 const writeInstallationProfile = (profile) => {
 	installations[profile.hash] = profile;
-	versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
-	const instancePath = path.join(versions_directory, profile.name, 'instance.json');
+	const instancePath = path.join(getVersionsDirectory(), profile.name, 'instance.json');
 	if (!fs.existsSync(instancePath)) fs.mkdirSync(path.join(instancePath, '..'), { recursive: true });
 	try {
 		const content = JSON.stringify(installations[profile.hash], null, 4);
@@ -155,7 +154,7 @@ exports.getInstallationSync = (hash) => {
 			hash: hash,
 		}, installation);
 		installation.gameDir = installation.gameDir ??
-			path.resolve(getOption('overrides.path.minecraft'), "instances", installation.name);
+			path.resolve(getVersionsDirectory(), installation.name);
 		installation.versionDir = installation.versionDir ??
 			path.join(getOption('overrides.path.versions'), installation.lastVersionId);
 		installation.mcPath = installation.mcPath ??
@@ -194,8 +193,7 @@ exports.removeInstallation = async function (hash, forceDeps = false) {
 			await removeVersion(installation.lastVersionId);
 		}
 		delete installations[hash];
-		versions_directory = path.join(getOption('overrides.path.minecraft'), "instances");
-		const ver_path = path.join(versions_directory, installation.name);
+		const ver_path = path.join(getVersionsDirectory(), installation.name);
 		fs.rmSync(ver_path, { recursive: true, force: true });
 		callbacks.runCallbacks(installations);
 		return hash;
