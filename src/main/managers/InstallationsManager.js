@@ -51,10 +51,10 @@ const readInstallationProfile = (profile_name) => {
 		profile = JSON.parse(fs.readFileSync(instancePath, 'utf-8'));
 		installations[profile.hash] = profile;
 	} catch (err) {
-		logger.error("Error reading instance file for: " + folder_name + "\n" + error);
+		logger.error("Error reading instance file for: " + profile_name + "\n" + error);
 	}
-	if (profile && folder_name != profile.name)
-		fs.renameSync(path.join(versions_directory, folder_name), path.join(versions_directory, profile.name));
+	if (profile && profile_name != profile.name)
+		fs.renameSync(path.join(versions_directory, profile_name), path.join(versions_directory, profile.name));
 	return profile;
 };
 /**
