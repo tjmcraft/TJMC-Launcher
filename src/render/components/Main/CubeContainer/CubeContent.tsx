@@ -103,7 +103,7 @@ const CubeContent = ({ hash }: { hash: string }) => {
 		hasInstallation ? (
 			<Fragment>
 				<div className="r-box">
-					<div className={buildClassName("main-content", "auto-s")}>
+					<div className={buildClassName("main-content", "thin-s")}>
 						<CubeTopContainer hash={hash} />
 						<CubeMainContainer hash={hash} />
 					</div>

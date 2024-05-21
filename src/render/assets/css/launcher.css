@@ -908,7 +908,8 @@ body {
     overflow: hidden;
     background-color: var(--background-secondary-alt);
 }
-.r-box + .r-box {
+
+.leftColumn .r-box + .r-box {
     max-height: 40vh;
 }
 
@@ -937,6 +938,12 @@ body {
     overflow: hidden;
 }
 
+.r-box .header-w > span.title i {
+    line-height: 20px;
+}
+.r-box .header-w > span.title i+span {
+    line-height: 20px;
+}
 .r-box .header-w > span.title {
     -webkit-box-align: center;
     -ms-flex-align: center;
@@ -1177,6 +1184,21 @@ body {
 .main-content  > .main {
     position: relative;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+.main-content > .main .r-box {
+    background-color: var(--background-primary);
+}
+.main-content > .main .main-row {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 #playButton {
@@ -1550,6 +1572,12 @@ a.anchor:hover {
 .d-flex.right {
     justify-content: flex-end !important;
     align-items: center !important;
+}
+.d-flex.row {
+    flex-direction: row;
+}
+.d-flex.gap {
+    gap: 8px;
 }
 
 .input-wrapper .label {
