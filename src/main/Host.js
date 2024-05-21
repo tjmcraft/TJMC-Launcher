@@ -304,7 +304,7 @@ const initHandlers = async () => {
 		});
 		WSSHost.addReducer(requestChannels.openInstallationFolder, async ({ hash }) => {
 			const installation = await InstallationsManager.getInstallation(hash);
-			shell.openPath(installation.versionDir);
+			shell.openPath(installation.gameDir);
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallationScreenshots, async ({ name }) => {
 			const screenshots = await InstanceScreenshotService.getScreenshots(name);
