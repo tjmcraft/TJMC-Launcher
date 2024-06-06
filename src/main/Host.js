@@ -12,6 +12,7 @@ const requestChannels = Object.seal({
 	revokeLaunch: 'revokeLaunch',
 	fetchInstallations: 'fetchInstallations',
 	fetchInstallationScreenshots: 'fetchInstallationScreenshots',
+	fetchInstallationSaves: 'fetchInstallationSaves',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
 	killAllInstances: 'killAllInstances',
@@ -41,6 +42,7 @@ const ackChannels = Object.seal({
 	updateConfiguration: 'updateConfiguration',
 	updateInstallations: 'updateInstallations',
 	updateInstallationScreenshots: 'updateInstallationScreenshots',
+	updateInstallationSaves: 'updateInstallationSaves',
 	updateInstances: 'updateInstances',
 	gameProgressLoad: 'game.progress.load',
 	gameStartup: 'game.startup.success',
@@ -91,6 +93,7 @@ const InstallationsManager = require('./managers/InstallationsManager');
 const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
 const InstanceScreenshotService = require('./services/InstanceScreenshotService');
+const InstanceSavesService = require('./services/InstanceSavesService');
 
 const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
 
@@ -309,6 +312,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.fetchInstallationScreenshots, async ({ name }) => {
 			const screenshots = await InstanceScreenshotService.getScreenshots(name);
 			return { profile_name: name, screenshots };
+		});
+		WSSHost.addReducer(requestChannels.fetchInstallationSaves, async ({ name }) => {
+			const saves = await InstanceSavesService.getSaves(name);
+			return { profile_name: name, saves };
 		});
 	}
 

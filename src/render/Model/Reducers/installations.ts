@@ -1,5 +1,5 @@
 import { selectCurrentVersionHash, selectInstallation } from "Model/Selectors/installations";
-import { getState, setState } from "Store/Global";
+import { GlobalState, getState, setState } from "Store/Global";
 import ProgressStore from "Store/Progress";
 
 export function replaceInstallation(global, hash, update) {
@@ -66,13 +66,24 @@ export function updateInstallationProgress(global, update) {
 	return void 0;
 }
 
-export function updateInstallationScreenshots(global, update) {
+export function updateInstallationScreenshots(global: GlobalState, update) {
 	const { profile_name, screenshots } = update;
 	return {
 		...global,
 		screenshotsByInstallationHash: {
 			...global.screenshotsByInstallationHash,
 			[profile_name]: screenshots
+		}
+	};
+}
+
+export function updateInstallationSaves(global: GlobalState, update) {
+	const { profile_name, saves } = update;
+	return {
+		...global,
+		savesByInstallationHash: {
+			...global.savesByInstallationHash,
+			[profile_name]: saves
 		}
 	};
 }

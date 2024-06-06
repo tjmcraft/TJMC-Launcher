@@ -114,3 +114,22 @@ export async function fetchInstallationScreenshots(name) {
 	});
 	return result.payload;
 }
+
+export async function fetchInstallationSaves(name) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "fetchInstallationSaves",
+			data: { name: name },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	result.payload?.saves && onUpdate({
+		type: "updateInstallationSaves",
+		saves: result.payload.saves,
+		profile_name: result.payload.profile_name,
+	});
+	return result.payload;
+}

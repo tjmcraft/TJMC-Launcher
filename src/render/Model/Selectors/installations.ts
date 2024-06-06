@@ -37,3 +37,9 @@ export function selectScreenshots(global, hash) {
 	}
 	return [];
 }
+export function selectSaves(global: GlobalState, hash) {
+	if (global.savesByInstallationHash && Object(global.savesByInstallationHash).hasOwnProperty(hash)) {
+		return [ ...global.savesByInstallationHash[hash] ];
+	}
+	return [];
+}

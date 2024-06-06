@@ -64,6 +64,12 @@ export function updater(update) {
 			screenshots: payload.screenshots,
 			profile_name: payload.profile_name,
 		});
+	} else if (type == "updateInstallationSaves") {
+		payload?.saves && onUpdate({
+			type: "updateInstallationSaves",
+			saves: payload.saves,
+			profile_name: payload.profile_name,
+		});
 	} else if (type == "updateConfiguration") {
 		payload?.configuration && onUpdate({
 			type: "updateConfiguration",

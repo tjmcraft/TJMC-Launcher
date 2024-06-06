@@ -1,6 +1,6 @@
 import { addReducer } from "Store/Global";
 import { callHost } from "../../api/host";
-import { updateInstallations, updateInstallationProgress, updateInstallationScreenshots } from "Model/Reducers/installations";
+import { updateInstallations, updateInstallationProgress, updateInstallationScreenshots, updateInstallationSaves } from "Model/Reducers/installations";
 import { updateVersions } from "Model/Reducers/versions";
 import { updateInstances } from "Model/Reducers/instances";
 import { cleanObject } from "Util/Iterates";
@@ -10,6 +10,7 @@ addReducer("hostUpdate", (global, _actions, update) => {
 	switch (update.type) {
 		case "updateInstallations": return updateInstallations(global, update);
 		case "updateInstallationScreenshots": return updateInstallationScreenshots(global, update);
+		case "updateInstallationSaves": return updateInstallationSaves(global, update);
 		case "updateVersions": return updateVersions(global, update);
 		case "updateInstances": return updateInstances(global, update);
 
@@ -31,6 +32,10 @@ addReducer("createInstallation", async (_global, actions, payload) => {
 addReducer("fetchInstallationScreenshots", async (_global, actions, payload) => {
 	if (!payload) return;
 	await callHost("fetchInstallationScreenshots", payload);
+});
+addReducer("fetchInstallationSaves", async (_global, actions, payload) => {
+	if (!payload) return;
+	await callHost("fetchInstallationSaves", payload);
 });
 addReducer("editInstallation", async (_global, _actions, payload) => {
 	if (!payload) return;
