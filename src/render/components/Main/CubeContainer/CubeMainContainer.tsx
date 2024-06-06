@@ -16,13 +16,12 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 	return (
 		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
 			<div className="header-w-wrap">
-			<div className='header-w'>
-				<span className="title">
-					<i className="icon-forums"></i>
-					<span>Screenshots</span>
-				</span>
-			</div>
-
+				<div className='header-w'>
+					<span className="title">
+						<i className="icon-forums"></i>
+						<span>Screenshots</span>
+					</span>
+				</div>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
 				{screenshots.length > 0 ? (
@@ -49,13 +48,12 @@ const SavesCard = ({ hash }: { hash: string }) => {
 	return (
 		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
 			<div className="header-w-wrap">
-			<div className='header-w'>
-				<span className="title">
-					<i className="icon-forums"></i>
-					<span>Saves</span>
-				</span>
-			</div>
-
+				<div className='header-w'>
+					<span className="title">
+						<i className="icon-forums"></i>
+						<span>Saves</span>
+					</span>
+				</div>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
 				{saves.length > 0 ? (
