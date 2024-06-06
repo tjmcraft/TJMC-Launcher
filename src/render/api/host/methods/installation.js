@@ -94,6 +94,19 @@ export async function openInstallationFolder(hash) {
 	if (!result) return undefined;
 	return result.payload;
 }
+export async function openInstallationSavesFolder(hash) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "openInstallationSavesFolder",
+			data: { hash: hash },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	return result.payload;
+}
 
 
 export async function fetchInstallationScreenshots(name) {

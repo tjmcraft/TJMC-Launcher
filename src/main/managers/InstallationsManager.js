@@ -85,6 +85,7 @@ const DEFAULT_PROFILE = Object.seal({
 	icon: undefined,
 	type: 'custom',
 	gameDir: undefined,
+	savesDir: undefined,
 	versionDir: undefined,
 	mcPath: undefined,
 	javaPath: undefined,
@@ -163,6 +164,8 @@ exports.getInstallationSync = (hash) => {
 		}, installation);
 		installation.gameDir = installation.gameDir ??
 			path.resolve(getVersionsDirectory(), installation.name);
+		installation.savesDir = installation.savesDir ??
+			path.resolve(getVersionsDirectory(), installation.name, "saves");
 		installation.versionDir = installation.versionDir ??
 			path.join(getOption('overrides.path.versions'), installation.lastVersionId);
 		installation.mcPath = installation.mcPath ??

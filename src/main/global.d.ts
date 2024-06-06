@@ -43,6 +43,7 @@ interface HostInstallation {
   icon?: string;
   type: 'custom';
   gameDir?: PathLike;
+  savesDir?: PathLike;
   versionDir?: PathLike;
   mcPath?: PathLike;
   javaPath?: PathLike;

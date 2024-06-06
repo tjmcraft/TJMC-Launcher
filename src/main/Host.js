@@ -33,6 +33,7 @@ const requestChannels = Object.seal({
 	openMinecraftFolder: 'openMinecraftFolder',
 	openVersionsFolder: 'openVersionsFolder',
 	openInstallationFolder: 'openInstallationFolder',
+	openInstallationSavesFolder: 'openInstallationSavesFolder',
 });
 exports.requestChannels = requestChannels;
 
@@ -308,6 +309,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.openInstallationFolder, async ({ hash }) => {
 			const installation = await InstallationsManager.getInstallation(hash);
 			shell.openPath(installation.gameDir);
+		});
+		WSSHost.addReducer(requestChannels.openInstallationSavesFolder, async ({ hash }) => {
+			const savesDir = await InstanceSavesService.getSavesDir(hash);
+			shell.openPath(savesDir);
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallationScreenshots, async ({ name }) => {
 			const screenshots = await InstanceScreenshotService.getScreenshots(name);

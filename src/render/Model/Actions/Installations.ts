@@ -54,6 +54,10 @@ addReducer("openInstallationFolder", (_global, _actions, payload) => {
 	const { hash } = payload;
 	void callHost("openInstallationFolder", hash);
 });
+addReducer("openInstallationSavesFolder", (_global, _actions, payload) => {
+	if (!payload) return;
+	void callHost("openInstallationSavesFolder", payload);
+});
 
 addReducer("killInstance", (_global, _actions, payload) => {
 	if (!payload) return;

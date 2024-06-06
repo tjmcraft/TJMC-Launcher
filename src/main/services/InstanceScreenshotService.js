@@ -16,4 +16,4 @@ module.exports.getScreenshots = async (profile_name) => {
 	return screenshots || [];
 };
 
-module.exports.showScreenshot = () => { };
+module.exports.openScreenshot = () => { };

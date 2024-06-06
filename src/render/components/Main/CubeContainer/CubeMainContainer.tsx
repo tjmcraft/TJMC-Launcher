@@ -1,4 +1,4 @@
-import React, { memo, createElement, useEffect } from "react";
+import React, { memo, createElement, useEffect, useCallback } from "react";
 import useGlobal from "Hooks/useGlobal";
 import { selectInstallation, selectSaves, selectScreenshots } from "Model/Selectors/installations";
 import { getDispatch } from "Store/Global";
@@ -21,6 +21,9 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 						<i className="icon-forums"></i>
 						<span>Screenshots</span>
 					</span>
+					<button className="circle">
+						<i className="icon-folder"></i>
+					</button>
 				</div>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
@@ -39,11 +42,12 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 
 const SavesCard = ({ hash }: { hash: string }) => {
 	const hostOnline = useHostOnline();
-	const { fetchInstallationSaves } = getDispatch();
+	const { fetchInstallationSaves, openInstallationSavesFolder } = getDispatch();
 
 	const { name } = useGlobal(global => selectInstallation(global, hash), [hash]);
 	useEffect(() => hostOnline && name ? fetchInstallationSaves(name) : null, [hostOnline, name]);
 	const saves = useGlobal(global => selectSaves(global, name));
+	const openSavesFolder = useCallback(() => openInstallationSavesFolder(name), [name]);
 
 	return (
 		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
@@ -53,6 +57,9 @@ const SavesCard = ({ hash }: { hash: string }) => {
 						<i className="icon-forums"></i>
 						<span>Saves</span>
 					</span>
+					<button className="circle" onClick={openSavesFolder} title="Open saves folder">
+						<i className="icon-folder"></i>
+					</button>
 				</div>
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
@@ -65,6 +72,14 @@ const SavesCard = ({ hash }: { hash: string }) => {
 							<div className="nameTag">
 								<div className="title">{save.name as string}</div>
 								<div className="subtitle">{save.path as string}</div>
+							</div>
+							<div className="container">
+								<button className="circle">
+									<i className="icon-folder"></i>
+								</button>
+								<button className="circle">
+									<i className="icon-delete"></i>
+								</button>
 							</div>
 						</div>
 					))

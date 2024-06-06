@@ -589,13 +589,13 @@ p {
     cursor: default;
 }
 
-.navItem button {
+.navItem.itemHover button {
     visibility: hidden;
     width: 24px !important;
     height: 24px !important;
     font-size: 12px !important;
 }
-.navItem:hover button {
+.navItem.itemHover:hover button {
     visibility: visible;
 }
 
