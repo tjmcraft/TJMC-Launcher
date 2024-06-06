@@ -24,4 +24,9 @@ module.exports.getSavesDir = (profile_name) => {
 	if (!fs.existsSync(savesDirectory)) fs.mkdirSync(savesDirectory, { recursive: true });
 	return savesDirectory;
 };
-module.exports.openSaveDir = (profile_name, save_name) => { };
+module.exports.getSaveDir = (profile_name, save_name) => {
+	const profileDirectory = getProfileDirectory(profile_name);
+	const savesDirectory = path.join(profileDirectory, "saves");
+	if (!fs.existsSync(savesDirectory)) fs.mkdirSync(savesDirectory, { recursive: true });
+	return path.join(savesDirectory, save_name);
+};

@@ -19,6 +19,7 @@ export {
 	removeInstallation,
 	openInstallationFolder,
 	openInstallationSavesFolder,
+	openInstallationSaveFolder,
 } from './installation';
 export {
 	fetchInstances,

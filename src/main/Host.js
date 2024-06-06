@@ -34,6 +34,7 @@ const requestChannels = Object.seal({
 	openVersionsFolder: 'openVersionsFolder',
 	openInstallationFolder: 'openInstallationFolder',
 	openInstallationSavesFolder: 'openInstallationSavesFolder',
+	openInstallationSaveFolder: 'openInstallationSaveFolder',
 });
 exports.requestChannels = requestChannels;
 
@@ -313,6 +314,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.openInstallationSavesFolder, async ({ hash }) => {
 			const savesDir = await InstanceSavesService.getSavesDir(hash);
 			shell.openPath(savesDir);
+		});
+		WSSHost.addReducer(requestChannels.openInstallationSaveFolder, async ({ hash, name }) => {
+			const saveDir = await InstanceSavesService.getSaveDir(hash, name);
+			shell.openPath(saveDir);
 		});
 		WSSHost.addReducer(requestChannels.fetchInstallationScreenshots, async ({ name }) => {
 			const screenshots = await InstanceScreenshotService.getScreenshots(name);

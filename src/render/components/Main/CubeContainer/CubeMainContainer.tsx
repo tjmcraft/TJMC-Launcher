@@ -42,12 +42,13 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 
 const SavesCard = ({ hash }: { hash: string }) => {
 	const hostOnline = useHostOnline();
-	const { fetchInstallationSaves, openInstallationSavesFolder } = getDispatch();
+	const { fetchInstallationSaves, openInstallationSavesFolder, openInstallationSaveFolder } = getDispatch();
 
 	const { name } = useGlobal(global => selectInstallation(global, hash), [hash]);
 	useEffect(() => hostOnline && name ? fetchInstallationSaves(name) : null, [hostOnline, name]);
 	const saves = useGlobal(global => selectSaves(global, name));
 	const openSavesFolder = useCallback(() => openInstallationSavesFolder(name), [name]);
+	const openSaveFolder = useCallback((saveName) => openInstallationSaveFolder({ hash: name, name: saveName }), [name]);
 
 	return (
 		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
@@ -74,7 +75,7 @@ const SavesCard = ({ hash }: { hash: string }) => {
 								<div className="subtitle">{save.path as string}</div>
 							</div>
 							<div className="container">
-								<button className="circle">
+								<button className="circle" onClick={() => openSaveFolder(save.name)}>
 									<i className="icon-folder"></i>
 								</button>
 								<button className="circle">
