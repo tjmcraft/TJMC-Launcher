@@ -26,6 +26,17 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
 				{screenshots.length > 0 ? (
+					screenshots.map((screenshot: HostInstallationScreenshot, key) => (
+						<div className={buildClassName("item", "navItem")} key={screenshot.path as string}>
+							<img src={screenshot.path as string} key={screenshot.path as string} width={150} />
+							<span>{screenshot.name}</span>
+						</div>
+					))
+				) : null}
+			</div>
+		</div>
+	);
+};
 
 const SavesCard = ({ hash }: { hash: string }) => {
 	const hostOnline = useHostOnline();

@@ -31,7 +31,7 @@ export function selectInstance(global, instanceId) {
 	return undefined;
 }
 
-export function selectScreenshots(global, hash) {
+export function selectScreenshots(global: GlobalState, hash): HostInstallationScreenshot[] | [] {
 	if (global.screenshotsByInstallationHash && Object(global.screenshotsByInstallationHash).hasOwnProperty(hash)) {
 		return [ ...global.screenshotsByInstallationHash[hash] ];
 	}
