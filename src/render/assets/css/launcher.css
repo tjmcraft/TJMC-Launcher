@@ -1271,6 +1271,15 @@ i {
     height: 38px;
 }
 
+.navItem > .avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+}
+.navItem > .avatar~.nameTag {
+    margin-left: 0px;
+}
+
 .bimAvatar {
     position: relative;
     background-position: 50%;

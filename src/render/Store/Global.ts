@@ -30,7 +30,7 @@ export type GlobalState = {
 	users: Record<string, AnyLiteral>;
 	installations: Record<string, HostInstallation>;
 	screenshotsByInstallationHash: Record<keyof GlobalState['installations'], HostInstallationScreenshot[]>;
-	savesByInstallationHash: Record<keyof GlobalState['installations'], string[]>;
+	savesByInstallationHash: Record<keyof GlobalState['installations'], HostInstallationSave[]>;
 	instances: Record<string, AnyLiteral>;
 	versions: Array<Version>;
 	modals: Array<{

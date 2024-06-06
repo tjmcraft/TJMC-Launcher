@@ -37,7 +37,7 @@ export function selectScreenshots(global: GlobalState, hash): HostInstallationSc
 	}
 	return [];
 }
-export function selectSaves(global: GlobalState, hash) {
+export function selectSaves(global: GlobalState, hash): HostInstallationSave[] | [] {
 	if (global.savesByInstallationHash && Object(global.savesByInstallationHash).hasOwnProperty(hash)) {
 		return [ ...global.savesByInstallationHash[hash] ];
 	}

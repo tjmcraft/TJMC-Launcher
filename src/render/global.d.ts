@@ -121,6 +121,12 @@ interface HostInstallationScreenshot {
   name: string;
 }
 
+interface HostInstallationSave {
+  path: PathLike;
+  name: string;
+  iconPath: PathLike;
+}
+
 type HostInstallationWithHash = HostInstallation & { hash: string, isProcessing?: boolean };
 type VersionType = 'release' | 'modified' | 'snapshot' | 'pending' | 'old_beta' | 'old_alpha';
 type VersionTypes = Array<{ name: string; type: VersionType; }>;

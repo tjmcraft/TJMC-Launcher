@@ -27,7 +27,7 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 				{screenshots.length > 0 ? (
 					screenshots.map((screenshot: HostInstallationScreenshot, key) => (
 						<div className={buildClassName("item", "navItem")} key={screenshot.path as string}>
-							<img src={screenshot.path as string} key={screenshot.path as string} width={150} />
+							<img src={screenshot.path as string} key={screenshot.path as string} height={64} />
 							<span>{screenshot.name}</span>
 						</div>
 					))
@@ -57,9 +57,15 @@ const SavesCard = ({ hash }: { hash: string }) => {
 			</div>
 			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
 				{saves.length > 0 ? (
-					saves.map((save, key) => (
-						<div className={buildClassName("item", "navItem")} key={save}>
-							<span>{save}</span>
+					saves.map((save: HostInstallationSave, key) => (
+						<div className={buildClassName("item", "navItem")} key={save.path as string}>
+							<div className="avatar">
+								<img src={save.iconPath as string} key={save.path as string} height={64} />
+							</div>
+							<div className="nameTag">
+								<div className="title">{save.name as string}</div>
+								<div className="subtitle">{save.path as string}</div>
+							</div>
 						</div>
 					))
 				) : null}
