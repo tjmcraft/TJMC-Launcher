@@ -75,10 +75,10 @@ const SavesCard = ({ hash }: { hash: string }) => {
 								<div className="subtitle">{save.path as string}</div>
 							</div>
 							<div className="container">
-								<button className="circle" onClick={() => openSaveFolder(save.name)}>
+								<button className="circle" onClick={() => openSaveFolder(save.name)} title="Open save folder">
 									<i className="icon-folder"></i>
 								</button>
-								<button className="circle">
+								<button className={buildClassName("circle", "destructive")} title="Delete save">
 									<i className="icon-delete"></i>
 								</button>
 							</div>

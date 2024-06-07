@@ -36,6 +36,7 @@
     --color-shadow: rgba(0, 0, 0, 0.24);
     --button-red-background: #ee4145;
     --button-red-background-hover: #aa2e30;
+    --button-destructive-background-hover: #aa2e3040;
     --backdrop-color: #010101cf;
 }
 

@@ -306,6 +306,13 @@ button.filled.colorRed:hover {
     background-color: var(--button-red-background-hover);
 }
 
+button.destructive {
+	color: var(--text-negative);
+}
+button.destructive:hover {
+	background-color: var(--button-destructive-background-hover);
+}
+
 button:hover {
     background-color: var(--background-modifier-selected);
 }
