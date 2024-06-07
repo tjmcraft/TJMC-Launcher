@@ -1,6 +1,7 @@
 
 const fs = require("node:fs");
 const nbt = require('prismarine-nbt');
+const { deserialize } = require('@xmcl/nbt');
 const path = require("node:path");
 const { getOption } = require("../managers/ConfigManager");
 
@@ -12,16 +13,18 @@ const getProfileDirectory = (name = null) => path.join(getOption('overrides.path
  * @returns {import("../global").HostInstallationSave['meta']}
  */
 const readSaveMetadata = async (save) => {
-	var data = fs.readFileSync(path.join(save, 'level.dat'));
-	const { parsed, metadata } = await nbt.parse(data);
-	// console.debug(">>", parsed.value['Data'].value);
+	var data = await fs.readFileSync(path.join(save, 'level.dat'));
+	const { Data } = await deserialize(data, { compressed: 'gzip' });
+	// const { parsed, metadata } = await nbt.parse(data);
+	// const saveMeta = parsed.value['Data'].value;
+	console.debug(">>", Data);
 	return {
-		mode: parsed.value['Data'].value['GameType'].value,
-		levelName: parsed.value['Data'].value['LevelName'].value,
-		gameVersion: parsed.value['Data'].value['Version'].value['Name'].value,
-		difficulty: parsed.value['Data'].value['Difficulty'].value,
-		time: Number(parsed.value['Data'].value['DayTime'].value),
-		lastPlayed: Number(parsed.value['Data'].value['LastPlayed'].value),
+		mode: Data['GameType'],
+		levelName: Data['LevelName'],
+		gameVersion: Data.Version?.Name || Data.version,
+		difficulty: Data['Difficulty'],
+		time: Number(Data['DayTime']),
+		lastPlayed: Number(Data['LastPlayed']),
 	};
 
 };
@@ -37,11 +40,13 @@ module.exports.getSaves = async (profile_name) => {
 	if (!fs.existsSync(savesDirectory)) fs.mkdirSync(savesDirectory, { recursive: true });
 	const savesNames = fs.readdirSync(savesDirectory, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name);
 	const saves = await Promise.all(savesNames.map(async e => {
-		let meta = await readSaveMetadata(path.join(savesDirectory, e));
+		const root = path.join(savesDirectory, e);
+		let meta = await readSaveMetadata(root);
+		const iconPath = path.join(root, 'icon.png');
 		return {
-			path: path.join(savesDirectory, e),
 			name: e,
-			iconPath: path.join(savesDirectory, e, 'icon.png'),
+			path: root,
+			iconPath: fs.existsSync(iconPath) ? iconPath : path.join(__dirname, "../game", 'assets', 'minecraft_icon.png'),
 			meta: meta,
 		};
 	}));

@@ -45,7 +45,7 @@
 
 :root.light-theme {
     --background-tertiary: #efeff3;
-    --background-primary: #fff;
+    --background-primary: #f1f1f1;
     --background-secondary: #f2f3f5;
     --background-secondary-alt: #fff;
     --sbw-background-side: #efeff3;

@@ -94,9 +94,9 @@ const SavesCard = ({ hash }: { hash: string }) => {
 								<img src={save.iconPath as string} key={save.path as string} height={64} />
 							</div>
 							<div className="nameTag">
-								<div className="title">{save.name as string}</div>
-								<div className="subtitle">{new Date(save.meta.lastPlayed).toLocaleString()}</div>
-								<div className="subtitle">{"Minecraft "+save.meta.gameVersion}</div>
+								<div className="title">{save.meta.levelName as string}</div>
+								<div className="subtitle">{`${save.name} (${new Date(save.meta.lastPlayed).toLocaleString()})`}</div>
+								<div className="subtitle">{`Версия: ${save.meta.gameVersion}`}</div>
 							</div>
 							<div className="actions">
 								<button className="circle" onClick={() => openSaveFolder(save.name)} title="Open save folder">
