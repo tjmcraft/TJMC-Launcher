@@ -97,6 +97,7 @@ const InstanceManager = require('./managers/InstanceManager');
 const AuthManager = require('./managers/AuthManager');
 const InstanceScreenshotService = require('./services/InstanceScreenshotService');
 const InstanceSavesService = require('./services/InstanceSavesService');
+const ResourcePacksService = require('./services/ResourcepacksService');
 
 const setProgressBar = throttle((progress) => MainWindow.setProgressBar(progress), 10, true);
 
@@ -332,6 +333,7 @@ const initHandlers = async () => {
 			console.debug("removeInstallationSave", hash, name);
 			return true;
 		});
+		ResourcePacksService.getLocalResourcePacks();
 	}
 
 	{ // Configuration

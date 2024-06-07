@@ -12,7 +12,7 @@ module.exports.getScreenshots = async (profile_name) => {
 		path: path.join(screenshotsDirectory, e),
 		name: e,
 	}));
-	console.debug(">>", screenshots);
+	console.debug("[InstanceScreenshotService]", screenshots);
 	return screenshots || [];
 };
 

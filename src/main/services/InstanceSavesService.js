@@ -17,7 +17,7 @@ const readSaveMetadata = async (save) => {
 	const { Data } = await deserialize(data, { compressed: 'gzip' });
 	// const { parsed, metadata } = await nbt.parse(data);
 	// const saveMeta = parsed.value['Data'].value;
-	console.debug(">>", Data);
+	// console.debug(">>", Data);
 	return {
 		mode: Data['GameType'],
 		levelName: Data['LevelName'],
@@ -50,7 +50,7 @@ module.exports.getSaves = async (profile_name) => {
 			meta: meta,
 		};
 	}));
-	console.debug(">>saves", saves);
+	console.debug("[InstanceSavesService]", saves);
 	return saves || [];
 };
 
