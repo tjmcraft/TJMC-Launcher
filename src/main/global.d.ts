@@ -62,6 +62,25 @@ interface HostInstallation {
   autoConnect?: boolean;
 }
 
+interface HostInstallationScreenshot {
+  path: PathLike;
+  name: string;
+}
+
+interface HostInstallationSave {
+  path: PathLike;
+  name: string;
+  iconPath: PathLike;
+  meta: {
+    mode: number;
+    levelName: string;
+    gameVersion: string;
+    difficulty: number;
+    time: number;
+    lastPlayed: number;
+  }
+}
+
 type HostInstallationWithHash = HostInstallation & { hash: string, isProcessing?: boolean };
 type VersionType = 'release' | 'modified' | 'snapshot' | 'pending' | 'old_beta' | 'old_alpha';
 type VersionTypes = Array<{ name: string; type: VersionType; }>;

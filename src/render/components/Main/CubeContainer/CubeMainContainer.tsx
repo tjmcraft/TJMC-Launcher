@@ -95,9 +95,10 @@ const SavesCard = ({ hash }: { hash: string }) => {
 							</div>
 							<div className="nameTag">
 								<div className="title">{save.name as string}</div>
-								<div className="subtitle">{save.path as string}</div>
+								<div className="subtitle">{new Date(save.meta.lastPlayed).toLocaleString()}</div>
+								<div className="subtitle">{"Minecraft "+save.meta.gameVersion}</div>
 							</div>
-							<div className="container">
+							<div className="actions">
 								<button className="circle" onClick={() => openSaveFolder(save.name)} title="Open save folder">
 									<i className="icon-folder"></i>
 								</button>
