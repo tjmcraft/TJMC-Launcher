@@ -122,12 +122,12 @@ export async function openInstallationSaveFolder({ hash, name }) {
 }
 
 
-export async function fetchInstallationScreenshots(name) {
+export async function fetchInstallationScreenshots(hash) {
 	let result;
 	try {
 		result = await invokeRequest({
 			type: "fetchInstallationScreenshots",
-			data: { name: name },
+			data: { name: hash },
 		}, false, true, true);
 	} catch (e) {
 		return;
@@ -141,12 +141,12 @@ export async function fetchInstallationScreenshots(name) {
 	return result.payload;
 }
 
-export async function fetchInstallationSaves(name) {
+export async function fetchInstallationSaves(hash) {
 	let result;
 	try {
 		result = await invokeRequest({
 			type: "fetchInstallationSaves",
-			data: { name: name },
+			data: { name: hash },
 		}, false, true, true);
 	} catch (e) {
 		return;
@@ -157,5 +157,19 @@ export async function fetchInstallationSaves(name) {
 		saves: result.payload.saves,
 		profile_name: result.payload.profile_name,
 	});
+	return result.payload;
+}
+
+export async function removeInstallationSave({ hash, name }) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "removeInstallationSave",
+			data: { hash, name },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
 	return result.payload;
 }

@@ -17,6 +17,7 @@ export {
 	createInstallation,
 	editInstallation,
 	removeInstallation,
+	removeInstallationSave,
 	openInstallationFolder,
 	openInstallationSavesFolder,
 	openInstallationSaveFolder,

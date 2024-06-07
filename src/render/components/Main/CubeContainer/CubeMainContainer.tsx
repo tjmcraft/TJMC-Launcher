@@ -42,13 +42,36 @@ const ScreenshotsCard = ({ hash }: { hash: string }) => {
 
 const SavesCard = ({ hash }: { hash: string }) => {
 	const hostOnline = useHostOnline();
-	const { fetchInstallationSaves, openInstallationSavesFolder, openInstallationSaveFolder } = getDispatch();
+	const { fetchInstallationSaves, openInstallationSavesFolder, openInstallationSaveFolder, removeInstallationSave, alert } = getDispatch();
 
 	const { name } = useGlobal(global => selectInstallation(global, hash), [hash]);
 	useEffect(() => hostOnline && name ? fetchInstallationSaves(name) : null, [hostOnline, name]);
 	const saves = useGlobal(global => selectSaves(global, name));
 	const openSavesFolder = useCallback(() => openInstallationSavesFolder(name), [name]);
 	const openSaveFolder = useCallback((saveName) => openInstallationSaveFolder({ hash: name, name: saveName }), [name]);
+
+	const handleRemoveClick = useCallback((saveName) => {
+		alert({
+			title: "Удаление installation save",
+			content: `Вы действительно хотите удалить "${saveName}" с вашего компьютера?`,
+			type: "error",
+			buttons: [
+				{
+					name: "Отмена",
+					closeOverlay: true,
+				},
+				{
+					name: "Удалить",
+					class: ["filled", "colorRed"],
+					closeOverlay: true,
+					callback: () => {
+						removeInstallationSave({ hash: name, name: saveName });
+					}
+				},
+			],
+			mini: true,
+		});
+	}, [alert, name, removeInstallationSave, hash]);
 
 	return (
 		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
@@ -78,7 +101,7 @@ const SavesCard = ({ hash }: { hash: string }) => {
 								<button className="circle" onClick={() => openSaveFolder(save.name)} title="Open save folder">
 									<i className="icon-folder"></i>
 								</button>
-								<button className={buildClassName("circle", "destructive")} title="Delete save">
+								<button className={buildClassName("circle", "destructive")} onClick={() => handleRemoveClick(save.name)} title="Delete save">
 									<i className="icon-delete"></i>
 								</button>
 							</div>

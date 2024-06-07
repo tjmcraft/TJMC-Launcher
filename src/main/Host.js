@@ -13,6 +13,7 @@ const requestChannels = Object.seal({
 	fetchInstallations: 'fetchInstallations',
 	fetchInstallationScreenshots: 'fetchInstallationScreenshots',
 	fetchInstallationSaves: 'fetchInstallationSaves',
+	removeInstallationSave: 'removeInstallationSave',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
 	killAllInstances: 'killAllInstances',
@@ -326,6 +327,10 @@ const initHandlers = async () => {
 		WSSHost.addReducer(requestChannels.fetchInstallationSaves, async ({ name }) => {
 			const saves = await InstanceSavesService.getSaves(name);
 			return { profile_name: name, saves };
+		});
+		WSSHost.addReducer(requestChannels.removeInstallationSave, async ({ hash, name }) => {
+			console.debug("removeInstallationSave", hash, name);
+			return true;
 		});
 	}
 
