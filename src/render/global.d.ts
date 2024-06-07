@@ -121,6 +121,11 @@ interface HostInstallationScreenshot {
   name: string;
 }
 
+interface HostInstallationResourcePack {
+  path: PathLike;
+  name: string;
+}
+
 interface HostInstallationSave {
   path: PathLike;
   name: string;

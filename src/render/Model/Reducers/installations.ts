@@ -66,7 +66,7 @@ export function updateInstallationProgress(global, update) {
 	return void 0;
 }
 
-export function updateInstallationScreenshots(global: GlobalState, update) {
+export function updateInstallationScreenshots(global: GlobalState, update): GlobalState {
 	const { profile_name, screenshots } = update;
 	return {
 		...global,
@@ -77,7 +77,18 @@ export function updateInstallationScreenshots(global: GlobalState, update) {
 	};
 }
 
-export function updateInstallationSaves(global: GlobalState, update) {
+export function updateInstallationResourcePacks(global: GlobalState, update): GlobalState {
+	const { profile_name, resourcepacks } = update;
+	return {
+		...global,
+		resourcepacksByInstallationHash: {
+			...global.resourcepacksByInstallationHash,
+			[profile_name]: resourcepacks
+		}
+	};
+}
+
+export function updateInstallationSaves(global: GlobalState, update): GlobalState {
 	const { profile_name, saves } = update;
 	return {
 		...global,

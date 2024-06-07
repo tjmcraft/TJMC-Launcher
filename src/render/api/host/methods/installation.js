@@ -146,15 +146,35 @@ export async function fetchInstallationSaves(hash) {
 	try {
 		result = await invokeRequest({
 			type: "fetchInstallationSaves",
-			data: { name: hash },
+			data: { hash: hash },
 		}, false, true, true);
 	} catch (e) {
 		return;
 	}
 	if (!result) return undefined;
+	console.debug(">>>>", result);
 	result.payload?.saves && onUpdate({
 		type: "updateInstallationSaves",
 		saves: result.payload.saves,
+		profile_name: result.payload.profile_name,
+	});
+	return result.payload;
+}
+
+export async function fetchInstallationResourcePacks(hash) {
+	let result;
+	try {
+		result = await invokeRequest({
+			type: "fetchInstallationResourcePacks",
+			data: { hash: hash },
+		}, false, true, true);
+	} catch (e) {
+		return;
+	}
+	if (!result) return undefined;
+	result.payload?.resourcepacks && onUpdate({
+		type: "updateInstallationResourcePacks",
+		resourcepacks: result.payload.resourcepacks,
 		profile_name: result.payload.profile_name,
 	});
 	return result.payload;

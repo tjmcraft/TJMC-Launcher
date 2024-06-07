@@ -1,6 +1,6 @@
 import React, { memo, createElement, useEffect, useCallback } from "react";
 import useGlobal from "Hooks/useGlobal";
-import { selectInstallation, selectSaves, selectScreenshots } from "Model/Selectors/installations";
+import { selectInstallation, selectResourcePacks, selectSaves, selectScreenshots } from "Model/Selectors/installations";
 import { getDispatch } from "Store/Global";
 import useHostOnline from "Hooks/useHostOnline";
 import buildClassName from "Util/buildClassName";
@@ -114,6 +114,41 @@ const SavesCard = ({ hash }: { hash: string }) => {
 	);
 };
 
+
+const ResourcePacksCard = ({ hash }: { hash: string }) => {
+	const hostOnline = useHostOnline();
+	const { fetchInstallationResourcePacks } = getDispatch();
+
+	const { name } = useGlobal(global => selectInstallation(global, hash), [hash]);
+	useEffect(() => hostOnline && name ? fetchInstallationResourcePacks(name) : null, [hostOnline, name]);
+	const resourcepacks = useGlobal(global => selectResourcePacks(global, name));
+
+	return (
+		<div className={buildClassName("r-box", "main")} style={{width: "500px", height: "50vh"}}>
+			<div className="header-w-wrap">
+				<div className='header-w'>
+					<span className="title">
+						<i className="icon-forums"></i>
+						<span>ResourcePacks</span>
+					</span>
+					<button className="circle">
+						<i className="icon-folder"></i>
+					</button>
+				</div>
+			</div>
+			<div className={buildClassName('scroller', 'thin-s')} style={{ padding: 0 }}>
+				{resourcepacks.length > 0 ? (
+					resourcepacks.map((resourcepack: HostInstallationResourcePack, key) => (
+						<div className={buildClassName("item", "navItem")} key={resourcepack.path as string}>
+							<span>{resourcepack.name}</span>
+						</div>
+					))
+				) : null}
+			</div>
+		</div>
+	);
+};
+
 const Test = ({ hash }: { hash: string }) => {
 	const { name } = useGlobal(global => {
 		const version = selectInstallation(global, hash);
@@ -135,8 +170,9 @@ const CubeMainContainer = ({ hash }: { hash: string }) => {
 			<Test hash={hash} />
 			<div className="main-row">
 				<SavesCard hash={hash} />
-				<ScreenshotsCard hash={hash} />
+				<ResourcePacksCard hash={hash} />
 			</div>
+			<ScreenshotsCard hash={hash} />
 		</div>
 	);
 };

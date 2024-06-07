@@ -13,6 +13,7 @@ const requestChannels = Object.seal({
 	fetchInstallations: 'fetchInstallations',
 	fetchInstallationScreenshots: 'fetchInstallationScreenshots',
 	fetchInstallationSaves: 'fetchInstallationSaves',
+	fetchInstallationResourcePacks: 'fetchInstallationResourcePacks',
 	removeInstallationSave: 'removeInstallationSave',
 	fetchInstances: 'fetchInstances',
 	killInstance: 'killInstance',
@@ -325,15 +326,18 @@ const initHandlers = async () => {
 			const screenshots = await InstanceScreenshotService.getScreenshots(name);
 			return { profile_name: name, screenshots };
 		});
-		WSSHost.addReducer(requestChannels.fetchInstallationSaves, async ({ name }) => {
-			const saves = await InstanceSavesService.getSaves(name);
-			return { profile_name: name, saves };
+		WSSHost.addReducer(requestChannels.fetchInstallationSaves, async ({ hash }) => {
+			const saves = await InstanceSavesService.getSaves(hash);
+			return { profile_name: hash, saves };
+		});
+		WSSHost.addReducer(requestChannels.fetchInstallationResourcePacks, async ({ hash }) => {
+			const resourcepacks = await ResourcePacksService.getInstallationResourcePacks(hash);
+			return { profile_name: hash, resourcepacks };
 		});
 		WSSHost.addReducer(requestChannels.removeInstallationSave, async ({ hash, name }) => {
 			console.debug("removeInstallationSave", hash, name);
 			return true;
 		});
-		ResourcePacksService.getLocalResourcePacks();
 	}
 
 	{ // Configuration

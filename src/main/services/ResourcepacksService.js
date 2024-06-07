@@ -45,6 +45,16 @@ const openResourcePack = async (basePath) => {
 	}
 }
 
+const getVersionsDirectory = () => path.join(getOption('overrides.path.minecraft'), "instances");
+
+module.exports.linkSharedResources = (profile_name) => {
+	const instanceResourcePacksPath = path.join(getVersionsDirectory(), profile_name, 'resourcepacks');
+	const resourcePacksPath = path.join(getOption('overrides.path.minecraft'), 'resourcepacks');
+	if (!fs.existsSync(instanceResourcePacksPath)) fs.mkdirSync(path.join(instanceResourcePacksPath, '..'), { recursive: true });
+	if (!fs.existsSync(resourcePacksPath)) fs.mkdirSync(path.join(resourcePacksPath, '..'), { recursive: true });
+	fs.symlinkSync(resourcePacksPath, instanceResourcePacksPath, 'dir');
+}
+
 module.exports.getLocalResourcePacks = async () => {
 	const resDir = path.join(getOption('overrides.path.minecraft'), "resourcepacks");
 	if (!fs.existsSync(resDir)) fs.mkdirSync(resDir, { recursive: true });
@@ -60,3 +70,9 @@ module.exports.getLocalResourcePacks = async () => {
 	console.debug(">>res", res);
 	return res || [];
 };
+
+module.exports.getInstallationResourcePacks = async (installationName) => {
+	console.debug(">>call res", 1);
+	this.linkSharedResources(installationName);
+	return [];
+}

@@ -18,6 +18,8 @@
         "pctx",
         "prefresh",
         "realname",
+        "resourcepack",
+        "resourcepacks",
         "scroller"
     ],
     "cSpell.language": "en,ru",

@@ -13,6 +13,7 @@ export {
 	fetchInstallations,
 	fetchInstallationScreenshots,
 	fetchInstallationSaves,
+	fetchInstallationResourcePacks,
 	fetchVersions,
 	createInstallation,
 	editInstallation,

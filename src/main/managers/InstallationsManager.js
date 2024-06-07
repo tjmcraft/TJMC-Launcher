@@ -6,6 +6,7 @@ const { cleanObject } = require('../util/Tools');
 const { generateIdFor } = require('../util/Random');
 const LoggerUtil = require('../util/loggerutil');
 const CallbackStore = require('../util/CallbackStore');
+const ResourcepacksService = require('../services/ResourcepacksService');
 
 const callbacks = new CallbackStore();
 
@@ -66,6 +67,7 @@ const writeInstallationProfile = (profile) => {
 	installations[profile.hash] = profile;
 	const instancePath = path.join(getVersionsDirectory(), profile.name, 'instance.json');
 	if (!fs.existsSync(instancePath)) fs.mkdirSync(path.join(instancePath, '..'), { recursive: true });
+	ResourcepacksService.linkSharedResources(profile.name);
 	try {
 		const content = JSON.stringify(installations[profile.hash], null, 4);
 		fs.writeFileSync(instancePath, content, 'utf-8');

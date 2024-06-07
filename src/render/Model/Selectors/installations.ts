@@ -43,3 +43,9 @@ export function selectSaves(global: GlobalState, hash): HostInstallationSave[] |
 	}
 	return [];
 }
+export function selectResourcePacks(global: GlobalState, hash): HostInstallationResourcePack[] | [] {
+	if (global.resourcepacksByInstallationHash && Object(global.resourcepacksByInstallationHash).hasOwnProperty(hash)) {
+		return [ ...global.resourcepacksByInstallationHash[hash] ];
+	}
+	return [];
+}

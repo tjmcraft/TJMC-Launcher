@@ -31,6 +31,7 @@ export type GlobalState = {
 	installations: Record<string, HostInstallation>;
 	screenshotsByInstallationHash: Record<keyof GlobalState['installations'], HostInstallationScreenshot[]>;
 	savesByInstallationHash: Record<keyof GlobalState['installations'], HostInstallationSave[]>;
+	resourcepacksByInstallationHash: Record<keyof GlobalState['installations'], HostInstallationSave[]>;
 	instances: Record<string, AnyLiteral>;
 	versions: Array<Version>;
 	modals: Array<{
