@@ -3,6 +3,7 @@ const path = require("node:path");
 const { getOption } = require("../managers/ConfigManager");
 const AdmZip = require("adm-zip");
 const { stat } = require("node:fs/promises");
+const InstanceOptionsService = require("./InstanceOptionsService");
 
 const openResourcePack = async (basePath) => {
 	if (typeof basePath === 'string') {
@@ -50,9 +51,11 @@ const getVersionsDirectory = () => path.join(getOption('overrides.path.minecraft
 module.exports.linkSharedResources = (profile_name) => {
 	const instanceResourcePacksPath = path.join(getVersionsDirectory(), profile_name, 'resourcepacks');
 	const resourcePacksPath = path.join(getOption('overrides.path.minecraft'), 'resourcepacks');
-	if (!fs.existsSync(instanceResourcePacksPath)) fs.mkdirSync(path.join(instanceResourcePacksPath, '..'), { recursive: true });
 	if (!fs.existsSync(resourcePacksPath)) fs.mkdirSync(path.join(resourcePacksPath, '..'), { recursive: true });
-	fs.symlinkSync(resourcePacksPath, instanceResourcePacksPath, 'dir');
+	if (!fs.existsSync(instanceResourcePacksPath)) {
+		fs.mkdirSync(path.join(instanceResourcePacksPath, '..'), { recursive: true });
+		fs.symlinkSync(resourcePacksPath, instanceResourcePacksPath, 'dir');
+	}
 }
 
 module.exports.getLocalResourcePacks = async () => {
@@ -74,5 +77,6 @@ module.exports.getLocalResourcePacks = async () => {
 module.exports.getInstallationResourcePacks = async (installationName) => {
 	console.debug(">>call res", 1);
 	this.linkSharedResources(installationName);
+	InstanceOptionsService.getGameOptions(installationName);
 	return [];
 }
