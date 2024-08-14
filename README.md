@@ -26,6 +26,10 @@ If you have any troubles with Linux Snap package **auth**, run this command in b
 ```sh
 sudo snap connect tjmc-launcher:password-manager-service
 ```
+On macOS copy app to Application folder and then open terminal to paste and run this:
+```sh
+xattr -cr /Applications/TJMC-Launcher.app && codesign --force --deep --sign - /Applications/TJMC-Launcher.app
+```
 
 ## Developing 💻
 
